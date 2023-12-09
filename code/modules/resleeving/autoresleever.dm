@@ -12,6 +12,7 @@
 	var/respawn = 30 MINUTES			//The time to wait if you didn't die from vore
 	var/spawn_slots = -1				//How many people can be spawned from this? If -1 it's unlimited
 	var/spawntype						//The kind of mob that will be spawned, if set.
+	var/station_spawner = TRUE			//If true, this can be located by the find auto resleever verb
 
 /obj/machinery/transhuman/autoresleever/update_icon()
 	. = ..()
@@ -224,3 +225,6 @@
 	else
 		spawn_slots --
 		return
+
+/obj/machinery/transhuman/autoresleever/offstation
+	station_spawner = FALSE

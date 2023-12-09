@@ -142,7 +142,7 @@
 
 	var/list/ar = list()
 	for(var/obj/machinery/transhuman/autoresleever/A in world)
-		if(A.spawntype)
+		if(A.spawntype || !A.station_spawner)
 			continue
 		else
 			ar |= A
