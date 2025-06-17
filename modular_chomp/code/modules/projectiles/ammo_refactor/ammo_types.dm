@@ -4,7 +4,7 @@
 	desc = "You shouldn't be able to read this!"
 	var/ammo_flags = 0
 
-/obj/item/projectile/simple_bullet/launch_from_gun(atom/target, target_zone, mob/user, params, angle_override, forced_spread, obj/item/weapon/gun/launcher)
+/obj/item/projectile/simple_bullet/launch_from_gun(atom/target, target_zone, mob/user, params, angle_override, forced_spread, obj/item/gun/launcher)
 	//We aren't actually going to launch! We're just a convenient placeholder. Spawn whatever projectile type the gun uses!
 	var/obj/item/projectile/projectile_type_real = launcher.projectile_type
 	var/damage = projectile_type_real::damage
@@ -38,11 +38,12 @@
 		var/obj/item/projectile/P = new projectile_type_real(src.loc)
 		P.agony = round(P.damage * AMMO_RUBBER_AGONY_MULT) //In exchange for agony proportional to damage
 		P.damage = round(P.damage * AMMO_RUBBER_DAMAGE_MULT) //Severely reduced damage
+		P.sharp = FALSE //Rubber shot shouldnt bleed you
 		qdel(src)
 		return P.launch_from_gun(target, target_zone, user, params, angle_override, forced_spread, launcher)
 	if(ammo_flags & AMMO_FLAG_HUNTER)
 		var/obj/item/projectile/P = new projectile_type_real(src.loc)
-		P.SA_bonus_damage = round(P.damage * AMMO_HUNTER_SA_DAMAGE_MULT) //In exchange for SA damage
+		P.mob_bonus_damage = round(P.damage * AMMO_HUNTER_SA_DAMAGE_MULT) //In exchange for SA damage
 		P.damage = round(P.damage * AMMO_HUNTER_DAMAGE_MULT) //Severely reduced damage
 		qdel(src)
 		return P.launch_from_gun(target, target_zone, user, params, angle_override, forced_spread, launcher)
@@ -61,8 +62,8 @@
 	projectile_type = /obj/item/projectile/simple_bullet
 	var/ammo_flags = 0
 
-/obj/item/ammo_casing/simple/New()
-	..()
+/obj/item/ammo_casing/simple/Initialize(mapload)
+	. = ..()
 	var/obj/item/projectile/simple_bullet/P = BB
 	if(istype(P))
 		P.ammo_flags = ammo_flags
@@ -76,7 +77,6 @@
 	desc = "A medium bullet casing, probably fit for a rifle"
 	caliber = "medium"
 	icon_state = "rifle-casing"
-	projectile_type = /obj/item/projectile/bullet/rifle/a545
 	matter = list(MAT_STEEL = 180)
 	ammo_flags = AMMO_FLAG_MEDIUM
 
@@ -84,7 +84,6 @@
 	desc = "A large bullet casing, probably fit for a sniper."
 	icon_state = "lcasing"
 	caliber = "large"
-	projectile_type = /obj/item/projectile/bullet/rifle/a338
 	matter = list(MAT_STEEL = 800)
 	ammo_flags = AMMO_FLAG_LARGE
 

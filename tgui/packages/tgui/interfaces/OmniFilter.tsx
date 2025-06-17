@@ -1,8 +1,7 @@
-import { BooleanLike } from 'common/react';
-
-import { useBackend } from '../backend';
-import { Box, Button, LabeledList, Section } from '../components';
-import { Window } from '../layouts';
+import { useBackend } from 'tgui/backend';
+import { Window } from 'tgui/layouts';
+import { Box, Button, LabeledList, Section, Stack } from 'tgui-core/components';
+import type { BooleanLike } from 'tgui-core/react';
 
 const getStatusText = (port) => {
   if (port.input) {
@@ -36,21 +35,25 @@ export const OmniFilter = (props) => {
         <Section
           title={config ? 'Configuration' : 'Status'}
           buttons={
-            <>
-              <Button
-                icon="power-off"
-                selected={power}
-                disabled={config}
-                onClick={() => act('power')}
-              >
-                {power ? 'On' : 'Off'}
-              </Button>
-              <Button
-                icon="wrench"
-                selected={config}
-                onClick={() => act('configure')}
-              />
-            </>
+            <Stack>
+              <Stack.Item>
+                <Button
+                  icon="power-off"
+                  selected={power}
+                  disabled={config}
+                  onClick={() => act('power')}
+                >
+                  {power ? 'On' : 'Off'}
+                </Button>
+              </Stack.Item>
+              <Stack.Item>
+                <Button
+                  icon="wrench"
+                  selected={config}
+                  onClick={() => act('configure')}
+                />
+              </Stack.Item>
+            </Stack>
           }
         >
           <LabeledList>

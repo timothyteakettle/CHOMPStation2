@@ -83,13 +83,15 @@
 	name = "XI-GUS"
 	sprite_icon_state = "spider"
 
+
 /datum/robot_sprite/science/worm
 	name = "W02M"
-	sprite_icon_state = "worm-science" //CHOMPEdit
-	has_custom_open_sprites = TRUE
-	sprite_icon = 'modular_chomp/icons/mob/wormborg.dmi' //CHOMPEdit
-	has_vore_belly_sprites = TRUE //CHOMPEdit
-	has_dead_sprite = TRUE //CHOMPEdit
+	sprite_icon_state = "worm-science"
+	sprite_icon = 'icons/mob/robot/wormborg.dmi'
+	has_dead_sprite_overlay = FALSE
+	has_custom_open_sprites = FALSE
+	has_vore_belly_sprites = TRUE
+	has_dead_sprite = TRUE
 
 /datum/robot_sprite/science/uptall
 	name = "Feminine Humanoid"
@@ -101,13 +103,13 @@
 	module_type = "Research"
 	sprite_icon = 'icons/mob/robot/science_wide.dmi'
 
-/datum/robot_sprite/dogborg/science/do_equipment_glamour(var/obj/item/weapon/robot_module/module)
+/datum/robot_sprite/dogborg/science/do_equipment_glamour(var/obj/item/robot_module/module)
 	if(!has_custom_equipment_sprites)
 		return
 
 	..()
 
-	var/obj/item/weapon/shockpaddles/robot/jumper/J = locate() in module.modules
+	var/obj/item/shockpaddles/robot/jumper/J = locate() in module.modules
 	if(J)
 		J.name = "jumper paws"
 		J.desc = "Zappy paws. For rebooting a full body prostetic."
@@ -150,18 +152,13 @@
 /datum/robot_sprite/dogborg/tall/science
 	module_type = "Research"
 	sprite_icon = 'icons/mob/robot/science_large.dmi'
-	var/has_taser_sprite = FALSE
 
-/datum/robot_sprite/dogborg/tall/science/handle_extra_icon_updates(var/mob/living/silicon/robot/ourborg)
-	if(has_taser_sprite && istype(ourborg.module_active, /obj/item/weapon/gun/energy/taser/xeno/robot))
-		ourborg.add_overlay("[sprite_icon_state]-taser")
-
-/datum/robot_sprite/dogborg/tall/science/do_equipment_glamour(var/obj/item/weapon/robot_module/module)
+/datum/robot_sprite/dogborg/tall/science/do_equipment_glamour(var/obj/item/robot_module/module)
 	if(!has_custom_equipment_sprites)
 		return
 	..()
 
-	var/obj/item/weapon/shockpaddles/robot/jumper/J = locate() in module.modules
+	var/obj/item/shockpaddles/robot/jumper/J = locate() in module.modules
 	if(J)
 		J.name = "jumper paws"
 		J.desc = "Zappy paws. For rebooting a full body prostetic."
@@ -173,7 +170,7 @@
 	name = "Raptor V-4"
 	sprite_icon_state = "raptor"
 	has_custom_equipment_sprites = TRUE
-	has_taser_sprite = TRUE
+	sprite_flags = ROBOT_HAS_TASER_SPRITE
 	rest_sprite_options = list("Default", "Bellyup")
 
 /datum/robot_sprite/dogborg/tall/science/meka
@@ -212,3 +209,64 @@
 	has_custom_open_sprites = TRUE
 	has_vore_belly_sprites = FALSE
 	rest_sprite_options = list("Default", "Bellyup")
+
+
+/datum/robot_sprite/dogborg/tall/science/dullahan
+	name = "Dullahan"
+	sprite_icon_state = "dullahansci"
+	sprite_icon = 'icons/mob/robot/dullahan/v1/dullahan_sci.dmi'
+	has_eye_light_sprites = TRUE
+	has_rest_sprites = TRUE
+	has_vore_belly_sprites = TRUE
+	has_vore_belly_resting_sprites = TRUE
+	has_rest_lights_sprites = TRUE
+	has_rest_eyes_sprites = TRUE
+	sprite_hud_icon_state = "sci-borg"
+	rest_sprite_options = list("Default", "Sit")
+	sprite_decals = list("breastplate","loincloth","eyecover")
+	icon_x = 32
+	pixel_x = 0
+
+/datum/robot_sprite/dogborg/tall/science/dullataursci
+	name = "Dullataur"
+	sprite_icon_state = "dullataursci"
+	sprite_icon = 'icons/mob/robot/dullahan/dullataurs/dullataur.dmi'
+	rest_sprite_options = list("Default")
+	has_eye_light_sprites = TRUE
+	has_rest_sprites = TRUE
+	has_vore_belly_sprites = FALSE
+	has_vore_belly_resting_sprites = FALSE
+	has_rest_lights_sprites = TRUE
+	has_rest_eyes_sprites = TRUE
+	sprite_decals = list("breastplate")
+	icon_x = 32
+	pixel_x = 0
+
+/datum/robot_sprite/dogborg/tall/science/dullahanv3
+	name = "Dullahan v3"
+	sprite_icon = 'icons/mob/robot/dullahan/v3/science.dmi'
+	has_vore_belly_sprites = TRUE
+	has_eye_light_sprites = TRUE
+	sprite_icon_state = "dullahanscience"
+	rest_sprite_options = list("Default", "Sit")
+	sprite_decals = list("decals")
+	icon_x = 64
+	pixel_x = -16
+
+/datum/robot_sprite/dogborg/science/cat
+	name = "Cat"
+	sprite_icon = 'icons/mob/robot/catborg_variant.dmi'
+	sprite_icon_state = "vixsci"
+	sprite_hud_icon_state = "sci-borg"
+	has_vore_belly_resting_sprites = TRUE
+	has_eye_light_sprites = TRUE
+	has_dead_sprite_overlay = FALSE
+
+/datum/robot_sprite/dogborg/science/smolraptor
+	sprite_icon = 'icons/mob/robot/smallraptors/smolraptor_sci.dmi'
+	name = "Small Raptor"
+	sprite_icon_state = "smolraptor"
+	has_eye_light_sprites = TRUE
+	has_vore_belly_sprites = TRUE
+	has_dead_sprite_overlay = FALSE
+	rest_sprite_options = list("Default", "Sit", "Bellyup")

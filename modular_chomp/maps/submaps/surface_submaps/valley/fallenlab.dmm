@@ -7,8 +7,6 @@
 "aZ" = (
 /obj/structure/table/darkglass,
 /obj/item/ammo_casing/microbattery/medical/burn3,
-/obj/random/maintenance/medical,
-/obj/random/maintenance/medical,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "bH" = (
@@ -25,10 +23,20 @@
 /mob/living/simple_mob/mechanical/cyber_horror/grey,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
+"dg" = (
+/obj/structure/table/standard,
+/obj/random/maintenance/engineering,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
 "dx" = (
 /obj/effect/floor_decal/corner/red/diagonal,
-/mob/living/simple_mob/mechanical/cyber_horror/grey,
-/turf/simulated/floor/tiled/dark,
+/mob/living/simple_mob/mechanical/cyber_horror/grey{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/turf/simulated/floor/tiled/dark{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
 /area/submap/fallenlab)
 "eq" = (
 /obj/structure/closet/toolcloset,
@@ -45,21 +53,11 @@
 "fl" = (
 /obj/structure/salvageable/implant_container,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/corner/orange/diagonal,
-/turf/simulated/floor/tiled/dark,
-/area/submap/fallenlab)
-"fr" = (
-/mob/living/simple_mob/mechanical/cyber_horror/tajaran,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "fL" = (
 /obj/machinery/door/airlock/multi_tile/metal/mait,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/red/diagonal,
 /turf/simulated/floor/tiled/dark,
@@ -74,7 +72,6 @@
 "gy" = (
 /mob/living/simple_mob/mechanical/cyber_horror/corgi,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -86,8 +83,6 @@
 "gP" = (
 /obj/structure/table/standard,
 /obj/item/ammo_casing/microbattery/medical/haste,
-/obj/random/material/refined,
-/obj/random/material/precious,
 /obj/effect/floor_decal/corner/red/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -97,14 +92,6 @@
 /area/submap/fallenlab)
 "iw" = (
 /mob/living/simple_mob/mechanical/cyber_horror/vox,
-/obj/effect/floor_decal/corner/orange/diagonal,
-/turf/simulated/floor/tiled/dark,
-/area/submap/fallenlab)
-"jh" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -123,12 +110,6 @@
 /obj/random/maintenance/medical,
 /obj/random/maintenance/medical,
 /obj/effect/floor_decal/corner/red/diagonal,
-/turf/simulated/floor/tiled/dark,
-/area/submap/fallenlab)
-"kW" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "kZ" = (
@@ -165,13 +146,6 @@
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
-"qL" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/corner/red/diagonal,
-/turf/simulated/floor/tiled/dark,
-/area/submap/fallenlab)
 "rk" = (
 /obj/machinery/portable_atmospherics/canister/oxygen,
 /turf/simulated/floor/tiled/dark,
@@ -181,7 +155,9 @@
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "rL" = (
-/mob/living/simple_mob/mechanical/cyber_horror/tajaran,
+/mob/living/simple_mob/mechanical/cyber_horror/tajaran{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -189,6 +165,7 @@
 /obj/machinery/optable,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
+/obj/random/maintenance/medical,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "sg" = (
@@ -209,7 +186,7 @@
 /area/submap/fallenlab)
 "sS" = (
 /obj/structure/table/standard,
-/obj/item/device/nif,
+/obj/item/nif,
 /obj/random/maintenance/foodstuff,
 /obj/random/maintenance/foodstuff,
 /obj/effect/floor_decal/corner/orange/diagonal,
@@ -241,19 +218,17 @@
 "vt" = (
 /obj/machinery/optable,
 /obj/effect/floor_decal/corner/orange/diagonal,
+/obj/random/maintenance/medical,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "wi" = (
-/obj/structure/table/standard,
-/obj/item/weapon/gun/projectile/cell_loaded/medical,
-/obj/random/maintenance/medical,
-/obj/random/maintenance/engineering,
+/obj/structure/table/darkglass,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "xo" = (
 /obj/structure/table/darkglass,
-/obj/item/weapon/storage/toolbox/syndicate/powertools,
+/obj/item/storage/toolbox/syndicate/powertools,
 /obj/random/maintenance/research,
 /obj/random/maintenance/research,
 /obj/effect/floor_decal/corner/orange/diagonal,
@@ -287,15 +262,7 @@
 "AE" = (
 /mob/living/simple_mob/mechanical/cyber_horror/cat_cyber_horror,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
-/obj/effect/floor_decal/corner/orange/diagonal,
-/turf/simulated/floor/tiled/dark,
-/area/submap/fallenlab)
-"AU" = (
-/obj/structure/salvageable/data,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -308,12 +275,10 @@
 "Ck" = (
 /mob/living/simple_mob/mechanical/cyber_horror/vox,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/red/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "Cw" = (
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/red/diagonal,
 /obj/effect/floor_decal/corner/orange/diagonal,
@@ -327,13 +292,6 @@
 "CW" = (
 /obj/structure/table/darkglass,
 /obj/random/maintenance/morestuff,
-/obj/effect/floor_decal/corner/orange/diagonal,
-/turf/simulated/floor/tiled/dark,
-/area/submap/fallenlab)
-"Dz" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -352,13 +310,6 @@
 "Gi" = (
 /turf/simulated/wall/iron,
 /area/submap/fallenlab)
-"GJ" = (
-/mob/living/simple_mob/mechanical/cyber_horror/ling_cyber_horror,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/corner/red/diagonal,
-/turf/simulated/floor/tiled/dark,
-/area/submap/fallenlab)
 "HP" = (
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -369,9 +320,11 @@
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "Iw" = (
-/mob/living/simple_mob/mechanical/cyber_horror/tajaran,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/tajaran{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "Ix" = (
@@ -386,10 +339,7 @@
 /area/submap/fallenlab)
 "KI" = (
 /obj/structure/table/darkglass,
-/obj/random/maintenance/medical,
-/obj/random/maintenance/medical,
 /obj/effect/floor_decal/corner/red/diagonal,
-/obj/random/medical,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "KR" = (
@@ -419,13 +369,14 @@
 "Ni" = (
 /obj/structure/table/standard,
 /obj/item/ammo_casing/microbattery/medical/haste,
-/obj/random/maintenance/medical,
 /obj/random/maintenance/engineering,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "NT" = (
-/mob/living/simple_mob/mechanical/cyber_horror/vox,
+/mob/living/simple_mob/mechanical/cyber_horror/vox{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
 /obj/effect/floor_decal/corner/red/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -443,7 +394,9 @@
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "PB" = (
-/mob/living/simple_mob/mechanical/cyber_horror/ling_cyber_horror,
+/mob/living/simple_mob/mechanical/cyber_horror/ling_cyber_horror{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -453,14 +406,15 @@
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "QH" = (
-/mob/living/simple_mob/mechanical/cyber_horror/tajaran,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/red/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/tajaran{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
 "Rg" = (
 /obj/structure/table/standard,
-/obj/random/material/refined,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
@@ -500,9 +454,15 @@
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
+"Uv" = (
+/obj/effect/floor_decal/corner/orange/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/tajaran{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
 "UG" = (
 /obj/machinery/oxygen_pump/mobile/anesthetic,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/red/diagonal,
 /turf/simulated/floor/tiled/dark,
@@ -523,16 +483,8 @@
 /mob/living/simple_mob/mechanical/cyber_horror/corgi,
 /turf/simulated/floor/tiled/dark,
 /area/submap/fallenlab)
-"XJ" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/corner/red/diagonal,
-/turf/simulated/floor/tiled/dark,
-/area/submap/fallenlab)
 "XS" = (
 /obj/structure/salvageable/data,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/floor_decal/corner/orange/diagonal,
 /turf/simulated/floor/tiled/dark,
@@ -621,12 +573,12 @@ cQ
 bH
 ki
 Gi
-rL
+Uv
 bH
 Cx
 bH
 ki
-XJ
+sM
 ki
 bH
 kh
@@ -649,16 +601,16 @@ SX
 Gi
 xo
 bH
-kW
+ki
 sM
 yC
 bH
 ki
 sM
-kW
-qL
-kW
-qL
+ki
+sM
+ki
+sM
 XS
 Cw
 ki
@@ -680,14 +632,14 @@ SX
 Gi
 KR
 kh
-XJ
+sM
 ki
 Gi
 ki
-qL
+sM
 ki
 kZ
-kW
+ki
 Et
 Ay
 bH
@@ -711,7 +663,7 @@ SX
 Gi
 Uf
 bH
-Dz
+ki
 Bi
 Gi
 Gi
@@ -741,8 +693,8 @@ SX
 SX
 Gi
 RQ
-kW
-qL
+ki
+sM
 sf
 Gi
 kh
@@ -751,10 +703,10 @@ ki
 bH
 Iw
 sM
-Dz
+ki
 fL
 ki
-XJ
+sM
 kh
 sM
 ki
@@ -772,25 +724,25 @@ SX
 SX
 Gi
 Ay
-XJ
-kW
+sM
+ki
 UG
 Gi
 sM
-Dz
+ki
 sM
-jh
-XJ
-kW
+ki
+sM
+ki
 sM
 kh
 sM
 ki
-XJ
-kW
+sM
+ki
 OG
-kW
-XJ
+ki
+sM
 RS
 Gi
 SX
@@ -808,7 +760,7 @@ sM
 KF
 Gi
 iw
-XJ
+sM
 ki
 bH
 eq
@@ -835,7 +787,7 @@ SX
 Gi
 Uf
 bH
-kW
+ki
 Iq
 Gi
 tc
@@ -850,8 +802,8 @@ lh
 es
 Gi
 sS
-XJ
-kW
+sM
+ki
 Ck
 mo
 Gi
@@ -866,7 +818,7 @@ SX
 Gi
 RQ
 kh
-qL
+sM
 CW
 Gi
 Gi
@@ -897,11 +849,11 @@ SX
 Gi
 qK
 aH
-kW
+ki
 sM
 Gi
-XJ
-kW
+sM
+ki
 sM
 Gi
 lh
@@ -912,12 +864,12 @@ lh
 lh
 lh
 Gi
-XJ
+sM
 ki
 bH
 Gi
 sM
-fr
+Iw
 bH
 aZ
 Gi
@@ -929,11 +881,11 @@ Gi
 kq
 kh
 SL
-Dz
+ki
 rv
 kh
 xI
-kW
+ki
 Yv
 Yn
 lh
@@ -944,11 +896,11 @@ lh
 Yn
 Yv
 ki
-GJ
+xI
 ki
 ZC
-kW
-XJ
+ki
+sM
 kh
 KI
 Gi
@@ -964,7 +916,7 @@ sM
 Gi
 bH
 kh
-XJ
+sM
 Gi
 lh
 lh
@@ -979,9 +931,9 @@ ki
 bH
 Gi
 bH
-kW
+ki
 bH
-qK
+wi
 Gi
 SX
 "}
@@ -1010,7 +962,7 @@ Gi
 Gi
 Gi
 CW
-qL
+sM
 ki
 RQ
 Gi
@@ -1027,7 +979,7 @@ Rg
 dx
 kh
 bH
-tI
+Rg
 Gi
 es
 lh
@@ -1035,8 +987,8 @@ Yn
 lh
 es
 Gi
-wi
-fY
+sg
+dg
 Ni
 fY
 Gi
@@ -1068,7 +1020,7 @@ Gi
 eq
 bH
 kh
-XJ
+sM
 PB
 Gi
 bV
@@ -1091,20 +1043,20 @@ ki
 sM
 ki
 sM
-kW
-XJ
+ki
+sM
 UK
 sM
 ki
 bH
-Dz
-XJ
-kW
+ki
+sM
+ki
 bH
 Gi
 gN
 ki
-XJ
+sM
 Ay
 Gi
 SX
@@ -1119,23 +1071,23 @@ Gi
 Ub
 ki
 QH
-kW
-XJ
-kW
+ki
+sM
+ki
 sM
 ki
 Ix
-kW
+ki
 sM
 rL
 bH
-kW
+ki
 sM
 kh
 Gi
 vt
 sM
-kW
+ki
 RQ
 Gi
 SX
@@ -1166,7 +1118,7 @@ Gi
 Gi
 Bi
 kh
-XJ
+sM
 Uf
 Gi
 SX
@@ -1190,14 +1142,14 @@ Wd
 kh
 bH
 AE
-qL
-kW
+sM
+ki
 sM
 Cx
 Gi
 kh
-XJ
-kW
+sM
+ki
 KR
 Gi
 SX
@@ -1217,17 +1169,17 @@ fh
 ZC
 kh
 bH
-kW
+ki
 sM
 fl
-XJ
-Dz
+sM
+ki
 Ck
 ki
 sM
 mf
 sM
-Dz
+ki
 bH
 Ld
 Gi
@@ -1247,7 +1199,7 @@ sN
 rk
 Gi
 bH
-AU
+XS
 sM
 ki
 sM
@@ -1255,9 +1207,9 @@ ki
 ny
 kh
 sM
-kW
+ki
 Gi
-kW
+ki
 bH
 cQ
 KR

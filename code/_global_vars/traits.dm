@@ -1,10 +1,11 @@
 /*
- FUN ZONE OF ADMIN LISTINGS
- Try to keep this in sync with __DEFINES/traits.dm
- Not to be confused with character creator traits
+ * FUN ZONE OF ADMIN LISTINGS
+ * Try to keep this in sync with __DEFINES/traits.dm
+ * Not to be confused with character creator traits
 */
 GLOBAL_LIST_INIT(traits_by_type, list(
 	/mob = list(
+		"TRAIT_THINKING_IN_CHARACTER" = TRAIT_THINKING_IN_CHARACTER,
 		/*
 		"TRAIT_BLIND" = TRAIT_BLIND,
 	*/

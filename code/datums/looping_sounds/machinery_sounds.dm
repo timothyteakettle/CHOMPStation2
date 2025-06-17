@@ -13,7 +13,7 @@
 	mid_length = 60
 	volume = 40
 	extra_range = 10
-	pref_check = /datum/client_preference/supermatter_hum
+	pref_check = /datum/preference/toggle/supermatter_hum
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -104,7 +104,7 @@
 	mid_length = 70
 	end_sound = 'sound/machines/air_pump/airpumpshutdown.ogg'
 	volume = 15
-	pref_check = /datum/client_preference/air_pump_noise
+	pref_check = /datum/preference/toggle/air_pump_noise
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -124,7 +124,7 @@
 	mid_length = 60
 	volume = 10
 	extra_range = -1 // Short-range
-	pref_check = /datum/client_preference/fridge_hum
+	pref_check = /datum/preference/toggle/fridge_hum
 	volume_chan = VOLUME_CHANNEL_MACHINERY_IDLE
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,10 +142,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /datum/looping_sound/shield_generator
-	start_sound = 'modular_chomp/sound/machines/shield_hum/shield_generator_whir.ogg'
-	mid_sounds = list('modular_chomp/sound/machines/shield_hum/shield_generator_hum2.ogg', 'modular_chomp/sound/machines/shield_hum/shield_generator_hum3.ogg')
+	start_sound = 'sound/machines/shield_hum/shield_generator_whir.ogg'
+	mid_sounds = list('sound/machines/shield_hum/shield_generator_hum2.ogg', 'sound/machines/shield_hum/shield_generator_hum3.ogg')
 	mid_length = 60
-	end_sound = 'modular_chomp/sound/machines/shield_hum/shield_generator_whir.ogg'
+	end_sound = 'sound/machines/shield_hum/shield_generator_whir.ogg'
 	volume = 40
 	volume_chan = VOLUME_CHANNEL_MACHINERY
 	exclusive = TRUE

@@ -25,7 +25,7 @@ GLOBAL_VAR_INIT(prey_eaten_roundstat, 0)		//VOREStation Edit - Obviously
 GLOBAL_VAR_INIT(prey_absorbed_roundstat, 0)		//VOREStation Edit - Obviously
 GLOBAL_VAR_INIT(prey_digested_roundstat, 0)		//VOREStation Edit - Obviously
 GLOBAL_VAR_INIT(items_digested_roundstat, 0)	//VOREStation Edit - Obviously
-var/global/list/security_printer_tickets = list()	//VOREStation Edit
+GLOBAL_LIST_EMPTY(security_printer_tickets)		//VOREStation Edit
 
 
 /hook/roundend/proc/RoundTrivia()//bazinga
@@ -38,7 +38,7 @@ var/global/list/security_printer_tickets = list()	//VOREStation Edit
 	else if(GLOB.mech_destroyed_roundstat > 1)
 		valid_stats_list.Add("[GLOB.mech_destroyed_roundstat] mechs were destroyed this shift. What did you do?")
 	else if(GLOB.seed_planted_shift_roundstat > 20)
-		valid_stats_list.Add("[GLOB.seed_planted_shift_roundstat] were planted according to our sensors this shift.")
+		valid_stats_list.Add("[GLOB.seed_planted_shift_roundstat] seeds were planted according to our sensors this shift.")
 
 	if(GLOB.rocks_drilled_roundstat > 80)
 		valid_stats_list.Add("Our strong miners pulverized a whole [GLOB.rocks_drilled_roundstat] piles of pathetic rubble.")
@@ -57,17 +57,17 @@ var/global/list/security_printer_tickets = list()	//VOREStation Edit
 		valid_stats_list.Add("The disposal system flushed a whole [GLOB.disposals_flush_shift_roundstat] times for this shift. We should really invest in waste treatement.")
 
 	//VOREStation add Start - Ticket time!
-	if(security_printer_tickets.len)
-		valid_stats_list.Add("<span class = 'danger'>[security_printer_tickets.len] unique security tickets were issued today!</span><br>Examples include:")
+	if(GLOB.security_printer_tickets.len)
+		valid_stats_list.Add(span_danger("[GLOB.security_printer_tickets.len] unique security tickets were issued today!") + "<br>Examples include:")
 		var/good_num = 5
 		var/ourticket
 		while(good_num > 0)
 			ourticket = null
-			if(security_printer_tickets.len)
-				ourticket = pick(security_printer_tickets)
-				security_printer_tickets -= ourticket
+			if(GLOB.security_printer_tickets.len)
+				ourticket = pick(GLOB.security_printer_tickets)
+				GLOB.security_printer_tickets -= ourticket
 				if(ourticket)
-					valid_stats_list.Add("<b>-</b>\"[ourticket]\"")
+					valid_stats_list.Add(span_bold("-")+"\"[ourticket]\"")
 				good_num--
 			else
 				good_num = 0
@@ -84,7 +84,7 @@ var/global/list/security_printer_tickets = list()	//VOREStation Edit
 	//VOREStation Add End
 
 	if(LAZYLEN(valid_stats_list))
-		to_world("<B>Shift trivia!</B>")
+		to_world(span_world("Shift trivia!"))
 
 		for(var/body in valid_stats_list)
-			to_world("[body]")
+			to_world(span_filter_system("[body]"))

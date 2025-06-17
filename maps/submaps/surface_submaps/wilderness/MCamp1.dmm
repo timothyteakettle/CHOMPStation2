@@ -56,7 +56,7 @@
 /turf/simulated/floor,
 /area/submap/MilitaryCamp1)
 "p" = (
-/obj/item/weapon/material/shard,
+/obj/item/material/shard,
 /turf/template_noop,
 /area/submap/MilitaryCamp1)
 "q" = (
@@ -75,9 +75,9 @@
 /area/submap/MilitaryCamp1)
 "t" = (
 /obj/structure/table/standard,
-/mob/living/simple_mob/mechanical/viscerator,
-/mob/living/simple_mob/mechanical/viscerator,
 /obj/random/energy,
+/mob/living/simple_mob/mechanical/viscerator,
+/mob/living/simple_mob/mechanical/viscerator,
 /turf/simulated/floor,
 /area/submap/MilitaryCamp1)
 "u" = (
@@ -101,7 +101,7 @@
 /turf/simulated/floor,
 /area/submap/MilitaryCamp1)
 "y" = (
-/obj/item/weapon/material/shard,
+/obj/item/material/shard,
 /obj/random/landmine,
 /turf/template_noop,
 /area/submap/MilitaryCamp1)
@@ -120,7 +120,6 @@
 /area/submap/MilitaryCamp1)
 "C" = (
 /obj/structure/table,
-/obj/random/firstaid,
 /turf/simulated/floor,
 /area/submap/MilitaryCamp1)
 "D" = (
@@ -149,7 +148,7 @@
 "I" = (
 /obj/structure/table/standard,
 /obj/random/cigarettes,
-/obj/item/weapon/flame/lighter/random,
+/obj/item/flame/lighter/random,
 /turf/simulated/floor,
 /area/submap/MilitaryCamp1)
 "J" = (

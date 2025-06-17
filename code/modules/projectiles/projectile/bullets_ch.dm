@@ -76,7 +76,7 @@ only use the hollow_point and armor_penetration values.*/
 	velocity = 360
 
 /obj/item/projectile/bullet/a57
-	fire_sound = 'modular_chomp/sound/weapons/ballistics/smg_heavy.ogg'
+	fire_sound = 'sound/weapons/ballistics/smg_heavy.ogg'
 	diam = 5.7
 	grains = 31
 	velocity = 716
@@ -400,6 +400,7 @@ only use the hollow_point and armor_penetration values.*/
 //beware of cadyn cope above ^^ - Ocelot
 
 /obj/item/projectile/bullet/rifle/a9x39 //We also have actual 9x39mm
+	damage = 30 //9mm pistol with 7.62 cartridge? idk russiain chambers.
 	fire_sound = 'sound/weapons/ballistics/a545.ogg'
 	diam = 9.25
 	grains = 259

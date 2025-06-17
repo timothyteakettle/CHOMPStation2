@@ -10,7 +10,7 @@
 
 
 /datum/admins/proc/setup_supermatter()
-	set category = "Debug.Game" //CHOMPEdit
+	set category = "Debug.Game"
 	set name = "Setup Supermatter"
 	set desc = "Allows you to start the Supermatter engine."
 
@@ -102,7 +102,7 @@
 /obj/effect/engine_setup/
 	name = "Engine Setup Marker"
 	desc = "You shouldn't see this."
-	invisibility = 101
+	invisibility = INVISIBILITY_ABSTRACT
 	anchored = TRUE
 	density = FALSE
 	icon = 'icons/mob/screen1.dmi'

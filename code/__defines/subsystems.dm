@@ -19,7 +19,7 @@
  * Timing should be based on how timing progresses on clients, not the server.
  *
  * Tracking this is more expensive,
- * should only be used in conjuction with things that have to progress client side, such as
+ * should only be used in conjunction with things that have to progress client side, such as
  * animate() or sound()
  */
 #define TIMER_CLIENT_TIME (1<<2)
@@ -43,20 +43,44 @@
 ///Empty ID define
 #define TIMER_ID_NULL -1
 
-#define INITIALIZATION_INSSATOMS 0	//New should not call Initialize
-#define INITIALIZATION_INNEW_MAPLOAD 1	//New should call Initialize(TRUE)
-#define INITIALIZATION_INNEW_REGULAR 2	//New should call Initialize(FALSE)
+/// Used to trigger object removal from a processing list
+#define PROCESS_KILL 26
 
-#define INITIALIZE_HINT_NORMAL   0  //Nothing happens
-#define INITIALIZE_HINT_LATELOAD 1  //Call LateInitialize
-#define INITIALIZE_HINT_QDEL     2  //Call qdel on the atom
-//CHOMPEdit Begin
-//type and all subtypes should always call Initialize in New()
+
+//! ## Initialization subsystem
+
+///New should not call Initialize
+#define INITIALIZATION_INSSATOMS 0
+///New should call Initialize(TRUE)
+#define INITIALIZATION_INNEW_MAPLOAD 1
+///New should call Initialize(FALSE)
+#define INITIALIZATION_INNEW_REGULAR 2
+
+//! ### Initialization hints
+
+///Nothing happens
+#define INITIALIZE_HINT_NORMAL 0
+/**
+ * call LateInitialize at the end of all atom Initialization
+ *
+ * The item will be added to the late_loaders list, this is iterated over after
+ * initialization of subsystems is complete and calls LateInitalize on the atom
+ * see [this file for the LateIntialize proc](atom.html#proc/LateInitialize)
+ */
+#define INITIALIZE_HINT_LATELOAD 1
+
+///Call qdel on the atom after initialization
+#define INITIALIZE_HINT_QDEL 2
+
+///type and all subtypes should always immediately call Initialize in New()
 #define INITIALIZE_IMMEDIATE(X) ##X/New(loc, ...){\
 	..();\
 	if(!(flags & ATOM_INITIALIZED)) {\
+		var/previous_initialized_value = SSatoms.initialized;\
+		SSatoms.initialized = INITIALIZATION_INNEW_MAPLOAD;\
 		args[1] = TRUE;\
-		SSatoms.InitAtom(src, args);\
+		SSatoms.InitAtom(src, FALSE, args);\
+		SSatoms.initialized = previous_initialized_value;\
 	}\
 }
 //CHOMPEdit End
@@ -75,33 +99,33 @@ var/global/list/runlevel_flags = list(RUNLEVEL_LOBBY, RUNLEVEL_SETUP, RUNLEVEL_G
 
 //! ### SS initialization hints
 /**
- * Negative values incidate a failure or warning of some kind, positive are good.
- * 0 and 1 are unused so that TRUE and FALSE are guarenteed to be invalid values.
+ * Negative values indicate a failure or warning of some kind, positive are good.
+ * 0 and 1 are unused so that TRUE and FALSE are guaranteed to be invalid values.
  */
 
 /// Subsystem failed to initialize entirely. Print a warning, log, and disable firing.
 #define SS_INIT_FAILURE -2
 
-/// The default return value which must be overriden. Will succeed with a warning.
+/// The default return value which must be overridden. Will succeed with a warning.
 #define SS_INIT_NONE -1
 
-/// Subsystem initialized sucessfully.
+/// Subsystem initialized successfully.
 #define SS_INIT_SUCCESS 2
 
-/// Successful, but don't print anything. Useful if subsystem was disabled.
+/// If your system doesn't need to be initialized (by being disabled or something)
 #define SS_INIT_NO_NEED 3
 
 //! ### SS initialization load orders
-
 // Subsystem init_order, from highest priority to lowest priority
 // Subsystems shutdown in the reverse of the order they initialize in
 // The numbers just define the ordering, they are meaningless otherwise.
-#define INIT_ORDER_TITLE			99	//CHOMPEdit
-#define INIT_ORDER_SERVER_MAINT		93 //CHOMPEdit
+#define INIT_ORDER_SERVER_MAINT		93
+#define INIT_ORDER_ADMIN_VERBS 		84 // needs to be pretty high, admins can't do much without it
+#define INIT_ORDER_LOBBY			82
 #define INIT_ORDER_WEBHOOKS			50
-#define INIT_ORDER_DBCORE			41	//CHOMPEdit
-#define INIT_ORDER_SQLITE			40
-#define INIT_ORDER_GARBAGE			39
+#define INIT_ORDER_SQLITE			41
+#define INIT_ORDER_GARBAGE			40
+#define INIT_ORDER_DBCORE			39
 #define INIT_ORDER_MEDIA_TRACKS		38 // Gotta get that lobby music up, yo
 #define INIT_ORDER_INPUT			37
 #define INIT_ORDER_CHEMISTRY		35
@@ -117,14 +141,16 @@ var/global/list/runlevel_flags = list(RUNLEVEL_LOBBY, RUNLEVEL_SETUP, RUNLEVEL_G
 #define INIT_ORDER_ALARM			16 // Must initialize before atoms.
 #define INIT_ORDER_TRANSCORE		15
 #define INIT_ORDER_ATOMS			14
+#define INIT_ORDER_HOLOMAPS			13
+#define INIT_ORDER_POIS				12
 #define INIT_ORDER_MACHINES			10
+#define INIT_ORDER_STARMOVER		4
 #define INIT_ORDER_SHUTTLES			3
 #define INIT_ORDER_TIMER			1
 #define INIT_ORDER_DEFAULT			0
 #define INIT_ORDER_LIGHTING			0
 #define INIT_ORDER_AIR				-1
-#define INIT_ORDER_ASSETS			-3
-#define INIT_ORDER_HOLOMAPS			-5
+#define INIT_ORDER_ASSETS			-5
 #define INIT_ORDER_NIGHTSHIFT		-6
 #define INIT_ORDER_OVERLAY			-7
 #define INIT_ORDER_XENOARCH			-20
@@ -136,27 +162,32 @@ var/global/list/runlevel_flags = list(RUNLEVEL_LOBBY, RUNLEVEL_SETUP, RUNLEVEL_G
 #define INIT_ORDER_SKYBOX			-30 //Visual only, irrelevant to gameplay, but needs to be late enough to have overmap populated fully
 #define INIT_ORDER_TICKER			-50
 #define INIT_ORDER_MAPRENAME		-60 //Initiating after Ticker to ensure everything is loaded and everything we rely on us working
-#define INIT_ORDER_STATPANELS		-98 //CHOMPEdit
+#define INIT_ORDER_WIKI				-61
+#define INIT_ORDER_ATC				-70
+#define INIT_ORDER_STATPANELS		-98
 #define INIT_ORDER_CHAT				-100 //Should be last to ensure chat remains smooth during init.
-
-
 
 // Subsystem fire priority, from lowest to highest priority
 // If the subsystem isn't listed here it's either DEFAULT or PROCESS (if it's a processing subsystem child)
+#define FIRE_PRIORITY_ATC			1
+#define FIRE_PRIORITY_APPRECIATE	2
 #define FIRE_PRIORITY_PLAYERTIPS	5
 #define FIRE_PRIORITY_SHUTTLES		5
 #define FIRE_PRIORITY_SUPPLY		5
 #define FIRE_PRIORITY_NIGHTSHIFT	5
 #define FIRE_PRIORITY_PLANTS		5
 #define FIRE_PRIORITY_VIS			5
+#define FIRE_PRIORITY_MOTIONTRACKER 6
 #define FIRE_PRIORITY_ORBIT			7
 #define FIRE_PRIORITY_VOTE			8
 #define FIRE_PRIORITY_INSTRUMENTS	9
 #define FIRE_PRIORITY_PING			10
-#define FIRE_PRIORITY_SERVER_MAINT	10 //CHOMPEdit
+#define FIRE_PRIORITY_SERVER_MAINT	10
 #define FIRE_PRIORITY_AI			10
+#define FIRE_PRIORITY_STARMOVER		11
 #define FIRE_PRIORITY_GARBAGE		15
 #define FIRE_PRIORITY_ASSETS 		20
+#define FIRE_PRIORITY_POIS	 		20
 #define FIRE_PRIORITY_ALARM			20
 #define FIRE_PRIORITY_CHARSETUP     25
 #define FIRE_PRIORITY_AIRFLOW		30
@@ -169,12 +200,13 @@ var/global/list/runlevel_flags = list(RUNLEVEL_LOBBY, RUNLEVEL_SETUP, RUNLEVEL_G
 #define FIRE_PRIORITY_MACHINES		100
 #define FIRE_PRIORITY_TGUI			110
 #define FIRE_PRIORITY_PROJECTILES	150
-#define FIRE_PRIORITY_STATPANEL		390 //CHOMPEdit
+#define FIRE_PRIORITY_STATPANEL		390
 #define FIRE_PRIORITY_CHAT			400
+#define FIRE_PRIORITY_RUNECHAT		410
 #define FIRE_PRIORITY_OVERLAYS		500
 #define FIRE_PRIORITY_TIMER			700
-#define FIRE_PRIORITY_SPEECH_CONTROLLER 900 // CHOMPEdit
-#define FIRE_PRIORITY_DELAYED_VERBS 950 // CHOMPEdit
+#define FIRE_PRIORITY_SPEECH_CONTROLLER 900
+#define FIRE_PRIORITY_DELAYED_VERBS 950
 #define FIRE_PRIORITY_INPUT			1000 // This must always always be the max highest priority. Player input must never be lost.
 
 /**
@@ -187,5 +219,5 @@ var/global/list/runlevel_flags = list(RUNLEVEL_LOBBY, RUNLEVEL_SETUP, RUNLEVEL_G
 */
 #define addtimer(args...) _addtimer(args, file = __FILE__, line = __LINE__)
 
-/// The timer key used to know how long subsystem initialization takes // CHOMPEdit
-#define SS_INIT_TIMER_KEY "ss_init" // CHOMPEdit
+/// The timer key used to know how long subsystem initialization takes
+#define SS_INIT_TIMER_KEY "ss_init"

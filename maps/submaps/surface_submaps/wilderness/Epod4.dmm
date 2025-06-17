@@ -37,8 +37,8 @@
 /area/submap/Epod4)
 "k" = (
 /obj/structure/bed/chair{
-	dir = 1;
-	icon_state = "chair_preview"
+	icon_state = "chair_preview";
+	dir = 1
 	},
 /obj/machinery/status_display{
 	density = 0;
@@ -54,8 +54,8 @@
 /area/submap/Epod4)
 "m" = (
 /obj/structure/bed/chair{
-	dir = 1;
-	icon_state = "chair_preview"
+	icon_state = "chair_preview";
+	dir = 1
 	},
 /obj/effect/decal/remains/posi,
 /obj/machinery/light{
@@ -76,11 +76,11 @@
 /area/submap/Epod4)
 "n" = (
 /obj/structure/bed/chair{
-	dir = 1;
-	icon_state = "chair_preview"
+	icon_state = "chair_preview";
+	dir = 1
 	},
 /obj/structure/closet/walllocker/emerglocker/east,
-/obj/item/device/radio/intercom{
+/obj/item/radio/intercom{
 	dir = 8;
 	name = "Station Intercom (General)";
 	pixel_x = -28

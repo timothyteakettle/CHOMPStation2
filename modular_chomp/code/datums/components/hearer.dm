@@ -77,7 +77,7 @@
 				M.create_chat_message(source, "[runemessage]", FALSE, list("emote"), audible = FALSE)
 		else if(blind_message)
 			M.show_message(blind_message, AUDIBLE_MESSAGE)
-	else
+	else if (source.invisibility <= SEE_INVISIBLE_LIVING)
 		parent_atom.show_message(message, VISIBLE_MESSAGE, blind_message, AUDIBLE_MESSAGE)
 
 //Atom definition (base)
@@ -97,46 +97,46 @@
 
 //Overmap ship definition (I have no idea why they use show_message?? but ok)
 
-/obj/effect/overmap/visitable/ship/Initialize()
+/obj/effect/overmap/visitable/ship/Initialize(mapload)
 	. = ..()
 	hearer = AddComponent(/datum/component/hearer)
 
 //Holopad definition
 
-/obj/machinery/hologram/holopad/Initialize()
+/obj/machinery/hologram/holopad/Initialize(mapload)
 	. = ..()
 	hearer = AddComponent(/datum/component/hearer)
 
 //UAV definition
 
-/obj/item/device/uav/Initialize()
+/obj/item/uav/Initialize(mapload)
 	. = ..()
 	hearer = AddComponent(/datum/component/hearer)
 
 //AIcard definition
 
-/obj/item/device/aicard/Initialize()
+/obj/item/aicard/Initialize(mapload)
 	. = ..()
 	hearer = AddComponent(/datum/component/hearer)
 
 //Tape recorder definition
 
-/obj/item/device/taperecorder/Initialize()
+/obj/item/taperecorder/Initialize(mapload)
 	. = ..()
 	hearer = AddComponent(/datum/component/hearer)
 
 //Portal definition
 
-/obj/effect/map_effect/portal/master/Initialize()
+/obj/effect/map_effect/portal/master/Initialize(mapload)
 	. = ..()
 	hearer = AddComponent(/datum/component/hearer)
 
 //Communicator definition
 
-/obj/item/device/communicator/Initialize()
+/obj/item/communicator/Initialize(mapload)
 	. = ..()
 	hearer = AddComponent(/datum/component/hearer)
 
-/obj/item/device/paicard/Initialize()
+/obj/item/paicard/Initialize(mapload)
 	. = ..()
 	hearer = AddComponent(/datum/component/hearer)

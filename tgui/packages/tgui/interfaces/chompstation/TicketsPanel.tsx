@@ -1,22 +1,22 @@
 /* eslint react/no-danger: "off" */
-import { useState } from 'react';
-
-import { KEY_ENTER } from '../../../common/keycodes';
-import { BooleanLike } from '../../../common/react';
-import { useBackend } from '../../backend';
+import { type RefObject, useEffect, useRef, useState } from 'react';
+import { useBackend } from 'tgui/backend';
+import { Window } from 'tgui/layouts';
 import {
   Box,
   Button,
   Divider,
   Dropdown,
-  Flex,
   Icon,
   Input,
   LabeledList,
   Section,
+  Stack,
   Tabs,
-} from '../../components';
-import { Window } from '../../layouts';
+} from 'tgui-core/components';
+import { KEY } from 'tgui-core/keys';
+import { round, toFixed } from 'tgui-core/math';
+import { type BooleanLike } from 'tgui-core/react';
 
 const Level = {
   0: 'Admin',
@@ -78,7 +78,7 @@ const getFilteredTickets = (
   state: string,
   level: number,
 ): Ticket[] => {
-  let result: Ticket[] = [];
+  const result: Ticket[] = [];
 
   tickets.forEach((t) => {
     if (
@@ -101,12 +101,37 @@ export const TicketsPanel = (props) => {
 
   const [ticketChat, setTicketChat] = useState('');
 
-  let filtered_tickets = getFilteredTickets(tickets, stateFilter, levelFilter);
+  const messagesEndRef: RefObject<HTMLDivElement | null> = useRef(null);
+
+  useEffect(() => {
+    const scroll = messagesEndRef.current;
+    if (scroll) {
+      scroll.scrollTop = scroll.scrollHeight;
+    }
+  }, []);
+
+  useEffect(() => {
+    const scroll = messagesEndRef.current;
+    if (scroll) {
+      const height = scroll.scrollHeight;
+      const bottom = scroll.scrollTop + scroll.offsetHeight;
+      const scrollTracking = Math.abs(height - bottom) < 24;
+      if (scrollTracking) {
+        scroll.scrollTop = scroll.scrollHeight;
+      }
+    }
+  });
+
+  const filtered_tickets = getFilteredTickets(
+    tickets,
+    stateFilter,
+    levelFilter,
+  );
   return (
     <Window width={1000} height={600}>
       <Window.Content>
-        <Flex>
-          <Flex.Item shrink>
+        <Stack fill>
+          <Stack.Item shrink>
             <Section title="Filter">
               <Dropdown
                 width="100%"
@@ -165,107 +190,138 @@ export const TicketsPanel = (props) => {
                 ))}
               </Tabs>
             </Section>
-          </Flex.Item>
-          <Flex.Item grow>
+          </Stack.Item>
+          <Stack.Item grow>
             {(selected_ticket && (
-              <Section
-                title={'Ticket #' + selected_ticket.id}
-                buttons={
-                  <Box nowrap>
-                    <Button
-                      icon="arrow-up"
-                      onClick={() => act('undock_ticket')}
-                    >
-                      Undock
-                    </Button>
-                    <Button icon="pen" onClick={() => act('retitle_ticket')}>
-                      Rename Ticket
-                    </Button>
-                    <Button onClick={() => act('legacy')}>Legacy UI</Button>
-                    <Button color={LevelColor[selected_ticket.level]}>
-                      {Level[selected_ticket.level]}
-                    </Button>
-                  </Box>
-                }
-              >
-                <LabeledList>
-                  <LabeledList.Item label="Ticket ID">
-                    #{selected_ticket.id}:
-                    <div
-                      dangerouslySetInnerHTML={{ __html: selected_ticket.name }}
-                    />
-                  </LabeledList.Item>
-                  <LabeledList.Item label="Type">
-                    {Level[selected_ticket.level]}
-                  </LabeledList.Item>
-                  <LabeledList.Item label="State">
-                    {State[selected_ticket.state]}
-                  </LabeledList.Item>
-                  <LabeledList.Item label="Assignee">
-                    {selected_ticket.handler}
-                  </LabeledList.Item>
-                  {State[selected_ticket.state] === State.open ? (
-                    <LabeledList.Item label="Opened At">
-                      {selected_ticket.opened_at_date} (
-                      {Math.round((selected_ticket.opened_at / 600) * 10) / 10}
-                      minutes ago.)
-                    </LabeledList.Item>
-                  ) : (
-                    <LabeledList.Item label="Closed At">
-                      {selected_ticket.closed_at_date} (
-                      {Math.round((selected_ticket.closed_at / 600) * 10) / 10}
-                      minutes ago.)
-                      <Button onClick={() => act('reopen_ticket')}>
-                        Reopen
-                      </Button>
-                    </LabeledList.Item>
-                  )}
-                  <LabeledList.Item label="Actions">
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: selected_ticket.actions,
-                      }}
-                    />
-                  </LabeledList.Item>
-                  <LabeledList.Item label="Log" />
-                </LabeledList>
-                <Divider />
-                <Flex direction="column">
-                  <Flex.Item maxWidth={'500px'}>
-                    {Object.keys(selected_ticket.log)
-                      .slice(0)
-                      .map((L, i) => (
+              <Stack fill vertical>
+                <Stack.Item>
+                  <Section
+                    title={'Ticket #' + selected_ticket.id}
+                    buttons={
+                      <Stack>
+                        <Stack.Item>
+                          <Button
+                            icon="arrow-up"
+                            onClick={() => act('undock_ticket')}
+                          >
+                            Undock
+                          </Button>
+                        </Stack.Item>
+                        <Stack.Item>
+                          <Button
+                            icon="pen"
+                            onClick={() => act('retitle_ticket')}
+                          >
+                            Rename Ticket
+                          </Button>
+                        </Stack.Item>
+                        <Stack.Item>
+                          <Button onClick={() => act('legacy')}>
+                            Legacy UI
+                          </Button>
+                        </Stack.Item>
+                        <Stack.Item>
+                          <Button color={LevelColor[selected_ticket.level]}>
+                            {Level[selected_ticket.level]}
+                          </Button>
+                        </Stack.Item>
+                      </Stack>
+                    }
+                  >
+                    <LabeledList>
+                      <LabeledList.Item label="Ticket ID">
+                        #{selected_ticket.id}:
                         <div
-                          key={i}
                           dangerouslySetInnerHTML={{
-                            __html: selected_ticket.log[L],
+                            __html: selected_ticket.name,
                           }}
                         />
-                      ))}
-                  </Flex.Item>
+                      </LabeledList.Item>
+                      <LabeledList.Item label="Type">
+                        {Level[selected_ticket.level]}
+                      </LabeledList.Item>
+                      <LabeledList.Item label="State">
+                        {State[selected_ticket.state]}
+                      </LabeledList.Item>
+                      <LabeledList.Item label="Assignee">
+                        {selected_ticket.handler}
+                      </LabeledList.Item>
+                      {State[selected_ticket.state] === State.open ? (
+                        <LabeledList.Item label="Opened At">
+                          {selected_ticket.opened_at_date +
+                            ' (' +
+                            toFixed(
+                              round((selected_ticket.opened_at / 600) * 10, 0) /
+                                10,
+                              1,
+                            ) +
+                            ' minutes ago.)'}
+                        </LabeledList.Item>
+                      ) : (
+                        <LabeledList.Item label="Closed At">
+                          {selected_ticket.closed_at_date +
+                            ' (' +
+                            toFixed(
+                              round((selected_ticket.closed_at / 600) * 10, 0) /
+                                10,
+                              1,
+                            ) +
+                            ' minutes ago.)'}
+                          <Button onClick={() => act('reopen_ticket')}>
+                            Reopen
+                          </Button>
+                        </LabeledList.Item>
+                      )}
+                      <LabeledList.Item label="Actions">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: selected_ticket.actions,
+                          }}
+                        />
+                      </LabeledList.Item>
+                      <LabeledList.Item label="Log" />
+                    </LabeledList>
+                  </Section>
                   <Divider />
-                  <Flex.Item>
-                    <Flex>
-                      <Flex.Item grow>
+                </Stack.Item>
+                <Stack.Item grow>
+                  <Section fill ref={messagesEndRef} scrollable>
+                    <Stack fill direction="column">
+                      <Stack.Item grow>
+                        {Object.keys(selected_ticket.log)
+                          .slice(0)
+                          .map((L, i) => (
+                            <div
+                              key={i}
+                              dangerouslySetInnerHTML={{
+                                __html: selected_ticket.log[L],
+                              }}
+                            />
+                          ))}
+                      </Stack.Item>
+                    </Stack>
+                  </Section>
+                </Stack.Item>
+                <Stack.Item>
+                  <Section fill>
+                    <Stack fill>
+                      <Stack.Item grow>
                         <Input
                           autoFocus
                           autoSelect
                           fluid
                           placeholder="Enter a message..."
                           value={ticketChat}
-                          onInput={(e, value) => setTicketChat(value)}
-                          onKeyDown={(event) => {
-                            const keyCode = window.event
-                              ? event.which
-                              : event.keyCode;
-                            if (keyCode === KEY_ENTER) {
+                          onChange={(value: string) => setTicketChat(value)}
+                          onKeyDown={(e) => {
+                            if (KEY.Enter === e.key) {
                               act('send_msg', { msg: ticketChat });
                               setTicketChat('');
                             }
                           }}
                         />
-                      </Flex.Item>
-                      <Flex.Item>
+                      </Stack.Item>
+                      <Stack.Item>
                         <Button
                           onClick={() => {
                             act('send_msg', { msg: ticketChat });
@@ -274,39 +330,45 @@ export const TicketsPanel = (props) => {
                         >
                           Send
                         </Button>
-                      </Flex.Item>
-                    </Flex>
-                  </Flex.Item>
-                </Flex>
-              </Section>
+                      </Stack.Item>
+                    </Stack>
+                  </Section>
+                </Stack.Item>
+              </Stack>
             )) || (
               <Section
                 title="No ticket selected"
                 buttons={
-                  <Box nowrap>
-                    <Button
-                      disabled
-                      icon="arrow-up"
-                      onClick={() => act('undock_ticket')}
-                    >
-                      Undock
-                    </Button>
-                    <Button
-                      disabled
-                      icon="pen"
-                      onClick={() => act('retitle_ticket')}
-                    >
-                      Rename Ticket
-                    </Button>
-                    <Button onClick={() => act('legacy')}>Legacy UI</Button>
-                  </Box>
+                  <Stack>
+                    <Stack.Item>
+                      <Button
+                        disabled
+                        icon="arrow-up"
+                        onClick={() => act('undock_ticket')}
+                      >
+                        Undock
+                      </Button>
+                    </Stack.Item>
+                    <Stack.Item>
+                      <Button
+                        disabled
+                        icon="pen"
+                        onClick={() => act('retitle_ticket')}
+                      >
+                        Rename Ticket
+                      </Button>
+                    </Stack.Item>
+                    <Stack.Item>
+                      <Button onClick={() => act('legacy')}>Legacy UI</Button>
+                    </Stack.Item>
+                  </Stack>
                 }
               >
                 Please select a ticket on the left to view its details.
               </Section>
             )}
-          </Flex.Item>
-        </Flex>
+          </Stack.Item>
+        </Stack>
       </Window.Content>
     </Window>
   );

@@ -18,13 +18,13 @@
 	say_threaten = list("This area is condemned by Vir System Authority. Please leave immediately. You have 20 seconds to comply.")
 	say_stand_down = list("Visual lost.", "Error: Target not found.")
 	say_escalate = list("Intruder is tresspassing. Maximum force authorized by Vir System Suthority.")
-	threaten_sound = 'modular_chomp/sound/mob/robots/DroneFreezeLong.ogg'
-	stand_down_sound = 'modular_chomp/sound/mob/robots/DroneLostTarget.ogg'
+	threaten_sound = 'sound/mob/robots/DroneFreezeLong.ogg'
+	stand_down_sound = 'sound/mob/robots/DroneLostTarget.ogg'
 
 /datum/ai_holder/simple_mob/ranged/kiting/threatening/drone_aerostat
 	threaten_delay = 10 SECOND
 	threaten_timeout = 30 SECONDS
-
+/* Combat refactor walkback
 /mob/living/simple_mob/mechanical/combat_drone
 	maxHealth = 25
 	health = 25
@@ -37,7 +37,7 @@
 /mob/living/simple_mob/mechanical/viscerator
 	maxHealth = 7
 	health = 7
-
+*/
 /obj/item/shield_projector/rectangle/automatic/drone
 	shield_health = 75
 	max_shield_health = 75

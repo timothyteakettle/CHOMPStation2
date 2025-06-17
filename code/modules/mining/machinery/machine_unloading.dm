@@ -3,21 +3,20 @@
 
 /obj/machinery/mineral/unloading_machine
 	name = "unloading machine"
-	icon = 'icons/obj/machines/mining_machines_vr.dmi' // VOREStation Edit
+	icon = 'icons/obj/machines/mining_machines.dmi'
 	icon_state = "unloader"
 	density = TRUE
 	anchored = TRUE
 	var/obj/machinery/mineral/input = null
 	var/obj/machinery/mineral/output = null
 
-
-/obj/machinery/mineral/unloading_machine/Initialize()
+/obj/machinery/mineral/unloading_machine/Initialize(mapload)
 	. = ..()
-	for(var/dir in cardinal)
+	for(var/dir in GLOB.cardinal)
 		input = locate(/obj/machinery/mineral/input, get_step(src, dir))
 		if(input)
 			break
-	for(var/dir in cardinal)
+	for(var/dir in GLOB.cardinal)
 		output = locate(/obj/machinery/mineral/output, get_step(src, dir))
 		if(output)
 			break
@@ -47,45 +46,45 @@
 					BOX.stored_ore[ore] = 0
 
 					//Icon code here. Going from most to least common.
-					if(ore == "sand")
+					if(ore == ORE_SAND)
 						ore_chunk.icon_state = "ore_glass"
-					else if(ore == "carbon")
+					else if(ore == ORE_CARBON)
 						ore_chunk.icon_state = "ore_coal"
-					else if(ore == "hematite")
+					else if(ore == ORE_HEMATITE)
 						ore_chunk.icon_state = "ore_iron"
-					else if(ore == "phoron")
+					else if(ore == ORE_PHORON)
 						ore_chunk.icon_state = "ore_phoron"
-					else if(ore == "silver")
+					else if(ore == ORE_SILVER)
 						ore_chunk.icon_state = "ore_silver"
-					else if(ore == "gold")
+					else if(ore == ORE_GOLD)
 						ore_chunk.icon_state = "ore_gold"
-					else if(ore == "uranium")
+					else if(ore == ORE_URANIUM)
 						ore_chunk.icon_state = "ore_uranium"
-					else if(ore == "diamond")
+					else if(ore == ORE_DIAMOND)
 						ore_chunk.icon_state = "ore_diamond"
-					else if(ore == "platinum")
+					else if(ore == ORE_PLATINUM)
 						ore_chunk.icon_state = "ore_platinum"
-					else if(ore == "marble")
+					else if(ore == ORE_MARBLE)
 						ore_chunk.icon_state = "ore_marble"
-					else if(ore == "lead")
+					else if(ore == ORE_LEAD)
 						ore_chunk.icon_state = "ore_lead"
-					else if(ore == "rutile")
+					else if(ore == ORE_RUTILE)
 						ore_chunk.icon_state = "ore_rutile"
-					else if(ore == "quartz")
+					else if(ore == ORE_QUARTZ)
 						ore_chunk.icon_state = "ore_quartz"
-					else if(ore == "mhydrogen")
+					else if(ore == ORE_MHYDROGEN)
 						ore_chunk.icon_state = "ore_hydrogen"
-					else if(ore == "verdantium")
+					else if(ore == ORE_VERDANTIUM)
 						ore_chunk.icon_state = "ore_verdantium"
-					else if(ore == "raw copper")
+					else if(ore == ORE_COPPER)
 						ore_chunk.icon_state = "ore_copper"
-					else if(ore == "raw tin")
+					else if(ore == ORE_TIN)
 						ore_chunk.icon_state = "ore_tin"
-					else if(ore == "void opal")
+					else if(ore == ORE_VOPAL)
 						ore_chunk.icon_state = "ore_void_opal"
-					else if(ore == "raw bauxite")
+					else if(ore == ORE_BAUXITE)
 						ore_chunk.icon_state = "ore_bauxite"
-					else if(ore == "painite")
+					else if(ore == ORE_PAINITE)
 						ore_chunk.icon_state = "ore_painite"
 					else
 						ore_chunk.icon_state = "boulder[rand(1,4)]"

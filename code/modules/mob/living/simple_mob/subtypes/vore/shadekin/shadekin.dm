@@ -5,7 +5,7 @@
 	icon = 'icons/mob/vore_shadekin.dmi'
 	icon_state = "map_example"
 	icon_living = "map_example"
-	faction = "shadekin"
+	faction = FACTION_SHADEKIN
 	ui_icons = 'icons/mob/shadekin_hud.dmi'
 	mob_class = MOB_CLASS_HUMANOID
 	mob_bump_flag = HUMAN
@@ -68,8 +68,7 @@
 	var/image/tailimage //Cached tail image
 
 	//Darknesssss
-	var/energy = 100 //For abilities
-	var/energy_adminbuse = FALSE //For adminbuse infinite energy
+	var/datum/component/shadekin/comp = /datum/component/shadekin //Component that holds all the shadekin vars.
 	var/dark_gains = 0 //Last tick's change in energy
 	var/ability_flags = 0 //Flags for active abilities
 	var/obj/screen/darkhud //Holder to update this icon
@@ -78,11 +77,12 @@
 	var/list/shadekin_abilities
 	var/check_for_observer = FALSE
 	var/check_timer = 0
+	var/doing_phase = FALSE // Prevent bugs when spamming phase button
 
 	var/respite_activating = FALSE //CHOMPEdit - Dark Respite
 	var/list/active_dark_maws = list()
 
-/mob/living/simple_mob/shadekin/Initialize()
+/mob/living/simple_mob/shadekin/Initialize(mapload)
 	//You spawned the prototype, and want a totally random one.
 	if(type == /mob/living/simple_mob/shadekin)
 
@@ -97,8 +97,9 @@
 		var/new_type = pickweight(sk_types)
 
 		new new_type(loc)
-		flags |= ATOM_INITIALIZED //CHOMPEdit
+		flags |= ATOM_INITIALIZED
 		return INITIALIZE_HINT_QDEL
+	comp = LoadComponent(comp)
 
 	if(icon_state == "map_example")
 		icon_state = pick("white","dark","brown")
@@ -134,7 +135,7 @@
 
 	update_icon()
 
-	add_verb(src,/mob/proc/adjust_hive_range) //CHOMPEdit TGPanel
+	add_verb(src, /mob/proc/adjust_hive_range)
 
 	return ..()
 
@@ -143,15 +144,15 @@
 	. = ..()
 
 /mob/living/simple_mob/shadekin/init_vore()
-	if(!voremob_loaded) //CHOMPAdd
-		return //CHOMPAdd
+	if(!voremob_loaded)
+		return
 	if(LAZYLEN(vore_organs))
 		return
 
 	var/obj/belly/B = new /obj/belly(src)
 	vore_selected = B
 	B.immutable = 1
-	B.affects_vore_sprites = TRUE //CHOMPEdit - vore sprites enabled for simplemobs!
+	B.affects_vore_sprites = TRUE
 	B.name = vore_stomach_name ? vore_stomach_name : "stomach"
 	B.desc = vore_stomach_flavor ? vore_stomach_flavor : "Your surroundings are warm, soft, and slimy. Makes sense, considering you're inside \the [name]."
 	B.digest_mode = vore_default_mode
@@ -199,6 +200,7 @@
 		"The stinging and aching gives way to numbness as you're slowly smothered out. Your body is steadily reduced to nutrients and energy for the creature to continue on its way.",
 		"The chaos of being digested fades as you're snuffed out by a harsh clench! You're steadily broken down into a thick paste, processed and absorbed by the predator!"
 		)
+	. = ..()
 
 /mob/living/simple_mob/shadekin/Life()
 	. = ..()
@@ -206,14 +208,14 @@
 		density = FALSE
 
 	//Convert spare nutrition into energy at a certain ratio
-	if(. && nutrition > initial(nutrition) && energy < 100 && !(ability_flags | AB_DARK_RESPITE)) //CHOMPEdit - Dark Respite
+	if(. && nutrition > initial(nutrition) && comp.dark_energy < 100 && !(ability_flags | AB_DARK_RESPITE))  //CHOMPEdit - Dark Respite
 		nutrition = max(0, nutrition-5)
-		energy = min(100,energy+1)
+		comp.dark_energy = min(100,comp.dark_energy+1)
 	if(!client && check_for_observer && check_timer++ > 5)
 		check_timer = 0
 		var/non_kin_count = 0
 		for(var/mob/living/M in view(6,src))
-			if(!istype(M, /mob/living/simple_mob/shadekin))
+			if(!issimplekin(M))
 				non_kin_count ++
 		// Technically can be combined with ||, they call the same function, but readability is poor
 		if(!non_kin_count && (ability_flags & AB_PHASE_SHIFTED))
@@ -231,7 +233,6 @@
 	add_overlay(tailimage)
 	add_overlay(eye_icon_state)
 
-//ChompEDIT START - TGPanel
 /mob/living/simple_mob/shadekin/update_misc_tabs()
 	..()
 	var/list/L = list()
@@ -247,7 +248,6 @@
 
 		L[++L.len] = list("[A.ability_name]", A.ability_name, img, A.atom_button_text(), REF(A))
 	misc_tabs["Shadekin"] = L
-//ChompEDIT END
 
 //They phase back to the dark when killed
 /mob/living/simple_mob/shadekin/death(gibbed, deathmessage = "phases to somewhere far away!")
@@ -260,7 +260,7 @@
 
 	//CHOMPEdit Begin - Actually phase to the dark on death
 	var/area/current_area = get_area(src)
-	if((ability_flags & AB_DARK_RESPITE) || current_area.limit_dark_respite)
+	if((ability_flags & AB_DARK_RESPITE) || current_area.flag_check(AREA_LIMIT_DARK_RESPITE))
 		icon_state = ""
 		spawn(1 SECOND)
 			qdel(src) //Back from whence you came!
@@ -268,10 +268,7 @@
 		return ..(FALSE, deathmessage)
 
 
-	var/list/floors = list()
-	for(var/turf/unsimulated/floor/dark/floor in get_area_turfs(/area/shadekin))
-		floors.Add(floor)
-	if(!LAZYLEN(floors))
+	if(!LAZYLEN(GLOB.latejoin_thedark))
 		log_and_message_admins("[src] died outside of the dark but there were no valid floors to warp to")
 		icon_state = ""
 		spawn(1 SECOND)
@@ -285,7 +282,7 @@
 	drop_l_hand()
 	drop_r_hand()
 
-	energy = 0
+	comp.dark_energy = 0
 	ability_flags |= AB_DARK_RESPITE
 	invisibility = INVISIBILITY_LEVEL_TWO
 
@@ -300,11 +297,11 @@
 		//Yay digestion... presumably...
 		var/obj/belly/belly = src.loc
 		add_attack_logs(belly.owner, src, "Digested in [lowertext(belly.name)]")
-		to_chat(belly.owner, "<span class='notice'>\The [src.name] suddenly vanishes within your [belly.name]</span>")
-		forceMove(pick(floors))
+		to_chat(belly.owner, span_notice("\The [src.name] suddenly vanishes within your [belly.name]"))
+		forceMove(pick(GLOB.latejoin_thedark))
 		flick("tp_in",src)
 		respite_activating = FALSE
-		belly.owner.update_fullness()
+		belly.owner.handle_belly_update() // CHOMPEdit
 		clear_fullscreen("belly")
 		if(hud_used)
 			if(!hud_used.hud_shown)
@@ -315,11 +312,11 @@
 		spawn(10 MINUTES)
 			ability_flags &= ~AB_DARK_RESPITE
 			movement_cooldown = initial(movement_cooldown)
-			to_chat(src, "<span class='notice'>You feel like you can leave the Dark again</span>")
+			to_chat(src, span_notice("You feel like you can leave the Dark again"))
 	else
 		spawn(1 SECOND)
 			respite_activating = FALSE
-			forceMove(pick(floors))
+			forceMove(pick(GLOB.latejoin_thedark))
 			update_icon()
 			flick("tp_in",src)
 			invisibility = initial(invisibility)
@@ -328,7 +325,7 @@
 		spawn(15 MINUTES)
 			ability_flags &= ~AB_DARK_RESPITE
 			movement_cooldown = initial(movement_cooldown)
-			to_chat(src, "<span class='notice'>You feel like you can leave the Dark again</span>")
+			to_chat(src, span_notice("You feel like you can leave the Dark again"))
 	//CHOMPEdit End
 
 /* //VOREStation AI Temporary Removal
@@ -336,7 +333,7 @@
 /mob/living/simple_mob/shadekin/Found(var/atom/A)
 	if(specific_targets && isliving(A)) //Healing!
 		var/mob/living/L = A
-		var/health_percent = (L.health/L.maxHealth)*100
+		var/health_percent = (L.health/L.getMaxHealth())*100
 		if(health_percent <= 50 && will_eat(A))
 			return A
 	. = ..()
@@ -403,14 +400,14 @@
 				if(darkness >= 0.65)
 					dark_gains = 0.30
 
-	energy = max(0,min(initial(energy),energy + dark_gains))
+	comp.dark_energy = max(0,min(initial(comp.dark_energy),comp.dark_energy + dark_gains))
 
-	if(energy_adminbuse)
-		energy = 100
 	//CHOMPEdit Begin - Dark Respite
 	if(ability_flags & AB_DARK_RESPITE)
-		energy = 0
+		comp.dark_energy = 0
 	//CHOMPEdit End
+	if(comp.dark_energy_infinite)
+		comp.dark_energy = 100
 
 	//Update turf darkness hud
 	if(darkhud)
@@ -428,7 +425,7 @@
 
 	//Update energy storage hud
 	if(energyhud)
-		switch(energy)
+		switch(comp.dark_energy)
 			if(80 to INFINITY)
 				energyhud.icon_state = "energy0"
 			if(60 to 80)
@@ -472,7 +469,7 @@
 						if((get_dist(src,henlo_human) <= 1))
 							dir = moving_to
 							if(prob(speak_chance))
-								visible_message("<span class='notice'>\The [src] [pick(friendly)] \the [henlo_human].</span>")
+								visible_message(span_notice("\The [src] [pick(friendly)] \the [henlo_human]."))
 								shy_approach = FALSE //ACCLIMATED
 							lifes_since_move = 0
 							return //No need to move
@@ -487,7 +484,7 @@
 
 				//Random walk
 				if(!moving_to)
-					moving_to = pick(cardinal)
+					moving_to = pick(GLOB.cardinal)
 					dir = moving_to
 
 				var/turf/T = get_step(src,moving_to)
@@ -520,7 +517,7 @@
 				if(ORANGE_EYES)
 					gains = 5
 
-			energy += gains
+			comp.dark_energy += gains
 
 //Special hud elements for darkness and energy gains
 /mob/living/simple_mob/shadekin/extra_huds(var/datum/hud/hud,var/icon/ui_style,var/list/hud_elements)

@@ -16,16 +16,14 @@
 
 	var/list/logs = list() // Gets written to by exonet's send_message() function.
 
-	circuit = /obj/item/weapon/circuitboard/telecomms/exonet_node
+	circuit = /obj/item/circuitboard/telecomms/exonet_node
 
 	var/datum/looping_sound/tcomms/soundloop // CHOMPStation Add: Hummy noises
 	var/noisy = TRUE // CHOMPStation Add: Hummy noises, this starts on
 // Proc: New()
 // Parameters: None
 // Description: Adds components to the machine for deconstruction.
-/obj/machinery/exonet_node/Initialize() //CHOMPAdd Start
-	. = ..()
-	default_apply_parts()
+/obj/machinery/exonet_node/Initialize(mapload)
 	// CHOMPAdd: Exonet Machinery humming
 	soundloop = new(list(src), FALSE)
 	if(prob(60)) // 60% chance to change the midloop
@@ -40,12 +38,11 @@
 			soundloop.mid_length = 30
 	soundloop.start() // CHOMPStation Edit: This starts on
 	// CHOMPAdd End
-
-/obj/machinery/exonet_node/map/Initialize()
 	. = ..()
-	//default_apply_parts() //CHOMPEdit
-	desc = "This machine is one of many, many nodes inside [using_map.starsys_name]'s section of the Exonet, connecting the [using_map.station_short] to the rest of the system, at least \
-	electronically."
+	default_apply_parts()
+	if(mapload)
+		desc = "This machine is one of many, many nodes inside [using_map.starsys_name]'s section of the Exonet, connecting the [using_map.station_short] to the rest of the system, at least \
+		electronically."
 
 /obj/machinery/exonet_node/Destroy() // CHOMPAdd: Just in case.
 	QDEL_NULL(soundloop) // CHOMPAdd: Exonet noises
@@ -156,7 +153,7 @@
 // Proc: tgui_act()
 // Parameters: 2 (standard tgui_act arguments)
 // Description: Responds to button presses on the TGUI interface.
-/obj/machinery/exonet_node/tgui_act(action, params)
+/obj/machinery/exonet_node/tgui_act(action, params, datum/tgui/ui)
 	if(..())
 		return TRUE
 
@@ -166,7 +163,7 @@
 			toggle = !toggle
 			update_power()
 			if(!toggle)
-				var/msg = "[usr.client.key] ([usr]) has turned [src] off, at [x],[y],[z]."
+				var/msg = "[ui.user.client.key] ([ui.user]) has turned [src] off, at [x],[y],[z]."
 				message_admins(msg)
 				log_game(msg)
 
@@ -178,7 +175,7 @@
 			. = TRUE
 			allow_external_communicators = !allow_external_communicators
 			if(!allow_external_communicators)
-				var/msg = "[usr.client.key] ([usr]) has turned [src]'s communicator port off, at [x],[y],[z]."
+				var/msg = "[ui.user.client.key] ([ui.user]) has turned [src]'s communicator port off, at [x],[y],[z]."
 				message_admins(msg)
 				log_game(msg)
 
@@ -186,18 +183,18 @@
 			. = TRUE
 			allow_external_newscasters = !allow_external_newscasters
 			if(!allow_external_newscasters)
-				var/msg = "[usr.client.key] ([usr]) has turned [src]'s newscaster port off, at [x],[y],[z]."
+				var/msg = "[ui.user.client.key] ([ui.user]) has turned [src]'s newscaster port off, at [x],[y],[z]."
 				message_admins(msg)
 				log_game(msg)
 
 	update_icon()
-	add_fingerprint(usr)
+	add_fingerprint(ui.user)
 
 // Proc: get_exonet_node()
 // Parameters: None
 // Description: Helper proc to get a reference to an Exonet node.
 /proc/get_exonet_node()
-	for(var/obj/machinery/exonet_node/E in machines)
+	for(var/obj/machinery/exonet_node/E in GLOB.machines)
 		if(E.on)
 			return E
 

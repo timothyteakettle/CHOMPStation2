@@ -28,11 +28,11 @@
 
 	/* DON'T CARE, DIDN'T ASK. YOU WILL PERFORM THE MACGUFFIN HEAT EXCHANGE AND NOT POWER DOWN UNTIL YOU ARE TOLD TO!
 	if(draw_power(idle_power_usage) < idle_power_usage)
-		visible_message("<b>\The [src]</b> shuts down.")
-		turn_off() 
+		visible_message(span_infoplain(span_bold("\The [src]") + " shuts down."))
+		turn_off()
 		return
 	*/
-	
+
 	var/datum/gas_mixture/env = loc.return_air()
 	if(!env || abs(env.temperature - target_temp) < 1)
 		change_mode(MODE_IDLE)
@@ -57,7 +57,7 @@
 		var/cop = removed.temperature/TN60C
 		var/actual_heat_transfer = heat_transfer
 		heat_transfer = min(heat_transfer, active_power_usage*cop)
-		 // power_avail = draw_power(heat_transfer/cop)
+		// power_avail = draw_power(heat_transfer/cop)
 		removed.add_thermal_energy(-min(active_power_usage*1000*cop,actual_heat_transfer))
 	env.merge(removed)
 

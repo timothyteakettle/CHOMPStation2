@@ -13,16 +13,14 @@
 /obj/structure/drop_pod/polite
 	polite = TRUE
 
-/obj/structure/drop_pod/New(newloc, atom/movable/A, auto_open = FALSE)
-	..()
+/obj/structure/drop_pod/Initialize(mapload, atom/movable/A, auto_open = FALSE)
+	. = ..()
 	if(A)
 		A.forceMove(src) // helo
 		podfall(auto_open)
 		air = new(1000)
 
 /obj/structure/drop_pod/proc/podfall(auto_open)
-	set waitfor = FALSE // sleeping in new otherwise
-
 	var/turf/T = get_turf(src)
 	if(!T)
 		warning("Drop pod wasn't spawned on a turf")
@@ -36,9 +34,11 @@
 	for(var/turf/TN in turfs_nearby)
 		new /obj/effect/temporary_effect/shuttle_landing(TN)
 
-	// Wait a minute
-	sleep(4 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(do_fall), auto_open, T), 4 SECONDS, TIMER_DELETE_ME)
 
+/obj/structure/drop_pod/proc/do_fall(auto_open, turf/T)
+	SHOULD_NOT_OVERRIDE(TRUE)
+	PRIVATE_PROC(TRUE)
 	// Wheeeeeee
 	plane = ABOVE_PLANE
 	pixel_y = 300
@@ -49,10 +49,18 @@
 	animate(src, alpha = 255, time = 1 SECOND, flags = ANIMATION_PARALLEL)
 	filters += filter(type="drop_shadow", x=-64, y=100, size=10)
 	animate(filters[filters.len], x=0, y=0, size=0, time=3 SECONDS, flags=ANIMATION_PARALLEL, easing=SINE_EASING|EASE_OUT)
-	sleep(2 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(after_fall), auto_open, T), 2 SECONDS, TIMER_DELETE_ME)
+
+/obj/structure/drop_pod/proc/after_fall(auto_open, turf/T)
+	SHOULD_NOT_OVERRIDE(TRUE)
+	PRIVATE_PROC(TRUE)
 	new /obj/effect/effect/smoke(T)
 	T.hotspot_expose(900)
-	sleep(1 SECOND)
+	addtimer(CALLBACK(src, PROC_REF(on_impact), auto_open, T), 1 SECOND, TIMER_DELETE_ME)
+
+/obj/structure/drop_pod/proc/on_impact(auto_open, turf/T)
+	SHOULD_NOT_OVERRIDE(TRUE)
+	PRIVATE_PROC(TRUE)
 	filters = null
 
 	// CRONCH
@@ -78,14 +86,14 @@
 	icon_state = "[initial(icon_state)]"
 
 	if(auto_open)
-		sleep(2 SECONDS)
-		open_pod()
-		visible_message("\The [src] pops open!")
+		addtimer(CALLBACK(src, PROC_REF(open_pod), TRUE), 2 SECONDS, TIMER_DELETE_ME)
 	else
 		for(var/mob/M in src)
-			to_chat(M, "<span class='danger'>You've landed! Open the hatch if you think it's safe! \The [src] has enough air to last for a while...</span>")
+			to_chat(M, span_danger("You've landed! Open the hatch if you think it's safe! \The [src] has enough air to last for a while..."))
 
-/obj/structure/drop_pod/proc/open_pod()
+/obj/structure/drop_pod/proc/open_pod(dropped)
+	if(dropped)
+		visible_message("\The [src] pops open!")
 	if(finished)
 		return
 	icon_state = "[initial(icon_state)]_open"
@@ -99,21 +107,21 @@
 /obj/structure/drop_pod/attack_hand(mob/living/user)
 	if(istype(user) && (Adjacent(user) || (user in src)) && !user.incapacitated())
 		if(finished)
-			to_chat(user, "<span class='warning'>Nothing left to do with it now. Maybe you can break it down into materials.</span>")
+			to_chat(user, span_warning("Nothing left to do with it now. Maybe you can break it down into materials."))
 		else
 			open_pod()
-			user.visible_message("<b>[user]</b> opens \the [src]!","You open \the [src]!")
+			user.visible_message(span_infoplain(span_bold("[user]") + " opens \the [src]!"),span_infoplain("You open \the [src]!"))
 
 /obj/structure/drop_pod/attackby(obj/item/O, mob/user)
 	if(O.has_tool_quality(TOOL_WRENCH))
 		if(finished)
-			to_chat(user, "<span class='notice'>You start breaking down \the [src].</span>")
+			to_chat(user, span_notice("You start breaking down \the [src]."))
 			if(do_after(user, 10 SECONDS, src, exclusive = TASK_ALL_EXCLUSIVE))
 				new /obj/item/stack/material/plasteel(loc, 10)
 				playsound(user, O.usesound, 50, 1)
 				qdel(src)
 		else
-			to_chat(user, "<span class='warning'>\The [src] hasn't been opened yet. Do that first.</span>")
+			to_chat(user, span_warning("\The [src] hasn't been opened yet. Do that first."))
 	return ..()
 
 /obj/structure/drop_pod/return_air()
@@ -124,12 +132,12 @@
 
 // This is about 0.896m^3 of atmosphere, which is enough to last for quite a while.
 /datum/gas_mixture/pod_air
-    volume = 2500
-    temperature = 293.150
-    total_moles = 104
+	volume = 2500
+	temperature = 293.150
+	total_moles = 104
 
 /datum/gas_mixture/pod_air/New()
-    . = ..()
-    gas = list(
-        "oxygen" = 21,
-        "nitrogen" = 79)
+	. = ..()
+	gas = list(
+		GAS_O2 = 21,
+		GAS_N2 = 79)

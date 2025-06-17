@@ -46,8 +46,7 @@
 /area/tcomsat)
 "ak" = (
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 6
@@ -65,8 +64,6 @@
 	dir = 4
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /turf/simulated/floor/plating,
@@ -88,7 +85,7 @@
 /area/tcommsat/computer)
 "ap" = (
 /obj/structure/stool/bed,
-/obj/item/weapon/bedsheet/green,
+/obj/item/bedsheet/green,
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "aq" = (
@@ -99,7 +96,7 @@
 /area/tcommsat/computer)
 "ar" = (
 /obj/structure/stool/bed,
-/obj/item/weapon/bedsheet/brown,
+/obj/item/bedsheet/brown,
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "as" = (
@@ -112,7 +109,7 @@
 /area/tcommsat/computer)
 "at" = (
 /obj/structure/stool/bed,
-/obj/item/weapon/bedsheet/red,
+/obj/item/bedsheet/red,
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "au" = (
@@ -141,8 +138,6 @@
 /area/tcomsat)
 "ay" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/floor/plating,
@@ -186,8 +181,8 @@
 	network = list("Tcomsat")
 	},
 /obj/structure/table/standard,
-/obj/item/weapon/folder/yellow,
-/obj/item/weapon/folder/yellow,
+/obj/item/folder/yellow,
+/obj/item/folder/yellow,
 /obj/machinery/light{
 	dir = 1
 	},
@@ -195,8 +190,8 @@
 /area/tcommsat/computer)
 "aE" = (
 /obj/structure/table/standard,
-/obj/item/weapon/paper_bin,
-/obj/item/weapon/pen/blue{
+/obj/item/paper_bin,
+/obj/item/pen/blue{
 	pixel_x = -3;
 	pixel_y = 2
 	},
@@ -204,17 +199,17 @@
 /area/tcommsat/computer)
 "aF" = (
 /obj/structure/table/standard,
-/obj/item/device/flashlight/lamp,
+/obj/item/flashlight/lamp,
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "aG" = (
-/obj/item/weapon/syntiflesh{
+/obj/item/syntiflesh{
 	name = "Cuban Pete-Meat"
 	},
 /turf/simulated/floor/engine,
 /area/tcommsat/computer)
 "aH" = (
-/obj/item/device/radio/intercom{
+/obj/item/radio/intercom{
 	name = "Station Intercom (General)";
 	pixel_x = -29;
 	pixel_y = 0
@@ -266,7 +261,7 @@
 /turf/space,
 /area/tcomsat)
 "aO" = (
-/obj/item/device/radio/intercom{
+/obj/item/radio/intercom{
 	dir = 8;
 	name = "Station Intercom (General)";
 	pixel_x = -28
@@ -283,7 +278,7 @@
 /obj/machinery/computer/telecomms/monitor{
 	network = "tcommsat"
 	},
-/obj/item/device/radio/intercom{
+/obj/item/radio/intercom{
 	anyai = 1;
 	freerange = 1;
 	name = "General Listening Channel";
@@ -294,7 +289,7 @@
 /area/tcommsat/computer)
 "aR" = (
 /obj/structure/stool/bed,
-/obj/item/weapon/bedsheet/orange,
+/obj/item/bedsheet/orange,
 /obj/machinery/light{
 	dir = 8
 	},
@@ -337,8 +332,6 @@
 	dir = 4
 	},
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/floor/plating,
@@ -397,10 +390,10 @@
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "be" = (
-/obj/item/weapon/syntiflesh{
+/obj/item/syntiflesh{
 	name = "Cuban Pete-Meat"
 	},
-/obj/item/weapon/spacecash/c1,
+/obj/item/spacecash/c1,
 /turf/simulated/floor/engine,
 /area/tcommsat/computer)
 "bf" = (
@@ -425,7 +418,7 @@
 /area/tcommsat/computer)
 "bi" = (
 /obj/structure/table/standard,
-/obj/item/weapon/storage/fancy/cigarettes,
+/obj/item/storage/fancy/cigarettes,
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "bj" = (
@@ -466,8 +459,6 @@
 	},
 /obj/structure/window/reinforced,
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 4;
 	icon_state = "1-4"
 	},
 /turf/simulated/floor{
@@ -484,8 +475,6 @@
 	dir = 4
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -496,8 +485,6 @@
 /area/tcomsat)
 "bo" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -513,8 +500,6 @@
 /area/tcommsat/computer)
 "bp" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -525,54 +510,41 @@
 /area/tcommsat/computer)
 "bq" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
 /obj/machinery/atmospherics/pipe/manifold/hidden{
-	 icon_state = "manifold-f";
 	dir = 1
 	},
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "br" = (
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 4;
 	icon_state = "2-4"
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden{
-	 icon_state = "intact-f";
 	dir = 4
 	},
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "bs" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden{
-	 icon_state = "intact-f";
 	dir = 4
 	},
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "bt" = (
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden{
-	 icon_state = "intact-f";
 	dir = 10
 	},
 /obj/machinery/power/apc{
@@ -595,7 +567,7 @@
 /turf/simulated/floor,
 /area/tcommsat/computer)
 "bx" = (
-/obj/item/weapon/cigbutt,
+/obj/item/cigbutt,
 /obj/machinery/light,
 /turf/simulated/floor,
 /area/tcommsat/computer)
@@ -678,7 +650,7 @@
 	dir = 8
 	},
 /obj/structure/table/standard,
-/obj/item/device/multitool,
+/obj/item/multitool,
 /obj/structure/sign/electricshock{
 	pixel_x = -32
 	},
@@ -695,8 +667,6 @@
 /area/tcommsat/computer)
 "bK" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/floor,
@@ -768,8 +738,7 @@
 	dir = 8
 	},
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden,
 /turf/simulated/floor/plating,
@@ -781,11 +750,9 @@
 	dir = 1
 	},
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /turf/simulated/floor/plating,
@@ -797,17 +764,14 @@
 	dir = 1
 	},
 /obj/structure/cable{
-	d2 = 2;
 	icon_state = "0-2";
 	pixel_y = 0
 	},
 /obj/structure/cable,
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /turf/simulated/floor/plating,
@@ -822,11 +786,9 @@
 	dir = 4
 	},
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden{
-	 icon_state = "intact-f";
 	dir = 5
 	},
 /turf/simulated/floor/plating,
@@ -838,7 +800,6 @@
 	pixel_y = 0
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden{
-	 icon_state = "intact-f";
 	dir = 10
 	},
 /turf/simulated/wall/r_wall,
@@ -923,8 +884,7 @@
 /area/tcommsat/chamber)
 "cf" = (
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /obj/machinery/power/apc{
 	dir = 1;
@@ -941,8 +901,6 @@
 /area/tcommsat/chamber)
 "cg" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -956,8 +914,6 @@
 /area/tcommsat/chamber)
 "ch" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -975,13 +931,9 @@
 	network = list("Tcomsat")
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/light{
@@ -1054,8 +1006,6 @@
 /area/tcommsat/chamber)
 "cp" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/floor/bluegrid{
@@ -1143,8 +1093,6 @@
 /area/tcommsat/chamber)
 "cw" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/floor/bluegrid{
@@ -1189,16 +1137,16 @@
 /area/tcomsat)
 "cA" = (
 /obj/structure/table/standard,
-/obj/item/weapon/stock_parts/micro_laser,
-/obj/item/weapon/stock_parts/manipulator,
-/obj/item/weapon/stock_parts/manipulator,
-/obj/item/weapon/stock_parts/manipulator,
-/obj/item/weapon/stock_parts/manipulator,
-/obj/item/weapon/stock_parts/capacitor,
-/obj/item/weapon/stock_parts/micro_laser/high,
-/obj/item/weapon/stock_parts/micro_laser/high,
-/obj/item/weapon/stock_parts/micro_laser/high,
-/obj/item/weapon/stock_parts/micro_laser/high,
+/obj/item/stock_parts/micro_laser,
+/obj/item/stock_parts/manipulator,
+/obj/item/stock_parts/manipulator,
+/obj/item/stock_parts/manipulator,
+/obj/item/stock_parts/manipulator,
+/obj/item/stock_parts/capacitor,
+/obj/item/stock_parts/micro_laser/high,
+/obj/item/stock_parts/micro_laser/high,
+/obj/item/stock_parts/micro_laser/high,
+/obj/item/stock_parts/micro_laser/high,
 /turf/simulated/floor,
 /area/tcomsat)
 "cB" = (
@@ -1216,14 +1164,14 @@
 /area/tcomsat)
 "cC" = (
 /obj/structure/rack,
-/obj/item/weapon/circuitboard/telecomms/processor,
-/obj/item/weapon/circuitboard/telecomms/processor,
-/obj/item/weapon/circuitboard/telecomms/receiver,
-/obj/item/weapon/circuitboard/telecomms/server,
-/obj/item/weapon/circuitboard/telecomms/server,
-/obj/item/weapon/circuitboard/telecomms/bus,
-/obj/item/weapon/circuitboard/telecomms/bus,
-/obj/item/weapon/circuitboard/telecomms/broadcaster,
+/obj/item/circuitboard/telecomms/processor,
+/obj/item/circuitboard/telecomms/processor,
+/obj/item/circuitboard/telecomms/receiver,
+/obj/item/circuitboard/telecomms/server,
+/obj/item/circuitboard/telecomms/server,
+/obj/item/circuitboard/telecomms/bus,
+/obj/item/circuitboard/telecomms/bus,
+/obj/item/circuitboard/telecomms/broadcaster,
 /turf/simulated/floor,
 /area/tcomsat)
 "cD" = (
@@ -1329,9 +1277,9 @@
 /area/tcomsat)
 "cM" = (
 /obj/structure/table/standard,
-/obj/item/weapon/stock_parts/subspace/treatment,
-/obj/item/weapon/stock_parts/subspace/treatment,
-/obj/item/weapon/stock_parts/subspace/treatment,
+/obj/item/stock_parts/subspace/treatment,
+/obj/item/stock_parts/subspace/treatment,
+/obj/item/stock_parts/subspace/treatment,
 /turf/simulated/floor,
 /area/tcomsat)
 "cN" = (
@@ -1339,9 +1287,9 @@
 /area/tcomsat)
 "cO" = (
 /obj/structure/table/standard,
-/obj/item/weapon/stock_parts/subspace/analyzer,
-/obj/item/weapon/stock_parts/subspace/analyzer,
-/obj/item/weapon/stock_parts/subspace/analyzer,
+/obj/item/stock_parts/subspace/analyzer,
+/obj/item/stock_parts/subspace/analyzer,
+/obj/item/stock_parts/subspace/analyzer,
 /turf/simulated/floor,
 /area/tcomsat)
 "cP" = (
@@ -1407,8 +1355,6 @@
 /area/tcommsat/chamber)
 "cV" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/telecomms/hub/preset,
@@ -1521,10 +1467,10 @@
 /area/tcomsat)
 "de" = (
 /obj/structure/table/standard,
-/obj/item/weapon/stock_parts/subspace/amplifier,
-/obj/item/weapon/stock_parts/subspace/amplifier,
-/obj/item/weapon/stock_parts/subspace/amplifier,
-/obj/item/device/radio/intercom{
+/obj/item/stock_parts/subspace/amplifier,
+/obj/item/stock_parts/subspace/amplifier,
+/obj/item/stock_parts/subspace/amplifier,
+/obj/item/radio/intercom{
 	name = "Station Intercom (General)";
 	pixel_x = 29;
 	pixel_y = 0
@@ -1623,14 +1569,14 @@
 /turf/simulated/floor/plating,
 /area/tcomsat)
 "dn" = (
-/obj/item/weapon/storage/toolbox/mechanical,
+/obj/item/storage/toolbox/mechanical,
 /turf/simulated/floor,
 /area/tcomsat)
 "do" = (
 /obj/structure/table/standard,
-/obj/item/weapon/stock_parts/subspace/ansible,
-/obj/item/weapon/stock_parts/subspace/ansible,
-/obj/item/weapon/stock_parts/subspace/ansible,
+/obj/item/stock_parts/subspace/ansible,
+/obj/item/stock_parts/subspace/ansible,
+/obj/item/stock_parts/subspace/ansible,
 /turf/simulated/floor,
 /area/tcomsat)
 "dp" = (
@@ -1645,24 +1591,24 @@
 /area/tcomsat)
 "dq" = (
 /obj/structure/table/standard,
-/obj/item/weapon/stock_parts/subspace/transmitter,
-/obj/item/weapon/stock_parts/subspace/transmitter,
+/obj/item/stock_parts/subspace/transmitter,
+/obj/item/stock_parts/subspace/transmitter,
 /turf/simulated/floor,
 /area/tcomsat)
 "dr" = (
 /obj/structure/table/standard,
-/obj/item/weapon/stock_parts/subspace/filter,
-/obj/item/weapon/stock_parts/subspace/filter,
-/obj/item/weapon/stock_parts/subspace/filter,
-/obj/item/weapon/stock_parts/subspace/filter,
-/obj/item/weapon/stock_parts/subspace/filter,
+/obj/item/stock_parts/subspace/filter,
+/obj/item/stock_parts/subspace/filter,
+/obj/item/stock_parts/subspace/filter,
+/obj/item/stock_parts/subspace/filter,
+/obj/item/stock_parts/subspace/filter,
 /turf/simulated/floor,
 /area/tcomsat)
 "ds" = (
 /obj/structure/table/standard,
-/obj/item/weapon/stock_parts/subspace/crystal,
-/obj/item/weapon/stock_parts/subspace/crystal,
-/obj/item/weapon/stock_parts/subspace/crystal,
+/obj/item/stock_parts/subspace/crystal,
+/obj/item/stock_parts/subspace/crystal,
+/obj/item/stock_parts/subspace/crystal,
 /turf/simulated/floor,
 /area/tcomsat)
 "dt" = (
@@ -1701,7 +1647,6 @@
 /area/tcommsat/chamber)
 "dw" = (
 /obj/machinery/atmospherics/pipe/simple/hidden{
-	 icon_state = "intact-f";
 	dir = 9
 	},
 /turf/simulated/floor/bluegrid{
@@ -1782,8 +1727,6 @@
 	network = list("Tcomsat")
 	},
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/light,
@@ -1814,8 +1757,6 @@
 /area/tcommsat/chamber)
 "dF" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/wall/r_wall,
@@ -1870,8 +1811,7 @@
 /area/tcomfoyer)
 "dL" = (
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /obj/machinery/power/apc{
 	dir = 1;
@@ -1889,8 +1829,6 @@
 	dir = 6
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -1901,8 +1839,6 @@
 /area/tcomfoyer)
 "dN" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/turretid{
@@ -1916,8 +1852,6 @@
 	req_access = list(61)
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -2042,8 +1976,6 @@
 /area/tcomfoyer)
 "dZ" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/floor,
@@ -2179,8 +2111,6 @@
 /area/tcomfoyer)
 "eq" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/door/airlock/hatch{
@@ -2202,20 +2132,17 @@
 	},
 /obj/structure/window/reinforced,
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /turf/simulated/floor/plating,
 /area/tcommsat/entrance)
 "es" = (
 /obj/machinery/power/smes/magical,
 /obj/structure/cable{
-	d2 = 2;
 	icon_state = "0-2";
 	pixel_y = 0
 	},
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /turf/simulated/floor,
@@ -2231,8 +2158,6 @@
 /area/tcommsat/entrance)
 "eu" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2";
 	pixel_y = 0
 	},
@@ -2240,7 +2165,7 @@
 /turf/simulated/wall/r_wall,
 /area/tcommsat/entrance)
 "ev" = (
-/obj/item/device/radio/intercom{
+/obj/item/radio/intercom{
 	broadcasting = 0;
 	listening = 1;
 	name = "Station Intercom (General)";
@@ -2253,8 +2178,6 @@
 /area/tcommsat/entrance)
 "ew" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -2288,7 +2211,6 @@
 /area/tcommsat/entrance)
 "eA" = (
 /obj/structure/cable{
-	d2 = 2;
 	icon_state = "0-2";
 	pixel_y = 0
 	},
@@ -2296,8 +2218,7 @@
 	name = "telecoms power monitoring"
 	},
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /turf/simulated/floor{
 	icon_state = "bot"
@@ -2316,15 +2237,12 @@
 	},
 /obj/structure/window/reinforced,
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /turf/simulated/floor/plating,
 /area/tcommsat/entrance)
 "eC" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 4;
 	icon_state = "1-4"
 	},
 /turf/simulated/floor{
@@ -2334,8 +2252,6 @@
 /area/tcommsat/entrance)
 "eD" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -2346,8 +2262,6 @@
 /area/tcommsat/entrance)
 "eE" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -2363,8 +2277,6 @@
 /area/tcommsat/entrance)
 "eF" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -2375,26 +2287,18 @@
 /area/tcommsat/entrance)
 "eG" = (
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 4;
 	icon_state = "2-4"
 	},
 /turf/simulated/floor,
 /area/tcommsat/entrance)
 "eH" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -2402,8 +2306,6 @@
 /area/tcommsat/entrance)
 "eI" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8";
 	pixel_x = 0
 	},
@@ -2419,8 +2321,6 @@
 /area/tcommsat/entrance)
 "eJ" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 8;
 	icon_state = "1-8"
 	},
 /turf/simulated/floor,
@@ -2434,8 +2334,6 @@
 /area/tcommsat/entrance)
 "eL" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/door/airlock/hatch{
@@ -2459,8 +2357,6 @@
 /area/tcommsat/entrance)
 "eO" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/floor{
@@ -2490,8 +2386,6 @@
 /area/tcommsat/entrance)
 "eR" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /turf/simulated/floor,
@@ -2524,15 +2418,12 @@
 /area/tcommsat/entrance)
 "eW" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 4;
 	icon_state = "1-4"
 	},
 /turf/simulated/floor,
 /area/tcommsat/entrance)
 "eX" = (
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /obj/machinery/power/apc{
@@ -2554,7 +2445,7 @@
 	},
 /area/tcommsat/entrance)
 "fa" = (
-/obj/item/weapon/cell,
+/obj/item/cell,
 /turf/simulated/floor,
 /area/tcommsat/entrance)
 "fb" = (
@@ -2637,7 +2528,7 @@
 	req_access_txt = "13"
 	},
 /obj/machinery/atmospherics/pipe/simple/visible{
-	 icon_state = "intact";
+	icon_state = "intact";
 	dir = 9
 	},
 /turf/simulated/floor{
@@ -2650,7 +2541,7 @@
 /turf/simulated/floor,
 /area/tcommsat/entrance)
 "fh" = (
-/obj/item/device/radio/intercom{
+/obj/item/radio/intercom{
 	name = "Station Intercom (General)";
 	pixel_x = 29;
 	pixel_y = 0
@@ -2673,8 +2564,8 @@
 /area/tcommsat/entrance)
 "fk" = (
 /obj/structure/closet/crate,
-/obj/item/device/aicard,
-/obj/item/device/multitool,
+/obj/item/aicard,
+/obj/item/multitool,
 /obj/machinery/camera{
 	c_tag = "Entrance South";
 	dir = 1;

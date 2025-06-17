@@ -17,7 +17,6 @@
 	species_language = LANGUAGE_SAGARU
 	color_mult = 1
 	inherent_verbs = list(/mob/living/carbon/human/proc/tie_hair)
-	digi_allowed = TRUE
 
 	min_age = 18
 	max_age = 110
@@ -40,7 +39,7 @@
 
 	catalogue_data = list(/datum/category_item/catalogue/fauna/sergal)
 
-	primitive_form = "Saru"
+	primitive_form = SPECIES_MONKEY_SERGAL
 
 	spawn_flags = SPECIES_CAN_JOIN
 	appearance_flags = HAS_HAIR_COLOR | HAS_LIPS | HAS_UNDERWEAR | HAS_SKIN_COLOR | HAS_EYE_COLOR
@@ -93,7 +92,6 @@
 	min_age = 18
 	//max_age = 80
 	max_age = 110 //CHOMPedit
-	digi_allowed = TRUE
 	// male_scream_sound = null //CHOMPedit
 	// female_scream_sound = null //CHOMPedit
 
@@ -110,7 +108,7 @@
 
 	catalogue_data = list(/datum/category_item/catalogue/fauna/akula)
 
-	primitive_form = "Sobaka"
+	primitive_form = SPECIES_MONKEY_AKULA
 
 	genders = list(MALE, FEMALE, PLURAL, NEUTER)
 
@@ -119,6 +117,7 @@
 
 	water_breather = TRUE
 	water_movement = -4 //Negates shallow. Halves deep.
+	swim_mult = 0.5
 
 	flesh_color = "#AFA59E"
 	base_color = "#777777"
@@ -150,7 +149,6 @@
 	min_age = 18
 	//max_age = 80
 	max_age = 110 //CHOMPedit
-	digi_allowed = TRUE
 	// male_scream_sound = null //CHOMPedit
 	// female_scream_sound = null //CHOMPedit
 	// CHOMPEdit Start: Missing Sounds, so none for this race.
@@ -166,7 +164,7 @@
 
 	catalogue_data = list(/datum/category_item/catalogue/fauna/nevrean)
 
-	primitive_form = "Sparra"
+	primitive_form = SPECIES_MONKEY_NEVREAN
 
 	genders = list(MALE, FEMALE, PLURAL, NEUTER)
 
@@ -198,7 +196,6 @@
 		/mob/living/proc/shred_limb,
 		/mob/living/carbon/human/proc/tie_hair)
 	assisted_langs = list(LANGUAGE_EAL, LANGUAGE_SKRELLIAN, LANGUAGE_ROOTLOCAL, LANGUAGE_ROOTGLOBAL, LANGUAGE_VOX)	//AEIOU edit: Zorren can speak Terminus unassisted.
-	digi_allowed = TRUE
 
 	min_age = 18
 	max_age = 110
@@ -224,7 +221,7 @@
 	flesh_color = "#AFA59E"
 	base_color = "#333333"
 	blood_color = "#240bc4"
-	blood_reagents = "copper"
+	blood_reagents = REAGENT_ID_COPPER
 	reagent_tag = IS_ZORREN
 	color_mult = 1
 
@@ -251,7 +248,7 @@
 	secondary_langs = list(LANGUAGE_CANILUNZT)
 	name_language = LANGUAGE_CANILUNZT
 	species_language = LANGUAGE_CANILUNZT
-	primitive_form = "Wolpin"
+	primitive_form = SPECIES_MONKEY_VULPKANIN
 	tail = "vulptail"
 	tail_animation = 'icons/mob/species/vulpkanin/tail.dmi' // probably need more than just one of each, but w/e
 	unarmed_types = list(/datum/unarmed_attack/stomp, /datum/unarmed_attack/kick, /datum/unarmed_attack/claws, /datum/unarmed_attack/bite/sharp)
@@ -261,10 +258,9 @@
 	color_mult = 1
 	inherent_verbs = list(/mob/living/carbon/human/proc/lick_wounds,
 		/mob/living/carbon/human/proc/tie_hair)
-	digi_allowed = TRUE
 
-	// male_scream_sound = list('modular_chomp/sound/voice/scream/canine/wolf_scream.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream2.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream3.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream4.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream5.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream6.ogg') //CHOMPedit: Scream sounds, finally, 3 years later.
-	// female_scream_sound = list('modular_chomp/sound/voice/scream/canine/wolf_scream.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream2.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream3.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream4.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream5.ogg', 'modular_chomp/sound/voice/scream/canine/wolf_scream6.ogg') //CHOMPedit: Scream sounds, finally, 3 years later.
+	// male_scream_sound = list('sound/voice/scream/canine/wolf_scream.ogg', 'sound/voice/scream/canine/wolf_scream2.ogg', 'sound/voice/scream/canine/wolf_scream3.ogg', 'sound/voice/scream/canine/wolf_scream4.ogg', 'sound/voice/scream/canine/wolf_scream5.ogg', 'sound/voice/scream/canine/wolf_scream6.ogg') //CHOMPedit: Scream sounds, finally, 3 years later.
+	// female_scream_sound = list('sound/voice/scream/canine/wolf_scream.ogg', 'sound/voice/scream/canine/wolf_scream2.ogg', 'sound/voice/scream/canine/wolf_scream3.ogg', 'sound/voice/scream/canine/wolf_scream4.ogg', 'sound/voice/scream/canine/wolf_scream5.ogg', 'sound/voice/scream/canine/wolf_scream6.ogg') //CHOMPedit: Scream sounds, finally, 3 years later.
 	// CHOMPEdit Start: Add Pain/Gasp/Death sounds
 	pain_verb_1p = list("yelp", "growl")
 	pain_verb_3p = list("yelps", "growls")
@@ -299,7 +295,7 @@
 	breath_heat_level_2 = 445	//Default 450
 	breath_heat_level_3 = 1125	//Default 1250
 
-	primitive_form = "Wolpin"
+	primitive_form = SPECIES_MONKEY_VULPKANIN
 
 	spawn_flags = SPECIES_CAN_JOIN
 	appearance_flags = HAS_HAIR_COLOR | HAS_LIPS | HAS_UNDERWEAR | HAS_SKIN_COLOR | HAS_EYE_COLOR
@@ -325,7 +321,7 @@
 	deform = 'icons/mob/human_races/r_def_lizard_vr.dmi'
 	tail_animation = 'icons/mob/species/unathi/tail_vr.dmi'
 	color_mult = 1
-	min_age = 18
+	min_age = 40 //ChompEDIT - Unathi lore minimal adult age.
 	inherent_verbs = list(/mob/living/carbon/human/proc/tie_hair)
 	gluttonous = 0
 	inherent_verbs = list(/mob/living/proc/shred_limb)
@@ -360,7 +356,7 @@
 	icobase = 'icons/mob/human_races/r_skrell_vr.dmi'
 	deform = 'icons/mob/human_races/r_def_skrell_vr.dmi'
 	color_mult = 1
-	min_age = 18
+	min_age = 19 //ChompEDIT Lore-based adulthood age for this species is greater than 18.
 	inherent_verbs = list(/mob/living/carbon/human/proc/tie_hair, /mob/living/carbon/human/proc/water_stealth, /mob/living/carbon/human/proc/underwater_devour)
 	reagent_tag = null
 	allergens = null
@@ -386,7 +382,7 @@
 
 /datum/species/zaddat/equip_survival_gear(var/mob/living/carbon/human/H)
 	.=..()
-	var/obj/item/weapon/storage/toolbox/lunchbox/survival/zaddat/L = new(get_turf(H))
+	var/obj/item/storage/toolbox/lunchbox/survival/zaddat/L = new(get_turf(H))
 	if(H.backbag == 1)
 		H.equip_to_slot_or_del(L, slot_r_hand)
 	else
@@ -457,7 +453,6 @@
 	color_mult = 1
 	genders = list(MALE, FEMALE, PLURAL, NEUTER)
 	inherent_verbs = list(/mob/living/proc/flying_toggle,/mob/living/proc/flying_vore_toggle,/mob/living/proc/start_wings_hovering,/mob/living/carbon/human/proc/tie_hair)
-	digi_allowed = TRUE
 
 	min_age = 18
 	max_age = 80
@@ -505,7 +500,6 @@
 //CHOMPStation Removal
 //	wikilink = "https://wiki.vore-station.net/Shadekin"
 	catalogue_data = list(/datum/category_item/catalogue/fauna/shadekin)
-	digi_allowed = TRUE
 
 	language = LANGUAGE_SHADEKIN
 	name_language = LANGUAGE_SHADEKIN
@@ -543,7 +537,7 @@
 	heat_level_2 = 1000
 	heat_level_3 = 1150
 
-	flags =  NO_SCAN
+	flags =  NO_DNA | NO_SLEEVE
 	spawn_flags = SPECIES_IS_RESTRICTED //SPECIES_CAN_JOIN | SPECIES_IS_WHITELISTED | SPECIES_WHITELIST_SELECTABLE CHOMPedit: disabled maybe forever
 
 	reagent_tag = IS_SHADEKIN		// for shadekin-unqiue chem interactions
@@ -617,7 +611,6 @@
 	name_language = LANGUAGE_TERMINUS
 	species_language = LANGUAGE_TERMINUS
 	inherent_verbs = list(/mob/living/carbon/human/proc/lick_wounds,/mob/living/proc/shred_limb,/mob/living/carbon/human/proc/tie_hair)
-	digi_allowed = TRUE
 
 	min_age = 18
 	max_age = 80
@@ -653,7 +646,6 @@
 	darksight = 4 //Better hunters in the dark.
 	hunger_factor = 0.1 //In exchange, they get hungry a tad faster.
 	num_alternate_languages = 3
-	digi_allowed = TRUE
 
 	min_age = 18
 	max_age = 80
@@ -697,7 +689,6 @@
 	name_language = null
 	color_mult = 1
 	inherent_verbs = list(/mob/living/carbon/human/proc/tie_hair)
-	digi_allowed = TRUE
 
 	min_age = 18
 	max_age = 80

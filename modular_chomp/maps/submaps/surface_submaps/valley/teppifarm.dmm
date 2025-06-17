@@ -23,7 +23,7 @@
 /area/template_noop)
 "h" = (
 /obj/random/energy/highend,
-/obj/item/weapon/material/knife/machete/hatchet/unathiknife,
+/obj/item/material/knife/machete/hatchet/unathiknife,
 /obj/structure/closet/crate,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
@@ -33,7 +33,6 @@
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "j" = (
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/grass/sif,
 /area/submap/teppifarm)
@@ -45,14 +44,14 @@
 /area/template_noop)
 "m" = (
 /obj/structure/table/standard,
-/obj/item/weapon/material/minihoe,
-/obj/item/weapon/reagent_containers/glass/beaker/large,
+/obj/item/material/minihoe,
+/obj/item/reagent_containers/glass/beaker/large,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "p" = (
 /obj/structure/table/standard,
-/obj/item/weapon/material/knife/machete/hatchet,
-/obj/item/weapon/reagent_containers/glass/bucket,
+/obj/item/material/knife/machete/hatchet,
+/obj/item/reagent_containers/glass/bucket,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "q" = (
@@ -61,19 +60,14 @@
 /area/submap/teppifarm)
 "r" = (
 /obj/structure/table/woodentable,
-/obj/random/contraband/nofail,
+/obj/random/contraband,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "s" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/flame/candle/candelabra,
+/obj/item/flame/candle/candelabra,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
-"t" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/dirt,
-/area/template_noop)
 "u" = (
 /turf/simulated/floor/outdoors/grass/sif,
 /area/submap/teppifarm)
@@ -81,12 +75,6 @@
 /obj/structure/window/basic,
 /obj/structure/curtain/black,
 /obj/structure/table/standard,
-/turf/simulated/floor/wood/alt,
-/area/submap/teppifarm)
-"y" = (
-/obj/effect/decal/cleanable/blood/oil/streak,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "z" = (
@@ -97,8 +85,7 @@
 /area/submap/teppifarm)
 "A" = (
 /obj/structure/table/rack,
-/obj/item/weapon/melee/umbrella/random,
-/obj/item/weapon/gun/energy/taser/xeno,
+/obj/item/melee/umbrella/random,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "B" = (
@@ -120,12 +107,6 @@
 /obj/effect/landmark/loot_spawn,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
-"G" = (
-/obj/structure/simple_door/wood,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood/alt,
-/area/submap/teppifarm)
 "H" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/structure/loot_pile/surface/bones,
@@ -136,12 +117,6 @@
 /obj/structure/closet/crate/hydroponics/exotic,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
-"L" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/dirt,
-/area/template_noop)
 "M" = (
 /obj/structure/simple_door/wood,
 /obj/effect/decal/cleanable/dirt,
@@ -152,13 +127,7 @@
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "P" = (
-/obj/item/weapon/material/shard,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood/alt,
-/area/submap/teppifarm)
-"Q" = (
-/obj/effect/decal/cleanable/dirt,
+/obj/item/material/shard,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
@@ -172,8 +141,7 @@
 "V" = (
 /obj/effect/decal/cleanable/blood/oil/streak,
 /obj/structure/table/rack,
-/obj/item/weapon/melee/umbrella/random,
-/obj/item/weapon/gun/energy/taser/xeno,
+/obj/item/melee/umbrella/random,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "W" = (
@@ -183,15 +151,9 @@
 /obj/structure/railing,
 /turf/simulated/floor/outdoors/grass/sif,
 /area/submap/teppifarm)
-"X" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood/alt,
-/area/submap/teppifarm)
 "Y" = (
 /obj/structure/bed/padded,
-/obj/item/weapon/bedsheet/blue,
+/obj/item/bedsheet/blue,
 /turf/simulated/floor/wood/alt,
 /area/submap/teppifarm)
 "Z" = (
@@ -253,11 +215,11 @@ Z
 Z
 k
 r
-Q
+O
 k
-Q
+O
 H
-Q
+O
 P
 j
 u
@@ -273,8 +235,8 @@ s
 O
 k
 i
-Q
-Q
+O
+O
 O
 u
 u
@@ -290,7 +252,7 @@ h
 O
 k
 s
-Q
+O
 A
 k
 u
@@ -304,7 +266,7 @@ Z
 Z
 k
 k
-G
+M
 k
 k
 B
@@ -323,11 +285,11 @@ k
 s
 O
 O
-X
+O
 O
 B
-L
-t
+g
+g
 g
 g
 l
@@ -339,12 +301,12 @@ Z
 k
 s
 O
-X
-y
+O
+i
 O
 M
-L
-L
+g
+g
 g
 g
 l
@@ -362,7 +324,7 @@ k
 k
 g
 g
-t
+g
 l
 l
 Z
@@ -373,11 +335,11 @@ Z
 k
 I
 O
-Q
-X
+O
+O
 O
 z
-t
+g
 l
 l
 Z
@@ -392,7 +354,7 @@ S
 O
 O
 O
-Q
+O
 z
 g
 l

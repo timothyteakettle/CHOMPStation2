@@ -4,57 +4,61 @@
 /obj/item/clothing/mask/gas,
 /obj/item/clothing/suit/fire/firefighter,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "b" = (
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "c" = (
+/obj/effect/decal/cleanable/liquid_fuel/flamethrower_fuel,
 /obj/effect/decal/cleanable/molten_item,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "d" = (
-/obj/item/weapon/flamethrower,
+/obj/item/flamethrower,
+/obj/effect/decal/cleanable/liquid_fuel/flamethrower_fuel,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "e" = (
 /obj/effect/decal/cleanable/liquid_fuel,
+/obj/effect/decal/cleanable/liquid_fuel/flamethrower_fuel,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "f" = (
+/obj/effect/decal/cleanable/liquid_fuel/flamethrower_fuel,
+/turf/simulated/mineral/floor/ignore_mapgen,
+/area/submap/deadspy)
+"g" = (
+/obj/effect/decal/cleanable/liquid_fuel/flamethrower_fuel,
 /obj/effect/decal/cleanable/ash,
 /obj/random/landmine,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
-"g" = (
-/obj/random/landmine,
-/turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "h" = (
 /obj/effect/decal/cleanable/liquid_fuel,
 /obj/random/landmine,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "i" = (
 /obj/effect/decal/cleanable/liquid_fuel,
 /obj/effect/decal/cleanable/molten_item,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "j" = (
-/obj/item/weapon/material/butterfly,
+/obj/item/material/butterfly,
 /obj/effect/decal/cleanable/liquid_fuel,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "k" = (
 /obj/effect/decal/remains/human,
-/obj/item/weapon/tool/wrench,
+/obj/item/tool/wrench,
 /obj/item/clothing/head/hardhat,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "l" = (
-/obj/item/weapon/flame/lighter/zippo,
+/obj/item/flame/lighter/zippo,
 /obj/effect/decal/cleanable/liquid_fuel,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "m" = (
 /obj/effect/decal/remains/human,
 /obj/item/clothing/mask/balaclava,
@@ -63,13 +67,13 @@
 /obj/effect/decal/cleanable/liquid_fuel,
 /obj/effect/decal/cleanable/ash,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "n" = (
 /obj/effect/decal/cleanable/liquid_fuel,
 /obj/effect/decal/cleanable/liquid_fuel,
 /obj/effect/decal/cleanable/ash,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "o" = (
 /obj/machinery/porta_turret/poi{
 	desc = "Looking at this heavy caliber, tripod-mounted, little ol' number makes you want to square-dance.";
@@ -77,34 +81,40 @@
 	name = "sentry turret"
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "p" = (
-/obj/item/weapon/deadringer,
+/obj/item/deadringer,
 /obj/effect/decal/cleanable/liquid_fuel,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "q" = (
 /obj/effect/decal/cleanable/liquid_fuel,
 /obj/effect/decal/cleanable/liquid_fuel,
 /obj/random/landmine,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "r" = (
 /obj/effect/decal/cleanable/liquid_fuel,
-/obj/item/weapon/storage/fancy/cigarettes/professionals,
+/obj/item/storage/fancy/cigarettes/professionals,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "s" = (
-/obj/item/weapon/card/emag_broken,
+/obj/item/card/emag_broken,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "t" = (
+/obj/effect/decal/cleanable/liquid_fuel/flamethrower_fuel,
+/obj/random/landmine,
+/turf/simulated/mineral/floor/ignore_mapgen,
+/area/submap/deadspy)
+"u" = (
+/obj/effect/decal/cleanable/liquid_fuel/flamethrower_fuel,
 /obj/effect/decal/cleanable/ash,
 /turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 "v" = (
 /turf/simulated/mineral,
-/area/submap/cave/deadspy)
+/area/submap/deadspy)
 
 (1,1,1) = {"
 a
@@ -118,10 +128,10 @@ v
 (2,1,1) = {"
 b
 c
-b
-b
-b
-g
+f
+f
+f
+t
 v
 "}
 (3,1,1) = {"
@@ -130,7 +140,7 @@ d
 h
 l
 p
-b
+f
 b
 "}
 (4,1,1) = {"
@@ -139,25 +149,25 @@ e
 i
 m
 q
-t
+u
 b
 "}
 (5,1,1) = {"
 b
-b
+f
 j
 n
 r
-b
+f
 b
 "}
 (6,1,1) = {"
 v
+g
 f
-b
-b
-b
-b
+f
+f
+f
 v
 "}
 (7,1,1) = {"

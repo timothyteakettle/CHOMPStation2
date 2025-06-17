@@ -4,29 +4,29 @@
 /area/template_noop)
 "b" = (
 /obj/structure/cliff/automatic/corner{
-	dir = 6;
-	icon_state = "cliffbuilder-corner"
+	icon_state = "cliffbuilder-corner";
+	dir = 6
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
 "c" = (
 /obj/structure/cliff/automatic{
-	dir = 2;
-	icon_state = "cliffbuilder"
+	icon_state = "cliffbuilder";
+	dir = 2
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
 "d" = (
 /obj/structure/cliff/automatic/corner{
-	dir = 10;
-	icon_state = "cliffbuilder-corner"
+	icon_state = "cliffbuilder-corner";
+	dir = 10
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
 "e" = (
 /obj/structure/cliff/automatic{
-	dir = 6;
-	icon_state = "cliffbuilder"
+	icon_state = "cliffbuilder";
+	dir = 6
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
@@ -35,15 +35,15 @@
 /area/submap/cave/vault6)
 "g" = (
 /obj/structure/cliff/automatic{
-	dir = 10;
-	icon_state = "cliffbuilder"
+	icon_state = "cliffbuilder";
+	dir = 10
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
 "h" = (
 /obj/structure/cliff/automatic{
-	dir = 4;
-	icon_state = "cliffbuilder"
+	icon_state = "cliffbuilder";
+	dir = 4
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
@@ -61,8 +61,8 @@
 /area/submap/cave/vault6)
 "l" = (
 /obj/structure/cliff/automatic{
-	dir = 8;
-	icon_state = "cliffbuilder"
+	icon_state = "cliffbuilder";
+	dir = 8
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
@@ -81,22 +81,22 @@
 /area/submap/cave/vault6)
 "p" = (
 /obj/structure/cliff/automatic{
-	dir = 5;
-	icon_state = "cliffbuilder"
+	icon_state = "cliffbuilder";
+	dir = 5
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
 "q" = (
 /obj/structure/cliff/automatic{
-	dir = 9;
-	icon_state = "cliffbuilder"
+	icon_state = "cliffbuilder";
+	dir = 9
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)
 "r" = (
 /obj/structure/cliff/automatic/corner{
-	dir = 9;
-	icon_state = "cliffbuilder-corner"
+	icon_state = "cliffbuilder-corner";
+	dir = 9
 	},
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault6)

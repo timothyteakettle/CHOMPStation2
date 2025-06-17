@@ -5,12 +5,12 @@
 "ab" = (
 /turf/simulated/shuttle/wall/alien,
 /area/submap/cave/crashed_ufo_frigate)
+"ac" = (
+/turf/simulated/shuttle/floor/alienplating,
+/area/submap/cave/crashed_ufo_frigate)
 "ad" = (
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/template_noop)
-"ae" = (
-/turf/simulated/shuttle/floor/alienplating,
-/area/submap/cave/crashed_ufo_frigate)
 "af" = (
 /mob/living/simple_mob/animal/space/alien/drone,
 /turf/simulated/shuttle/floor/alienplating,
@@ -43,7 +43,7 @@
 "al" = (
 /turf/simulated/floor/outdoors/ice,
 /area/submap/cave/crashed_ufo_frigate)
-"an" = (
+"am" = (
 /obj/structure/window/phoronreinforced,
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
@@ -196,15 +196,15 @@
 /area/submap/cave/crashed_ufo_frigate)
 "aX" = (
 /obj/structure/prop/alien/computer/camera/flipped{
-	dir = 4;
-	icon_state = "camera_flipped"
+	icon_state = "camera_flipped";
+	dir = 4
 	},
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
 "aY" = (
 /obj/structure/prop/alien/computer/camera{
-	dir = 8;
-	icon_state = "camera"
+	icon_state = "camera";
+	dir = 8
 	},
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
@@ -239,7 +239,7 @@
 /area/submap/cave/crashed_ufo_frigate)
 "bf" = (
 /obj/structure/table/alien,
-/obj/item/weapon/paper/alien{
+/obj/item/paper/alien{
 	icon_state = "alienpaper_words";
 	info = "\[i]This tablet has a large collection of symbols that you've never seen before outside this ship. You have no hope of figuring out what any of the mean...\[/i]"
 	},
@@ -273,8 +273,8 @@
 /area/submap/cave/crashed_ufo_frigate)
 "bm" = (
 /obj/structure/table/alien,
-/obj/item/weapon/paper/alien,
-/obj/item/weapon/paper/alien,
+/obj/item/paper/alien,
+/obj/item/paper/alien,
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
 "bn" = (
@@ -297,8 +297,8 @@
 /area/submap/cave/crashed_ufo_frigate)
 "br" = (
 /obj/structure/prop/alien/computer{
-	dir = 8;
-	icon_state = "console-c"
+	icon_state = "console-c";
+	dir = 8
 	},
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
@@ -316,7 +316,7 @@
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
 "bv" = (
-/obj/item/weapon/surgical/bone_clamp/alien,
+/obj/item/surgical/bone_clamp/alien,
 /obj/structure/closet/alien,
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
@@ -330,7 +330,7 @@
 	desc = "It vaguely like a star. It looks like something an alien admiral might've worn. Probably.";
 	name = "alien admiral's medal"
 	},
-/obj/item/weapon/telecube/precursor/mated/zone,
+/obj/item/telecube/precursor/mated/zone,
 /obj/item/clothing/head/helmet/alien/tank,
 /turf/simulated/shuttle/floor/alien,
 /area/submap/cave/crashed_ufo_frigate)
@@ -352,15 +352,15 @@
 /area/submap/cave/crashed_ufo_frigate)
 "bC" = (
 /obj/structure/prop/alien/computer/camera/flipped{
-	dir = 4;
-	icon_state = "camera_flipped"
+	icon_state = "camera_flipped";
+	dir = 4
 	},
 /turf/simulated/shuttle/floor/alien,
 /area/submap/cave/crashed_ufo_frigate)
 "bD" = (
 /obj/structure/prop/alien/computer/camera{
-	dir = 8;
-	icon_state = "camera"
+	icon_state = "camera";
+	dir = 8
 	},
 /turf/simulated/shuttle/floor/alien,
 /area/submap/cave/crashed_ufo_frigate)
@@ -387,8 +387,8 @@
 /area/submap/cave/crashed_ufo_frigate)
 "bJ" = (
 /obj/structure/window/phoronreinforced{
-	dir = 8;
-	icon_state = "phoronrwindow"
+	icon_state = "phoronrwindow";
+	dir = 8
 	},
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
@@ -399,11 +399,11 @@
 /area/submap/cave/crashed_ufo_frigate)
 "bL" = (
 /obj/structure/table/alien,
-/obj/item/weapon/paper/alien{
+/obj/item/paper/alien{
 	icon_state = "alienpaper_words";
 	info = "\[i]This tablet has a large collection of symbols that you've never seen before outside this ship. You have no hope of figuring out what any of the mean...\[/i]"
 	},
-/obj/item/device/gps/internal/poi,
+/obj/item/gps/internal/poi,
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
 "bM" = (
@@ -417,7 +417,7 @@
 /obj/structure/window/phoronreinforced{
 	dir = 4
 	},
-/obj/item/weapon/paper/alien{
+/obj/item/paper/alien{
 	icon_state = "alienpaper_words";
 	info = "\[i]This tablet has a large collection of symbols that you've never seen before outside this ship. You have no hope of figuring out what any of the mean...\[/i]"
 	},
@@ -429,7 +429,7 @@
 /area/submap/cave/crashed_ufo_frigate)
 "bP" = (
 /obj/structure/table/alien,
-/obj/item/weapon/weldingtool/alien,
+/obj/item/weldingtool/alien,
 /turf/simulated/shuttle/floor/alienplating,
 /area/submap/cave/crashed_ufo_frigate)
 "bQ" = (
@@ -437,7 +437,7 @@
 /obj/structure/window/phoronreinforced{
 	dir = 4
 	},
-/obj/item/weapon/paper/alien{
+/obj/item/paper/alien{
 	icon_state = "alienpaper_words";
 	info = "\[i]This tablet has a large collection of symbols that you've never seen before outside this ship. You have no hope of figuring out what any of the mean...\[/i]"
 	},
@@ -454,8 +454,8 @@
 /area/submap/cave/crashed_ufo_frigate)
 "bT" = (
 /obj/structure/window/phoronreinforced{
-	dir = 8;
-	icon_state = "phoronrwindow"
+	icon_state = "phoronrwindow";
+	dir = 8
 	},
 /obj/structure/window/phoronreinforced,
 /turf/simulated/shuttle/floor/alienplating,
@@ -470,7 +470,7 @@
 "bV" = (
 /obj/structure/table/alien,
 /obj/structure/window/phoronreinforced,
-/obj/item/weapon/paper/alien,
+/obj/item/paper/alien,
 /turf/simulated/shuttle/floor/alien,
 /area/submap/cave/crashed_ufo_frigate)
 "bW" = (
@@ -496,7 +496,7 @@
 /area/submap/cave/crashed_ufo_frigate)
 "ca" = (
 /obj/structure/table/alien,
-/obj/item/weapon/paper/alien{
+/obj/item/paper/alien{
 	icon_state = "alienpaper_words";
 	info = "\[i]This tablet has a large collection of symbols that you've never seen before outside this ship. You have no hope of figuring out what any of the mean...\[/i]"
 	},
@@ -529,21 +529,6 @@
 /area/submap/cave/crashed_ufo_frigate)
 "ch" = (
 /turf/simulated/shuttle/wall/alien/hard_corner,
-/area/submap/cave/crashed_ufo_frigate)
-"de" = (
-/obj/machinery/porta_turret/alien/destroyed,
-/turf/simulated/shuttle/floor/alienplating{
-	oxygen = 20.7263;
-	nitrogen = 93.7835;
-	temperature = 243.15
-	},
-/area/submap/cave/crashed_ufo_frigate)
-"xX" = (
-/turf/simulated/shuttle/floor/alienplating{
-	oxygen = 20.7263;
-	nitrogen = 93.7835;
-	temperature = 243.15
-	},
 /area/submap/cave/crashed_ufo_frigate)
 
 (1,1,1) = {"
@@ -687,7 +672,7 @@ ab
 ab
 ab
 aV
-ae
+ac
 ba
 al
 bh
@@ -727,7 +712,7 @@ aM
 aF
 aF
 aF
-ae
+ac
 ap
 ap
 ap
@@ -765,8 +750,8 @@ ab
 ak
 ab
 aN
-ae
-ae
+ac
+ac
 al
 ap
 ap
@@ -801,9 +786,9 @@ aa
 aa
 ab
 ab
-ae
-ae
-ae
+ac
+ac
+ac
 ab
 ab
 ak
@@ -811,7 +796,7 @@ al
 al
 ap
 ap
-ae
+ac
 ab
 bi
 bp
@@ -842,12 +827,12 @@ aa
 ab
 ab
 ao
-ae
-ae
-ae
+ac
+ac
+ac
 aF
 ab
-ae
+ac
 al
 ap
 ap
@@ -855,15 +840,15 @@ ap
 al
 ab
 aw
-ae
+ac
 br
 bv
-ae
+ac
 al
 ap
 bn
 bn
-ae
+ac
 aF
 ab
 ab
@@ -882,7 +867,7 @@ aa
 ab
 ab
 ao
-ae
+ac
 al
 aF
 aK
@@ -892,7 +877,7 @@ ch
 ap
 ap
 ap
-ae
+ac
 bb
 ab
 ab
@@ -922,7 +907,7 @@ aa
 ab
 ab
 ao
-ae
+ac
 al
 al
 ap
@@ -932,8 +917,8 @@ al
 au
 al
 ap
-ae
-ae
+ac
+ac
 al
 ab
 bi
@@ -943,7 +928,7 @@ ab
 ab
 al
 al
-ae
+ac
 ap
 ap
 ap
@@ -962,7 +947,7 @@ aa
 ab
 ab
 ao
-ae
+ac
 ay
 al
 ap
@@ -972,9 +957,9 @@ al
 al
 ch
 ab
-ae
-ae
-ae
+ac
+ac
+ac
 bc
 ab
 ap
@@ -984,7 +969,7 @@ aF
 ab
 al
 al
-ae
+ac
 bS
 bS
 ap
@@ -1001,22 +986,22 @@ aa
 aa
 aa
 ab
-ae
-ae
-ae
+ac
+ac
+ac
 ap
 ap
 ap
-ae
-ae
+ac
+ac
 al
-ae
+ac
 ao
 ab
 ab
 ak
-ae
-ae
+ac
+ac
 ab
 aF
 bq
@@ -1043,16 +1028,16 @@ aa
 ab
 ab
 al
-ae
+ac
 ap
 ap
 ap
-ae
-ae
-ae
-ae
-ae
-ae
+ac
+ac
+ac
+ac
+ac
+ac
 aT
 ab
 ab
@@ -1065,16 +1050,16 @@ at
 ch
 ab
 ab
-ae
+ac
 ag
 al
 ab
 ab
 ab
-ae
+ac
 ap
 ap
-ae
+ac
 ab
 ab
 aa
@@ -1090,10 +1075,10 @@ ap
 ah
 aF
 aF
-ae
-ae
-ae
-ae
+ac
+ac
+ac
+ac
 al
 al
 ab
@@ -1116,7 +1101,7 @@ ab
 al
 cd
 ap
-ae
+ac
 ab
 aa
 "}
@@ -1139,7 +1124,7 @@ ab
 aT
 ab
 ab
-ae
+ac
 ap
 ap
 al
@@ -1173,14 +1158,14 @@ ab
 ab
 aG
 ab
-ae
+ac
 ab
-ae
+ac
 ab
 ab
 ab
 aX
-ae
+ac
 ap
 aR
 al
@@ -1204,7 +1189,7 @@ ab
 "}
 (17,1,1) = {"
 ab
-ae
+ac
 ab
 ab
 ch
@@ -1212,15 +1197,15 @@ at
 ch
 ab
 aG
-ae
+ac
 aJ
-ae
+ac
 aO
 aQ
-ae
+ac
 ab
-ae
-ae
+ac
+ac
 ap
 ap
 bj
@@ -1245,9 +1230,9 @@ ab
 "}
 (18,1,1) = {"
 ab
-ae
-ae
-an
+ac
+ac
+am
 al
 al
 az
@@ -1257,10 +1242,10 @@ aG
 ab
 ak
 ab
-ae
+ac
 ab
 ab
-ae
+ac
 aF
 al
 ap
@@ -1286,12 +1271,12 @@ ab
 "}
 (19,1,1) = {"
 ab
-ae
+ac
 ai
-an
+am
 al
 ap
-ae
+ac
 az
 ab
 ab
@@ -1305,7 +1290,7 @@ aW
 aF
 al
 ap
-ae
+ac
 aF
 ab
 bx
@@ -1328,8 +1313,8 @@ ab
 (20,1,1) = {"
 ab
 af
-ae
-an
+ac
+am
 al
 ap
 aA
@@ -1346,7 +1331,7 @@ aA
 ah
 al
 ap
-ae
+ac
 aF
 ab
 bw
@@ -1368,7 +1353,7 @@ ab
 "}
 (21,1,1) = {"
 ab
-ae
+ac
 ab
 ab
 ch
@@ -1377,18 +1362,18 @@ ch
 ab
 aH
 al
-ae
-ae
-ae
-ae
+ac
+ac
+ac
+ac
 aw
 ab
-ae
+ac
 al
 ap
 ap
-ae
-ae
+ac
+ac
 ab
 ab
 bD
@@ -1411,14 +1396,14 @@ ab
 ab
 ab
 ab
-ae
+ac
 ap
 ap
 aA
 ab
 ab
 al
-ae
+ac
 aL
 aL
 aL
@@ -1429,7 +1414,7 @@ aY
 ap
 ap
 ap
-ae
+ac
 ak
 ab
 ab
@@ -1442,7 +1427,7 @@ ap
 bO
 aF
 ab
-ae
+ac
 ap
 al
 ab
@@ -1451,8 +1436,8 @@ ab
 (23,1,1) = {"
 aa
 ab
-ae
-ae
+ac
+ac
 ap
 ap
 aB
@@ -1493,20 +1478,20 @@ aa
 aa
 ab
 ak
-ae
+ac
 aq
 ap
 ap
 aw
 ab
-ae
+ac
 ab
 ab
 ab
 ab
 aM
-ae
-ae
+ac
+ac
 ab
 ap
 ap
@@ -1519,11 +1504,11 @@ ap
 ap
 ap
 ap
-ae
-ae
+ac
+ac
 ab
 ab
-ae
+ac
 ap
 al
 al
@@ -1534,20 +1519,20 @@ aa
 aa
 ab
 ab
-ae
+ac
 ar
 av
 ap
 ap
 aI
-ae
-ae
+ac
+ac
 ab
 ab
 ab
 aF
 aF
-ae
+ac
 ch
 be
 ch
@@ -1557,13 +1542,13 @@ ab
 ab
 ab
 ab
-ae
+ac
 ak
-ae
+ac
 ab
 ab
 ab
-ae
+ac
 ap
 ap
 cf
@@ -1576,18 +1561,18 @@ aa
 aa
 ab
 ao
-ae
+ac
 al
 aC
 ap
 ap
-ae
+ac
 aA
-ae
+ac
 ab
 ak
-ae
-ae
+ac
+ac
 ap
 aR
 ap
@@ -1602,7 +1587,7 @@ ab
 ab
 ab
 ab
-ae
+ac
 ab
 ap
 ap
@@ -1618,8 +1603,8 @@ aa
 ab
 ab
 as
-ae
-ae
+ac
+ac
 aE
 ap
 ap
@@ -1631,23 +1616,23 @@ ap
 ap
 ap
 ap
-ae
-ae
-ae
-ae
+ac
+ac
+ac
+ac
 aA
-ae
+ac
 bF
 ab
-ae
-ae
-ae
-ae
+ac
+ac
+ac
+ac
 ap
 ch
 ap
 ap
-ae
+ac
 ab
 ab
 aa
@@ -1660,8 +1645,8 @@ aa
 ab
 ab
 aw
-ae
-ae
+ac
+ac
 aq
 ap
 ap
@@ -1671,8 +1656,8 @@ aR
 ap
 ap
 ap
-ae
-ae
+ac
+ac
 bf
 aF
 bm
@@ -1681,7 +1666,7 @@ bz
 bH
 ab
 ak
-ae
+ac
 bV
 ap
 ap
@@ -1702,10 +1687,10 @@ aa
 ab
 ab
 aw
-ae
+ac
 aA
-ae
-ae
+ac
+ac
 ab
 ch
 ab
@@ -1727,7 +1712,7 @@ bW
 ap
 ap
 ch
-ae
+ac
 ab
 ab
 aa
@@ -1744,20 +1729,20 @@ aa
 ab
 ab
 aB
-ae
-ae
+ac
+ac
 ab
 ab
 aF
 aS
 ah
-ae
+ac
 av
 ab
 ab
 ab
-ae
-ae
+ac
+ac
 al
 al
 al
@@ -1765,8 +1750,8 @@ al
 ap
 ap
 ap
-ae
-ae
+ac
+ac
 ab
 ab
 ab
@@ -1792,12 +1777,12 @@ aI
 al
 al
 al
-ae
+ac
 ab
 ab
 al
 bg
-ae
+ac
 ap
 ap
 al
@@ -1805,9 +1790,9 @@ al
 ap
 ap
 ap
-ae
+ac
 ak
-ae
+ac
 ab
 ab
 aa
@@ -1829,15 +1814,15 @@ ab
 ab
 ab
 aI
-ae
-ae
-ae
-ae
+ac
+ac
+ac
+ac
 ab
 ab
 aZ
 al
-ae
+ac
 ap
 ap
 ap
@@ -1875,15 +1860,15 @@ aP
 aP
 aP
 ab
-ae
-ae
-ae
+ac
+ac
+ac
 ap
 ap
 ap
 al
-ae
-ae
+ac
+ac
 al
 al
 ab
@@ -1916,8 +1901,8 @@ ab
 ab
 ab
 ab
-ae
-ae
+ac
+ac
 ap
 ap
 ap
@@ -2000,9 +1985,9 @@ ad
 ad
 ad
 ad
-de
-xX
-de
+aZ
+ac
+aZ
 ad
 ad
 ad

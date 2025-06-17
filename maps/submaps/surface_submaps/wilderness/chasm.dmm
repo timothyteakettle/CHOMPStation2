@@ -4,7 +4,7 @@
 /turf/simulated/floor/outdoors/dirt,
 /area/template_noop)
 "aE" = (
-/obj/item/weapon/storage/firstaid/bonemed,
+/obj/item/storage/firstaid/bonemed,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -21,24 +21,29 @@
 /turf/template_noop,
 /area/submap/Chasm)
 "bF" = (
-/obj/item/weapon/bone/ribs,
-/obj/effect/landmark/loot_spawn/low,
+/obj/item/bone/ribs,
+/obj/item/melee/energy/axe/charge/loaded,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "bN" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/mob/living/simple_mob/animal/giant_spider/lurker,
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/Chasm)
 "cj" = (
 /turf/simulated/floor/outdoors/dirt,
 /area/template_noop)
+"dD" = (
+/mob/living/simple_mob/animal/giant_spider/tunneler,
+/obj/effect/spider/stickyweb/dark,
+/turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
+/area/submap/Chasm)
 "eY" = (
 /obj/random/junk,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
@@ -48,25 +53,30 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust/color_rustedfull,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/weapon/cat_box/black,
+/obj/item/cat_box/black,
 /turf/simulated/floor/tiled/asteroid_steel,
+/area/submap/Chasm)
+"gR" = (
+/obj/random/obstruction,
+/obj/effect/spider/stickyweb/dark,
+/turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
 /area/submap/Chasm)
 "hG" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/mob/living/simple_mob/animal/giant_spider/electric{
-	faction = "virgo2";
-	health = 350;
-	name = "slimed giant spider"
-	},
+/mob/living/simple_mob/animal/giant_spider/webslinger,
 /turf/simulated/floor/outdoors/rocks,
+/area/submap/Chasm)
+"hQ" = (
+/obj/effect/floor_decal/rust,
+/obj/effect/spider/stickyweb/dark,
+/turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "hR" = (
 /turf/template_noop,
 /area/template_noop)
 "ik" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
@@ -76,29 +86,19 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust/mono_rusted2,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "iF" = (
-/obj/item/weapon/bone/skull,
+/obj/item/bone/skull,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "iR" = (
 /obj/random/trash,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/Chasm)
-"kn" = (
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
@@ -110,17 +110,20 @@
 /area/submap/Chasm)
 "kR" = (
 /obj/effect/floor_decal/rust,
-/mob/living/simple_mob/vore/jelly{
-	health = 150;
-	maxHealth = 150;
-	name = "Cavern jelly blob"
-	},
+/mob/living/simple_mob/animal/giant_spider/tunneler,
 /turf/simulated/floor/plating,
+/area/submap/Chasm)
+"le" = (
+/obj/random/maintenance/medical,
+/obj/effect/spider/stickyweb,
+/turf/simulated/floor/outdoors/dirt{
+	outdoors = 0
+	},
 /area/submap/Chasm)
 "lz" = (
 /obj/random/junk,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -131,21 +134,26 @@
 /obj/random/junk,
 /turf/simulated/floor/plating,
 /area/submap/Chasm)
+"mE" = (
+/mob/living/simple_mob/animal/giant_spider/hunter,
+/obj/effect/spider/stickyweb,
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/Chasm)
 "nx" = (
 /obj/random/trash,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "nJ" = (
-/obj/effect/floor_decal/rust,
-/obj/item/weapon/material/knife/machete/deluxe,
-/turf/simulated/floor/plating,
-/area/submap/Chasm)
+/obj/structure/snowman/spider,
+/turf/template_noop,
+/area/template_noop)
 "oA" = (
 /obj/random/obstruction,
+/obj/effect/decal/cleanable/cobweb,
 /obj/effect/spider/stickyweb/dark,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
@@ -153,12 +161,7 @@
 /area/submap/Chasm)
 "pk" = (
 /obj/random/maintenance,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/Chasm)
-"pC" = (
-/obj/effect/spider/stickyweb,
+/obj/effect/decal/cleanable/cobweb2,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -167,24 +170,22 @@
 /obj/structure/cliff/automatic{
 	dir = 2
 	},
-/obj/effect/landmark/loot_spawn/low,
-/obj/item/weapon/bone/arm,
+/obj/item/bone/arm,
 /turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
+/area/submap/Chasm)
+"qB" = (
+/obj/random/trash,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb/dark,
+/turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "rI" = (
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/Chasm)
-"rR" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb/dark,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -193,13 +194,11 @@
 /obj/structure/cliff/automatic{
 	dir = 8
 	},
-/obj/effect/floor_decal/stairs/dark_stairs{
+/obj/structure/ledge/ledge_stairs{
 	dir = 1
 	},
 /obj/structure/barricade,
-/turf/simulated/floor/outdoors/rocks{
-	outdoors = 0
-	},
+/turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "sg" = (
 /obj/structure/loot_pile/mecha/odysseus,
@@ -210,7 +209,7 @@
 "st" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/weapon/bone/arm,
+/obj/item/bone/arm,
 /turf/simulated/floor/plating,
 /area/submap/Chasm)
 "tg" = (
@@ -220,16 +219,13 @@
 	},
 /obj/effect/step_trigger/thrower,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb/dark,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/Chasm)
-"ua" = (
-/turf/simulated/wall/solidrock,
-/area/submap/Chasm)
 "uc" = (
-/obj/item/weapon/bone,
+/obj/item/bone,
 /obj/random/junk,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
@@ -241,21 +237,30 @@
 	outdoors = 0
 	},
 /area/submap/Chasm)
+"uh" = (
+/obj/effect/decal/cleanable/cobweb,
+/turf/simulated/floor/outdoors/dirt{
+	outdoors = 0
+	},
+/area/submap/Chasm)
 "uj" = (
 /obj/structure/cliff/automatic/corner{
 	dir = 10
 	},
-/obj/item/weapon/bone/skull/unknown,
+/obj/item/bone/skull/unknown,
+/obj/random/outcrop,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "vd" = (
 /obj/effect/floor_decal/rust,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "vV" = (
 /obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb/dark,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -264,6 +269,7 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/plating,
 /area/submap/Chasm)
 "wF" = (
@@ -274,12 +280,17 @@
 /area/submap/Chasm)
 "wP" = (
 /obj/random/humanoidremains,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/Chasm)
+"xt" = (
+/obj/effect/spider/stickyweb/dark,
+/turf/simulated/mineral/ignore_mapgen,
+/area/submap/Chasm)
 "yq" = (
-/obj/item/weapon/bone/leg,
+/obj/item/bone/leg,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust/color_rusted,
 /obj/effect/decal/cleanable/dirt,
@@ -298,6 +309,7 @@
 /area/submap/Chasm)
 "zq" = (
 /obj/structure/outcrop/diamond,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -313,6 +325,7 @@
 /area/submap/Chasm)
 "zt" = (
 /obj/random/trash,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/Chasm)
 "Aq" = (
@@ -324,7 +337,8 @@
 	},
 /area/submap/Chasm)
 "BQ" = (
-/obj/item/weapon/bone,
+/obj/item/bone,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -333,7 +347,6 @@
 /obj/structure/cliff/automatic/corner{
 	dir = 10
 	},
-/obj/effect/landmark/loot_spawn,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -343,6 +356,7 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
+/mob/living/simple_mob/animal/giant_spider/nurse/hat,
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "Cs" = (
@@ -352,34 +366,48 @@
 	name = "loose rock stairs"
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb/dark,
 /turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
+/area/submap/Chasm)
+"Da" = (
+/obj/random/maintenance,
+/obj/effect/spider/stickyweb,
+/turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "Di" = (
 /obj/effect/floor_decal/rust,
 /obj/random/humanoidremains,
+/mob/living/simple_mob/animal/giant_spider/webslinger,
 /turf/simulated/floor/plating,
 /area/submap/Chasm)
 "DH" = (
-/mob/living/simple_mob/vore/jelly,
+/mob/living/simple_mob/animal/giant_spider/tunneler/frequent,
+/obj/effect/spider/stickyweb/dark,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "DI" = (
 /obj/random/junk,
+/obj/effect/decal/cleanable/cobweb2,
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/Chasm)
 "DQ" = (
 /obj/structure/cliff/automatic{
 	dir = 4
 	},
-/obj/effect/floor_decal/stairs/dark_stairs{
+/obj/structure/ledge/ledge_stairs{
 	dir = 1
 	},
 /obj/structure/barricade,
+/turf/simulated/floor/plating,
+/area/submap/Chasm)
+"DS" = (
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -395,11 +423,11 @@
 "Ea" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/weapon/pickaxe/excavationdrill,
+/obj/item/pickaxe/excavationdrill,
 /turf/simulated/floor/plating,
 /area/submap/Chasm)
 "Ec" = (
-/obj/effect/landmark/loot_spawn/low,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -416,18 +444,32 @@
 	outdoors = 0
 	},
 /area/submap/Chasm)
+"Ep" = (
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb,
+/turf/simulated/floor/outdoors/dirt{
+	outdoors = 0
+	},
+/area/submap/Chasm)
 "Eu" = (
-/obj/item/weapon/bone,
+/obj/item/bone,
 /obj/effect/floor_decal/rust,
+/obj/effect/spider/stickyweb,
+/obj/random/tool/power,
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "Fe" = (
 /obj/random/outcrop,
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
+"Fr" = (
+/obj/random/junk,
+/obj/effect/spider/stickyweb,
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/Chasm)
 "HE" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -440,8 +482,14 @@
 	outdoors = 0
 	},
 /area/submap/Chasm)
+"Ie" = (
+/obj/random/tool/power,
+/turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
+/area/submap/Chasm)
 "Ji" = (
-/obj/item/stolenpackage,
+/obj/item/instrument/violin,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -450,7 +498,7 @@
 /obj/structure/loot_pile/surface/bones,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "Kv" = (
@@ -460,12 +508,21 @@
 /area/submap/Chasm)
 "Kz" = (
 /obj/random/trash,
+/obj/effect/spider/stickyweb/dark,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "KX" = (
 /obj/structure/loot_pile/surface/bones,
+/turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
+/area/submap/Chasm)
+"Ll" = (
+/obj/random/humanoidremains,
+/obj/effect/spider/stickyweb,
+/obj/random/multiple/gun/projectile/shotgun,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -477,14 +534,12 @@
 	},
 /area/submap/Chasm)
 "LJ" = (
-/obj/effect/floor_decal/stairs/dark_stairs{
+/obj/effect/decal/cleanable/dirt,
+/obj/structure/ledge/ledge_stairs{
 	dir = 1
 	},
-/obj/effect/decal/cleanable/dirt,
 /obj/structure/barricade,
-/turf/simulated/floor/outdoors/rocks{
-	outdoors = 0
-	},
+/turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "NU" = (
 /obj/structure/cliff/automatic/corner{
@@ -498,8 +553,16 @@
 /obj/effect/floor_decal/rust,
 /turf/simulated/floor/plating,
 /area/submap/Chasm)
+"Ov" = (
+/obj/structure/loot_pile/surface/bones,
+/obj/effect/spider/stickyweb,
+/obj/random/outcrop,
+/turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
+/area/submap/Chasm)
 "Pk" = (
-/obj/effect/landmark/loot_spawn/low,
+/obj/random/multiple/gun/projectile/rifle,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -511,7 +574,7 @@
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "Qi" = (
-/obj/item/weapon/bone/skull/tajaran,
+/obj/item/bone/skull/tajaran,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/asteroid_steel,
@@ -520,10 +583,13 @@
 /obj/structure/cliff/automatic/corner{
 	dir = 6
 	},
-/obj/effect/landmark/loot_spawn,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
+/area/submap/Chasm)
+"Rx" = (
+/obj/effect/spider/stickyweb,
+/turf/simulated/floor/outdoors/dirt,
 /area/submap/Chasm)
 "Rz" = (
 /turf/simulated/floor/outdoors/rocks{
@@ -545,12 +611,11 @@
 /obj/item/clothing/suit/sexyminer,
 /turf/simulated/floor/plating,
 /area/submap/Chasm)
-"Sp" = (
-/obj/random/maintenance,
+"SA" = (
+/obj/random/junk,
+/mob/living/simple_mob/animal/giant_spider/hunter,
 /obj/effect/spider/stickyweb,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/floor/outdoors/dirt,
 /area/submap/Chasm)
 "SD" = (
 /turf/simulated/mineral/ignore_mapgen,
@@ -564,12 +629,12 @@
 "SS" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust/color_rustedfull,
-/obj/item/weapon/book/manual/rust_engine,
+/obj/item/book/manual/rust_engine,
 /turf/simulated/floor/tiled/asteroid_steel,
 /area/submap/Chasm)
 "Tl" = (
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/storage/bag/ore,
+/obj/item/storage/bag/ore,
 /turf/simulated/floor/plating,
 /area/submap/Chasm)
 "Tp" = (
@@ -577,6 +642,12 @@
 	dir = 9
 	},
 /turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
+/area/submap/Chasm)
+"Tt" = (
+/obj/effect/spider/stickyweb/dark,
+/turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
 /area/submap/Chasm)
@@ -606,29 +677,23 @@
 /obj/structure/cliff/automatic/corner{
 	dir = 10
 	},
-/mob/living/simple_mob/vore/jelly{
-	health = 150;
-	maxHealth = 150;
-	name = "Cavern jelly blob"
-	},
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "XZ" = (
-/obj/item/weapon/bone/ribs,
+/obj/item/bone/ribs,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "Yp" = (
-/obj/effect/floor_decal/stairs/dark_stairs{
+/obj/structure/ledge/ledge_stairs{
 	dir = 1
 	},
 /obj/structure/barricade,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/floor/plating,
 /area/submap/Chasm)
 "YR" = (
 /obj/structure/cliff/automatic/corner{
@@ -655,28 +720,19 @@
 	},
 /area/submap/Chasm)
 "Zd" = (
-/obj/item/instrument/trombone,
-/turf/simulated/floor/outdoors/rocks{
-	outdoors = 0
-	},
+/mob/living/simple_mob/animal/giant_spider/hunter,
+/turf/simulated/floor/outdoors/dirt,
 /area/submap/Chasm)
 "Zn" = (
-/mob/living/simple_mob/vore/jelly{
-	health = 150;
-	maxHealth = 150;
-	name = "Cavern jelly blob"
-	},
-/obj/item/weapon/bone/skull,
+/obj/item/bone/skull,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/Chasm)
 "ZS" = (
-/mob/living/simple_mob/vore/jelly{
-	health = 150;
-	maxHealth = 150;
-	name = "Cavern jelly blob"
-	},
+/mob/living/simple_mob/animal/giant_spider/tunneler,
+/obj/effect/spider/stickyweb,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -711,11 +767,11 @@ hR
 hR
 hR
 bD
-Ee
+Zd
+hR
+nJ
 hR
 hR
-hR
-hR
 Sc
 Sc
 Sc
@@ -726,7 +782,7 @@ Sc
 Sc
 Ee
 Ee
-Ee
+Rx
 SD
 SD
 hR
@@ -741,44 +797,44 @@ Sc
 hR
 hR
 Sc
-ua
-ua
-ua
-ua
-ua
-ua
-ua
-ua
+Sc
+Sc
+Sc
+Sc
+Sc
+Sc
+Sc
+Sc
 Sc
 Ec
-Kv
-Kv
+Tt
+Ec
 SD
 cj
 hR
 "}
 (4,1,1) = {"
-hR
+nJ
 DI
 bN
 Sc
 Sc
 hR
 Sc
-ua
-ua
-pC
-Kv
-Kv
-Kv
-Kv
-pk
-ua
-ua
 Sc
-DH
+Sc
+uh
+Kv
+Kv
+Kv
+Kv
+Da
+Sc
+Sc
+Sc
+dD
 Kz
-DI
+SA
 cj
 cj
 "}
@@ -789,20 +845,20 @@ eY
 Sc
 Sc
 Sc
-ua
-ua
-Lt
+Sc
+Sc
+le
 Kv
 Tp
 Aq
 Aq
 Za
-Kv
-pC
-ua
-ua
+Ec
+Tt
 Sc
-Ee
+Sc
+Sc
+Rx
 Ee
 cj
 hR
@@ -813,20 +869,20 @@ Sc
 ik
 Sc
 Sc
-ua
-ua
-Kv
-Kv
+Sc
+Sc
+Tt
+Ec
 Tp
 NU
 Rz
 aE
 BU
 Za
-Kv
-Kv
-ua
-ua
+Ec
+Ec
+Sc
+Sc
 Sc
 Sc
 cj
@@ -838,21 +894,21 @@ Sc
 iR
 Kv
 Sc
-ua
-pC
-Kv
+Sc
+Ec
+Ec
 Tp
 NU
 Rz
 SH
-KX
+Ov
 wP
 uj
 Za
 Kv
-pC
-ua
-ua
+Kv
+Sc
+Sc
 Sc
 Sc
 hR
@@ -860,11 +916,11 @@ hR
 (8,1,1) = {"
 Sc
 Sc
-kn
+ik
 lz
 oA
-oA
-Kv
+gR
+Tt
 Tp
 NU
 Rz
@@ -875,21 +931,21 @@ sg
 yL
 YR
 Za
-Kv
-Kv
-ua
-ua
+Ec
+Tt
+Sc
+Sc
 Sc
 Sc
 "}
 (9,1,1) = {"
 Sc
 Sc
-Kv
+Ec
 nx
 Sc
-ua
-Kv
+Sc
+Ec
 uf
 Rz
 zq
@@ -898,12 +954,12 @@ gK
 Ea
 Di
 wF
-Rz
+DS
 XU
 rY
 vd
 Kv
-ua
+Sc
 Sc
 Sc
 "}
@@ -911,10 +967,10 @@ Sc
 Sc
 Sc
 Sc
-ik
-nx
-ua
-Kv
+Ep
+qB
+Sc
+Tt
 uf
 Rz
 VD
@@ -928,7 +984,7 @@ yD
 Yp
 iu
 Oj
-ua
+Sc
 Sc
 Sc
 "}
@@ -937,13 +993,13 @@ hR
 Sc
 Sc
 rI
-rR
+rI
 tg
 HE
 uf
 Rz
 YU
-nJ
+Oj
 iF
 Pr
 Sj
@@ -953,7 +1009,7 @@ yD
 LJ
 UZ
 WE
-ua
+Sc
 Sc
 Sc
 "}
@@ -978,7 +1034,7 @@ zs
 DQ
 wn
 Kv
-ua
+Sc
 Sc
 Sc
 "}
@@ -988,8 +1044,8 @@ hR
 Sc
 Sc
 Sc
-ua
-Kv
+Sc
+Tt
 HF
 RY
 Rz
@@ -997,13 +1053,13 @@ yL
 BQ
 Fe
 ZS
-Rz
-wP
+Ie
+Ll
 qx
-Kv
-vd
-ua
-ua
+Ec
+hQ
+Sc
+Sc
 Sc
 Sc
 "}
@@ -1013,8 +1069,8 @@ hR
 hR
 Sc
 Sc
-ua
-pC
+Sc
+Ec
 Kv
 HF
 DW
@@ -1026,8 +1082,8 @@ BQ
 Qr
 aF
 Kv
-ua
-ua
+Sc
+Sc
 Sc
 Sc
 Sc
@@ -1038,20 +1094,20 @@ hR
 hR
 hR
 Sc
-ua
-ua
+Sc
+Sc
 pk
 Kv
 Kv
 HF
 RY
-Rz
-Zd
+DS
+TR
 Eh
 aF
 Kv
-pk
-ua
+Da
+Sc
 Sc
 Sc
 Sc
@@ -1064,19 +1120,19 @@ hR
 Ee
 zt
 Sc
-ua
-ua
-ua
-Kv
+Sc
+Sc
+Sc
+Tt
 Kv
 HF
 DW
 DW
 aF
 Kv
-pC
-ua
-ua
+Ec
+Sc
+Sc
 Sc
 Sc
 cj
@@ -1086,21 +1142,21 @@ hR
 hR
 hR
 hR
-Ee
-Kv
+Rx
+Tt
 DH
 Sc
 Sc
-ua
-ua
-Sp
+Sc
+Sc
+pk
 Kv
 Kv
 Lt
 Kv
-Kv
-ua
-ua
+Ec
+xt
+Sc
 Sc
 Ec
 Ee
@@ -1113,22 +1169,22 @@ hR
 Sc
 Sc
 Sc
-Kv
+Tt
 Ec
 Sc
 Sc
-ua
-ua
-ua
-ua
-ua
-ua
-ua
-ua
 Sc
-DH
-Kv
-Ee
+Sc
+Sc
+Sc
+Sc
+Sc
+Sc
+Sc
+Sc
+dD
+Tt
+mE
 cj
 hR
 "}
@@ -1138,7 +1194,7 @@ hR
 hR
 Sc
 Sc
-Ee
+Rx
 Ee
 Ee
 hR
@@ -1149,8 +1205,8 @@ Sc
 Sc
 Sc
 Sc
-Sc
-DI
+hR
+Fr
 Kz
 SD
 SD
@@ -1176,7 +1232,7 @@ hR
 hR
 hR
 Ee
-Ee
+Rx
 SD
 hR
 hR

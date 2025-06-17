@@ -33,7 +33,7 @@
 	icon_living = "oregrub"
 	icon_dead = "oregrub-dead"
 
-	faction = "grubs"
+	faction = FACTION_GRUBS
 	maxHealth = 50 //oregrubs are quite hardy
 	health = 50
 
@@ -42,7 +42,7 @@
 
 	movement_cooldown = 3.5
 
-	meat_type = /obj/item/weapon/ore/coal
+	meat_type = /obj/item/ore/coal
 
 	response_help = "pokes"
 	response_disarm = "pushes"
@@ -52,17 +52,17 @@
 	say_list_type = /datum/say_list/oregrub
 
 	var/poison_per_bite = 2.5
-	var/poison_type = "thermite_v" //burn baby burn
+	var/poison_type = REAGENT_ID_THERMITEV //burn baby burn
 	var/poison_chance = 50
 
 	var/min_ore = 4
 	var/max_ore = 7
 
-	vore_bump_chance = 60 // CHOMPEdit - Un-disabled.
+	vore_bump_chance = 60
 	vore_bump_emote = "applies minimal effort to try and slurp up"
-	vore_active = 1 // CHOMPEdit - Un-disabled.
+	vore_active = 1
 	vore_capacity = 1
-	vore_pounce_chance = 0 //grubs only eat incapacitated targets
+	vore_pounce_chance = 50 // Might seem unforgiving, but these guys run away from enemies, making them more of an environmental hazard than a real threat. You have to bump them.
 	vore_default_mode = DM_DIGEST
 
 	min_oxy = 0
@@ -133,10 +133,10 @@
 			inject_poison(L, target_zone)
 
 /mob/living/simple_mob/vore/oregrub/death()
-	visible_message("<span class='warning'>\The [src] shudders and collapses, expelling the ores it had devoured!</span>")
+	visible_message(span_warning("\The [src] shudders and collapses, expelling the ores it had devoured!"))
 	var/i = rand(min_ore,max_ore)
 	while(i>1)
-		var/ore = pick(/obj/item/weapon/ore/glass,/obj/item/weapon/ore/coal,/obj/item/weapon/ore/iron,/obj/item/weapon/ore/lead,/obj/item/weapon/ore/marble,/obj/item/weapon/ore/phoron,/obj/item/weapon/ore/silver,/obj/item/weapon/ore/gold)
+		var/ore = pick(/obj/item/ore/glass,/obj/item/ore/coal,/obj/item/ore/iron,/obj/item/ore/lead,/obj/item/ore/marble,/obj/item/ore/phoron,/obj/item/ore/silver,/obj/item/ore/gold)
 		new ore(src.loc)
 		i--
 	..()
@@ -153,7 +153,7 @@
 	set_light(0)
 	var/p = rand(lava_min_ore,lava_max_ore)
 	while(p>1)
-		var/ore = pick(/obj/item/weapon/ore/osmium,/obj/item/weapon/ore/uranium,/obj/item/weapon/ore/hydrogen,/obj/item/weapon/ore/diamond,/obj/item/weapon/ore/verdantium)
+		var/ore = pick(/obj/item/ore/osmium,/obj/item/ore/uranium,/obj/item/ore/hydrogen,/obj/item/ore/diamond,/obj/item/ore/verdantium)
 		new ore(src.loc)
 		p--
 	..()
@@ -161,24 +161,26 @@
 // Does actual poison injection, after all checks passed.
 /mob/living/simple_mob/vore/oregrub/proc/inject_poison(mob/living/L, target_zone)
 	if(prob(poison_chance))
-		to_chat(L, "<span class='warning'>You feel fire running through your veins!</span>")
+		to_chat(L, span_warning("You feel fire running through your veins!"))
 		L.reagents.add_reagent(poison_type, poison_per_bite)
 
-// CHOMPEdit - Un-disabled.
 /mob/living/simple_mob/vore/oregrub/init_vore()
 	if(!voremob_loaded)
 		return
-	.=..()
+	if(LAZYLEN(vore_organs))
+		return
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
 	B.desc = "Through either grave error, overwhelming willingness, or some other factor, you find yourself lodged halfway past the grub's mandibles. While it had initially hissed and chittered in glee at the prospect of a new meal, it is clearly more versed in crunching ores to feed off of; inch by inch, bit by bit, it undulates forth to slowly, noisily gulp you down its short esophagus... and right into its extra-cramped, surprisingly hot stomach. As the rest of you spills out into the plush-walled chamber, the grub's soft body bulges outwards here and there with your compressed figure. Before long, a thick slime oozes out from the surrounding stomach walls; only time will tell how effective it is on something fleshy like you, although given it's usual diet..."
-	B.vore_sound = "Tauric Swallow"				// CHOMPedit - Fancy Vore Sounds
-	B.release_sound = "Pred Escape"				// CHOMPedit - Fancy Vore Sounds
-	B.fancy_vore = 1							// CHOMPedit - Fancy Vore Sounds
-	B.belly_fullscreen_color = "#1b4ba3" 		// CHOMPedit - Belly Fullscreen
-	B.belly_fullscreen = "anim_belly" 			// CHOMPedit - Belly Fullscreen
+	B.vore_sound = "Tauric Swallow"
+	B.release_sound = "Pred Escape"
+	B.fancy_vore = 1
+	B.belly_fullscreen_color = "#1b4ba3"
+	B.belly_fullscreen = "VBOanim_belly1"
+	B.colorization_enabled = TRUE
 
-	// CHOMPEdit: Yes, these are copied + modified from the solargrub list. These are better placeholders than ~nothing~, and will give us more voremobs to work with.
+	// Yes, these are copied + modified from the solargrub list. These are better placeholders than ~nothing~, and will give us more voremobs to work with.
 	B.emote_lists[DM_HOLD] = list(
 		"The air trapped within the grub is hot, humid, and tinged with soot, but otherwise mercifully harmless to you aside from being heavy on the lungs.",
 		"Your doughy, squishy surroundings heavily pulse around your body as the grub attempts to wriggle elsewhere, its solid prey weighing it down quite a bit.",
@@ -198,6 +200,8 @@
 /mob/living/simple_mob/vore/oregrub/lava/init_vore() // Should inherit everything from parent, and then change our belly fullscreen color.
 	if(!voremob_loaded)
 		return
+	if(LAZYLEN(vore_organs))
+		return
 	.=..()
 	var/obj/belly/B = vore_selected
-	B.belly_fullscreen_color = "#cf741e" 		// CHOMPedit - Belly Fullscreen
+	B.belly_fullscreen_color = "#cf741e"

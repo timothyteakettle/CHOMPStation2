@@ -7,21 +7,21 @@
 // Definitions
 ////////////////////////////////
 
-/* Cable directions (d1 and d2)
-
-
-  9   1   5
-	\ | /
-  8 - 0 - 4,
-	/ | \
-  10  2   6
+/** Cable directions (d1 and d2)
+ *
+ *
+ *  9   1   5
+ *	  \ | /
+ *  8 - 0 - 4,
+ *	  / | \
+ *  10  2   6
 
 If d1 = 0 and d2 = 0, there's no cable
 If d1 = 0 and d2 = dir, it's a O-X cable, getting from the center of the tile to dir (knot cable)
 If d1 = dir1 and d2 = dir2, it's a full X-X cable, getting from dir1 to dir2
 By design, d1 is the smallest direction and d2 is the highest
 */
-var/list/possible_cable_coil_colours = list(
+GLOBAL_LIST_INIT(possible_cable_coil_colours, list(
 		"White" = COLOR_WHITE,
 		"Silver" = COLOR_SILVER,
 		"Gray" = COLOR_GRAY,
@@ -41,7 +41,7 @@ var/list/possible_cable_coil_colours = list(
 		"Orange" = COLOR_ORANGE,
 		"Beige" = COLOR_BEIGE,
 		"Brown" = COLOR_BROWN
-	)
+	))
 
 /obj/structure/cable
 	level = 1
@@ -89,8 +89,8 @@ var/list/possible_cable_coil_colours = list(
 /obj/structure/cable/white
 	color = COLOR_WHITE
 
-/obj/structure/cable/New()
-	..()
+/obj/structure/cable/Initialize(mapload)
+	. = ..()
 
 	// ensure d1 & d2 reflect the icon_state for entering and exiting cable
 
@@ -114,7 +114,7 @@ var/list/possible_cable_coil_colours = list(
 /obj/structure/cable/examine(mob/user)
 	. = ..()
 	if(isobserver(user))
-		. += "<span class='warning'>[powernet?.avail > 0 ? "[DisplayPower(powernet.avail)] in power network." : "The cable is not powered."]</span>"
+		. += span_warning("[powernet?.avail > 0 ? "[DisplayPower(powernet.avail)] in power network." : "The cable is not powered."]")
 
 // Rotating cables requires d1 and d2 to be rotated
 /obj/structure/cable/set_dir(new_dir)
@@ -151,13 +151,16 @@ var/list/possible_cable_coil_colours = list(
 //If underfloor, hide the cable
 /obj/structure/cable/hide(var/i)
 	if(istype(loc, /turf))
-		invisibility = i ? 101 : 0
+		invisibility = i ? INVISIBILITY_ABSTRACT : INVISIBILITY_NONE
 	update_icon()
 
 /obj/structure/cable/hides_under_flooring()
 	return 1
 
 /obj/structure/cable/update_icon()
+	// We rely on the icon state for the wire Initialize(), prevent any updates to the icon before init passed
+	if(!(flags & ATOM_INITIALIZED))
+		return
 	icon_state = "[d1]-[d2]"
 	alpha = invisibility ? 127 : 255
 
@@ -180,11 +183,11 @@ var/list/possible_cable_coil_colours = list(
 	if(W.has_tool_quality(TOOL_WIRECUTTER))
 		var/obj/item/stack/cable_coil/CC
 		if(d1 == UP || d2 == UP)
-			to_chat(user, "<span class='warning'>You must cut this cable from above.</span>")
+			to_chat(user, span_warning("You must cut this cable from above."))
 			return
 
 		if(breaker_box)
-			to_chat(user, "<span class='warning'>This cable is connected to nearby breaker box. Use breaker box to interact with it.</span>")
+			to_chat(user, span_warning("This cable is connected to nearby breaker box. Use breaker box to interact with it."))
 			return
 
 		if (shock(user, 50))
@@ -199,7 +202,7 @@ var/list/possible_cable_coil_colours = list(
 		src.transfer_fingerprints_to(CC)
 
 		for(var/mob/O in viewers(src, null))
-			O.show_message("<span class='warning'>[user] cuts the cable.</span>", 1)
+			O.show_message(span_warning("[user] cuts the cable."), 1)
 
 		if(d1 == DOWN || d2 == DOWN)
 			var/turf/turf = GetBelow(src)
@@ -208,7 +211,7 @@ var/list/possible_cable_coil_colours = list(
 					if(c.d1 == UP || c.d2 == UP)
 						qdel(c)
 
-		investigate_log("was cut by [key_name(user, user.client)] in [user.loc.loc]","wires") //ChompEDIT usr --> user
+		investigate_log("was cut by [key_name(user, user.client)] in [user.loc.loc]","wires")
 
 		qdel(src)
 		return
@@ -221,13 +224,13 @@ var/list/possible_cable_coil_colours = list(
 			return
 		coil.cable_join(src, user)
 
-	else if(istype(W, /obj/item/device/multitool))
+	else if(istype(W, /obj/item/multitool))
 
 		if(powernet && (powernet.avail > 0))		// is it powered?
-			to_chat(user, "<span class='warning'>[DisplayPower(powernet.avail)] in power network.</span>")
+			to_chat(user, span_warning("[DisplayPower(powernet.avail)] in power network."))
 
 		else
-			to_chat(user, "<span class='warning'>The cable is not powered.</span>")
+			to_chat(user, span_warning("The cable is not powered."))
 
 		shock(user, 5, 0.2)
 
@@ -245,7 +248,7 @@ var/list/possible_cable_coil_colours = list(
 		var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 		s.set_up(5, 1, src)
 		s.start()
-		if(user.stunned) //ChompEDIT usr --> user
+		if(user.stunned)
 			return 1
 	return 0
 
@@ -323,7 +326,7 @@ var/list/possible_cable_coil_colours = list(
 // merge with the powernets of power objects in the given direction
 /obj/structure/cable/proc/mergeConnectedNetworks(var/direction)
 
-	var/fdir = direction ? reverse_dir[direction] : 0 //flip the direction, to match with the source position on its turf
+	var/fdir = direction ? GLOB.reverse_dir[direction] : 0 //flip the direction, to match with the source position on its turf
 
 	if(!(d1 == direction || d2 == direction)) //if the cable is not pointed in this direction, do nothing
 		return
@@ -403,13 +406,13 @@ var/list/possible_cable_coil_colours = list(
 	for(var/cable_dir in list(d1, d2))
 		if(cable_dir == 0)
 			continue
-		var/reverse = reverse_dir[cable_dir]
+		var/reverse = GLOB.reverse_dir[cable_dir]
 		T = get_zstep(src, cable_dir)
 		if(T)
 			for(var/obj/structure/cable/C in T)
 				if(C.d1 == reverse || C.d2 == reverse)
 					. += C
-		if(cable_dir & (cable_dir - 1)) // Diagonal, check for /\/\/\ style cables along cardinal directions
+		if(cable_dir & (cable_dir - 1)) // Diagonal, check for /\/\/\ style cables along GLOB.cardinal directions
 			for(var/pair in list(NORTH|SOUTH, EAST|WEST))
 				T = get_step(src, cable_dir & pair)
 				if(T)
@@ -524,9 +527,9 @@ var/list/possible_cable_coil_colours = list(
 	uses_charge = 1
 	charge_costs = list(1)
 
-/obj/item/stack/cable_coil/New(loc, length = MAXCOIL, var/param_color = null)
-	..()
-	src.amount = length
+/obj/item/stack/cable_coil/Initialize(mapload, length = MAXCOIL, var/param_color = null)
+	. = ..()
+	amount = length
 	if (param_color) // It should be red by default, so only recolor it if parameter was specified.
 		color = param_color
 	pixel_x = rand(-2,2)
@@ -554,11 +557,11 @@ var/list/possible_cable_coil_colours = list(
 
 		if(S.organ_tag == BP_HEAD)
 			if(H.head && istype(H.head,/obj/item/clothing/head/helmet/space))
-				to_chat(user, "<span class='warning'>You can't apply [src] through [H.head]!</span>")
+				to_chat(user, span_warning("You can't apply [src] through [H.head]!"))
 				return 1
 		else
 			if(H.wear_suit && istype(H.wear_suit,/obj/item/clothing/suit/space))
-				to_chat(user, "<span class='warning'>You can't apply [src] through [H.wear_suit]!</span>")
+				to_chat(user, span_warning("You can't apply [src] through [H.wear_suit]!"))
 				return 1
 
 		var/use_amt = min(src.amount, CEILING(S.burn_dam/5, 1), 5)
@@ -586,12 +589,12 @@ var/list/possible_cable_coil_colours = list(
 	if(!selected_color)
 		return
 
-	var/final_color = possible_cable_coil_colours[selected_color]
+	var/final_color = GLOB.possible_cable_coil_colours[selected_color]
 	if(!final_color)
-		final_color = possible_cable_coil_colours["Red"]
+		final_color = GLOB.possible_cable_coil_colours["Red"]
 		selected_color = "red"
 	color = final_color
-	to_chat(user, "<span class='notice'>You change \the [src]'s color to [lowertext(selected_color)].</span>")
+	to_chat(user, span_notice("You change \the [src]'s color to [lowertext(selected_color)]."))
 
 /obj/item/stack/cable_coil/proc/update_wclass()
 	if(amount == 1)
@@ -600,9 +603,9 @@ var/list/possible_cable_coil_colours = list(
 		w_class = ITEMSIZE_SMALL
 
 /obj/item/stack/cable_coil/attackby(obj/item/W, mob/user)
-	if(istype(W, /obj/item/device/multitool))
-		var/selected_type = tgui_input_list(user, "Pick new colour.", "Cable Colour", possible_cable_coil_colours) //ChompEDIT usr --> user
-		set_cable_color(selected_type, user) //ChompEDIT usr --> user
+	if(istype(W, /obj/item/multitool))
+		var/selected_type = tgui_input_list(user, "Pick new colour.", "Cable Colour", GLOB.possible_cable_coil_colours)
+		set_cable_color(selected_type, user)
 		return
 	return ..()
 
@@ -612,22 +615,22 @@ var/list/possible_cable_coil_colours = list(
 	var/mob/M = usr
 
 	if(ishuman(M) && !M.restrained() && !M.stat && !M.paralysis && ! M.stunned)
-		if(!istype(usr.loc,/turf)) return
+		if(!istype(M.loc,/turf)) return
 		if(src.amount <= 14)
-			to_chat(usr, "<span class='warning'>You need at least 15 lengths to make restraints!</span>")
+			to_chat(M, span_warning("You need at least 15 lengths to make restraints!"))
 			return
-		var/obj/item/weapon/handcuffs/cable/B = new /obj/item/weapon/handcuffs/cable(usr.loc)
+		var/obj/item/handcuffs/cable/B = new /obj/item/handcuffs/cable(M.loc)
 		B.color = color
-		to_chat(usr, "<span class='notice'>You wind some cable together to make some restraints.</span>")
+		to_chat(M, span_notice("You wind some cable together to make some restraints."))
 		src.use(15)
 	else
-		to_chat(usr, "<span class='notice'>You cannot do that.</span>")
+		to_chat(M, span_notice("You cannot do that."))
 
 /obj/item/stack/cable_coil/cyborg/verb/set_colour()
 	set name = "Change Colour"
 	set category = "Object"
 
-	var/selected_type = tgui_input_list(usr, "Pick new colour.", "Cable Colour", possible_cable_coil_colours)
+	var/selected_type = tgui_input_list(usr, "Pick new colour.", "Cable Colour", GLOB.possible_cable_coil_colours)
 	set_cable_color(selected_type, usr)
 
 // Items usable on a cable coil :
@@ -685,7 +688,7 @@ var/list/possible_cable_coil_colours = list(
 
 	for(var/obj/structure/cable/LC in F)
 		if((LC.d1 == dirn && LC.d2 == end_dir ) || ( LC.d2 == dirn && LC.d1 == end_dir))
-			to_chat(user, "<span class='warning'>There's already a cable at that position.</span>")
+			to_chat(user, span_warning("There's already a cable at that position."))
 			return
 
 	put_cable(F, user, end_dir, dirn)
@@ -697,7 +700,11 @@ var/list/possible_cable_coil_colours = list(
 	if(!istype(F))
 		return
 
-	var/obj/structure/cable/C = new(F)
+	var/obj/structure/cable/C
+	if(istype(src,/obj/item/stack/cable_coil/heavyduty)) // this is the only cable that does this, not worth an override
+		C = new /obj/structure/cable/heavyduty(F)
+	else
+		C = new /obj/structure/cable(F)
 	C.cableColor(color)
 	C.d1 = d1
 	C.d2 = d2
@@ -821,9 +828,9 @@ var/list/possible_cable_coil_colours = list(
 /obj/item/stack/cable_coil/cut
 	item_state = "coil2"
 
-/obj/item/stack/cable_coil/cut/New(loc)
-	..()
-	src.amount = rand(1,2)
+/obj/item/stack/cable_coil/cut/Initialize(mapload)
+	. = ..()
+	amount = rand(1,2)
 	pixel_x = rand(-2,2)
 	pixel_y = rand(-2,2)
 	update_icon()
@@ -901,16 +908,16 @@ var/list/possible_cable_coil_colours = list(
 	stacktype = /obj/item/stack/cable_coil
 	color = COLOR_BROWN
 
-/obj/item/stack/cable_coil/random/New()
+/obj/item/stack/cable_coil/random/Initialize(mapload)
 	stacktype = /obj/item/stack/cable_coil
 	color = pick(COLOR_RED, COLOR_BLUE, COLOR_LIME, COLOR_WHITE, COLOR_PINK, COLOR_YELLOW, COLOR_CYAN, COLOR_SILVER, COLOR_GRAY, COLOR_BLACK, COLOR_MAROON, COLOR_OLIVE, COLOR_LIME, COLOR_TEAL, COLOR_NAVY, COLOR_PURPLE, COLOR_BEIGE, COLOR_BROWN)
-	..()
+	. = ..()
 
-/obj/item/stack/cable_coil/random_belt/New()
+/obj/item/stack/cable_coil/random_belt/Initialize(mapload)
 	stacktype = /obj/item/stack/cable_coil
 	color = pick(COLOR_RED, COLOR_YELLOW, COLOR_ORANGE)
 	amount = 30
-	..()
+	. = ..()
 
 //Endless alien cable coil
 
@@ -949,7 +956,8 @@ var/list/possible_cable_coil_colours = list(
 	stacktype = null
 	toolspeed = 0.25
 
-/obj/item/stack/cable_coil/alien/New(loc, length = MAXCOIL, var/param_color = null)		//There has to be a better way to do this.
+/obj/item/stack/cable_coil/alien/Initialize(mapload, length = MAXCOIL, var/param_color = null)		//There has to be a better way to do this.
+	. = ..()
 	if(embed_chance == -1)		//From /obj/item, don't want to do what the normal cable_coil does
 		if(sharp)
 			embed_chance = force/w_class
@@ -980,7 +988,7 @@ var/list/possible_cable_coil_colours = list(
 
 /obj/item/stack/cable_coil/alien/attack_hand(mob/user as mob)
 	if (user.get_inactive_hand() == src)
-		var/N = tgui_input_number(user, "How many units of wire do you want to take from [src]?  You can only take up to [amount] at a time.", "Split stacks", 1, amount) //ChompEDIT usr --> user
+		var/N = tgui_input_number(user, "How many units of wire do you want to take from [src]? You can only take up to [amount] at a time.", "Split stacks", 1, amount)
 		if(N && N <= amount)
 			var/obj/item/stack/cable_coil/CC = new/obj/item/stack/cable_coil(user.loc)
 			CC.amount = N
@@ -991,8 +999,8 @@ var/list/possible_cable_coil_colours = list(
 				src.add_fingerprint(user)
 				CC.add_fingerprint(user)
 				spawn(0)
-					if (src && user.machine==src) //ChompEDIT usr --> user
-						src.interact(user) //ChompEDIT usr --> user
+					if (src && user.machine==src)
+						src.interact(user)
 		else
 			return
 	else

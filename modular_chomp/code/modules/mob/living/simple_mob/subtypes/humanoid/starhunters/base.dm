@@ -84,7 +84,7 @@
 
 /mob/living/simple_mob/humanoid/starhunter/hunter/harvester/handle_special() //wierd movement
 	if(prob(20))
-		step(src, pick(cardinal))
+		step(src, pick(GLOB.cardinal))
 	..()
 
 /mob/living/simple_mob/humanoid/starhunter/hunter/ninja
@@ -116,7 +116,7 @@
 			valid_turfs.Add(potential_turf)
 
 	if(!(valid_turfs.len))
-		to_chat(src, span("warning", "There wasn't an unoccupied spot to teleport to."))
+		to_chat(src, span_warning("There wasn't an unoccupied spot to teleport to."))
 		return FALSE
 
 	var/turf/target_turf = pick(valid_turfs)
@@ -128,7 +128,7 @@
 
 	if(L.can_be_drop_prey && L.devourable)
 		L.forceMove(belly_dest)
-		to_chat(target, "<span class='danger'>[src] materializes around you, as you end up in their [belly_dest]!</span>")
+		to_chat(target, span_danger("[src] materializes around you, as you end up in their [belly_dest]!"))
 
 
 /mob/living/simple_mob/humanoid/starhunter/hunter/proc/smokebomb(atom/target)
@@ -147,7 +147,7 @@
 			valid_turfs.Add(potential_turf)
 
 	if(!(valid_turfs.len))
-		to_chat(src, span("warning", "There wasn't an unoccupied spot to teleport to."))
+		to_chat(src, span_warning("There wasn't an unoccupied spot to teleport to."))
 		return FALSE
 
 	var/turf/target_turf = pick(valid_turfs)

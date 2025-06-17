@@ -1,16 +1,15 @@
 import { useState } from 'react';
-
-import { useBackend } from '../../backend';
+import { useBackend } from 'tgui/backend';
+import { Window } from 'tgui/layouts';
 import {
   Box,
   Button,
-  Flex,
   Input,
   Section,
+  Stack,
   Tabs,
   TextArea,
-} from '../../components';
-import { Window } from '../../layouts';
+} from 'tgui-core/components';
 
 type Data = {
   open_windows: string[];
@@ -20,12 +19,12 @@ type Data = {
 export const TguiFeedback = (props) => {
   const { act, data } = useBackend<Data>();
   const { open_windows, selected_window } = data;
-  const [rating, setRating] = useState('');
-  const [comment, setComment] = useState('');
+  const [rating, setRating] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
   return (
     <Window width={550} height={460}>
-      <Flex>
-        <Flex.Item>
+      <Stack>
+        <Stack.Item>
           <Section title="Open Windows" scrollable>
             <Tabs vertical>
               {open_windows.map((window) => (
@@ -39,21 +38,21 @@ export const TguiFeedback = (props) => {
               ))}
             </Tabs>
           </Section>
-        </Flex.Item>
-        <Flex.Item>
+        </Stack.Item>
+        <Stack.Item>
           {selected_window && (
             <>
               <Section title="Rating">
                 Please enter your rating of this window from a range from 1 to 5
                 <br />
-                <Input onChange={(e, val) => setRating(val)} value={rating} />
+                <Input onChange={(val) => setRating(val)} value={rating} />
               </Section>
               <Section title="Optional Comment">
                 If you want, you can leave an optional comment as well!
                 <br />
                 <TextArea
                   height={'18rem'}
-                  onChange={(e, val) => setComment(val)}
+                  onChange={(val) => setComment(val)}
                   value={comment}
                 />
               </Section>
@@ -67,8 +66,8 @@ export const TguiFeedback = (props) => {
             </>
           )}
           : {<>Please select an open window on the left!</>}
-        </Flex.Item>
-      </Flex>
+        </Stack.Item>
+      </Stack>
     </Window>
   );
 };

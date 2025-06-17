@@ -37,10 +37,9 @@
 		//ADMIN THINGS//
 		////////////////
 	/// hides the byond verb panel as we use our own custom version
-	show_verb_panel = FALSE //CHOMPEdit
+	show_verb_panel = FALSE
 	///Contains admin info. Null if client is not an admin.
 	var/datum/admins/holder = null
-	var/datum/admins/deadmin_holder = null
 	var/buildmode		= 0
 
 	///Contains the last message sent by this client - used to protect against copy-paste spamming.
@@ -82,6 +81,10 @@
 	var/mute_irc = 0
 	var/ip_reputation = 0 //Do we think they're using a proxy/vpn? Only if IP Reputation checking is enabled in config.
 
+	///Used for limiting the rate of topic sends by the client to avoid abuse
+	var/list/topiclimiter
+	///Used for limiting the rate of clicks sends by the client to avoid abuse
+	var/list/clicklimiter
 
 		////////////////////////////////////
 		//things that require the database//
@@ -107,23 +110,20 @@
 	var/last_asset_job = 0
 	var/last_completed_asset_job = 0
 
-	//CHOMPAdd Start Panel Ping
 	///Last ping of the client
 	var/lastping = 0
 	///Average ping of the client
 	var/avgping = 0
-	//CHOMPAdd End
 
- 	///world.time they connected
+	///world.time they connected
 	var/connection_time
- 	///world.realtime they connected
+	///world.realtime they connected
 	var/connection_realtime
- 	///world.timeofday they connected
+	///world.timeofday they connected
 	var/connection_timeofday
 
 	// Runechat messages
 	var/list/seen_messages
-	//CHOMPEdit Begin
 	/// our current tab
 	var/stat_tab
 
@@ -141,7 +141,6 @@
 	var/list/misc_cache = list()
 
 	var/atom/examine_icon //Holder for examine icon, useful for statpanel
-	//CHOMPEdit End
 
 	//Hide top bars
 	var/fullscreen = FALSE
@@ -167,12 +166,21 @@
 
 	/// Bitfield of movement dirs that were released *this* cycle (even if currently held).
 	/// Note that only dirs that were already held at the start of this cycle are included, if it pressed then released it won't be in here.
- 	/// On next move, subtract this dir from the move that would otherwise be done
+	/// On next move, subtract this dir from the move that would otherwise be done
 	var/next_move_dir_sub
 
 	#ifdef CARDINAL_INPUT_ONLY
 
-	/// Movement dir of the most recently pressed movement key.  Used in cardinal-only movement mode.
+	/// Movement dir of the most recently pressed movement key.  Used in GLOB.cardinal-only movement mode.
 	var/last_move_dir_pressed = NONE
 
 	#endif
+
+	/// If this client has been fully initialized or not
+	var/fully_created = FALSE
+
+	/// Token used for the external chatlog api. Only valid for the current round.
+	var/chatlog_token
+
+	/// The DPI scale of the client. 1 is equivalent to 100% window scaling, 2 will be 200% window scaling
+	var/window_scaling

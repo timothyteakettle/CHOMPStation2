@@ -2,102 +2,92 @@
 "a" = (
 /turf/template_noop,
 /area/template_noop)
+"b" = (
+/turf/simulated/mineral/ignore_mapgen/sif,
+/area/submap/FrostflyNest)
 "c" = (
 /obj/structure/boulder,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 "d" = (
-/turf/simulated/mineral,
+/turf/simulated/wall/solidrock,
 /area/submap/FrostflyNest)
 "e" = (
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 "f" = (
 /obj/structure/outcrop/diamond,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 "g" = (
 /obj/random/humanoidremains,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 "h" = (
-/mob/living/simple_mob/animal/sif/frostfly,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
+/obj/structure/prop/nest{
+	color = "#041164";
+	creature_types = list(/mob/living/simple_mob/animal/sif/frostfly);
+	name = "frostfly den";
+	spawn_delay = 300
 	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 "i" = (
 /obj/random/medical/lite,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 "j" = (
 /obj/random/humanoidremains,
 /obj/random/gun/random,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 "k" = (
 /obj/random/medical/pillbottle,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 "l" = (
 /obj/random/gun/random,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/turf/simulated/mineral/floor/ignore_mapgen/sif,
 /area/submap/FrostflyNest)
 
 (1,1,1) = {"
 a
 a
-d
-d
-d
-d
+b
+b
+b
+b
 c
-d
-d
+b
+b
 a
 "}
 (2,1,1) = {"
 a
-d
-d
+b
+b
 d
 d
 d
 e
 d
-d
-d
+b
+b
 "}
 (3,1,1) = {"
-d
-d
+b
+b
 d
 d
 f
 k
 e
 d
-d
-d
+b
+b
 "}
 (4,1,1) = {"
-d
+b
 d
 d
 h
@@ -106,19 +96,19 @@ e
 f
 d
 d
-d
+b
 "}
 (5,1,1) = {"
-d
+b
 d
 f
 i
 e
 e
-h
+e
 g
 d
-d
+b
 "}
 (6,1,1) = {"
 c
@@ -130,52 +120,52 @@ g
 f
 d
 d
-d
+b
 "}
 (7,1,1) = {"
-d
+b
 d
 d
 i
-h
+e
 e
 l
 d
-d
-d
+b
+b
 "}
 (8,1,1) = {"
-d
-d
+b
+b
 d
 d
 f
 d
 d
 d
-d
+b
 a
 "}
 (9,1,1) = {"
 a
+b
+b
 d
 d
 d
-d
-d
-d
-d
-d
+b
+b
+b
 a
 "}
 (10,1,1) = {"
 a
 a
-d
-d
-d
-d
-d
+b
+b
+b
+b
+b
 a
 a
 a

@@ -36,18 +36,16 @@
 	maptext_height = 26
 	maptext_width = 32
 
-/obj/machinery/door_timer/Initialize()
+/obj/machinery/door_timer/Initialize(mapload)
 	..()
 	return INITIALIZE_HINT_LATELOAD
 
 /obj/machinery/door_timer/LateInitialize()
-	. = ..()
-
-	for(var/obj/machinery/door/window/brigdoor/M in machines)
+	for(var/obj/machinery/door/window/brigdoor/M in GLOB.machines)
 		if(M.id == id)
 			LAZYADD(targets,M)
 
-	for(var/obj/machinery/flasher/F in machines)
+	for(var/obj/machinery/flasher/F in GLOB.machines)
 		if(F.id == id)
 			LAZYADD(targets,F)
 
@@ -173,13 +171,13 @@
 			break
 	return data
 
-/obj/machinery/door_timer/tgui_act(action, params)
+/obj/machinery/door_timer/tgui_act(action, params, datum/tgui/ui)
 	if(..())
 		return
 	. = TRUE
 
-	if(!allowed(usr))
-		to_chat(usr, "<span class='warning'>Access denied.</span>")
+	if(!allowed(ui.user))
+		to_chat(ui.user, span_warning("Access denied."))
 		return FALSE
 
 	switch(action)

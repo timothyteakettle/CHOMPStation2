@@ -14,14 +14,14 @@
 	var/list/affecting
 	var/voracity = 5 //How much stuff is swallowed at once.
 
-/obj/machinery/v_garbosystem/Initialize()
+/obj/machinery/v_garbosystem/Initialize(mapload)
 	. = ..()
-	for(var/dir in cardinal)
+	for(var/dir in GLOB.cardinal)
 		src.crusher = locate(/obj/machinery/recycling/crusher, get_step(src, dir))
 		if(src.crusher)
 			crusher.hand_fed = FALSE
 			break
-	for(var/dir in cardinal)
+	for(var/dir in GLOB.cardinal)
 		src.button = locate(/obj/machinery/button/garbosystem, get_step(src, dir))
 		if(src.button)
 			button.grinder = src
@@ -74,8 +74,8 @@
 						var/mob/living/L = A
 						if(!emagged && ishuman(L) && L.mind)
 							playsound(src, 'sound/machines/warning-buzzer.ogg', 50, 0, 0)
-							visible_message("<span class='warning'>POSSIBLE CREW MEMBER DETECTED! EMERGENCY STOP ENGAGED!</span>")
-							global_announcer.autosay("Possible crew member detected in grinder feed. Emergency Stop Protocols engaged!", "Recycling Grinder Alert", "Supply")
+							visible_message(span_warning("POSSIBLE CREW MEMBER DETECTED! EMERGENCY STOP ENGAGED!"))
+							GLOB.global_announcer.autosay("Possible crew member detected in grinder feed. Emergency Stop Protocols engaged!", "Recycling Grinder Alert", "Supply")
 							operating = FALSE
 							update()
 							break
@@ -120,7 +120,7 @@
 	emagged = !emagged
 	update()
 
-/obj/machinery/v_garbosystem/attackby(obj/item/weapon/W as obj, mob/user as mob)
+/obj/machinery/v_garbosystem/attackby(obj/item/W as obj, mob/user as mob)
 	if(W.is_crowbar())
 		if(!operating)
 			to_chat(user, "You crowbar the filter hatch open, releasing the items trapped within.")

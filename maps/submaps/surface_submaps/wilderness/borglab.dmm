@@ -1,23 +1,95 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
+"aa" = (
+/obj/effect/floor_decal/techfloor/orange{
+	dir = 1
+	},
+/obj/random/maintenance,
+/turf/simulated/floor/reinforced,
+/area/submap/BorgLab)
+"ab" = (
+/obj/effect/floor_decal/industrial/warning,
+/obj/effect/floor_decal/rust,
+/obj/random/energy,
+/turf/simulated/floor/plating,
+/area/submap/BorgLab)
 "ac" = (
 /obj/machinery/light_construct{
 	dir = 1
 	},
+/obj/effect/decal/cleanable/dirt,
 /mob/living/simple_mob/humanoid/merc/ranged{
 	health = 15;
 	maxHealth = 15
 	},
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "ad" = (
 /obj/effect/floor_decal/sign/c,
 /turf/simulated/wall/r_wall,
 /area/submap/BorgLab)
+"ae" = (
+/obj/effect/floor_decal/rust/mono_rusted3,
+/obj/random/maintenance/research,
+/mob/living/simple_mob/humanoid/merc/ranged/ionrifle{
+	health = 15;
+	maxHealth = 15
+	},
+/turf/simulated/floor/tiled,
+/area/submap/BorgLab)
+"af" = (
+/obj/effect/floor_decal/rust,
+/obj/effect/floor_decal/rust/mono_rusted3,
+/obj/effect/decal/cleanable/generic,
+/mob/living/simple_mob/mechanical/combat_drone/lesser{
+	faction = "corrupt"
+	},
+/turf/simulated/floor/tiled,
+/area/submap/BorgLab)
+"ag" = (
+/obj/effect/floor_decal/industrial/warning,
+/obj/effect/floor_decal/rust,
+/obj/effect/decal/cleanable/dirt,
+/mob/living/simple_mob/humanoid/merc/melee/sword/poi{
+	health = 15;
+	maxHealth = 15
+	},
+/turf/simulated/floor/tiled,
+/area/submap/BorgLab)
+"ah" = (
+/obj/effect/floor_decal/industrial/warning,
+/obj/machinery/light/small/emergency/flicker,
+/obj/effect/decal/cleanable/dirt,
+/obj/random/contraband,
+/turf/simulated/floor/tiled,
+/area/submap/BorgLab)
+"ai" = (
+/obj/effect/floor_decal/industrial/warning,
+/obj/effect/decal/cleanable/dirt,
+/mob/living/simple_mob/humanoid/merc/ranged{
+	health = 15;
+	maxHealth = 15
+	},
+/turf/simulated/floor/tiled,
+/area/submap/BorgLab)
+"aj" = (
+/obj/effect/floor_decal/industrial/warning{
+	dir = 1
+	},
+/obj/random/energy/highend,
+/turf/simulated/floor/reinforced,
+/area/submap/BorgLab)
+"ak" = (
+/obj/effect/floor_decal/techfloor/orange,
+/turf/simulated/floor/reinforced,
+/area/submap/BorgLab)
+"al" = (
+/obj/effect/floor_decal/techfloor/orange,
+/obj/random/contraband,
+/turf/simulated/floor/reinforced,
+/area/submap/BorgLab)
 "bj" = (
 /obj/structure/bed/padded,
-/obj/item/weapon/bedsheet/brown,
+/obj/item/bedsheet/brown,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/generic,
@@ -31,9 +103,9 @@
 /obj/structure/closet/secure_closet/chemical{
 	locked = 0
 	},
-/obj/item/weapon/storage/box/pillbottles,
-/obj/item/weapon/storage/box/syringes,
-/obj/item/weapon/tool/screwdriver,
+/obj/item/storage/box/pillbottles,
+/obj/item/storage/box/syringes,
+/obj/item/tool/screwdriver,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
@@ -41,10 +113,10 @@
 "bI" = (
 /obj/structure/window/reinforced,
 /obj/structure/grille/broken,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_y = 10
 	},
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6
 	},
 /obj/effect/decal/cleanable/generic,
@@ -67,7 +139,7 @@
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 1
 	},
-/obj/item/device/perfect_tele/frontier,
+/obj/structure/loot_pile/surface/bones,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "cA" = (
@@ -86,7 +158,7 @@
 /area/submap/BorgLab)
 "cZ" = (
 /obj/effect/floor_decal/techfloor/orange,
-/obj/item/stolenpackage,
+/obj/structure/loot_pile/surface/drone,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "dd" = (
@@ -128,13 +200,8 @@
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "fh" = (
-/mob/living/simple_mob/mechanical/combat_drone/lesser{
-	faction = "corrupt"
-	},
 /obj/effect/floor_decal/rust,
 /obj/effect/gibspawner/robot,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
@@ -142,11 +209,11 @@
 /obj/effect/floor_decal/industrial/warning{
 	dir = 1
 	},
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = -3;
 	pixel_y = -6
 	},
-/obj/item/weapon/material/shard,
+/obj/item/material/shard,
 /obj/effect/decal/cleanable/generic,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
@@ -157,23 +224,20 @@
 /obj/machinery/light/small/emergency/flicker{
 	dir = 8
 	},
-/turf/simulated/floor/plating{
-	temperature = 243.15
-	},
+/turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "gf" = (
 /obj/structure/table/standard,
-/obj/item/weapon/reagent_containers/food/snacks/burrito_cheese,
+/obj/item/reagent_containers/food/snacks/burrito_cheese,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/cell/super/empty,
+/obj/item/cell/super/empty,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "gh" = (
 /obj/effect/floor_decal/industrial/warning{
 	dir = 1
 	},
-/mob/living/simple_mob/vore/aggressive/corrupthound,
 /obj/machinery/light_construct{
 	dir = 1
 	},
@@ -188,15 +252,6 @@
 /obj/effect/decal/cleanable/generic,
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
-"gS" = (
-/obj/effect/floor_decal/rust/mono_rusted3,
-/mob/living/simple_mob/humanoid/merc/ranged/ionrifle{
-	health = 15;
-	maxHealth = 15
-	},
-/obj/random/maintenance/research,
-/turf/simulated/floor/tiled,
-/area/submap/BorgLab)
 "he" = (
 /obj/structure/window/reinforced{
 	dir = 4;
@@ -206,7 +261,7 @@
 	dir = 8;
 	health = 1e+006
 	},
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6;
 	pixel_y = -6
 	},
@@ -228,8 +283,15 @@
 	},
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
+/turf/simulated/floor/tiled,
+/area/submap/BorgLab)
+"if" = (
+/obj/effect/floor_decal/industrial/warning{
+	dir = 1
+	},
+/obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/random/single,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "ii" = (
@@ -278,7 +340,7 @@
 /area/submap/BorgLab)
 "jR" = (
 /obj/effect/floor_decal/techfloor/orange,
-/obj/item/weapon/broken_gun/ionrifle,
+/obj/item/broken_gun/ionrifle,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "kj" = (
@@ -288,7 +350,7 @@
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "kt" = (
-/obj/item/device/mass_spectrometer/adv,
+/obj/item/mass_spectrometer/adv,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
@@ -298,7 +360,6 @@
 /obj/machinery/door/airlock/maintenance/rnd{
 	req_one_access = null
 	},
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/techmaint,
 /area/submap/BorgLab)
@@ -320,16 +381,6 @@
 "lU" = (
 /obj/machinery/chem_master,
 /obj/effect/floor_decal/rust/mono_rusted3,
-/turf/simulated/floor/tiled,
-/area/submap/BorgLab)
-"lZ" = (
-/obj/effect/floor_decal/industrial/warning,
-/obj/effect/floor_decal/rust,
-/mob/living/simple_mob/humanoid/merc/melee/sword/poi{
-	health = 15;
-	maxHealth = 15
-	},
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "ma" = (
@@ -356,8 +407,11 @@
 /turf/simulated/floor/tiled/techmaint,
 /area/submap/BorgLab)
 "mw" = (
-/obj/structure/sign/department/drones,
-/turf/simulated/wall/r_wall,
+/obj/effect/floor_decal/techfloor/orange{
+	dir = 1
+	},
+/obj/random/multiple/gun/projectile/rifle,
+/turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "mB" = (
 /obj/machinery/door/window/brigdoor/westright{
@@ -376,7 +430,7 @@
 /area/submap/BorgLab)
 "mE" = (
 /obj/effect/floor_decal/techfloor/orange,
-/obj/item/weapon/storage/backpack/holding/duffle,
+/obj/item/storage/backpack/holding/duffle,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "nb" = (
@@ -418,13 +472,6 @@
 	},
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
-"nV" = (
-/obj/effect/floor_decal/industrial/warning,
-/obj/machinery/light/small/emergency/flicker,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled,
-/area/submap/BorgLab)
 "nW" = (
 /obj/effect/floor_decal/rust,
 /obj/structure/table,
@@ -433,7 +480,7 @@
 /area/submap/BorgLab)
 "oa" = (
 /obj/effect/floor_decal/industrial/warning,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6;
 	pixel_y = -6
 	},
@@ -451,19 +498,20 @@
 	dir = 1
 	},
 /obj/random/trash,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "pY" = (
 /obj/machinery/power/port_gen/pacman,
 /obj/structure/cable/blue{
-	d2 = 2;
 	icon_state = "0-2"
 	},
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "qa" = (
 /obj/structure/table/standard,
-/obj/item/weapon/reagent_containers/food/snacks/monkeysdelight,
+/obj/item/reagent_containers/food/snacks/monkeysdelight,
 /obj/effect/floor_decal/rust/mono_rusted2,
 /turf/simulated/floor/tiled/dark,
 /area/submap/BorgLab)
@@ -483,7 +531,7 @@
 	dir = 1
 	},
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6
 	},
 /obj/effect/decal/cleanable/dirt,
@@ -491,7 +539,6 @@
 /area/submap/BorgLab)
 "rP" = (
 /obj/machinery/firealarm{
-	alarms_hidden = 1;
 	dir = 8;
 	pixel_x = -24
 	},
@@ -507,7 +554,7 @@
 /area/submap/BorgLab)
 "ta" = (
 /obj/structure/bed/padded,
-/obj/item/weapon/bedsheet/brown,
+/obj/item/bedsheet/brown,
 /obj/machinery/light_construct{
 	dir = 8
 	},
@@ -550,7 +597,8 @@
 /area/submap/BorgLab)
 "ub" = (
 /obj/effect/floor_decal/industrial/warning,
-/obj/item/stolenpackage,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "ug" = (
@@ -575,12 +623,12 @@
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 1
 	},
-/obj/item/device/nif,
+/obj/structure/closet/crate/secure/loot,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "wq" = (
 /obj/structure/table/standard,
-/obj/item/weapon/phone,
+/obj/item/phone,
 /obj/effect/floor_decal/rust/mono_rusted2,
 /turf/simulated/floor/tiled/dark,
 /area/submap/BorgLab)
@@ -595,12 +643,14 @@
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "xh" = (
-/mob/living/simple_mob/vore/aggressive/corrupthound,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/gibspawner/human,
 /obj/random/trash,
+/mob/living/simple_mob/mechanical/combat_drone/lesser{
+	faction = "corrupt"
+	},
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "xk" = (
@@ -624,8 +674,9 @@
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "xO" = (
-/mob/living/simple_mob/vore/aggressive/corrupthound,
 /obj/effect/decal/cleanable/generic,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "xU" = (
@@ -634,7 +685,7 @@
 /area/submap/BorgLab)
 "yq" = (
 /obj/structure/grille/broken,
-/obj/item/weapon/material/shard,
+/obj/item/material/shard,
 /obj/machinery/door/blast/regular{
 	dir = 8;
 	id = "borg";
@@ -645,24 +696,26 @@
 /area/submap/BorgLab)
 "yz" = (
 /obj/effect/floor_decal/industrial/warning,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = -3;
 	pixel_y = -6
 	},
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "yB" = (
-/mob/living/simple_mob/mechanical/combat_drone{
-	faction = "corrupt"
-	},
 /obj/random/trash,
+/mob/living/simple_mob/mechanical/mecha/hoverpod,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "yI" = (
-/mob/living/simple_mob/vore/aggressive/corrupthound,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
+/mob/living/simple_mob/mechanical/combat_drone/lesser{
+	faction = "corrupt"
+	},
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "yR" = (
@@ -679,9 +732,6 @@
 	},
 /area/submap/BorgLab)
 "zk" = (
-/obj/effect/floor_decal/stairs{
-	dir = 8
-	},
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "As" = (
@@ -690,11 +740,12 @@
 	},
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "AI" = (
-/mob/living/simple_mob/vore/aggressive/corrupthound,
+/mob/living/simple_mob/mechanical/combat_drone/lesser{
+	faction = "corrupt"
+	},
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "Bl" = (
@@ -702,8 +753,8 @@
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Bq" = (
-/mob/living/simple_mob/vore/aggressive/corrupthound,
 /obj/random/trash,
+/mob/living/simple_mob/mechanical/mining_drone,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "Cf" = (
@@ -712,7 +763,7 @@
 	dir = 8
 	},
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/module/power_control,
+/obj/item/module/power_control,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "Cz" = (
@@ -723,7 +774,6 @@
 /area/submap/BorgLab)
 "CA" = (
 /obj/effect/floor_decal/rust,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
@@ -741,8 +791,8 @@
 /area/submap/BorgLab)
 "Dj" = (
 /obj/structure/table/standard,
-/obj/item/weapon/reagent_containers/glass/beaker/large,
-/obj/item/weapon/reagent_containers/dropper,
+/obj/item/reagent_containers/glass/beaker/large,
+/obj/item/reagent_containers/dropper,
 /obj/effect/floor_decal/rust,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
@@ -771,7 +821,7 @@
 /area/submap/BorgLab)
 "Fj" = (
 /obj/effect/floor_decal/industrial/warning,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_y = 10
 	},
 /turf/simulated/floor/tiled,
@@ -780,11 +830,10 @@
 /obj/effect/floor_decal/industrial/warning,
 /obj/random/junk,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "Fu" = (
-/obj/item/weapon/storage/box/beakers,
+/obj/item/storage/box/beakers,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
@@ -802,25 +851,12 @@
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Gz" = (
-/mob/living/simple_mob/vore/aggressive/corrupthound/prettyboi{
-	health = 300;
-	maxHealth = 300;
-	melee_damage_lower = 15;
-	melee_damage_upper = 25
-	},
+/mob/living/simple_mob/mechanical/mining_drone,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "GA" = (
 /obj/machinery/door/airlock/maintenance/common,
 /turf/simulated/floor/plating,
-/area/submap/BorgLab)
-"GC" = (
-/obj/effect/floor_decal/industrial/warning{
-	dir = 1
-	},
-/obj/effect/floor_decal/rust,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "GS" = (
 /obj/item/stack/material/gold{
@@ -828,8 +864,9 @@
 	},
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
-"HA" = (
-/obj/effect/floor_decal/techfloor/orange,
+"Ic" = (
+/obj/random/trash,
+/mob/living/simple_mob/mechanical/mecha/ripley/deathripley,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "Jd" = (
@@ -840,15 +877,9 @@
 /area/submap/BorgLab)
 "Jh" = (
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/material/shard,
+/obj/item/material/shard,
 /obj/effect/floor_decal/rust/mono_rusted3,
 /obj/random/trash,
-/turf/simulated/floor/tiled,
-/area/submap/BorgLab)
-"Jm" = (
-/obj/effect/floor_decal/industrial/warning,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "Jo" = (
@@ -856,10 +887,10 @@
 	dir = 1
 	},
 /obj/structure/grille,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_y = 10
 	},
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6;
 	pixel_y = -6
 	},
@@ -879,10 +910,12 @@
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Jr" = (
-/obj/effect/landmark/loot_spawn/low,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
+/obj/effect/floor_decal/techfloor/orange{
+	dir = 1
 	},
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "JZ" = (
 /obj/effect/floor_decal/industrial/warning/corner,
@@ -897,10 +930,10 @@
 	dir = 4;
 	health = 1e+006
 	},
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_y = 10
 	},
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6;
 	pixel_y = -6
 	},
@@ -910,13 +943,6 @@
 	},
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
-"KX" = (
-/mob/living/simple_mob/vore/aggressive/corrupthound,
-/obj/effect/floor_decal/techfloor/orange{
-	dir = 1
-	},
-/turf/simulated/floor/reinforced,
-/area/submap/BorgLab)
 "Lr" = (
 /obj/structure/window/reinforced{
 	dir = 8
@@ -925,11 +951,11 @@
 	dir = 1
 	},
 /obj/structure/grille/broken,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = -3;
 	pixel_y = -6
 	},
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_y = 10
 	},
 /obj/machinery/door/blast/regular{
@@ -949,13 +975,12 @@
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "LB" = (
-/obj/structure/table/rack/shelf/steel,
 /obj/item/stack/material/phoron{
 	amount = 10
 	},
 /obj/random/toolbox,
 /obj/random/toolbox,
-/obj/item/weapon/storage/box/lights/mixed,
+/obj/item/storage/box/lights/mixed,
 /obj/random/maintenance/research,
 /obj/random/maintenance/research,
 /obj/random/maintenance/research,
@@ -963,11 +988,15 @@
 /obj/item/stack/material/phoron{
 	amount = 10
 	},
+/obj/structure/table/rack,
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "LC" = (
-/obj/item/weapon/reagent_containers/food/snacks/sliceable/supremoburrito,
-/turf/simulated/floor/plating,
+/obj/effect/gibspawner/human,
+/mob/living/simple_mob/mechanical/mecha/odysseus/murdysseus{
+	faction = "corrupt"
+	},
+/turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "MT" = (
 /obj/machinery/space_heater,
@@ -988,8 +1017,7 @@
 /area/submap/BorgLab)
 "Nq" = (
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/material/shard,
-/obj/effect/decal/cleanable/dirt,
+/obj/item/material/shard,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
@@ -1014,15 +1042,13 @@
 	},
 /obj/random/trash,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "NB" = (
 /obj/effect/floor_decal/industrial/warning{
 	dir = 1
 	},
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6;
 	pixel_y = -6
 	},
@@ -1037,8 +1063,8 @@
 /obj/structure/window/reinforced{
 	dir = 1
 	},
-/obj/item/weapon/material/shard,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard,
+/obj/item/material/shard{
 	pixel_y = 10
 	},
 /obj/effect/decal/cleanable/dirt,
@@ -1054,13 +1080,12 @@
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Oz" = (
-/obj/item/weapon/pickaxe/plasmacutter,
+/obj/item/pickaxe/plasmacutter,
 /obj/machinery/firealarm{
-	alarms_hidden = 1;
 	pixel_y = 24
 	},
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/material/shard,
+/obj/item/material/shard,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "OD" = (
@@ -1078,11 +1103,11 @@
 /area/submap/BorgLab)
 "OW" = (
 /obj/structure/table/standard,
-/obj/item/device/flashlight/lamp,
+/obj/item/flashlight/lamp,
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 1
 	},
-/obj/item/weapon/broken_gun/laserrifle,
+/obj/item/broken_gun/laserrifle,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "Pf" = (
@@ -1092,29 +1117,9 @@
 /obj/effect/decal/cleanable/generic,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
-"Pk" = (
-/obj/effect/floor_decal/industrial/warning,
-/obj/effect/floor_decal/rust,
-/turf/simulated/floor/plating,
-/area/submap/BorgLab)
-"PW" = (
-/obj/effect/floor_decal/industrial/warning,
-/mob/living/simple_mob/humanoid/merc/ranged{
-	health = 15;
-	maxHealth = 15
-	},
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled,
-/area/submap/BorgLab)
 "Qe" = (
-/obj/effect/floor_decal/stairs{
-	dir = 8
-	},
 /obj/effect/map_effect/interval/sound_emitter/energy_gunfight,
-/turf/simulated/floor/plating{
-	temperature = 243.15
-	},
+/turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Qg" = (
 /turf/simulated/mineral/ignore_mapgen,
@@ -1124,13 +1129,16 @@
 	dir = 4
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "Qs" = (
 /obj/effect/floor_decal/industrial/warning,
-/mob/living/simple_mob/vore/aggressive/corrupthound,
 /obj/machinery/light/small/emergency/flicker,
+/turf/simulated/floor/plating,
+/area/submap/BorgLab)
+"Qz" = (
+/obj/effect/floor_decal/rust,
+/obj/structure/loot_pile/surface/drone,
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "QW" = (
@@ -1166,14 +1174,6 @@
 "RP" = (
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/BorgLab)
-"RZ" = (
-/obj/effect/floor_decal/industrial/warning{
-	dir = 1
-	},
-/obj/effect/floor_decal/rust,
-/obj/effect/map_helper/no_phaseshift,
-/turf/simulated/floor/plating,
-/area/submap/BorgLab)
 "Su" = (
 /obj/effect/floor_decal/techfloor/orange,
 /obj/item/stack/material/uranium{
@@ -1186,7 +1186,6 @@
 	dir = 4
 	},
 /obj/random/trash,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/generic,
 /turf/simulated/floor/tiled,
@@ -1201,8 +1200,8 @@
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "SZ" = (
-/mob/living/simple_mob/vore/aggressive/corrupthound,
 /obj/effect/floor_decal/techfloor/orange,
+/obj/structure/loot_pile/surface/bones,
 /turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "Tj" = (
@@ -1217,15 +1216,6 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/generic,
 /turf/simulated/floor/plating,
-/area/submap/BorgLab)
-"Tt" = (
-/mob/living/simple_mob/mechanical/combat_drone/lesser{
-	faction = "corrupt"
-	},
-/obj/effect/floor_decal/rust,
-/obj/effect/floor_decal/rust/mono_rusted3,
-/obj/effect/decal/cleanable/generic,
-/turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "Tv" = (
 /obj/effect/floor_decal/sign/a,
@@ -1279,7 +1269,7 @@
 /obj/effect/floor_decal/borderfloorwhite/cee{
 	dir = 1
 	},
-/obj/item/weapon/soap/nanotrasen,
+/obj/item/soap/nanotrasen,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
@@ -1306,7 +1296,7 @@
 	dir = 1
 	},
 /obj/structure/grille/broken,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6;
 	pixel_y = -6
 	},
@@ -1330,7 +1320,7 @@
 	dir = 1
 	},
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/material/shard{
+/obj/item/material/shard{
 	pixel_x = 6;
 	pixel_y = -6
 	},
@@ -1354,17 +1344,22 @@
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Wh" = (
-/obj/effect/landmark/loot_spawn/low,
-/turf/simulated/floor/outdoors/dirt,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/reinforced,
 /area/submap/BorgLab)
 "Wq" = (
-/obj/structure/sign/department/xenolab,
-/turf/simulated/wall/r_wall,
+/obj/effect/floor_decal/rust,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "WK" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
-/obj/item/weapon/broken_gun/laser_retro,
+/obj/item/broken_gun/laser_retro,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "WQ" = (
@@ -1385,15 +1380,10 @@
 /obj/effect/decal/cleanable/generic,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
-"Yk" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/plating,
-/area/submap/BorgLab)
 "Yy" = (
 /obj/structure/table/steel,
-/obj/item/weapon/coin/phoron,
-/obj/item/weapon/storage/toolbox/syndicate/powertools,
+/obj/item/coin/phoron,
+/obj/item/storage/toolbox/syndicate/powertools,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/random/maintenance/research,
@@ -1413,7 +1403,6 @@
 "YZ" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Za" = (
@@ -1422,12 +1411,10 @@
 /area/submap/BorgLab)
 "Zc" = (
 /obj/structure/railing,
-/turf/simulated/floor/plating{
-	temperature = 243.15
-	},
+/turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Zn" = (
-/obj/item/device/measuring_tape,
+/obj/item/measuring_tape,
 /turf/simulated/floor/plating,
 /area/submap/BorgLab)
 "Zq" = (
@@ -1452,13 +1439,11 @@
 /obj/effect/floor_decal/rust,
 /obj/random/junk,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
 "ZO" = (
 /obj/effect/floor_decal/rust,
 /obj/random/trash,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/tiled,
 /area/submap/BorgLab)
@@ -1586,7 +1571,7 @@ Ns
 Zt
 lU
 kj
-Yk
+Bl
 Fu
 bN
 WQ
@@ -1673,7 +1658,7 @@ Zn
 WQ
 RG
 RG
-Jr
+bL
 RP
 RP
 DF
@@ -1741,13 +1726,13 @@ Qg
 Qg
 WQ
 WQ
-KX
+aa
 jf
 Vc
 bI
-RZ
+RL
 Nj
-lZ
+ag
 YD
 Jd
 tx
@@ -1769,15 +1754,15 @@ Qg
 WQ
 WQ
 xz
-TW
+LC
 Jp
 ug
 ej
 XG
 nb
 ne
-Jd
-yB
+aj
+Ic
 Nj
 WQ
 WQ
@@ -1797,7 +1782,7 @@ WQ
 WQ
 OW
 nk
-Pk
+ab
 OH
 Pf
 nW
@@ -1825,10 +1810,10 @@ WQ
 WQ
 WQ
 WQ
-Wq
+WQ
 gh
 Lz
-nV
+ah
 cA
 WQ
 WQ
@@ -1881,8 +1866,8 @@ Gz
 Vc
 wt
 ra
-gS
-Jm
+ae
+dd
 ne
 RL
 Bq
@@ -1909,7 +1894,7 @@ UM
 yq
 rO
 Jh
-Yk
+Bl
 he
 op
 tx
@@ -1935,8 +1920,8 @@ WQ
 WQ
 WQ
 ii
-Tt
-PW
+af
+ai
 ad
 WQ
 WQ
@@ -1957,7 +1942,7 @@ Qg
 Qg
 WQ
 WQ
-TD
+mw
 TU
 Vc
 YD
@@ -1967,7 +1952,7 @@ dd
 UW
 ga
 bz
-HA
+ak
 WQ
 WQ
 RG
@@ -2015,7 +2000,7 @@ bY
 tx
 Vc
 YD
-As
+if
 CX
 Nb
 OH
@@ -2041,7 +2026,7 @@ WQ
 WQ
 WQ
 WQ
-Wq
+WQ
 ac
 th
 Qs
@@ -2066,16 +2051,16 @@ Qg
 WQ
 WQ
 pe
-tx
+Wh
 yz
 Jo
-GC
+As
 th
 Fj
 KH
 NB
 Nj
-Nj
+Qz
 WQ
 WQ
 RG
@@ -2094,7 +2079,7 @@ WQ
 WQ
 WK
 xO
-Vc
+ub
 mB
 Vr
 Bl
@@ -2102,7 +2087,7 @@ qW
 Zq
 op
 xh
-HA
+SZ
 WQ
 WQ
 RG
@@ -2119,17 +2104,17 @@ bL
 RG
 WQ
 WQ
-KX
-Nj
+Jr
+Wq
 ub
 YD
 iS
-Yk
+Bl
 Vh
 tX
 Jd
 tx
-HA
+al
 WQ
 WQ
 RG
@@ -2160,7 +2145,7 @@ WQ
 WQ
 RG
 RG
-Wh
+RP
 RP
 DF
 DF
@@ -2177,11 +2162,11 @@ WQ
 WQ
 sK
 WQ
-mw
+WQ
 kI
 WQ
 WQ
-LC
+qW
 WQ
 WQ
 RG
@@ -2258,7 +2243,7 @@ DF
 Qg
 Qg
 WQ
-mw
+WQ
 ms
 WQ
 WQ

@@ -1,4 +1,4 @@
-var/global/list/grub_machine_overlays = list()
+GLOBAL_LIST_EMPTY(grub_machine_overlays)
 
 /mob/living/simple_mob/animal/solargrub_larva
 	name = "solargrub larva"
@@ -17,10 +17,10 @@ var/global/list/grub_machine_overlays = list()
 	melee_damage_upper = 1
 
 	meat_amount = 1
-	meat_type = /obj/item/weapon/reagent_containers/food/snacks/meat/grubmeat
+	meat_type = /obj/item/reagent_containers/food/snacks/meat/grubmeat
 	butchery_loot = list()		// No hides
 
-	faction = "grubs"
+	faction = FACTION_GRUBS
 
 	response_help = "pats"
 	response_disarm = "nudges"
@@ -53,14 +53,14 @@ var/global/list/grub_machine_overlays = list()
 
 	glow_override = TRUE
 
-/mob/living/simple_mob/animal/solargrub_larva/New()
-	..()
-	existing_solargrubs += src
+/mob/living/simple_mob/animal/solargrub_larva/Initialize(mapload)
+	. = ..()
+	GLOB.existing_solargrubs += src
 	powermachine = new(src)
 	sparks = new(src)
 	sparks.set_up()
 	sparks.attach(src)
-	add_verb(src,/mob/living/proc/ventcrawl) //CHOMPEdit TGPanel
+	add_verb(src, /mob/living/proc/ventcrawl)
 
 /mob/living/simple_mob/animal/solargrub_larva/death()
 	powermachine.draining = 0
@@ -68,7 +68,7 @@ var/global/list/grub_machine_overlays = list()
 	return ..()
 
 /mob/living/simple_mob/animal/solargrub_larva/Destroy()
-	existing_solargrubs -= src
+	GLOB.existing_solargrubs -= src
 	QDEL_NULL(powermachine)
 	QDEL_NULL(sparks)
 	QDEL_NULL(machine_effect)
@@ -88,7 +88,7 @@ var/global/list/grub_machine_overlays = list()
 		return
 
 	if(istype(loc, /obj/machinery))
-		if(machine_effect && air_master.current_cycle%30)
+		if(machine_effect && SSair.current_cycle%30)
 			for(var/mob/M in player_list)
 				M << machine_effect
 		if(prob(10))
@@ -122,10 +122,10 @@ var/global/list/grub_machine_overlays = list()
 	set_AI_busy(TRUE)
 	forceMove(M)
 	powermachine.draining = 2
-	visible_message("<span class='warning'>\The [src] finds an opening and crawls inside \the [M].</span>")
-	if(!(M.type in grub_machine_overlays))
+	visible_message(span_warning("\The [src] finds an opening and crawls inside \the [M]."))
+	if(!(M.type in GLOB.grub_machine_overlays))
 		generate_machine_effect(M)
-	machine_effect = image(grub_machine_overlays[M.type], M) //Can't do this the reasonable way with an overlay,
+	machine_effect = image(GLOB.grub_machine_overlays[M.type], M) //Can't do this the reasonable way with an overlay,
 	for(var/mob/L in player_list)				//because nearly every machine updates its icon by removing all overlays first
 		L << machine_effect
 
@@ -133,7 +133,7 @@ var/global/list/grub_machine_overlays = list()
 	var/icon/I = new /icon(M.icon, M.icon_state)
 	I.Blend(new /icon('icons/effects/blood.dmi', rgb(255,255,255)),ICON_ADD)
 	I.Blend(new /icon('icons/effects/alert.dmi', "_red"),ICON_MULTIPLY)
-	grub_machine_overlays[M.type] = I
+	GLOB.grub_machine_overlays[M.type] = I
 
 /mob/living/simple_mob/animal/solargrub_larva/proc/eject_from_machine(var/obj/machinery/M)
 	if(!M)
@@ -176,7 +176,7 @@ var/global/list/grub_machine_overlays = list()
 
 /mob/living/simple_mob/animal/solargrub_larva/proc/expand_grub()
 	eject_from_machine()
-	visible_message("<span class='warning'>\The [src] suddenly balloons in size!</span>")
+	visible_message(span_warning("\The [src] suddenly balloons in size!"))
 	log_game("A larva has matured into a grub in area [src.loc.name] ([src.x],[src.y],[src.z]")
 	var/mob/living/simple_mob/vore/solargrub/adult = new(get_turf(src))
 	adult.tracked = tracked
@@ -253,13 +253,13 @@ var/global/list/grub_machine_overlays = list()
 		ignored_targets += A
 
 
-/obj/machinery/abstract_grub_machine/New()
-	..()
+/obj/machinery/abstract_grub_machine/Initialize(mapload)
+	. = ..()
 	shuffle_power_usages()
 	grub = loc
 	if(!istype(grub))
 		grub = null
-		qdel(src)
+		return INITIALIZE_HINT_QDEL
 
 /obj/machinery/abstract_grub_machine/Destroy()
 	grub = null
@@ -291,22 +291,22 @@ var/global/list/grub_machine_overlays = list()
 	idle_power_usages = split_into_3(total_idle_power_usage)
 
 
-/obj/item/device/multitool/afterattack(obj/O, mob/user, proximity)
+/obj/item/multitool/afterattack(obj/O, mob/user, proximity)
 	if(proximity)
 		if(istype(O, /obj/machinery))
 			var/mob/living/simple_mob/animal/solargrub_larva/grub = locate() in O
 			if(grub)
 				grub.eject_from_machine(O)
-				to_chat(user, "<span class='warning'>You disturb a grub nesting in \the [O]!</span>")
+				to_chat(user, span_warning("You disturb a grub nesting in \the [O]!"))
 				return
 	return ..()
 
-/obj/item/weapon/melee/baton/afterattack(obj/O, mob/user, proximity)
+/obj/item/melee/baton/afterattack(obj/O, mob/user, proximity)
 	if(proximity)
 		if(istype(O, /obj/machinery))
 			var/mob/living/simple_mob/animal/solargrub_larva/grub = locate() in O
 			if(grub)
 				grub.eject_from_machine(O)
-				to_chat(user, "<span class='warning'>You disturb a grub nesting in \the [O]!</span>")
+				to_chat(user, span_warning("You disturb a grub nesting in \the [O]!"))
 				return
 	return ..()

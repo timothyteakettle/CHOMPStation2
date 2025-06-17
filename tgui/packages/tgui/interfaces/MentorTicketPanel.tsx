@@ -1,9 +1,8 @@
 /* eslint react/no-danger: "off" */
-import { round, toFixed } from 'common/math';
-
-import { useBackend } from '../backend';
-import { Box, Button, LabeledList, Section } from '../components';
-import { Window } from '../layouts';
+import { useBackend } from 'tgui/backend';
+import { Window } from 'tgui/layouts';
+import { Button, LabeledList, Section, Stack } from 'tgui-core/components';
+import { round, toFixed } from 'tgui-core/math';
 
 const State = {
   open: 'Open',
@@ -28,7 +27,6 @@ export const MentorTicketPanel = (props) => {
   const { act, data } = useBackend<Data>();
   const {
     id,
-    title,
     name,
     state,
     opened_at,
@@ -44,12 +42,16 @@ export const MentorTicketPanel = (props) => {
         <Section
           title={'Ticket #' + id}
           buttons={
-            <Box nowrap>
-              <Button icon="arrow-up" onClick={() => act('escalate')}>
-                Escalate
-              </Button>
-              <Button onClick={() => act('legacy')}>Legacy UI</Button>
-            </Box>
+            <Stack>
+              <Stack.Item>
+                <Button icon="arrow-up" onClick={() => act('escalate')}>
+                  Escalate
+                </Button>
+              </Stack.Item>
+              <Stack.Item>
+                <Button onClick={() => act('legacy')}>Legacy UI</Button>
+              </Stack.Item>
+            </Stack>
           }
         >
           <LabeledList>

@@ -12,7 +12,6 @@
 /turf/simulated/floor,
 /area/submap/XenoHive)
 "bq" = (
-/obj/structure/closet/secure_closet/egg/xenomorph,
 /obj/effect/alien/weeds,
 /obj/random/maintenance/medical,
 /obj/random/maintenance/medical,
@@ -20,6 +19,9 @@
 /obj/random/plushie,
 /obj/item/organ/internal/augment/armmounted,
 /obj/item/organ/internal/intestine,
+/obj/structure/safe,
+/obj/random/projectile/scrapped_laser,
+/obj/random/contraband,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -34,16 +36,17 @@
 "co" = (
 /obj/effect/alien/weeds,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/map_helper/no_phaseshift,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
 /area/submap/XenoHive)
 "dk" = (
+/mob/living/simple_mob/animal/space/alien/sentinel,
 /obj/effect/alien/weeds,
-/obj/effect/landmark/loot_spawn/low,
-/turf/simulated/floor/outdoors/dirt,
+/obj/structure/loot_pile/maint/technical,
+/turf/simulated/floor/outdoors/dirt{
+	outdoors = 0
+	},
 /area/submap/XenoHive)
 "dm" = (
 /obj/effect/alien/weeds,
@@ -71,21 +74,16 @@
 /area/submap/XenoHive)
 "fW" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/map_effect/interval/sound_emitter/ballistic_gunfight,
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/XenoHive)
 "gO" = (
-/obj/structure/closet/secure_closet/egg/xenomorph,
 /obj/effect/alien/weeds,
-/obj/item/stolenpackage,
 /obj/item/organ/internal/heart,
 /obj/item/organ/internal/kidneys/vox,
-/obj/structure/reagent_dispensers/space_cleaner{
-	pixel_y = 31
-	},
+/obj/structure/safe,
+/obj/random/multiple/gun/projectile/shotgun,
+/obj/random/contraband,
 /turf/simulated/floor,
 /area/submap/XenoHive)
 "gS" = (
@@ -101,6 +99,7 @@
 "im" = (
 /obj/item/stack/animalhide/xeno,
 /obj/effect/alien/weeds,
+/obj/structure/table/rack,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -153,8 +152,11 @@
 /turf/simulated/floor/tiled/steel_dirty,
 /area/submap/XenoHive)
 "ps" = (
-/obj/structure/sign/department/xenolab,
-/turf/simulated/wall/skipjack,
+/obj/effect/alien/weeds,
+/obj/structure/loot_pile/maint/technical,
+/turf/simulated/floor/outdoors/rocks{
+	outdoors = 0
+	},
 /area/submap/XenoHive)
 "qz" = (
 /mob/living/simple_mob/animal/space/alien/sentinel/praetorian,
@@ -174,8 +176,6 @@
 "sp" = (
 /obj/effect/alien/weeds/node,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -191,7 +191,7 @@
 /area/submap/XenoHive)
 "tz" = (
 /obj/effect/alien/weeds,
-/obj/effect/landmark/loot_spawn,
+/obj/structure/loot_pile/maint/technical,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -260,13 +260,6 @@
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor,
 /area/submap/XenoHive)
-"zm" = (
-/obj/item/modular_computer/tablet/preset/custom_loadout/elite,
-/obj/effect/alien/weeds,
-/turf/simulated/floor/outdoors/rocks{
-	outdoors = 0
-	},
-/area/submap/XenoHive)
 "zU" = (
 /obj/structure/salvageable/autolathe,
 /obj/effect/alien/weeds,
@@ -296,14 +289,14 @@
 /turf/simulated/floor/tiled/steel_dirty,
 /area/submap/XenoHive)
 "Ce" = (
-/obj/structure/closet/secure_closet/egg/xenomorph,
 /obj/effect/alien/weeds,
 /obj/random/maintenance/security,
 /obj/random/maintenance/security,
 /obj/random/maintenance/security,
-/obj/item/organ/internal/brain/alraune,
 /obj/item/organ/internal/eyes/replicant,
-/obj/item/weapon/gun/energy/gun/fluff/dominator,
+/obj/structure/safe,
+/obj/random/multiple/gun/projectile/rifle,
+/obj/random/contraband,
 /turf/simulated/floor,
 /area/submap/XenoHive)
 "CR" = (
@@ -332,11 +325,6 @@
 /obj/effect/alien/weeds,
 /turf/simulated/floor,
 /area/submap/XenoHive)
-"FV" = (
-/obj/effect/alien/weeds,
-/obj/structure/reagent_dispensers/fueltank/high,
-/turf/simulated/floor,
-/area/submap/XenoHive)
 "Gw" = (
 /obj/structure/table,
 /obj/effect/alien/weeds,
@@ -361,12 +349,11 @@
 /turf/simulated/floor/outdoors/dirt,
 /area/template_noop)
 "Hu" = (
-/obj/structure/table/rack/shelf/steel,
 /obj/effect/alien/weeds,
 /turf/simulated/floor,
 /area/submap/XenoHive)
 "Hx" = (
-/obj/item/weapon/portable_destructive_analyzer,
+/obj/item/portable_destructive_analyzer,
 /obj/effect/alien/weeds,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
@@ -380,22 +367,15 @@
 	},
 /area/submap/XenoHive)
 "HI" = (
-/obj/structure/prop/blackbox/xenofrigate,
 /obj/effect/alien/weeds,
+/obj/structure/prop/blackbox/quarantined_shuttle,
 /turf/simulated/floor/tiled/techfloor/grid,
-/area/submap/XenoHive)
-"HJ" = (
-/obj/effect/alien/weeds,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/rocks{
-	outdoors = 0
-	},
 /area/submap/XenoHive)
 "HO" = (
 /obj/structure/table,
 /obj/effect/alien/weeds,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/weapon/storage/backpack/holding,
+/obj/item/storage/backpack/holding,
 /turf/simulated/floor,
 /area/submap/XenoHive)
 "Ir" = (
@@ -405,7 +385,7 @@
 /area/submap/XenoHive)
 "Is" = (
 /obj/effect/alien/weeds,
-/obj/effect/landmark/loot_spawn,
+/obj/structure/loot_pile/maint/boxfort,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -446,7 +426,7 @@
 /area/submap/XenoHive)
 "MZ" = (
 /obj/effect/alien/weeds,
-/obj/effect/landmark/loot_spawn/low,
+/obj/structure/loot_pile/maint/boxfort,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -454,7 +434,6 @@
 "Or" = (
 /obj/effect/alien/weeds,
 /obj/effect/alien/weeds,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
@@ -468,7 +447,6 @@
 /area/submap/XenoHive)
 "Pq" = (
 /obj/structure/simple_door/resin,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
@@ -487,11 +465,11 @@
 /turf/template_noop,
 /area/submap/XenoHive)
 "QC" = (
-/obj/structure/closet/secure_closet/egg/xenomorph,
 /obj/effect/alien/weeds,
-/obj/item/stolenpackage,
-/obj/item/organ/internal/fruitgland,
 /obj/item/organ/internal/intestine/xeno,
+/obj/structure/safe,
+/obj/random/multiple/gun/projectile/handgun,
+/obj/random/contraband,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -534,33 +512,15 @@
 /obj/effect/alien/weeds,
 /obj/structure/prop/transmitter,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/device/gps/internal/poi,
 /turf/simulated/floor,
 /area/submap/XenoHive)
 "Vj" = (
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/XenoHive)
-"Vu" = (
-/obj/effect/alien/weeds/node,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/XenoHive)
 "VA" = (
 /obj/effect/alien/weeds/node,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/random/junk,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/XenoHive)
-"WD" = (
-/obj/effect/alien/weeds,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -578,6 +538,7 @@
 /obj/machinery/light/small/emergency/flicker{
 	dir = 8
 	},
+/obj/item/reagent_containers/food/snacks/truffle/random,
 /turf/simulated/floor,
 /area/submap/XenoHive)
 "YG" = (
@@ -590,7 +551,6 @@
 /area/submap/XenoHive)
 "YL" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /mob/living/simple_mob/humanoid/merc/ranged{
 	health = 15;
 	maxHealth = 15
@@ -600,7 +560,6 @@
 "Zc" = (
 /obj/effect/alien/weeds,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/random/junk,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
@@ -608,7 +567,6 @@
 /area/submap/XenoHive)
 "Zx" = (
 /obj/effect/alien/weeds,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /mob/living/simple_mob/humanoid/merc/melee/sword/poi{
 	health = 15;
@@ -661,7 +619,7 @@ xB
 Tv
 Hx
 dm
-Is
+ps
 xB
 xB
 xB
@@ -715,7 +673,7 @@ fG
 Cb
 yb
 aS
-FV
+Hu
 xB
 sy
 lb
@@ -724,7 +682,7 @@ lb
 (7,1,1) = {"
 sy
 AB
-zm
+va
 Gw
 tA
 Vg
@@ -767,7 +725,7 @@ AB
 xB
 Gy
 QG
-ps
+xB
 sy
 sy
 lb
@@ -799,7 +757,7 @@ QC
 xB
 xB
 xB
-HJ
+co
 kl
 AB
 sy
@@ -815,7 +773,7 @@ AB
 AB
 AB
 tz
-WD
+kl
 VA
 AB
 AB
@@ -844,7 +802,7 @@ lb
 sy
 AB
 dn
-Dh
+dk
 Et
 Et
 AB
@@ -860,13 +818,13 @@ lb
 (15,1,1) = {"
 eM
 rL
-MZ
+dn
 Et
 Et
 AB
 WE
 dn
-MZ
+dn
 AB
 Et
 Et
@@ -902,7 +860,7 @@ Zc
 Pv
 AB
 Et
-MZ
+tz
 Dh
 sy
 sy
@@ -919,7 +877,7 @@ Zx
 dn
 Et
 Et
-MZ
+dn
 dn
 gS
 sy
@@ -931,7 +889,7 @@ sy
 Et
 AB
 dn
-Vu
+sp
 kl
 AB
 Et
@@ -944,7 +902,7 @@ lb
 "}
 (20,1,1) = {"
 Hr
-dk
+rL
 Et
 Et
 MZ

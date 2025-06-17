@@ -73,7 +73,7 @@
 	say_got_target = list("Purge!","Cleanse!","Burn!") */
 
 	meat_amount = 0
-	meat_type = /obj/item/weapon/reagent_containers/food/snacks/meat
+	meat_type = /obj/item/reagent_containers/food/snacks/meat
 
 	var/turns_since_scan = 0
 	var/mob/flee_target
@@ -147,7 +147,7 @@
 						   "rubs against [friend].",
 						   "purrs."))
 	else
-		usr << "<span class='notice'>[src] ignores you.</span>"
+		usr << span_notice("[src] ignores you.")
 	return */
 
 /mob/living/simple_mob/clockwork/fluff/Ignis
@@ -171,8 +171,8 @@
 	name = "Cooper"
 	desc = "A lonely miner's best friend."
 
-/mob/living/simple_mob/animal/passive/mouse/mining/New()
-	..()
+/mob/living/simple_mob/animal/passive/mouse/mining/Initialize(mapload)
+	. = ..()
 
 	add_verb(src,/mob/living/proc/ventcrawl) //CHOMPEdit TGPanel
 	add_verb(src,/mob/living/proc/hide) //CHOMPEdit TGPanel

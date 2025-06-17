@@ -4,276 +4,236 @@
 /area/template_noop)
 "ab" = (
 /turf/template_noop,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ac" = (
 /turf/simulated/floor/outdoors/rocks,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ad" = (
 /turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ae" = (
 /turf/simulated/floor/water/deep,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "af" = (
 /obj/structure/flora/tree/sif,
 /turf/template_noop,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ag" = (
 /obj/structure/table/bench/wooden,
 /turf/template_noop,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ah" = (
 /obj/structure/table/woodentable,
 /turf/template_noop,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ai" = (
 /turf/simulated/wall/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aj" = (
 /obj/structure/closet/cabinet,
 /obj/item/clothing/accessory/jacket,
 /obj/item/clothing/accessory/jacket,
 /obj/item/clothing/head/beanie,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ak" = (
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "al" = (
 /obj/structure/closet/cabinet,
-/obj/item/weapon/gun/projectile/shotgun/doublebarrel,
+/obj/item/gun/projectile/shotgun/doublebarrel,
 /obj/item/ammo_magazine/ammo_box/b12g/beanbag,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "am" = (
 /turf/simulated/floor/carpet/turcarpet,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "an" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/storage/toolbox/mechanical,
+/obj/item/storage/toolbox/mechanical,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ao" = (
 /obj/structure/railing{
 	dir = 8
 	},
 /obj/structure/railing,
 /turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ap" = (
 /obj/structure/railing,
 /turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aq" = (
-/obj/item/weapon/stool/padded,
+/obj/item/stool/padded,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ar" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/deck/cards,
+/obj/item/deck/cards,
 /turf/simulated/floor/carpet/turcarpet,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "as" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/reagent_containers/food/snacks/chips,
+/obj/item/reagent_containers/food/snacks/chips,
 /turf/simulated/floor/carpet/turcarpet,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "at" = (
 /obj/structure/table/woodentable,
 /obj/item/trash/candle,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "au" = (
-/obj/item/weapon/stool,
+/obj/item/stool,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
-"av" = (
-/turf/simulated/floor/wood{
-	icon_state = "wood_broken6"
-	},
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aw" = (
 /obj/structure/railing{
 	dir = 8
 	},
 /turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ax" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/reagent_containers/food/drinks/bottle/whiskey,
+/obj/item/reagent_containers/food/drinks/bottle/whiskey,
 /turf/simulated/floor/carpet/turcarpet,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ay" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/reagent_containers/food/drinks/glass2/shot,
+/obj/item/reagent_containers/food/drinks/glass2/shot,
 /turf/simulated/floor/carpet/turcarpet,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "az" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/tape_roll,
+/obj/item/tape_roll,
 /obj/random/firstaid,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aA" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/reagent_containers/food/drinks/glass2/shot,
-/obj/item/weapon/reagent_containers/food/drinks/glass2/shot,
-/obj/item/weapon/reagent_containers/food/drinks/glass2/shot,
+/obj/item/reagent_containers/food/drinks/glass2/shot,
+/obj/item/reagent_containers/food/drinks/glass2/shot,
+/obj/item/reagent_containers/food/drinks/glass2/shot,
 /turf/simulated/floor/carpet/turcarpet,
-/area/submap/boathouse)
-"aB" = (
-/turf/simulated/floor/wood{
-	icon_state = "wood_broken2"
-	},
-/area/submap/boathouse)
-"aC" = (
-/obj/structure/railing{
-	dir = 8
-	},
-/obj/structure/railing{
-	dir = 1;
-	icon_state = "railing0"
-	},
-/turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aD" = (
 /obj/structure/railing{
-	dir = 1;
-	icon_state = "railing0"
+	dir = 1
 	},
 /turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aE" = (
 /obj/vehicle/boat/sifwood,
 /turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aF" = (
 /obj/structure/window/reinforced/full,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aG" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/oar,
-/obj/item/weapon/oar,
+/obj/item/oar,
+/obj/item/oar,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
-"aH" = (
-/obj/structure/railing{
-	dir = 8;
-	icon_state = "railing0"
-	},
-/turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aI" = (
 /obj/structure/table/woodentable,
 /obj/random/powercell,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aJ" = (
-/turf/simulated/floor/wood{
-	icon_state = "wood_broken4"
-	},
-/area/submap/boathouse)
+/turf/simulated/floor/wood/broken,
+/area/submap/Boathouse)
 "aK" = (
 /obj/structure/railing{
-	dir = 8;
-	icon_state = "railing0"
+	dir = 8
 	},
 /obj/structure/railing{
-	dir = 1;
-	icon_state = "railing0"
+	dir = 1
 	},
 /turf/simulated/floor/water,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aL" = (
 /obj/structure/simple_door/wood,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aM" = (
-/obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary,
-/turf/simulated/floor/wood,
-/area/submap/boathouse)
-"aN" = (
 /obj/structure/closet/secure_closet/freezer/fridge,
-/obj/item/weapon/reagent_containers/food/snacks/meat,
-/obj/item/weapon/reagent_containers/food/snacks/meat,
-/obj/item/weapon/reagent_containers/food/snacks/meat,
-/obj/item/weapon/reagent_containers/food/snacks/meat,
-/obj/item/weapon/reagent_containers/food/snacks/meat,
-/obj/item/weapon/reagent_containers/food/snacks/fruitsalad,
+/obj/item/reagent_containers/food/snacks/meat,
+/obj/item/reagent_containers/food/snacks/meat,
+/obj/item/reagent_containers/food/snacks/meat,
+/obj/item/reagent_containers/food/snacks/meat,
+/obj/item/reagent_containers/food/snacks/meat,
+/obj/item/reagent_containers/food/snacks/fruitsalad,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
+"aN" = (
+/obj/structure/table/woodentable,
+/turf/simulated/floor/wood,
+/area/submap/Boathouse)
 "aO" = (
-/obj/structure/table/woodentable,
-/turf/simulated/floor/wood,
-/area/submap/boathouse)
-"aP" = (
 /turf/simulated/floor/carpet/bcarpet,
-/area/submap/boathouse)
-"aQ" = (
+/area/submap/Boathouse)
+"aP" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/material/knife,
+/obj/item/material/knife,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
-"aR" = (
+/area/submap/Boathouse)
+"aQ" = (
 /obj/structure/bookcase,
 /turf/simulated/floor/carpet/bcarpet,
-/area/submap/boathouse)
+/area/submap/Boathouse)
+"aR" = (
+/obj/structure/table/woodentable,
+/obj/item/storage/bag/trash,
+/turf/simulated/floor/wood,
+/area/submap/Boathouse)
 "aS" = (
 /obj/structure/table/woodentable,
-/obj/item/weapon/storage/bag/trash,
+/obj/item/flame/lighter,
+/obj/item/storage/fancy/candle_box,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "aT" = (
-/obj/structure/table/woodentable,
-/obj/item/weapon/flame/lighter,
-/obj/item/weapon/storage/fancy/candle_box,
-/turf/simulated/floor/wood,
-/area/submap/boathouse)
-"aU" = (
 /obj/structure/bed/chair/wood,
 /turf/simulated/floor/carpet/bcarpet,
-/area/submap/boathouse)
-"aV" = (
+/area/submap/Boathouse)
+"aU" = (
 /obj/structure/table/rack,
 /obj/item/clothing/accessory/poncho/blue,
 /obj/item/clothing/accessory/poncho/blue,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
-"aW" = (
+/area/submap/Boathouse)
+"aV" = (
 /obj/structure/coatrack,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
-"aX" = (
+/area/submap/Boathouse)
+"aW" = (
 /obj/structure/table/rack,
 /obj/item/clothing/suit/storage/hooded/wintercoat,
 /obj/item/clothing/suit/storage/hooded/wintercoat,
 /obj/item/clothing/head/hood/winter,
 /obj/item/clothing/shoes/boots/winter,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
-"aY" = (
+/area/submap/Boathouse)
+"aX" = (
 /obj/structure/table/rack,
 /obj/item/clothing/accessory/storage,
 /obj/item/clothing/accessory/storage,
 /turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
+"aY" = (
+/obj/structure/table/woodentable,
+/obj/item/flashlight/lamp,
+/turf/simulated/floor/carpet/bcarpet,
+/area/submap/Boathouse)
 "aZ" = (
 /obj/structure/table/woodentable,
-/obj/item/device/flashlight/lamp,
 /turf/simulated/floor/carpet/bcarpet,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 "ba" = (
-/obj/structure/table/woodentable,
-/turf/simulated/floor/carpet/bcarpet,
-/area/submap/boathouse)
-"bb" = (
 /turf/simulated/floor/outdoors/dirt,
-/area/submap/boathouse)
-"LX" = (
-/obj/machinery/portable_atmospherics/canister/air,
-/turf/simulated/floor/wood,
-/area/submap/boathouse)
+/area/submap/Boathouse)
 
 (1,1,1) = {"
 aa
@@ -511,15 +471,15 @@ ak
 ak
 ak
 ak
+aM
 aN
-aO
-aQ
-aS
+aP
+aR
 ai
 ai
 ai
 ab
-bb
+ba
 ab
 aa
 "}
@@ -576,12 +536,12 @@ am
 am
 am
 am
-aT
+aS
 ai
 ai
 ai
 ab
-bb
+ba
 ab
 aa
 "}
@@ -638,12 +598,12 @@ am
 am
 am
 am
-LX
+ak
 ai
 ai
 ai
 ab
-bb
+ba
 ab
 aa
 "}
@@ -701,12 +661,12 @@ ak
 ak
 am
 ak
-aV
+aU
 ai
-ai
-ai
-bb
-bb
+ab
+ab
+ba
+ba
 aa
 "}
 (8,1,1) = {"
@@ -763,12 +723,12 @@ ai
 ak
 am
 am
-aW
+aV
 ai
-aM
 ai
-bb
-bb
+ai
+ba
+ba
 aa
 "}
 (9,1,1) = {"
@@ -820,7 +780,7 @@ at
 aI
 ak
 ai
-aM
+ai
 ai
 ak
 am
@@ -829,8 +789,8 @@ ak
 aL
 ak
 aL
-bb
-bb
+ba
+ba
 aa
 "}
 (10,1,1) = {"
@@ -891,8 +851,8 @@ ak
 aL
 ak
 aL
-bb
-bb
+ba
+ba
 aa
 "}
 (11,1,1) = {"
@@ -949,12 +909,12 @@ ai
 ak
 am
 am
-aX
+aW
 ai
-aM
 ai
-bb
-bb
+ai
+ba
+ba
 aa
 "}
 (12,1,1) = {"
@@ -999,7 +959,7 @@ ak
 ak
 ak
 ak
-aB
+aJ
 ak
 ak
 ak
@@ -1011,12 +971,12 @@ ai
 ak
 ak
 ak
-aY
+aX
 ai
-ai
-ai
-bb
-bb
+ab
+ab
+ba
+ba
 aa
 "}
 (13,1,1) = {"
@@ -1061,14 +1021,14 @@ ai
 ao
 ak
 ak
-aC
+aK
 aw
 ao
 ak
 ak
 aK
-aH
-aH
+aw
+aw
 ai
 aL
 ai
@@ -1077,8 +1037,8 @@ ai
 ai
 ai
 ab
-bb
-bb
+ba
+ba
 aa
 "}
 (14,1,1) = {"
@@ -1121,7 +1081,7 @@ ad
 ai
 ai
 ap
-av
+aJ
 ak
 aD
 ad
@@ -1132,15 +1092,15 @@ aD
 ad
 ad
 ai
-aP
-aR
-aR
-aZ
+aO
+aQ
+aQ
+aY
 ai
 ai
 ab
-bb
-bb
+ba
+ba
 aa
 "}
 (15,1,1) = {"
@@ -1194,15 +1154,15 @@ aD
 ad
 ad
 ai
-aP
-aP
-aU
-ba
+aO
+aO
+aT
+aZ
 ai
 ai
 ab
-bb
-bb
+ba
+ba
 aa
 "}
 (16,1,1) = {"
@@ -1264,7 +1224,7 @@ ai
 ac
 ab
 ab
-bb
+ba
 aa
 "}
 (17,1,1) = {"
@@ -1312,8 +1272,8 @@ aw
 ad
 ad
 ad
-aH
-aH
+aw
+aw
 ad
 ad
 ad
@@ -1326,7 +1286,7 @@ ad
 ac
 ab
 ab
-bb
+ba
 aa
 "}
 (18,1,1) = {"
@@ -1388,7 +1348,7 @@ ad
 ac
 ac
 ab
-bb
+ba
 aa
 "}
 (19,1,1) = {"

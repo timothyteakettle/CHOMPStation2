@@ -1,4 +1,8 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
+"aa" = (
+/obj/effect/step_trigger/death/train_lost,
+/turf/simulated/floor/maglev,
+/area/redgate/train/overboard)
 "ab" = (
 /obj/effect/step_trigger/thrower{
 	direction = 4;
@@ -11,6 +15,29 @@
 	nitrogen = 82.1472;
 	oxygen = 21.8366
 	},
+/area/redgate/train/overboard)
+"ac" = (
+/obj/structure/railing{
+	dir = 4
+	},
+/obj/effect/step_trigger/death/train_crush,
+/turf/simulated/floor/maglev,
+/area/redgate/train/overboard)
+"ad" = (
+/obj/structure/railing{
+	dir = 4
+	},
+/obj/effect/step_trigger/thrower{
+	immobilize = 0;
+	name = "down thrower";
+	stopper = 0;
+	tiles = 0
+	},
+/obj/structure/sign/warning/falling{
+	desc = "This is a train in motion. Do not try to stand on the outside of the train. Take caution near railings. Do not attempt to fly from the moving train. Falling is guaranteed death, your body will not be recoverable.";
+	pixel_y = 31
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "aj" = (
 /obj/structure/closet/secure_closet/animal,
@@ -66,7 +93,7 @@
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/tableseating)
 "bC" = (
-/obj/item/weapon/stool/padded,
+/obj/item/stool/padded,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/bar)
 "bT" = (
@@ -150,7 +177,7 @@
 /turf/simulated/floor/plating,
 /area/redgate/train/meeting)
 "dN" = (
-/obj/item/weapon/material/sword/battleaxe,
+/obj/item/material/sword/battleaxe,
 /turf/simulated/shuttle/floor/voidcraft{
 	outdoors = 1
 	},
@@ -276,13 +303,13 @@
 /obj/structure/closet/hydrant{
 	pixel_x = -30
 	},
-/obj/item/weapon/storage/firstaid/o2{
+/obj/item/storage/firstaid/o2{
 	layer = 2.8;
 	pixel_x = 4;
 	pixel_y = 6
 	},
-/obj/item/weapon/storage/firstaid/fire,
-/obj/item/weapon/storage/firstaid/toxin,
+/obj/item/storage/firstaid/fire,
+/obj/item/storage/firstaid/toxin,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/viewing)
 "fM" = (
@@ -425,10 +452,7 @@
 	dir = 4
 	},
 /obj/effect/step_trigger/death/train_crush,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "iX" = (
 /obj/effect/floor_decal/transit/orange{
@@ -438,10 +462,7 @@
 	dir = 8
 	},
 /obj/effect/step_trigger/death/train_lost,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "ja" = (
 /obj/structure/closet/walllocker/emerglocker{
@@ -492,10 +513,7 @@
 	dir = 8
 	},
 /obj/effect/step_trigger/death/train_lost,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "jL" = (
 /mob/living/simple_mob/vore/alienanimals/teppi/baby,
@@ -539,7 +557,7 @@
 	},
 /area/redgate/train/meeting)
 "le" = (
-/obj/item/weapon/stool/padded{
+/obj/item/stool/padded{
 	dir = 8
 	},
 /turf/simulated/shuttle/floor/skipjack{
@@ -550,9 +568,9 @@
 /area/redgate/train/casino)
 "lo" = (
 /obj/structure/table/standard,
-/obj/item/weapon/pen,
-/obj/item/weapon/pen,
-/obj/item/weapon/pen,
+/obj/item/pen,
+/obj/item/pen,
+/obj/item/pen,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/tableseating)
 "lC" = (
@@ -574,10 +592,7 @@
 /obj/structure/railing{
 	dir = 8
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "lL" = (
 /turf/simulated/shuttle/floor/white{
@@ -619,10 +634,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "mw" = (
 /obj/structure/railing{
@@ -630,10 +642,7 @@
 	},
 /obj/effect/step_trigger/death/train_crush,
 /obj/structure/railing/grey,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "mG" = (
 /obj/effect/step_trigger/death/train_crush,
@@ -644,10 +653,7 @@
 	desc = "This is a train in motion. Do not try to stand on the outside of the train. Take caution near railings. Do not attempt to fly from the moving train. Falling is guaranteed death, your body will not be recoverable.";
 	pixel_y = 31
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "mQ" = (
 /obj/structure/bed/chair/shuttle{
@@ -660,13 +666,13 @@
 /obj/structure/closet/hydrant{
 	pixel_x = -30
 	},
-/obj/item/weapon/storage/firstaid/o2{
+/obj/item/storage/firstaid/o2{
 	layer = 2.8;
 	pixel_x = 4;
 	pixel_y = 6
 	},
-/obj/item/weapon/storage/firstaid/fire,
-/obj/item/weapon/storage/firstaid/toxin,
+/obj/item/storage/firstaid/fire,
+/obj/item/storage/firstaid/toxin,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/seating)
 "mW" = (
@@ -674,10 +680,7 @@
 /obj/structure/railing{
 	dir = 4
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "mY" = (
 /obj/structure/fence/door,
@@ -708,13 +711,13 @@
 /obj/structure/closet/hydrant{
 	pixel_x = -30
 	},
-/obj/item/weapon/storage/firstaid/o2{
+/obj/item/storage/firstaid/o2{
 	layer = 2.8;
 	pixel_x = 4;
 	pixel_y = 6
 	},
-/obj/item/weapon/storage/firstaid/fire,
-/obj/item/weapon/storage/firstaid/toxin,
+/obj/item/storage/firstaid/fire,
+/obj/item/storage/firstaid/toxin,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/rear)
 "np" = (
@@ -734,10 +737,7 @@
 /obj/structure/railing/grey{
 	dir = 1
 	},
-/turf/unsimulated/floor/maglev{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/maglev,
 /area/redgate/train/overboard)
 "nv" = (
 /obj/structure/ladder/up{
@@ -769,10 +769,7 @@
 /obj/structure/railing/grey{
 	dir = 4
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "nK" = (
 /obj/structure/closet/walllocker/emerglocker{
@@ -828,10 +825,7 @@
 /obj/structure/railing/grey{
 	dir = 8
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "ph" = (
 /obj/effect/floor_decal/industrial/outline/blue,
@@ -850,20 +844,17 @@
 /obj/structure/railing{
 	dir = 4
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "pM" = (
 /obj/structure/closet/walllocker_double/misc_civ/north,
-/obj/item/weapon/pack/cardemon,
-/obj/item/weapon/pack/cardemon,
-/obj/item/weapon/pack/cardemon,
-/obj/item/weapon/deck/cards,
-/obj/item/weapon/deck/wizoff,
-/obj/item/weapon/deck/schnapsen,
-/obj/item/weapon/deck/egy,
+/obj/item/pack/cardemon,
+/obj/item/pack/cardemon,
+/obj/item/pack/cardemon,
+/obj/item/deck/cards,
+/obj/item/deck/wizoff,
+/obj/item/deck/schnapsen,
+/obj/item/deck/egy,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/arena)
 "pT" = (
@@ -879,9 +870,9 @@
 /area/redgate/train/redgate)
 "qk" = (
 /obj/structure/table/marble,
-/obj/item/weapon/reagent_containers/food/drinks/flask/vacuumflask,
-/obj/item/weapon/flame/lighter/zippo,
-/obj/item/weapon/book/manual/barman_recipes,
+/obj/item/reagent_containers/food/drinks/flask/vacuumflask,
+/obj/item/flame/lighter/zippo,
+/obj/item/book/manual/barman_recipes,
 /obj/item/clothing/head/that{
 	pixel_x = 4;
 	pixel_y = 6
@@ -981,10 +972,7 @@
 	dir = 4
 	},
 /obj/effect/step_trigger/death/train_lost,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "sa" = (
 /obj/machinery/door/airlock/glass{
@@ -1002,10 +990,7 @@
 	desc = "This is a train in motion. Do not try to stand on the outside of the train. Take caution near railings. Do not attempt to fly from the moving train. Falling is guaranteed death, your body will not be recoverable.";
 	pixel_y = 31
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "se" = (
 /obj/structure/bed/chair/shuttle,
@@ -1052,7 +1037,7 @@
 /area/redgate/train/storage)
 "tg" = (
 /obj/structure/table/marble,
-/obj/item/weapon/reagent_containers/glass/rag,
+/obj/item/reagent_containers/glass/rag,
 /turf/simulated/shuttle/floor/skipjack{
 	name = "floor";
 	nitrogen = 82.1472;
@@ -1163,7 +1148,7 @@
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/tableseating)
 "vg" = (
-/obj/item/weapon/stool/padded,
+/obj/item/stool/padded,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/tableseating)
 "vn" = (
@@ -1224,10 +1209,7 @@
 /obj/structure/railing/grey{
 	dir = 1
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "wX" = (
 /obj/structure/bed/chair/shuttle{
@@ -1266,10 +1248,7 @@
 /obj/structure/railing{
 	dir = 1
 	},
-/turf/unsimulated/floor/maglev{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/maglev,
 /area/redgate/train/overboard)
 "xz" = (
 /obj/structure/reagent_dispensers/fueltank/barrel/two{
@@ -1285,20 +1264,14 @@
 "xU" = (
 /obj/effect/step_trigger/death/train_crush,
 /obj/structure/railing/grey,
-/turf/unsimulated/floor/maglev{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/maglev,
 /area/redgate/train/overboard)
 "yc" = (
 /obj/effect/floor_decal/transit/orange{
 	dir = 4
 	},
 /obj/effect/step_trigger/death/train_lost,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "yf" = (
 /obj/effect/floor_decal/transit/orange{
@@ -1316,10 +1289,7 @@
 /obj/structure/railing/grey{
 	dir = 4
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "yj" = (
 /obj/effect/floor_decal/spline/fancy/wood{
@@ -1333,13 +1303,10 @@
 /obj/structure/railing/grey{
 	dir = 8
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "yq" = (
-/obj/item/weapon/stool/padded,
+/obj/item/stool/padded,
 /turf/simulated/shuttle/floor/skipjack{
 	name = "floor";
 	nitrogen = 82.1472;
@@ -1366,10 +1333,7 @@
 /obj/structure/railing/grey{
 	dir = 1
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "yx" = (
 /obj/machinery/light{
@@ -1458,10 +1422,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "zp" = (
 /obj/structure/table/standard,
@@ -1636,10 +1597,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Ch" = (
 /turf/simulated/shuttle/wall/voidcraft,
@@ -1714,10 +1672,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/maglev{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/maglev,
 /area/redgate/train/overboard)
 "Da" = (
 /obj/machinery/light{
@@ -1922,10 +1877,7 @@
 /obj/structure/railing/grey{
 	dir = 4
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "GU" = (
 /obj/structure/bed/chair/shuttle{
@@ -1961,10 +1913,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Hs" = (
 /turf/simulated/shuttle/wall/voidcraft,
@@ -1982,10 +1931,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "HF" = (
 /obj/machinery/light{
@@ -2057,10 +2003,7 @@
 	desc = "This is a train in motion. Do not try to stand on the outside of the train. Take caution near railings. Do not attempt to fly from the moving train. Falling is guaranteed death, your body will not be recoverable.";
 	pixel_y = 31
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/maglev,
 /area/redgate/train/overboard)
 "In" = (
 /obj/structure/grille,
@@ -2078,8 +2021,8 @@
 /area/redgate/train/redgate)
 "Io" = (
 /obj/structure/table/standard,
-/obj/item/weapon/pen,
-/obj/item/weapon/pen,
+/obj/item/pen,
+/obj/item/pen,
 /turf/simulated/shuttle/floor/yellow,
 /area/redgate/train/meeting)
 "Ip" = (
@@ -2162,7 +2105,7 @@
 /turf/simulated/floor/outdoors/newdirt,
 /area/redgate/train/animals)
 "Kb" = (
-/obj/item/weapon/stool/padded{
+/obj/item/stool/padded{
 	dir = 4
 	},
 /turf/simulated/shuttle/floor/skipjack{
@@ -2192,10 +2135,7 @@
 /obj/structure/railing{
 	dir = 8
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Kl" = (
 /obj/structure/table/standard,
@@ -2272,10 +2212,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "KZ" = (
 /obj/machinery/light{
@@ -2326,7 +2263,7 @@
 	},
 /area/redgate/train/meeting)
 "Lw" = (
-/obj/item/weapon/stool/padded{
+/obj/item/stool/padded{
 	dir = 1
 	},
 /turf/simulated/shuttle/floor/skipjack{
@@ -2351,7 +2288,7 @@
 /area/redgate/train/redgate)
 "LG" = (
 /obj/structure/table/standard,
-/obj/item/weapon/paper_bin,
+/obj/item/paper_bin,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/tableseating)
 "LI" = (
@@ -2382,13 +2319,13 @@
 /obj/structure/closet/hydrant{
 	pixel_x = -30
 	},
-/obj/item/weapon/storage/firstaid/o2{
+/obj/item/storage/firstaid/o2{
 	layer = 2.8;
 	pixel_x = 4;
 	pixel_y = 6
 	},
-/obj/item/weapon/storage/firstaid/fire,
-/obj/item/weapon/storage/firstaid/toxin,
+/obj/item/storage/firstaid/fire,
+/obj/item/storage/firstaid/toxin,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/bar)
 "LU" = (
@@ -2407,20 +2344,14 @@
 /area/redgate/train/meeting)
 "LY" = (
 /obj/effect/step_trigger/death/train_lost,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Mj" = (
 /turf/simulated/shuttle/wall/voidcraft,
 /area/redgate/train/rear)
 "Mo" = (
 /obj/effect/step_trigger/death/train_crush,
-/turf/unsimulated/floor/maglev{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/maglev,
 /area/redgate/train/overboard)
 "MJ" = (
 /obj/structure/bed/chair/shuttle{
@@ -2442,10 +2373,7 @@
 /area/redgate/train/wood)
 "Nd" = (
 /obj/effect/step_trigger/death/train_crush,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Ne" = (
 /turf/simulated/shuttle/floor/black,
@@ -2502,15 +2430,15 @@
 /area/redgate/train/wood)
 "Or" = (
 /obj/structure/closet/walllocker_double/casino/north,
-/obj/item/weapon/storage/pill_bottle/dice,
-/obj/item/weapon/storage/pill_bottle/dice,
-/obj/item/weapon/storage/pill_bottle/dice,
-/obj/item/weapon/storage/pill_bottle/dice_nerd,
-/obj/item/weapon/storage/pill_bottle/dice_nerd,
-/obj/item/weapon/storage/pill_bottle/dice_nerd,
-/obj/item/weapon/storage/dicecup,
-/obj/item/weapon/storage/dicecup,
-/obj/item/weapon/storage/dicecup,
+/obj/item/storage/pill_bottle/dice,
+/obj/item/storage/pill_bottle/dice,
+/obj/item/storage/pill_bottle/dice,
+/obj/item/storage/pill_bottle/dice_nerd,
+/obj/item/storage/pill_bottle/dice_nerd,
+/obj/item/storage/pill_bottle/dice_nerd,
+/obj/item/storage/dicecup,
+/obj/item/storage/dicecup,
+/obj/item/storage/dicecup,
 /obj/machinery/light{
 	dir = 8
 	},
@@ -2518,8 +2446,8 @@
 /area/redgate/train/casino)
 "Os" = (
 /obj/structure/table/standard,
-/obj/item/weapon/paper_bin,
-/obj/item/weapon/paper_bin,
+/obj/item/paper_bin,
+/obj/item/paper_bin,
 /turf/simulated/shuttle/floor/white{
 	color = "#cccccc"
 	},
@@ -2569,10 +2497,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Pf" = (
 /obj/machinery/vending/coffee,
@@ -2591,10 +2516,7 @@
 /obj/structure/railing/grey{
 	dir = 8
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Pp" = (
 /obj/structure/railing{
@@ -2613,15 +2535,15 @@
 /area/redgate/train/bar)
 "Px" = (
 /obj/structure/closet/walllocker_double/casino/south,
-/obj/item/weapon/storage/pill_bottle/dice,
-/obj/item/weapon/storage/pill_bottle/dice,
-/obj/item/weapon/storage/pill_bottle/dice,
-/obj/item/weapon/storage/pill_bottle/dice_nerd,
-/obj/item/weapon/storage/pill_bottle/dice_nerd,
-/obj/item/weapon/storage/pill_bottle/dice_nerd,
-/obj/item/weapon/storage/dicecup,
-/obj/item/weapon/storage/dicecup,
-/obj/item/weapon/storage/dicecup,
+/obj/item/storage/pill_bottle/dice,
+/obj/item/storage/pill_bottle/dice,
+/obj/item/storage/pill_bottle/dice,
+/obj/item/storage/pill_bottle/dice_nerd,
+/obj/item/storage/pill_bottle/dice_nerd,
+/obj/item/storage/pill_bottle/dice_nerd,
+/obj/item/storage/dicecup,
+/obj/item/storage/dicecup,
+/obj/item/storage/dicecup,
 /obj/machinery/light{
 	dir = 4
 	},
@@ -2685,10 +2607,7 @@
 /obj/structure/railing/grey{
 	dir = 8
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Qw" = (
 /obj/effect/floor_decal/spline/fancy/wood,
@@ -2757,10 +2676,7 @@
 /obj/structure/railing{
 	dir = 1
 	},
-/turf/unsimulated/floor/maglev{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/maglev,
 /area/redgate/train/overboard)
 "RC" = (
 /obj/effect/step_trigger/thrower{
@@ -2769,10 +2685,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "RE" = (
 /obj/machinery/smartfridge/drinks,
@@ -2861,10 +2774,7 @@
 	stopper = 0;
 	tiles = 0
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "SQ" = (
 /turf/simulated/shuttle/wall/voidcraft/hard_corner,
@@ -3031,13 +2941,13 @@
 /obj/structure/closet/hydrant{
 	pixel_x = -30
 	},
-/obj/item/weapon/storage/firstaid/o2{
+/obj/item/storage/firstaid/o2{
 	layer = 2.8;
 	pixel_x = 4;
 	pixel_y = 6
 	},
-/obj/item/weapon/storage/firstaid/fire,
-/obj/item/weapon/storage/firstaid/toxin,
+/obj/item/storage/firstaid/fire,
+/obj/item/storage/firstaid/toxin,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/tableseating)
 "VK" = (
@@ -3067,13 +2977,13 @@
 /area/redgate/train/overboard)
 "VU" = (
 /obj/structure/closet/walllocker_double/misc_civ/south,
-/obj/item/weapon/pack/cardemon,
-/obj/item/weapon/pack/cardemon,
-/obj/item/weapon/pack/cardemon,
-/obj/item/weapon/deck/cards,
-/obj/item/weapon/deck/wizoff,
-/obj/item/weapon/deck/schnapsen,
-/obj/item/weapon/deck/egy,
+/obj/item/pack/cardemon,
+/obj/item/pack/cardemon,
+/obj/item/pack/cardemon,
+/obj/item/deck/cards,
+/obj/item/deck/wizoff,
+/obj/item/deck/schnapsen,
+/obj/item/deck/egy,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/arena)
 "Wd" = (
@@ -3095,7 +3005,7 @@
 /area/redgate/train/overboard)
 "Wr" = (
 /obj/structure/table/standard,
-/obj/item/weapon/pen,
+/obj/item/pen,
 /turf/simulated/shuttle/floor/black,
 /area/redgate/train/tableseating)
 "Wy" = (
@@ -3114,10 +3024,7 @@
 	dir = 8
 	},
 /obj/effect/step_trigger/death/train_crush,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "WM" = (
 /obj/effect/step_trigger/death/train_lost,
@@ -3180,10 +3087,7 @@
 	},
 /obj/effect/step_trigger/death/train_crush,
 /obj/structure/railing/grey,
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "YC" = (
 /obj/machinery/light{
@@ -3243,10 +3147,7 @@
 /obj/structure/railing{
 	dir = 1
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "Zj" = (
 /obj/structure/fence/corner{
@@ -3307,10 +3208,7 @@
 /obj/structure/railing/grey{
 	dir = 4
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "ZK" = (
 /obj/structure/railing{
@@ -3326,10 +3224,7 @@
 	desc = "This is a train in motion. Do not try to stand on the outside of the train. Take caution near railings. Do not attempt to fly from the moving train. Falling is guaranteed death, your body will not be recoverable.";
 	pixel_y = 31
 	},
-/turf/unsimulated/floor/techfloor_grid{
-	icon = 'icons/turf/transit_vr.dmi';
-	outdoors = 1
-	},
+/turf/simulated/floor/tiled/techfloor/grid,
 /area/redgate/train/overboard)
 "ZO" = (
 /obj/random/mob/semirandom_mob_spawner/vore/retaliate,
@@ -3340,13 +3235,13 @@
 /area/redgate/train/teppi)
 "ZP" = (
 /obj/structure/closet/walllocker_double/casino/north,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/storage/box/roulette_balls_fancy,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/storage/box/roulette_balls_fancy,
 /obj/machinery/light{
 	dir = 4
 	},
@@ -3354,13 +3249,13 @@
 /area/redgate/train/casino)
 "ZY" = (
 /obj/structure/closet/walllocker_double/casino/south,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/deck/cards/casino,
-/obj/item/weapon/storage/box/roulette_balls_normal,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/deck/cards/casino,
+/obj/item/storage/box/roulette_balls_normal,
 /obj/machinery/light{
 	dir = 8
 	},
@@ -7477,11 +7372,11 @@ Ne
 Ne
 xx
 CZ
-uf
-uf
-uf
-uf
-uf
+aa
+aa
+aa
+aa
+aa
 uf
 ch
 "}
@@ -7529,7 +7424,7 @@ lZ
 lZ
 zV
 Il
-iG
+ac
 me
 FT
 FT
@@ -8329,12 +8224,12 @@ BM
 Ne
 Ru
 CZ
-uf
-uf
-uf
-uf
-uf
-uf
+aa
+aa
+aa
+aa
+aa
+aa
 ch
 "}
 (36,1,1) = {"
@@ -16850,11 +16745,11 @@ CB
 CB
 Mo
 Mo
-uf
-uf
-uf
-uf
-uf
+aa
+aa
+aa
+aa
+aa
 ch
 "}
 (96,1,1) = {"
@@ -16900,7 +16795,7 @@ AX
 yz
 lH
 sj
-Il
+ad
 iG
 cs
 fJ
@@ -17702,11 +17597,11 @@ CB
 CB
 Mo
 Mo
-uf
-uf
-uf
-uf
-uf
+aa
+aa
+aa
+aa
+aa
 ch
 "}
 (102,1,1) = {"

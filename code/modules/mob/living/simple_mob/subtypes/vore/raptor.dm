@@ -7,9 +7,9 @@
 	icon_living = "raptorpurple"
 	icon_state = "raptorpurple"
 	icon_rest = "raptorpurple"
-	faction = "raptor"
+	faction = FACTION_RAPTOR
 	meat_amount = 40 //Big dog, lots of meat
-	meat_type = /obj/item/weapon/reagent_containers/food/snacks/meat
+	meat_type = /obj/item/reagent_containers/food/snacks/meat
 	old_x = -48
 	old_y = 0
 	vis_height = 92
@@ -48,7 +48,7 @@
 		"raptorwhite"
 	)
 
-	allow_mind_transfer = TRUE //CHOMPAdd
+	allow_mind_transfer = TRUE
 
 /mob/living/simple_mob/vore/raptor
 
@@ -65,8 +65,8 @@
 	vore_pounce_maxhealth = 125
 	vore_bump_emote = "tries to snap up"
 
-/mob/living/simple_mob/vore/raptor/New()
-	..()
+/mob/living/simple_mob/vore/raptor/Initialize(mapload)
+	. = ..()
 	if(random_skin)
 		icon_living = pick(skins)
 		initial_icon = icon_living
@@ -78,11 +78,15 @@
 	. = ..()
 	if(!riding_datum)
 		riding_datum = new /datum/riding/simple_mob(src)
-	add_verb(src,/mob/living/simple_mob/proc/animal_mount) //CHOMPEdit TGPanel
-	add_verb(src,/mob/living/proc/toggle_rider_reins) //CHOMPEdit TGPanel
+	add_verb(src, /mob/living/simple_mob/proc/animal_mount)
+	add_verb(src, /mob/living/proc/toggle_rider_reins)
 	movement_cooldown = -1
 
 /mob/living/simple_mob/vore/raptor/init_vore()
+	if(!voremob_loaded)
+		return
+	if(LAZYLEN(vore_organs))
+		return
 	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
@@ -115,13 +119,13 @@
 	consider_wg()
 
 /mob/living/simple_mob/vore/raptor/proc/consider_wg()
-  var/past_state = wg_state
-  if(nutrition >= 900)
-    wg_state = 1
-  else
-    wg_state = 0
-  if(past_state != wg_state)
-    update_icon()
+	var/past_state = wg_state
+	if(nutrition >= 900)
+		wg_state = 1
+	else
+		wg_state = 0
+	if(past_state != wg_state)
+		update_icon()
 
 /mob/living/simple_mob/vore/raptor/update_icon()
 	if(wg_state == 1)

@@ -34,9 +34,9 @@
 	var/extra_range
 	var/opacity_check
 	var/pref_check
-	var/volume_chan //CHOMPedit
 	var/exclusive
 	var/falloff // CHOMPEdit: Add Falloff
+	var/volume_chan
 
 	var/timerid
 	var/started
@@ -105,7 +105,7 @@
 		if(direct)
 			if(ismob(thing))
 				var/mob/M = thing
-				if(pref_check && !M.is_preference_enabled(pref_check))
+				if(!M.check_sound_preference(pref_check))
 					continue
 			SEND_SOUND(thing, S)
 		else

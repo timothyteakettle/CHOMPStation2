@@ -1,5 +1,5 @@
 /decl/emote/human/mob_can_use(var/mob/living/carbon/human/user)
-	return ..() && (istype(user))//VOREStation Edit - What does a mouth have to do with wagging?? && user.check_has_mouth() && !user.isSynthetic())
+	return ..() && (istype(user))//What does a mouth have to do with wagging?? && user.check_has_mouth() && !user.isSynthetic())
 
 /decl/emote/human/deathgasp
 	key = "deathgasp"
@@ -15,7 +15,7 @@
 
 /decl/emote/human/deathgasp/do_emote(mob/living/carbon/human/user)
 	if(istype(user) && user.species.get_death_message(user) == DEATHGASP_NO_MESSAGE)
-		to_chat(user, SPAN_WARNING("Your species has no deathgasp."))
+		to_chat(user, span_warning("Your species has no deathgasp."))
 		return
 	. = ..()
 

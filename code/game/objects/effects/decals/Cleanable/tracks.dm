@@ -113,8 +113,7 @@ var/global/list/image/fluidtrack_cache=list()
 			updated=1
 
 	dirs |= comingdir|realgoing
-	if(islist(blood_DNA))
-		blood_DNA |= DNA.Copy()
+	init_forensic_data().merge_blooddna(null,DNA)
 	if(updated)
 		update_icon()
 
@@ -142,6 +141,7 @@ var/global/list/image/fluidtrack_cache=list()
 		stack[stack_idx]=track
 		add_overlay(I)
 	updatedtracks=0 // Clear our memory of updated tracks.
+	add_janitor_hud_overlay()
 
 /obj/effect/decal/cleanable/blood/tracks/footprints
 	name = "wet footprints"

@@ -12,11 +12,6 @@
 	temperature = 243.15
 	},
 /area/submap/cliffmanor)
-"bA" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood,
-/area/submap/cliffmanor)
 "cW" = (
 /obj/structure/cliff/automatic{
 	dir = 10
@@ -25,12 +20,12 @@
 /area/submap/cliffmanor)
 "dU" = (
 /obj/structure/bed,
-/obj/item/weapon/bedsheet/blue,
+/obj/item/bedsheet/blue,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
 "ei" = (
 /obj/structure/table/wooden_reinforced,
-/obj/item/device/soulstone,
+/obj/item/soulstone,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
 "gX" = (
@@ -46,17 +41,7 @@
 	dir = 1
 	},
 /obj/structure/table/wooden_reinforced,
-/obj/item/weapon/flame/candle/everburn,
-/turf/simulated/floor/wood{
-	nitrogen = 93.7835;
-	oxygen = 20.7263;
-	temperature = 243.15
-	},
-/area/submap/cliffmanor)
-"iA" = (
-/obj/structure/railing,
-/obj/structure/table/wooden_reinforced,
-/obj/random/material/precious,
+/obj/item/flame/candle/everburn,
 /turf/simulated/floor/wood{
 	nitrogen = 93.7835;
 	oxygen = 20.7263;
@@ -100,22 +85,10 @@
 	},
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/cliffmanor)
-"nu" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood{
-	nitrogen = 93.7835;
-	oxygen = 20.7263;
-	temperature = 243.15
-	},
-/area/submap/cliffmanor)
-"oX" = (
-/obj/structure/table/wooden_reinforced,
-/obj/item/clothing/head/psy_crown/gluttony,
-/turf/simulated/floor/wood,
-/area/submap/cliffmanor)
 "pI" = (
-/mob/living/simple_mob/humanoid/cultist/hunter,
+/mob/living/simple_mob/humanoid/cultist/hunter{
+	loot_list = list(/obj/item/material/butterfly/saw = 100, /obj/item/gun/projectile/shotgun/doublebarrel/sawn/alt = 100, /obj/item/clothing/head/psy_crown/wrath = 25)
+	},
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/wood{
 	nitrogen = 93.7835;
@@ -145,12 +118,12 @@
 /area/submap/cliffmanor)
 "uv" = (
 /obj/structure/table/wooden_reinforced,
-/obj/item/weapon/flame/candle/everburn,
+/obj/item/flame/candle/everburn,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
 "uS" = (
 /obj/structure/table/wooden_reinforced,
-/obj/item/weapon/flame/candle/everburn,
+/obj/item/flame/candle/everburn,
 /turf/simulated/floor/wood{
 	nitrogen = 93.7835;
 	oxygen = 20.7263;
@@ -160,7 +133,7 @@
 "va" = (
 /obj/structure/railing,
 /obj/structure/table/wooden_reinforced,
-/obj/item/weapon/flame/candle/everburn,
+/obj/item/flame/candle/everburn,
 /turf/simulated/floor/wood{
 	nitrogen = 93.7835;
 	oxygen = 20.7263;
@@ -177,7 +150,7 @@
 /area/submap/cliffmanor)
 "vw" = (
 /obj/structure/bed,
-/obj/item/weapon/bedsheet/blue,
+/obj/item/bedsheet/blue,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
@@ -190,19 +163,12 @@
 	temperature = 243.15
 	},
 /area/submap/cliffmanor)
-"wg" = (
-/mob/living/simple_mob/humanoid/cultist/tesh,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood,
-/area/submap/cliffmanor)
 "xD" = (
 /obj/structure/cliff/automatic,
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/cliffmanor)
 "yU" = (
 /mob/living/simple_mob/humanoid/cultist/noodle,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/wood{
 	nitrogen = 93.7835;
@@ -231,24 +197,6 @@
 	temperature = 243.15
 	},
 /area/submap/cliffmanor)
-"Dd" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood{
-	nitrogen = 93.7835;
-	oxygen = 20.7263;
-	temperature = 243.15
-	},
-/area/submap/cliffmanor)
-"DZ" = (
-/mob/living/simple_mob/humanoid/cultist/tesh,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood,
-/area/submap/cliffmanor)
 "Ed" = (
 /obj/structure/cliff/automatic{
 	dir = 5
@@ -272,38 +220,10 @@
 /obj/random/material,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
-"HS" = (
-/mob/living/simple_mob/humanoid/cultist/castertesh,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood{
-	nitrogen = 93.7835;
-	oxygen = 20.7263;
-	temperature = 243.15
-	},
-/area/submap/cliffmanor)
-"Ik" = (
-/obj/structure/table/wooden_reinforced,
-/obj/random/energy/highend,
-/turf/simulated/floor/wood{
-	nitrogen = 93.7835;
-	oxygen = 20.7263;
-	temperature = 243.15
-	},
-/area/submap/cliffmanor)
-"Ja" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood{
-	nitrogen = 93.7835;
-	oxygen = 20.7263;
-	temperature = 243.15
-	},
-/area/submap/cliffmanor)
 "Kj" = (
-/mob/living/simple_mob/humanoid/cultist/hunter,
-/obj/effect/decal/cleanable/dirt,
+/mob/living/simple_mob/humanoid/cultist/hunter{
+	loot_list = list(/obj/item/material/butterfly/saw = 100, /obj/item/gun/projectile/shotgun/doublebarrel/sawn/alt = 100, /obj/item/clothing/head/psy_crown/gluttony = 25)
+	},
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
@@ -316,12 +236,6 @@
 	temperature = 243.15
 	},
 /area/submap/cliffmanor)
-"LZ" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood,
-/area/submap/cliffmanor)
 "Me" = (
 /mob/living/simple_mob/humanoid/cultist/castertesh,
 /obj/effect/decal/cleanable/dirt,
@@ -331,18 +245,8 @@
 	temperature = 243.15
 	},
 /area/submap/cliffmanor)
-"Mt" = (
-/obj/structure/table/wooden_reinforced,
-/obj/random/firstaid,
-/turf/simulated/floor/wood{
-	nitrogen = 93.7835;
-	oxygen = 20.7263;
-	temperature = 243.15
-	},
-/area/submap/cliffmanor)
 "ND" = (
 /obj/structure/table/wooden_reinforced,
-/obj/item/clothing/head/psy_crown/wrath,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
 "NQ" = (
@@ -360,8 +264,6 @@
 	dir = 1
 	},
 /obj/structure/table/wooden_reinforced,
-/obj/random/medical/pillbottle,
-/obj/random/material/refined,
 /turf/simulated/floor/wood{
 	nitrogen = 93.7835;
 	oxygen = 20.7263;
@@ -390,13 +292,6 @@
 /area/submap/cliffmanor)
 "Ra" = (
 /mob/living/simple_mob/humanoid/cultist/tesh,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/wood,
-/area/submap/cliffmanor)
-"Rh" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
@@ -445,15 +340,15 @@
 /area/submap/cliffmanor)
 "Um" = (
 /obj/structure/closet/crate,
-/obj/item/weapon/firework_star/weather/storm,
-/obj/item/weapon/firework_star/weather/storm,
-/obj/item/weapon/firework_star/weather/rain,
-/obj/item/weapon/firework_star/weather/rain,
-/obj/item/weapon/firework_star/weather/hail,
-/obj/item/weapon/firework_star/weather/hail,
-/obj/item/weapon/firework_star/weather/blizzard,
-/obj/item/weapon/firework_star/weather/blizzard,
-/obj/item/weapon/firework_star/weather/fallout,
+/obj/item/firework_star/weather/storm,
+/obj/item/firework_star/weather/storm,
+/obj/item/firework_star/weather/rain,
+/obj/item/firework_star/weather/rain,
+/obj/item/firework_star/weather/hail,
+/obj/item/firework_star/weather/hail,
+/obj/item/firework_star/weather/blizzard,
+/obj/item/firework_star/weather/blizzard,
+/obj/item/firework_star/weather/fallout,
 /turf/simulated/floor/wood,
 /area/submap/cliffmanor)
 "Us" = (
@@ -465,8 +360,6 @@
 "Wc" = (
 /obj/structure/railing,
 /obj/structure/table/wooden_reinforced,
-/obj/random/medical/pillbottle,
-/obj/random/material/refined,
 /turf/simulated/floor/wood{
 	nitrogen = 93.7835;
 	oxygen = 20.7263;
@@ -477,13 +370,11 @@
 /turf/simulated/floor/water,
 /area/submap/cliffmanor)
 "Zp" = (
-/obj/structure/table/wooden_reinforced,
-/obj/random/gun/random,
-/turf/simulated/floor/wood{
-	nitrogen = 93.7835;
-	oxygen = 20.7263;
-	temperature = 243.15
-	},
+/obj/structure/closet/crate/secure/loot,
+/obj/random/mainttoyloot/nofail,
+/obj/item/stack/material/mhydrogen,
+/obj/random/material,
+/turf/simulated/floor/wood,
 /area/submap/cliffmanor)
 "ZA" = (
 /obj/structure/cliff/automatic{
@@ -723,13 +614,13 @@ bi
 Qi
 SZ
 kW
-oX
+ND
 uv
 ei
 kW
 SZ
 Me
-nu
+SZ
 bi
 bi
 vb
@@ -751,17 +642,17 @@ lK
 bi
 bi
 SZ
-nu
+SZ
 SZ
 iR
 Rm
 Kj
-bA
+Rm
 iR
 SZ
 SZ
 SZ
-nu
+SZ
 SZ
 vb
 xD
@@ -780,19 +671,19 @@ Wh
 aJ
 lK
 Bl
-nu
-Ja
-Ja
+SZ
+SZ
+SZ
 gX
 kW
-bA
-Rh
-bA
+Rm
+Rm
+Rm
 kW
 gX
 SZ
 SZ
-nu
+SZ
 Eq
 vb
 xD
@@ -811,12 +702,12 @@ Wh
 aJ
 lK
 SZ
-nu
+SZ
 gX
-Zp
+gX
 uS
 kW
-bA
+Rm
 Rm
 Rm
 kW
@@ -878,7 +769,7 @@ aJ
 kW
 vw
 Rm
-bA
+Rm
 SZ
 Rm
 Rm
@@ -910,8 +801,8 @@ kW
 Oz
 Ra
 Rm
-Ja
-bA
+SZ
+Rm
 Ra
 GU
 kW
@@ -940,8 +831,8 @@ aJ
 kW
 dU
 Rm
-bA
-nu
+Rm
+SZ
 Rm
 Rm
 dU
@@ -1001,7 +892,7 @@ rT
 aJ
 PT
 bi
-nu
+SZ
 SZ
 SZ
 SZ
@@ -1035,7 +926,7 @@ Qi
 SZ
 SZ
 yU
-nu
+SZ
 SZ
 Qi
 va
@@ -1065,11 +956,11 @@ Pk
 bi
 bi
 SZ
-nu
 SZ
 SZ
 SZ
-iA
+SZ
+Wc
 xD
 rT
 rT
@@ -1126,10 +1017,10 @@ aJ
 kW
 dU
 Rm
-LZ
-Ja
-bA
-bA
+Rm
+SZ
+Rm
+Rm
 dU
 kW
 xD
@@ -1155,12 +1046,12 @@ rT
 rT
 aJ
 kW
-GU
-wg
-Rh
-Dd
-LZ
-DZ
+Zp
+Ra
+Rm
+SZ
+Rm
+Ra
 Um
 kW
 xD
@@ -1188,10 +1079,10 @@ aJ
 kW
 dU
 Rm
-bA
-nu
-LZ
-bA
+Rm
+SZ
+Rm
+Rm
 dU
 kW
 xD
@@ -1247,7 +1138,7 @@ lK
 SZ
 SZ
 gX
-Mt
+gX
 uS
 kW
 Rm
@@ -1255,7 +1146,7 @@ Rm
 Rm
 kW
 uS
-Ik
+gX
 Ls
 SZ
 SZ
@@ -1277,8 +1168,8 @@ aJ
 lK
 Bl
 SZ
-nu
-nu
+SZ
+SZ
 gX
 kW
 Rm
@@ -1287,8 +1178,8 @@ Rm
 kW
 gX
 SZ
-nu
-Ja
+SZ
+SZ
 Eq
 vb
 xD
@@ -1309,16 +1200,16 @@ lK
 bi
 bi
 SZ
-nu
-nu
+SZ
+SZ
 iR
 SZ
 pI
 SZ
 iR
 SZ
-Ja
-Ja
+SZ
+SZ
 SZ
 bi
 vb
@@ -1341,14 +1232,14 @@ bi
 bi
 bi
 Me
-nu
+SZ
 kW
 ei
 uv
 ND
 kW
-nu
-HS
+SZ
+Me
 SZ
 SZ
 bi

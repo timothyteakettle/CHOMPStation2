@@ -10,7 +10,7 @@
 	icon_living = "slug"
 	icon_state = "slug"
 	faction = "slug" //A faction other than neutral is necessary to get the slug to try eating station crew.
-	meat_type = /obj/item/weapon/reagent_containers/food/snacks/meat
+	meat_type = /obj/item/reagent_containers/food/snacks/meat
 	melee_damage_lower = 0
 	melee_damage_upper = 1 //Not intended to pose any sort of threat outside of vore. Other code should stop it from ever attacking but this is an extra safety check.
 	friendly = list("blinks at")
@@ -58,6 +58,8 @@
 
 /mob/living/simple_mob/vore/slug/init_vore()
 	if(!voremob_loaded)
+		return
+	if(LAZYLEN(vore_organs))
 		return
 	.=..()
 	var/obj/belly/B = vore_selected
@@ -129,7 +131,7 @@
 		if(missed) // Most likely we have a slow attack and they dodged it or we somehow got moved.
 			add_attack_logs(src, A, "Animal-attacked (dodged)", admin_notify = FALSE)
 			playsound(src, 'sound/rakshasa/Decay1.ogg', 75, 1)
-			visible_message(span("warning", "\The [src] misses."))
+			visible_message(span_warning("\The [src] misses."))
 			return FALSE
 		tryBumpNom(A) //Meant for bump noms but this works as intended here and has sanity checks.
 
@@ -147,7 +149,7 @@
 /obj/effect/slug_glue
 	name = "liquid"
 	desc = "This looks wet."
-	icon = 'icons/effects/effects_ch.dmi'
+	icon = 'icons/effects/effects.dmi'
 	icon_state = "wet_turf"
 	opacity = 0
 	mouse_opacity = 0 //Unclickable
@@ -161,27 +163,20 @@
 	var/turf/my_turf = null //The turf we spawn on.
 	var/base_escape_time = 1 MINUTE //How long does it take to struggle free? Affected by the victim's size_multiplier.
 
-/obj/effect/slug_glue/New()
-	..()
-	dissipate()
+/obj/effect/slug_glue/Initialize(mapload)
+	. = ..()
+	if(!persist_time)
+		return INITIALIZE_HINT_QDEL
 	my_turf = get_turf(src)
 	if(istype(my_turf, /turf/simulated/floor/water)) //Aside from not making sense in water, this prevents drowning.
-		qdel(src)
+		return INITIALIZE_HINT_QDEL
+	QDEL_IN(src, persist_time)
 /*	for(var/obj/effect/slug_glue/G in my_turf.contents)
 		if(G == src)
 			continue
 		else
 			qdel(G) //Prevent glue layering
 */ //Not including this due to performance concerns but keeping as comments for reference.
-
-/obj/effect/slug_glue/proc/dissipate() //When spawned, set a timer to despawn.
-	if(!persist_time)
-		qdel(src)
-		return
-	else
-		spawn(persist_time) //I used sleep() here first and it made the slug sleep for 5 minutes when spawning glue. Byond.
-		qdel(src)
-		return
 
 /obj/effect/slug_glue/Destroy()
 	. = ..()
@@ -194,7 +189,7 @@
 		return ..()
 	else if(istype(AM, /mob/living))
 		if(prob(50))
-			to_chat(AM, span("warning", "You stick to \the [my_turf]!"))
+			to_chat(AM, span_warning("You stick to \the [my_turf]!"))
 			return FALSE
 	return ..()
 
@@ -214,13 +209,13 @@
 	if(istype(AM, /mob/living/carbon) || istype(AM, /mob/living/silicon))
 		var/mob/living/L = AM
 
-		if(L.m_intent == "run" && !L.buckled)
+		if(L.m_intent == I_RUN && !L.buckled)
 			if(has_buckled_mobs())
 				return
 			buckle_mob(L)
 			L.stop_pulling()
 			L.Weaken(2)
-			to_chat(L, "<span class='warning'>You tripped in the sticky substance, sticking to [my_turf]!</span>")
+			to_chat(L, span_warning("You tripped in the sticky substance, sticking to [my_turf]!"))
 			playsound(src, 'sound/rakshasa/Decay3.ogg', 100, 1)
 			alert_slug(L)
 
@@ -258,8 +253,9 @@
 		unbuckle_mob(buckled_mob)
 		unalert_slug(buckled_mob)
 
-/obj/effect/slug_glue/clean_blood(var/ignore = 0) //Remove with space cleaner.
-	if(!ignore)
+/obj/effect/slug_glue/wash(clean_types) // Needs proper scrubbing
+	. = ..()
+	if (. || (clean_types & CLEAN_SCRUB))
 		qdel(src)
-		return
-	..()
+		return TRUE
+	return .

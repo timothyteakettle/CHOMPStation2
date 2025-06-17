@@ -16,6 +16,10 @@
 /obj/structure/bed/nest,
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault4)
+"e" = (
+/obj/effect/alien/weeds,
+/turf/simulated/mineral/floor/ignore_mapgen,
+/area/submap/cave/vault4)
 "f" = (
 /obj/effect/alien/weeds,
 /mob/living/simple_mob/animal/space/alien/drone,
@@ -33,10 +37,6 @@
 "i" = (
 /obj/effect/alien/weeds,
 /mob/living/simple_mob/animal/space/alien,
-/turf/simulated/mineral/floor/ignore_mapgen,
-/area/submap/cave/vault4)
-"j" = (
-/obj/effect/alien/weeds,
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/submap/cave/vault4)
 
@@ -77,8 +77,8 @@ a
 a
 b
 d
-j
-j
+e
+e
 g
 f
 b
@@ -87,11 +87,11 @@ a
 (5,1,1) = {"
 a
 c
-j
-j
-j
-j
-j
+e
+e
+e
+e
+e
 c
 a
 "}
@@ -100,8 +100,8 @@ a
 b
 f
 g
-j
-j
+e
+e
 d
 b
 a

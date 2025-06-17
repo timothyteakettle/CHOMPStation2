@@ -1,7 +1,7 @@
 // Navigation beacon for AI robots
 // Functions as a transponder: looks for incoming signal matching
 
-var/global/list/navbeacons = list()	// no I don't like putting this in, but it will do for now
+GLOBAL_LIST_EMPTY(navbeacons) // no I don't like putting this in, but it will do for now
 
 /obj/machinery/navbeacon
 	icon = 'icons/obj/objects.dmi'
@@ -18,15 +18,15 @@ var/global/list/navbeacons = list()	// no I don't like putting this in, but it w
 	var/list/codes = list()	// assoc. list of transponder codes
 	req_access = list(access_engine)
 
-/obj/machinery/navbeacon/New()
-	..()
+/obj/machinery/navbeacon/Initialize(mapload)
+	. = ..()
 	set_codes_from_txt(codes_txt)
 	if(freq)
 		warning("[src] at [x],[y],[z] has deprecated var freq=[freq].  Replace it with proper type.")
 
 	var/turf/T = loc
 	hide(!T.is_plating())
-	navbeacons += src
+	GLOB.navbeacons += src
 
 // set the transponder codes assoc list from codes_txt
 // DEPRECATED - This is kept only for compatibilty with old map files! Do not use this!
@@ -54,7 +54,7 @@ var/global/list/navbeacons = list()	// no I don't like putting this in, but it w
 // called when turf state changes
 // hide the object if turf is intact
 /obj/machinery/navbeacon/hide(var/intact)
-	invisibility = intact ? 101 : 0
+	invisibility = intact ? INVISIBILITY_ABSTRACT : INVISIBILITY_NONE
 	update_icon()
 
 // update the icon_state
@@ -85,7 +85,7 @@ var/global/list/navbeacons = list()	// no I don't like putting this in, but it w
 				locked = !locked
 				to_chat(user, "Controls are now [locked ? "locked." : "unlocked."]")
 			else
-				to_chat(user, "<span class='warning'>Access denied.</span>")
+				to_chat(user, span_warning("Access denied."))
 			updateDialog()
 		else
 			to_chat(user, "You must open the cover first!")
@@ -137,9 +137,9 @@ Transponder Codes:<UL>"}
 		t += "<small><A href='byond://?src=\ref[src];add=1;'>(add new)</A></small><BR>"
 		t+= "<UL></TT>"
 
-	user << browse(t, "window=navbeacon")
-	onclose(user, "navbeacon")
-	return
+	var/datum/browser/popup = new(user, "navbeacon", "Navbeacon")
+	popup.set_content(t)
+	popup.open()
 
 /obj/machinery/navbeacon/Topic(href, href_list)
 	..()
@@ -201,8 +201,8 @@ Transponder Codes:<UL>"}
 				updateDialog()
 
 /obj/machinery/navbeacon/Destroy()
-	navbeacons.Remove(src)
-	..()
+	GLOB.navbeacons.Remove(src)
+	. = ..()
 
 
 //
@@ -237,6 +237,6 @@ Transponder Codes:<UL>"}
 /obj/machinery/navbeacon/patrol
 	var/next_patrol
 
-/obj/machinery/navbeacon/patrol/New()
+/obj/machinery/navbeacon/patrol/Initialize(mapload)
 	codes = list("patrol" = 1, "next_patrol" = next_patrol)
-	..()
+	. = ..()

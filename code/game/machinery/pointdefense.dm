@@ -18,7 +18,7 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 	active_power_usage = 5 KILOWATTS // CHOMPStation Edit Ends
 	density = TRUE
 	anchored = TRUE
-	circuit = /obj/item/weapon/circuitboard/pointdefense_control
+	circuit = /obj/item/circuitboard/pointdefense_control
 	var/list/targets = list()  // Targets being engaged by associated batteries
 	var/id_tag = null
 
@@ -30,9 +30,6 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 			if(PC != src && PC.id_tag == id_tag)
 				warning("Two [src] with the same id_tag of [id_tag]")
 				id_tag = null
-	// TODO - Remove this bit once machines are converted to Initialize
-	if(ispath(circuit))
-		circuit = new circuit(src)
 	default_apply_parts()
 
 /obj/machinery/pointdefense_control/get_description_interaction()
@@ -66,7 +63,7 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 			return FALSE
 
 		if(!(get_z(PD) in GetConnectedZlevels(get_z(src))))
-			to_chat(usr, "<span class='warning'>[PD] is not within control range.</span>")
+			to_chat(ui.user, span_warning("[PD] is not within control range."))
 			return FALSE
 
 		if(!PD.Activate()) //Activate() whilst the device is active will return false.
@@ -80,7 +77,7 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 	if(id_tag)
 		var/list/connected_z_levels = GetConnectedZlevels(get_z(src))
 		for(var/i = 1 to LAZYLEN(GLOB.pointdefense_turrets))
-			var/obj/machinery/pointdefense/PD = GLOB.pointdefense_turrets[i]
+			var/obj/machinery/pointdefense/PD = GLOB.pointdefense_turrets[i] //CHOMPEDIT - Whatever this is, needs to be sent upstream. I stumbled upon this deconflicting and it was uncommented. Bad.
 			if(!(PD.id_tag == id_tag && (get_z(PD) in connected_z_levels)))
 				continue
 			var/list/turret = list()
@@ -104,9 +101,9 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 			// Check for duplicate controllers with this ID
 			for(var/obj/machinery/pointdefense_control/PC as anything in GLOB.pointdefense_controllers)
 				if(PC != src && PC.id_tag == id_tag)
-					to_chat(user, "<span class='warning'>The [new_ident] network already has a controller.</span>")
+					to_chat(user, span_warning("The [new_ident] network already has a controller."))
 					return
-			to_chat(user, "<span class='notice'>You register [src] with the [new_ident] network.</span>")
+			to_chat(user, span_notice("You register [src] with the [new_ident] network."))
 			id_tag = new_ident
 		return
 	if(default_deconstruction_screwdriver(user, W))
@@ -130,7 +127,7 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 	description_info = "Must have the same ident tag as a fire assist mainframe on the same facility. Use a multitool to set the ident tag."
 	density = TRUE
 	anchored = TRUE
-	circuit = /obj/item/weapon/circuitboard/pointdefense
+	circuit = /obj/item/circuitboard/pointdefense
 	//idle_power_usage = 0.1 KILOWATTS // CHOMPStation Edit
 	//active_power_usage = 1 KILOWATTS // CHOMPStation Edit
 	appearance_flags = PIXEL_SCALE
@@ -143,11 +140,8 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 	var/id_tag = null
 	var/fire_sounds = list('sound/weapons/frigate_turret/frigate_turret_fire1.ogg', 'sound/weapons/frigate_turret/frigate_turret_fire2.ogg', 'sound/weapons/frigate_turret/frigate_turret_fire3.ogg', 'sound/weapons/frigate_turret/frigate_turret_fire4.ogg') // CHOMPEdit: Pew
 
-/obj/machinery/pointdefense/Initialize()
+/obj/machinery/pointdefense/Initialize(mapload)
 	. = ..()
-	// TODO - Remove this bit once machines are converted to Initialize
-	if(ispath(circuit))
-		circuit = new circuit(src)
 	default_apply_parts()
 	update_icon()
 
@@ -182,7 +176,7 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 		var/new_ident = tgui_input_text(user, "Enter a new ident tag.", "[src]", id_tag, MAX_NAME_LEN)
 		new_ident = sanitize(new_ident,MAX_NAME_LEN)
 		if(new_ident && new_ident != id_tag && user.Adjacent(src) && CanInteract(user, GLOB.tgui_physical_state))
-			to_chat(user, "<span class='notice'>You register [src] with the [new_ident] network.</span>")
+			to_chat(user, span_notice("You register [src] with the [new_ident] network."))
 			id_tag = new_ident
 		return
 	if(default_deconstruction_screwdriver(user, W))
@@ -297,17 +291,17 @@ GLOBAL_LIST_BOILERPLATE(pointdefense_turrets, /obj/machinery/pointdefense)
 /obj/machinery/pointdefense/RefreshParts()
 	. = ..()
 	// Calculates an average rating of components that affect shooting rate
-	var/shootrate_divisor = total_component_rating_of_type(/obj/item/weapon/stock_parts/capacitor)
+	var/shootrate_divisor = total_component_rating_of_type(/obj/item/stock_parts/capacitor)
 
 	charge_cooldown = 2 SECONDS / (shootrate_divisor ? shootrate_divisor : 1)
 
 	//Calculate max shooting range
-	var/killrange_multiplier = total_component_rating_of_type(/obj/item/weapon/stock_parts/capacitor)
-	killrange_multiplier += 1.5 * total_component_rating_of_type(/obj/item/weapon/stock_parts/scanning_module)
+	var/killrange_multiplier = total_component_rating_of_type(/obj/item/stock_parts/capacitor)
+	killrange_multiplier += 1.5 * total_component_rating_of_type(/obj/item/stock_parts/scanning_module)
 
 	kill_range = 10 + 4 * killrange_multiplier
 
-	var/rotation_divisor = total_component_rating_of_type(/obj/item/weapon/stock_parts/manipulator)
+	var/rotation_divisor = total_component_rating_of_type(/obj/item/stock_parts/manipulator)
 	rotation_speed = 4.5 SECONDS / (rotation_divisor ? rotation_divisor : 1)
 
 /obj/machinery/pointdefense/proc/Activate()

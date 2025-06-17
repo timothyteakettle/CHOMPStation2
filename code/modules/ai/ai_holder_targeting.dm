@@ -10,6 +10,7 @@
 	var/micro_hunt = FALSE					// Will target mobs at or under the micro_hunt_size size, requires vore_hostile to be true
 	var/micro_hunt_size = 0.25
 	var/belly_attack = TRUE					//Mobs attack if they are in a belly!
+	var/guard_limit = FALSE					//Mobs will not acquire targets unless they are in front of them.
 
 	var/atom/movable/target = null			// The thing (mob or object) we're trying to kill.
 	var/atom/movable/preferred_target = null// If set, and if given the chance, we will always prefer to target this over other options.
@@ -52,7 +53,10 @@
 	. = list()
 	if(!has_targets_list)
 		possible_targets = list_targets()
-	for(var/possible_target in possible_targets)
+	for(var/atom/possible_target as anything in possible_targets)
+		if(guard_limit)
+			if((holder.dir == 1 && holder.y >= possible_target.y) || (holder.dir == 2 && holder.y <= possible_target.y) || (holder.dir == 4 && holder.x >= possible_target.x) || (holder.dir == 8 && holder.x <= possible_target.x)) //Ignore targets that are behind you
+				continue
 		if(can_attack(possible_target)) // Can we attack it?
 			. += possible_target
 
@@ -132,6 +136,8 @@
 			return FALSE
 	if(isliving(the_target))
 		var/mob/living/L = the_target
+		if(holder.IIsAlly(L))
+			return FALSE
 		if(ishuman(L) || issilicon(L))
 			if(L.key && !L.client)	// SSD players get a pass
 				return FALSE
@@ -153,14 +159,12 @@
 					return FALSE
 		//VOREStation add start
 		else if(forgive_resting && !isbelly(holder.loc))	//Doing it this way so we only think about the other conditions if the var is actually set
-			if((holder.health == holder.maxHealth) && !hostile && (L.resting || L.weakened || L.stunned))	//If our health is full, no one is fighting us, we can forgive
+			if((holder.health == holder.getMaxHealth()) && !hostile && (L.resting || L.weakened || L.stunned))	//If our health is full, no one is fighting us, we can forgive
 				var/mob/living/simple_mob/vore/eater = holder
 				if(!eater.will_eat(L))		//We forgive people we can eat by eating them
 					set_stance(STANCE_IDLE)
 					return FALSE	//Forgiven
 		//VOREStation add end
-		if(holder.IIsAlly(L))
-			return FALSE
 		return TRUE
 
 	if(istype(the_target, /obj/mecha))
@@ -217,6 +221,7 @@
 
 // 'Hard' loss of target. Clean things up and return to idle.
 /datum/ai_holder/proc/remove_target()
+	SIGNAL_HANDLER
 	ai_log("remove_target() : Entering.", AI_LOG_TRACE)
 	if(target)
 		UnregisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(remove_target))
@@ -342,8 +347,14 @@
 	preferred_target = null
 
 /datum/ai_holder/proc/vore_check(mob/living/L)
-	if(!holder.vore_selected)	//We probably don't have a belly so don't even try
+	//CHOMPEdit Start
+	var/mob/living/simple_mob/simple = holder
+	if(istype(simple))	//We probably don't have a belly so don't even try
+		if (!simple.vore_active)
+			return FALSE
+	else if (holder.vore_selected == null)
 		return FALSE
+	// CHOMPEdit End
 	if(!isliving(L))	//We only want mob/living
 		return FALSE
 	if(!L.devourable || !L.allowmobvore)	//Check their prefs

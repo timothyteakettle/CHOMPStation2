@@ -12,26 +12,21 @@
 		var/obj/machinery/mecha_part_fabricator/pros/prosfab = fabricator
 		var/obj/item/organ/O = new build_path(newloc)
 		if(prosfab.manufacturer)
-			var/datum/robolimb/manf = all_robolimbs[prosfab.manufacturer]
+			var/datum/robolimb/manf = GLOB.all_robolimbs[prosfab.manufacturer]
 
 			if(!(O.organ_tag in manf.parts))	// Make sure we're using an actually present icon.
-				manf = all_robolimbs["Unbranded"]
+				manf = GLOB.all_robolimbs["Unbranded"]
 
 			if(prosfab.species in manf.species_alternates)	// If the prosthetics fab is set to say, Unbranded, and species set to 'Tajaran', it will make the Taj variant of Unbranded, if it exists.
 				manf = manf.species_alternates[prosfab.species]
 
 			if(!prosfab.species || (prosfab.species in manf.species_cannot_use))	// Fabricator ensures the manufacturer can make parts for the species we're set to.
-				O.species = GLOB.all_species["[manf.suggested_species]"]
+				O.data.setup_from_species(GLOB.all_species["[manf.suggested_species]"])
 			else
-				O.species = GLOB.all_species[prosfab.species]
+				O.data.setup_from_species(GLOB.all_species[prosfab.species])
 		else
-			O.species = GLOB.all_species["Human"]
+			O.data.setup_from_species(GLOB.all_species["Human"])
 		O.robotize(prosfab.manufacturer)
-		O.dna = new/datum/dna() //Uuughhhh... why do I have to do this?
-		O.dna.ResetUI()
-		O.dna.ResetSE()
-		spawn(10) //Limbs love to flop around. Who am I to deny them?
-			O.dir = 2
 		return O
 	return ..()
 
@@ -41,7 +36,7 @@
 		var/obj/machinery/mecha_part_fabricator/pros/prosfab = fabricator
 		var/newspecies = "Human"
 
-		var/datum/robolimb/manf = all_robolimbs[prosfab.manufacturer]
+		var/datum/robolimb/manf = GLOB.all_robolimbs[prosfab.manufacturer]
 
 		if(manf)
 			if(prosfab.species in manf.species_alternates)	// If the prosthetics fab is set to say, Unbranded, and species set to 'Tajaran', it will make the Taj variant of Unbranded, if it exists.
@@ -62,15 +57,13 @@
 				EO.remove_rejuv()
 
 		for(var/obj/item/organ/external/O in H.organs)
-			O.species = GLOB.all_species[newspecies]
+			O.data.setup_from_species(GLOB.all_species[newspecies])
 
 			if(!(O.organ_tag in manf.parts))	// Make sure we're using an actually present icon.
-				manf = all_robolimbs["Unbranded"]
+				manf = GLOB.all_robolimbs["Unbranded"]
 
 			O.robotize(manf.company)
-			O.dna = new/datum/dna()
-			O.dna.ResetUI()
-			O.dna.ResetSE()
+			O.data.setup_from_dna()
 
 			// Skincolor weirdness.
 			O.s_col[1] = 255 // CHOMP Edit
@@ -83,6 +76,7 @@
 		H.b_skin = 255 // CHOMP Edit
 		H.dna.ResetUIFrom(H)
 
+		H.allow_spontaneous_tf = TRUE // Allows vore customization of synthmorphs
 		H.real_name = "Synthmorph #[rand(100,999)]"
 		H.name = H.real_name
 		H.dir = 2
@@ -376,7 +370,51 @@
 /datum/design/item/prosfab/cyborg/component/ai_shell
 	name = "AI Remote Interface"
 	id = "mmi_ai_shell"
-	build_path = /obj/item/device/mmi/inert/ai_remote
+	build_path = /obj/item/mmi/inert/ai_remote
+
+//////////////////// Advanced Components ////////////////////
+/datum/design/item/prosfab/cyborg/component/radio_upgraded
+	name = "Improved Radio"
+	id = "improved_radio"
+	build_path = /obj/item/robot_parts/robot_component/radio/upgraded
+	req_tech = list(TECH_MAGNET = 7, TECH_MATERIAL = 5, TECH_PRECURSOR = 1)
+	materials = list(MAT_STEEL = 10000, MAT_DIAMOND = 2000, MAT_PLASTEEL = 3000, MAT_GLASS = 6500, MAT_SILVER = 3000, MAT_MORPHIUM = 560, MAT_DURASTEEL = 800)
+
+/datum/design/item/prosfab/cyborg/component/actuator_upgraded
+	name = "Improved Actuator"
+	id = "improved_actuator"
+	build_path = /obj/item/robot_parts/robot_component/actuator/upgraded
+	req_tech = list(TECH_MAGNET = 7, TECH_MATERIAL = 5, TECH_PRECURSOR = 1)
+	materials = list(MAT_STEEL = 10000, MAT_PLASTEEL = 2500, MAT_MORPHIUM = 500, MAT_DURASTEEL = 500)
+
+/datum/design/item/prosfab/cyborg/component/diagnosis_unit_upgraded
+	name = "Improved Diagnosis Unit"
+	id = "improved_diagnosis_unit"
+	build_path = /obj/item/robot_parts/robot_component/diagnosis_unit/upgraded
+	req_tech = list(TECH_MAGNET = 7, TECH_MATERIAL = 5, TECH_PRECURSOR = 1)
+	materials = list(MAT_STEEL = 10000, MAT_DIAMOND = 2000, MAT_URANIUM = 4000, MAT_PLASTEEL = 1000, MAT_GLASS = 400, MAT_SILVER = 1000, MAT_MORPHIUM = 420, MAT_DURASTEEL = 600)
+
+/datum/design/item/prosfab/cyborg/component/camera_upgraded
+	name = "Improved Camera"
+	id = "improved_camera"
+	build_path = /obj/item/robot_parts/robot_component/camera/upgraded
+	req_tech = list(TECH_MAGNET = 7, TECH_MATERIAL = 5, TECH_PRECURSOR = 1)
+	materials = list(MAT_STEEL = 10000, MAT_DIAMOND = 2000, MAT_PLASTEEL = 3000, MAT_GLASS = 6500, MAT_SILVER = 3000, MAT_MORPHIUM = 560, MAT_DURASTEEL = 800)
+
+/datum/design/item/prosfab/cyborg/component/binary_communication_device/upgraded
+	name = "Improved Binary Communication Device"
+	id = "improved_binary_communication_device"
+	build_path = /obj/item/robot_parts/robot_component/binary_communication_device/upgraded
+	req_tech = list(TECH_MAGNET = 7, TECH_MATERIAL = 5, TECH_PRECURSOR = 1)
+	materials = list(MAT_STEEL = 10000, MAT_DIAMOND = 2000, MAT_PLASTEEL = 3000, MAT_GLASS = 6500, MAT_GOLD = 3000, MAT_DURASTEEL = 800)
+
+/datum/design/item/prosfab/cyborg/component/armour_very_heavy
+	name = "Armour Plating (Prototype)"
+	id = "titan_armour"
+	build_path = /obj/item/robot_parts/robot_component/armour/armour_titan
+	req_tech = list(TECH_MATERIAL = 9, TECH_PRECURSOR = 3)
+	materials = list(MAT_STEEL = 12000, MAT_MORPHIUM = 3000, MAT_DURASTEEL = 5000)
+
 
 //////////////////// Cyborg Modules ////////////////////
 /datum/design/item/prosfab/robot_upgrade

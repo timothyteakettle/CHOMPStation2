@@ -3,14 +3,11 @@
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/WolfDen)
 "b" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/random/cargopod,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
+/mob/living/simple_mob/animal/sif/shantak,
+/turf/template_noop,
 /area/submap/WolfDen)
 "c" = (
-/obj/item/weapon/bone,
+/obj/item/bone,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/gibspawner/human,
 /obj/random/maintenance/engineering,
@@ -18,16 +15,7 @@
 	outdoors = 0
 	},
 /area/submap/WolfDen)
-"d" = (
-/mob/living/simple_mob/vore/wolf/direwolf{
-	faction = "wilderness"
-	},
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/WolfDen)
 "e" = (
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /obj/random/junk,
 /obj/random/maintenance/cargo,
@@ -36,7 +24,6 @@
 	},
 /area/submap/WolfDen)
 "i" = (
-/obj/random/cargopod,
 /obj/random/maintenance/security,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
@@ -50,7 +37,7 @@
 	},
 /area/submap/WolfDen)
 "m" = (
-/obj/item/weapon/bone/ribs,
+/obj/item/bone/ribs,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -59,13 +46,6 @@
 /turf/simulated/mineral/ignore_mapgen,
 /area/submap/WolfDen)
 "p" = (
-/mob/living/simple_mob/vore/wolf/direwolf/dog{
-	faction = "wilderness";
-	maxHealth = 350;
-	melee_damage_lower = 15;
-	melee_damage_upper = 30;
-	name = "Alpha dire wolf"
-	},
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
@@ -85,7 +65,6 @@
 /area/submap/WolfDen)
 "u" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /obj/structure/ledge/ledge_stairs{
 	dir = 4
 	},
@@ -95,13 +74,11 @@
 /area/submap/WolfDen)
 "v" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
 /area/submap/WolfDen)
 "w" = (
-/obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /obj/random/junk,
 /turf/simulated/floor/outdoors/dirt{
@@ -109,9 +86,6 @@
 	},
 /area/submap/WolfDen)
 "y" = (
-/mob/living/simple_mob/vore/wolf/direwolf{
-	faction = "wilderness"
-	},
 /obj/random/maintenance/security,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
@@ -129,7 +103,7 @@
 	},
 /area/submap/WolfDen)
 "C" = (
-/obj/random/trash_pile,
+/mob/living/simple_mob/animal/sif/shantak,
 /turf/simulated/floor/outdoors/dirt,
 /area/submap/WolfDen)
 "D" = (
@@ -140,35 +114,13 @@
 	},
 /area/submap/WolfDen)
 "G" = (
-/obj/item/weapon/bone/arm,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/WolfDen)
-"I" = (
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/WolfDen)
-"J" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/random/junk,
-/turf/simulated/floor/outdoors/dirt{
-	outdoors = 0
-	},
-/area/submap/WolfDen)
-"K" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
+/obj/item/bone/arm,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
 /area/submap/WolfDen)
 "M" = (
-/obj/random/cargopod,
 /obj/random/maintenance/cargo,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
@@ -180,15 +132,8 @@
 	outdoors = 0
 	},
 /area/submap/WolfDen)
-"R" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/outdoors/dirt,
-/area/submap/WolfDen)
 "S" = (
-/obj/item/weapon/bone,
-/obj/effect/decal/cleanable/dirt,
+/obj/item/bone,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
@@ -222,14 +167,14 @@
 	},
 /area/submap/WolfDen)
 "X" = (
-/obj/item/stolenpackage,
+/mob/living/simple_mob/animal/sif/shantak,
 /turf/simulated/floor/outdoors/dirt{
 	outdoors = 0
 	},
 /area/submap/WolfDen)
 "Y" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/random/cargopod,
+/mob/living/simple_mob/animal/sif/shantak/leader,
 /turf/simulated/floor/outdoors/rocks{
 	outdoors = 0
 	},
@@ -239,7 +184,7 @@
 /area/submap/WolfDen)
 
 (1,1,1) = {"
-Z
+b
 V
 o
 o
@@ -248,14 +193,14 @@ o
 o
 o
 o
-a
+C
 "}
 (2,1,1) = {"
 Z
 o
 o
 o
-d
+X
 O
 X
 o
@@ -281,8 +226,8 @@ v
 A
 w
 e
-J
-b
+w
+v
 r
 o
 "}
@@ -301,7 +246,7 @@ o
 (6,1,1) = {"
 Z
 o
-K
+v
 o
 o
 p
@@ -319,24 +264,24 @@ o
 o
 m
 j
-X
+p
 o
 "}
 (8,1,1) = {"
 Z
 z
 v
-I
+v
 o
 o
 o
-d
+X
 o
 o
 "}
 (9,1,1) = {"
 a
-R
+z
 z
 o
 o

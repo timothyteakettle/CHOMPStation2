@@ -10,9 +10,9 @@
 
 	spawncount = rand(2 * severity, 6 * severity)
 
-	for(var/obj/machinery/atmospherics/unary/vent_pump/temp_vent in machines)
+	for(var/obj/machinery/atmospherics/unary/vent_pump/temp_vent in GLOB.machines)
 		var/area/A = get_area(temp_vent)
-		if(A.forbid_events)
+		if(A.flag_check(AREA_FORBID_EVENTS))
 			continue
 		if(!temp_vent.welded && temp_vent.network && (temp_vent.loc.z in using_map.station_levels))
 			if(temp_vent.network.normal_members.len > 10) //CHOMP Edit: Most our networks are 40. SM is 4 and toxins is 2. This needed to change in order to spawn.
@@ -32,7 +32,7 @@
 
 /datum/event/grub_infestation/end()
 	var/list/area_names = list()
-	for(var/mob/living/G as anything in existing_solargrubs)
+	for(var/mob/living/G as anything in GLOB.existing_solargrubs)
 		if(!G || G.stat == DEAD)
 			continue
 		if(istype(G, /mob/living/simple_mob/animal/solargrub_larva))

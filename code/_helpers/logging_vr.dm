@@ -1,6 +1,6 @@
 /proc/log_nsay(text, inside, mob/speaker)
-	if (CONFIG_GET(flag/log_say)) // CHOMPEdit
-		WRITE_LOG(diary, "NSAY (NIF:[inside]): [speaker.simple_info_line()]: [html_decode(text)]")
+	if (CONFIG_GET(flag/log_say))
+		WRITE_LOG(GLOB.diary, "NSAY (NIF:[inside]): [speaker.simple_info_line()]: [html_decode(text)]")
 	//CHOMPEdit Begin
 	if(speaker.client)
 		if(!SSdbcore.IsConnected())
@@ -17,8 +17,8 @@
 	//CHOMPEdit End
 
 /proc/log_nme(text, inside, mob/speaker)
-	if (CONFIG_GET(flag/log_emote)) // CHOMPEdit
-		WRITE_LOG(diary, "NME (NIF:[inside]): [speaker.simple_info_line()]: [html_decode(text)]")
+	if (CONFIG_GET(flag/log_emote))
+		WRITE_LOG(GLOB.diary, "NME (NIF:[inside]): [speaker.simple_info_line()]: [html_decode(text)]")
 	//CHOMPEdit Begin
 	if(speaker.client)
 		if(!SSdbcore.IsConnected())
@@ -35,8 +35,8 @@
 	//CHOMPEdit End
 
 /proc/log_subtle(text, mob/speaker)
-	if (CONFIG_GET(flag/log_emote)) // CHOMPEdit
-		WRITE_LOG(diary, "SUBTLE: [speaker.simple_info_line()]: [html_decode(text)]")
+	if (CONFIG_GET(flag/log_emote))
+		WRITE_LOG(GLOB.diary, "SUBTLE: [speaker.simple_info_line()]: [html_decode(text)]")
 	//CHOMPEdit Begin
 	if(speaker.client)
 		if(!SSdbcore.IsConnected())

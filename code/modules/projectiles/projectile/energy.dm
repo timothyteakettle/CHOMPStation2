@@ -46,7 +46,7 @@
 
 	//snap pop
 	playsound(src, 'sound/effects/snap.ogg', 50, 1)
-	src.visible_message("<span class='warning'>\The [src] explodes in a bright flash!</span>")
+	src.visible_message(span_warning("\The [src] explodes in a bright flash!"))
 
 	var/datum/effect/effect/system/spark_spread/sparks = new /datum/effect/effect/system/spark_spread()
 	sparks.set_up(2, 1, T)
@@ -70,7 +70,7 @@
 	..() //initial flash
 
 	//residual illumination
-	new /obj/effect/effect/smoke/illumination(src.loc, rand(190,240) SECONDS, range=8, power=3, color=light_colour) //same lighting power as flare
+	new /obj/effect/effect/smoke/illumination(loc, rand(190,240) SECONDS, 8, 3, light_colour) //same lighting power as flare
 
 /obj/item/projectile/energy/electrode
 	name = "electrode"
@@ -243,7 +243,7 @@
 
 /obj/item/projectile/energy/plasmastun/proc/bang(var/mob/living/carbon/M)
 
-	to_chat(M, "<span class='danger'>You hear a loud roar.</span>")
+	to_chat(M, span_danger("You hear a loud roar."))
 	playsound(src, 'sound/effects/bang.ogg', 50, 1)
 	var/ear_safety = 0
 	ear_safety = M.get_ear_protection()
@@ -258,14 +258,14 @@
 		M.ear_deaf = max(M.ear_deaf,15)
 		M.deaf_loop.start() // CHOMPStation Add: Ear Ringing/Deafness
 	if (M.ear_damage >= 15)
-		to_chat(M, "<span class='danger'>Your ears start to ring badly!</span>")
+		to_chat(M, span_danger("Your ears start to ring badly!"))
 		if (prob(M.ear_damage - 5))
-			to_chat(M, "<span class='danger'>You can't hear anything!</span>")
+			to_chat(M, span_danger("You can't hear anything!"))
 			M.sdisabilities |= DEAF
 			M.deaf_loop.start() // CHOMPStation Add: Ear Ringing/Deafness
 	else
 		if (M.ear_damage >= 5)
-			to_chat(M, "<span class='danger'>Your ears start to ring!</span>")
+			to_chat(M, span_danger("Your ears start to ring!"))
 	M.update_icons() //Just to apply matrix transform for laying asap
 
 /obj/item/projectile/energy/plasmastun/on_hit(var/atom/target)
@@ -275,7 +275,7 @@
 /obj/item/projectile/energy/blue_pellet
 	name = "suppressive pellet"
 	icon_state = "blue_pellet"
-	fire_sound = 'sound/weapons/Laser4.ogg'
+	fire_sound = 'sound/weapons/laser5.ogg'
 	damage = 5
 	armor_penetration = 75
 	pass_flags = PASSTABLE | PASSGLASS | PASSGRILLE
@@ -294,24 +294,20 @@
 	icon_state = "phase"
 	range = 13 //Chompedit This range was still awful
 	damage = 5
-	SA_bonus_damage = 45	// 50 total on animals
-	SA_vulnerability = list(SA_ANIMAL, MOB_CLASS_SYNTHETIC, MOB_CLASS_ABERRATION, MOB_CLASS_HUMANOID) //CHOMP Edit expand this list
+	mob_bonus_damage = 45
 	hud_state = "laser_heat"
 
 /obj/item/projectile/energy/phase/light
-	range = 11 //Chompedit This range was absolutely pathetic
-	SA_bonus_damage = 35	// 40 total on animals
+	range = 4
 	hud_state = "laser_heat"
 
 /obj/item/projectile/energy/phase/heavy
-	range = 16 //Chompedit This range was not great
-	SA_bonus_damage = 55	// 60 total on animals
+	range = 8
 	hud_state = "laser_heat"
 
 /obj/item/projectile/energy/phase/heavy/cannon
 	range = 20 //Chompedit This range was mediocre, but not worth a cannon.
 	damage = 15
-	SA_bonus_damage = 60	// 75 total on animals
 	hud_state = "laser_heat"
 */
 

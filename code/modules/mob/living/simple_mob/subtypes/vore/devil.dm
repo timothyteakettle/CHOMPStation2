@@ -1,5 +1,5 @@
 /mob/living/simple_mob/vore/devil
-	name = "Statue of Temptation"
+	name = "statue of temptation"
 	desc = "A tall statue made of red-tinted metal in the shape of some sort of demon or devil."
 	catalogue_data = list(/datum/category_item/catalogue/fauna/devil)
 	tt_desc = "Metal Statue"
@@ -8,7 +8,7 @@
 	icon_living = "devil"
 	icon_state = "devil"
 	icon_rest = "devil"
-	faction = "devil"
+	faction = FACTION_DEVIL
 	old_x = -16
 	old_y = 0
 	default_pixel_x = -16
@@ -43,7 +43,11 @@
 	vore_bump_emote = "pounces on"
 
 /mob/living/simple_mob/vore/devil/init_vore()
-	..()
+	if(!voremob_loaded)
+		return
+	if(LAZYLEN(vore_organs))
+		return
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
 	B.desc = "It turns out that this was not just any old statue, but some form of android waiting for its chance to ambush you. The moment that it laid its hands on you, your fate was decided. The jaws of the machine parted, if you could call them that, and immediately enveloped your head. The inside was hot and slick, but dry. The textures were startlingly realistic, the base was clearly a tongue, the top palate of the mouth was hard but somewhat pliable. Not that you had time to admire it before the rest of your body was stuffed inside. Through a short passage down through a rubbery tube of a gullet, mechanical contractions squeezing you down from behind, you're quickly deposited in something much resembling a stomach. Amid the sounds of mechanical whirrs, you can heard glorping, gurgling and burbling from unknown sources. The walls wrap firmly around your body, deliberately dramping you up into the smallest space that the machine can crush you into, whilst the synthetic lining around you ripples across your hunched up form. You can even see yourself, the gut itself is backlit by some eerie red glow, just enough to tell exactly what is happening to you. It doesn't help that you can see the drooling fluids glistening in the dim light."
@@ -71,9 +75,9 @@
 	vore_pounce_cooldown = world.time + 1 SECONDS // don't attempt another pounce for a while
 	if(prob(successrate)) // pounce success!
 		M.Weaken(5)
-		M.visible_message("<span class='danger'>\The [src] pounces on \the [M]!</span>!")
+		M.visible_message(span_danger("\The [src] pounces on \the [M]!"))
 	else // pounce misses!
-		M.visible_message("<span class='danger'>\The [src] attempts to pounce \the [M] but misses!</span>!")
+		M.visible_message(span_danger("\The [src] attempts to pounce \the [M] but misses!"))
 		playsound(src, 'sound/weapons/punchmiss.ogg', 25, 1, -1)
 
 	if(will_eat(M) && (!M.canmove || vore_standing_too)) //if they're edible then eat them too
@@ -177,7 +181,7 @@
 //				return FALSE
 		//VOREStation add start
 		else if(forgive_resting && !isbelly(holder.loc))	//Doing it this way so we only think about the other conditions if the var is actually set
-			if((holder.health == holder.maxHealth) && !hostile && (L.resting || L.weakened || L.stunned))	//If our health is full, no one is fighting us, we can forgive
+			if((holder.health == holder.getMaxHealth()) && !hostile && (L.resting || L.weakened || L.stunned))	//If our health is full, no one is fighting us, we can forgive
 				var/mob/living/simple_mob/vore/eater = holder
 				if(!eater.will_eat(L))		//We forgive people we can eat by eating them
 					set_stance(STANCE_IDLE)
@@ -250,7 +254,7 @@
 		on_engagement(target)
 		if(firing_lanes && !test_projectile_safety(target))
 			// Nudge them a bit, maybe they can shoot next time.
-			var/turf/T = get_step(holder, pick(cardinal))
+			var/turf/T = get_step(holder, pick(GLOB.cardinal))
 			if(T)
 				holder.IMove(T) // IMove() will respect movement cooldown.
 				holder.face_atom(target)
@@ -264,4 +268,3 @@
 	else if(!stand_ground)
 		ai_log("engage_target() : Target ([target]) too far away. Exiting.", AI_LOG_DEBUG)
 		set_stance(STANCE_APPROACH)
-

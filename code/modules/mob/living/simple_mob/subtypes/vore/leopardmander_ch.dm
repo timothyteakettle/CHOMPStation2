@@ -10,7 +10,7 @@
 	icon_rest = "leopardmander-rest"
 	faction = "neutral"
 	meat_amount = 40 //I mean...
-	meat_type = /obj/item/weapon/reagent_containers/food/snacks/meat
+	meat_type = /obj/item/reagent_containers/food/snacks/meat
 	old_x = -48
 	old_y = 0
 	vis_height = 92
@@ -79,12 +79,14 @@
 	plane_holder.set_vis(VIS_CH_STATUS_R, 1)
 	plane_holder.set_vis(VIS_CH_BACKUP, 1)	//Makes sense for player Leppy's to be able to see health.
 
-/mob/living/simple_mob/vore/leopardmander/Initialize()
-	..()
+/mob/living/simple_mob/vore/leopardmander/Initialize(mapload)
+	. = ..()
 	src.adjust_nutrition(src.max_nutrition)
 
 /mob/living/simple_mob/vore/leopardmander/init_vore()
 	if(!voremob_loaded)
+		return
+	if(LAZYLEN(vore_organs))
 		return
 	.=..()
 	var/obj/belly/B = new /obj/belly(src)
@@ -136,6 +138,8 @@
 		"The drake's thick tongue presses against your form, smothering you with thick, gooey saliva as it pushes you around in it's maw.",
 		"The exotic drake lets out a deep rumble as it idly maws over you, shifting you in a warm, slimy embrace as it passively prepares to send you into a deeper embrace."
 	)
+	B.autotransfer_enabled = TRUE
+	B.autotransferchance = 30
 	B.autotransferwait = 5
 	B.autotransferlocation = "stomach"
 	B.escapetime = 1 SECONDS
@@ -178,14 +182,16 @@
 
 	glow_toggle = !glow_toggle
 
-/mob/living/simple_mob/vore/leopardmander/exotic/New()
-	..()
+/mob/living/simple_mob/vore/leopardmander/exotic/Initialize(mapload)
+	. = ..()
 	add_verb(src,/mob/living/simple_mob/vore/leopardmander/exotic/proc/toggle_glow) //CHOMPEdit TGPanel
 
 /mob/living/simple_mob/vore/leopardmander/exotic/init_vore()
 	if(!voremob_loaded)
 		return
-	//.=..() //Dont need this, it just spawns the parent's guts
+	if(LAZYLEN(vore_organs))
+		return
+
 	var/obj/belly/B = new /obj/belly(src)
 	B.name = "stomach"
 	B.desc = "The exotic leopardmander tosses its head back with you firmly clasped in its jaws, and in a few swift moments it finishes swallowing you down into its hot, brightly glowing gut. Your weight makes absolutely no impact on its form, the doughy walls giving way beneath you, with their unnatural softness. The thick, humid air is tinged with an oddly pleasant smell, and the surrounding flesh wastes no time in clenching and massaging down over its newfound fodder, smothering you in thick hot gutflesh~ You can only really sort of see outside that thick-walled gut."
@@ -240,6 +246,7 @@
 	B.autotransferlocation = "stomach"
 	B.escapetime = 1 SECONDS
 	B.escapechance = 75
+	. = ..()
 
 /obj/random/mob/leopardmander/item_to_spawn() //Random map spawner
 	return pick(prob(89);/mob/living/simple_mob/vore/leopardmander,

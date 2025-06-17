@@ -2,8 +2,8 @@
 	name = "Hades Chassis"
 	origin_tech = list(TECH_MATERIAL = 7)
 
-/obj/item/mecha_parts/chassis/hades/New()
-	..()
+/obj/item/mecha_parts/chassis/hades/Initialize(mapload)
+	. = ..()
 	construct = new /datum/construction/mecha/hades_chassis(src)
 
 /obj/item/mecha_parts/part/hades_torso
@@ -36,11 +36,11 @@
 	icon_state = "janus_r_leg"
 	origin_tech = list(TECH_MATERIAL = 5, TECH_BLUESPACE = 3, TECH_MAGNET = 3, TECH_ARCANE = 1)
 
-/obj/item/weapon/circuitboard/mecha/hades/targeting
+/obj/item/circuitboard/mecha/hades/targeting
 	name = "stange targeting circuit"
 
-/obj/item/weapon/circuitboard/mecha/hades/peripherals
+/obj/item/circuitboard/mecha/hades/peripherals
 	name = "stange peripheral circuit"
 
-/obj/item/weapon/circuitboard/mecha/hades/main
+/obj/item/circuitboard/mecha/hades/main
 	name = "stange control circuit"

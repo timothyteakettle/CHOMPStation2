@@ -5,7 +5,7 @@
 	icon_state = "basic"
 	icon_living = "basic"
 
-	faction = "hivebot"
+	faction = FACTION_HIVEBOT
 
 	maxHealth = 3 LASERS_TO_KILL
 	health = 3 LASERS_TO_KILL
@@ -13,7 +13,7 @@
 	movement_sound = 'sound/effects/servostep.ogg'
 
 	attacktext = list("clawed")
-	projectilesound = 'sound/weapons/Gunshot_old.ogg'
+	projectilesound = 'sound/weapons/gunshot_old.ogg'
 
 	organ_names = /decl/mob_organ_names/hivebot
 
@@ -23,7 +23,7 @@
 
 /mob/living/simple_mob/mechanical/hivebot/death()
 	..()
-	visible_message(span("warning","\The [src] blows apart!"))
+	visible_message(span_warning("\The [src] blows apart!"))
 	new /obj/effect/decal/cleanable/blood/gibs/robot(src.loc)
 	var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 	s.set_up(3, 1, src)

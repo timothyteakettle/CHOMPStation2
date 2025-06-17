@@ -10,9 +10,9 @@
 	req_open = 1
 
 /datum/surgery_step/repairflesh/can_use(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
-/*    VOREStation Removal for Mlem Reasons(TM)
-    if (target.stat == DEAD) // Sorry defibs, your subjects need to have pumping fluids for these to work.
-        return 0
+/* VOREStation Removal for Mlem Reasons(TM)
+	if (target.stat == DEAD) // Sorry defibs, your subjects need to have pumping fluids for these to work.
+		return 0
 */
 	if (isslime(target))
 		return 0
@@ -39,8 +39,8 @@
 /datum/surgery_step/repairflesh/scan_injury
 	surgery_name = "Scan Injury"
 	allowed_tools = list(
-	/obj/item/weapon/autopsy_scanner = 100,
-	/obj/item/device/analyzer = 10
+	/obj/item/autopsy_scanner = 100,
+	/obj/item/analyzer = 10
 	)
 
 	priority = 2
@@ -60,30 +60,30 @@
 
 /datum/surgery_step/repairflesh/scan_injury/begin_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	user.visible_message("<span class='notice'>[user] begins scanning [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You begin scanning [target]'s [affected] with \the [tool].</span>")
-	user.balloon_alert_visible("Begins scanning [target]'s [affected]", "Scaning \the [affected]") // CHOMPEdit
+	user.visible_message(span_notice("[user] begins scanning [target]'s [affected] with \the [tool]."), \
+	span_notice("You begin scanning [target]'s [affected] with \the [tool]."))
+	user.balloon_alert_visible("begins scanning [target]'s [affected]", "scaning \the [affected]")
 	..()
 
 /datum/surgery_step/repairflesh/scan_injury/end_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	user.visible_message("<span class='notice'>[user] finishes scanning [target]'s [affected].</span>", \
-	"<span class='notice'>You finish scanning [target]'s [affected].</span>")
-	user.balloon_alert_visible("Finishes scanning [target]'s [affected]", "Finished scanning \the [affected]") // CHOMPEdit
+	user.visible_message(span_notice("[user] finishes scanning [target]'s [affected]."), \
+	span_notice("You finish scanning [target]'s [affected]."))
+	user.balloon_alert_visible("finishes scanning [target]'s [affected]", "finished scanning \the [affected]")
 	if(affected.brute_dam)
-		to_chat(user, "<span class='notice'>The muscle in [target]'s [affected] is notably bruised.</span>")
+		to_chat(user, span_notice("The muscle in [target]'s [affected] is notably bruised."))
 		if(affected.status & ORGAN_BROKEN)
-			to_chat(user, "<span class='warning'>\The [target]'s [affected] is broken!</span>")
+			to_chat(user, span_warning("\The [target]'s [affected] is broken!"))
 		affected.brute_stage = max(1, affected.brute_stage)
 	if(affected.burn_dam)
-		to_chat(user, "<span class='notice'>\The muscle in [target]'s [affected] is notably charred.</span>")
+		to_chat(user, span_notice("\The muscle in [target]'s [affected] is notably charred."))
 		affected.burn_stage = max(1, affected.burn_stage)
 
 /datum/surgery_step/repairflesh/scan_injury/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	user.visible_message("<span class='warning'>[user]'s hand slips, dropping \the [tool] onto [target]'s [affected]!</span>" , \
-	"<span class='warning'>Your hand slips, dropping \the [tool] onto [target]'s [affected]!</span>" )
-	user.balloon_alert_visible("Slips, dropping \the [tool].", "Your hand slips, dropping \the [tool] onto \the [affected].") // CHOMPEdit
+	user.visible_message(span_warning("[user]'s hand slips, dropping \the [tool] onto [target]'s [affected]!") , \
+	span_warning("Your hand slips, dropping \the [tool] onto [target]'s [affected]!") )
+	user.balloon_alert_visible("slips, dropping \the [tool].", "your hand slips, dropping \the [tool] onto \the [affected].")
 	affected.createwound(BRUISE, 10)
 
 //////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@
 	allowed_tools = list(
 	/obj/item/stack/medical/advanced/ointment = 100,
 	/obj/item/stack/medical/ointment = 50,
-	/obj/item/weapon/tape_roll = 30,
+	/obj/item/tape_roll = 30,
 	/obj/item/taperoll = 10
 	)
 
@@ -114,27 +114,27 @@
 
 /datum/surgery_step/repairflesh/repair_burns/begin_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(istype(tool, /obj/item/weapon/tape_roll) || istype(tool, /obj/item/taperoll))
-		user.visible_message("<span class='warning'>[user] begins taping up [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You begin taping up [target]'s [affected] with \the [tool].</span>")
-		user.balloon_alert_visible("Begins taping up \the [target]", "Taping up \the [affected]") // CHOMPEdit
+	if(istype(tool, /obj/item/tape_roll) || istype(tool, /obj/item/taperoll))
+		user.visible_message(span_warning("[user] begins taping up [target]'s [affected] with \the [tool]."), \
+	span_notice("You begin taping up [target]'s [affected] with \the [tool]."))
+		user.balloon_alert_visible("begins taping up \the [target]", "taping up \the [affected]")
 		affected.jostle_bone(10)
-	else if(istype(tool, /obj/item/weapon/surgical/hemostat) || istype(tool, /obj/item/weapon/surgical/FixOVein))
-		user.visible_message("<span class='notice'>[user] begins mending the charred blood vessels in [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You begin mending the charred blood vessels in [target]'s [affected] with \the [tool].</span>")
-		user.balloon_alert_visible("Begins mending the charred blood vessels in [affected].", "Mends the charred blood vessels in [affected].") // CHOMPEdit
+	else if(istype(tool, /obj/item/surgical/hemostat) || istype(tool, /obj/item/surgical/FixOVein))
+		user.visible_message(span_notice("[user] begins mending the charred blood vessels in [target]'s [affected] with \the [tool]."), \
+	span_notice("You begin mending the charred blood vessels in [target]'s [affected] with \the [tool]."))
+		user.balloon_alert_visible("begins mending the charred blood vessels in [affected].", "mends the charred blood vessels in [affected].")
 	else
-		user.visible_message("<span class='notice'>[user] begins coating the charred tissue in [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You begin coating the charred tissue in [target]'s [affected] with \the [tool].</span>")
-		user.balloon_alert_visible("Begins coating the charred tissue in \the [affected]", "Coating the charred tssue in \the [affected]") // CHOMPEdit
+		user.visible_message(span_notice("[user] begins coating the charred tissue in [target]'s [affected] with \the [tool]."), \
+	span_notice("You begin coating the charred tissue in [target]'s [affected] with \the [tool]."))
+		user.balloon_alert_visible("begins coating the charred tissue in \the [affected]", "coating the charred tssue in \the [affected]")
 	..()
 
 /datum/surgery_step/repairflesh/repair_burns/end_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(istype(tool, /obj/item/weapon/tape_roll) || istype(tool, /obj/item/taperoll))
-		user.visible_message("<span class='notice'>[user] finishes taping up [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You finish taping up [target]'s [affected] with \the [tool].</span>")
-		user.balloon_alert_visible("Tapes up \the [affected]", "Taped up \the [affected]") // CHOMPEdit
+	if(istype(tool, /obj/item/tape_roll) || istype(tool, /obj/item/taperoll))
+		user.visible_message(span_notice("[user] finishes taping up [target]'s [affected] with \the [tool]."), \
+	span_notice("You finish taping up [target]'s [affected] with \the [tool]."))
+		user.balloon_alert_visible("tapes up \the [affected]", "taped up \the [affected]")
 		affected.createwound(BRUISE, 10)
 	affected.heal_damage(0, 25, 0, 0)
 	if(!(affected.burn_dam))
@@ -146,9 +146,9 @@
 
 /datum/surgery_step/repairflesh/repair_burns/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	user.visible_message("<span class='danger'>[user]'s hand slips, tearing up [target]'s [affected] with \the [tool].</span>", \
-	"<span class='danger'>Your hand slips, tearing up [target]'s [affected] with \the [tool].</span>")
-	user.balloon_alert_visible("Slips, tearing up \the [affected]", "You slip, tearing up \the [affected]") // CHOMPEdit
+	user.visible_message(span_danger("[user]'s hand slips, tearing up [target]'s [affected] with \the [tool]."), \
+	span_danger("Your hand slips, tearing up [target]'s [affected] with \the [tool]."))
+	user.balloon_alert_visible("slips, tearing up \the [affected]", "you slip, tearing up \the [affected]")
 	affected.createwound(BRUISE, 10)
 	affected.createwound(CUT, 5)
 	if(istype(tool, /obj/item/stack) && prob(30))
@@ -165,7 +165,7 @@
 	allowed_tools = list(
 	/obj/item/stack/medical/advanced/bruise_pack = 100,
 	/obj/item/stack/medical/bruise_pack = 50,
-	/obj/item/weapon/tape_roll = 40,
+	/obj/item/tape_roll = 40,
 	/obj/item/taperoll = 10
 	)
 
@@ -184,27 +184,27 @@
 
 /datum/surgery_step/repairflesh/repair_brute/begin_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(istype(tool, /obj/item/weapon/tape_roll) || istype(tool, /obj/item/taperoll))
-		user.visible_message("<span class='warning'>[user] begins taping up [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You begin taping up [target]'s [affected] with \the [tool].</span>")
-		user.balloon_alert_visible("Begins to tape up \the [affected].", "Taping up \the [affected].") // CHOMPEdit
+	if(istype(tool, /obj/item/tape_roll) || istype(tool, /obj/item/taperoll))
+		user.visible_message(span_warning("[user] begins taping up [target]'s [affected] with \the [tool]."), \
+	span_notice("You begin taping up [target]'s [affected] with \the [tool]."))
+		user.balloon_alert_visible("begins to tape up \the [affected].", "taping up \the [affected].")
 		affected.jostle_bone(10)
-	else if(istype(tool, /obj/item/weapon/surgical/FixOVein) || istype(tool, /obj/item/weapon/surgical/bonesetter))
-		user.visible_message("<span class='notice'>[user] begins mending the torn tissue in [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You begin mending the torn tissue in [target]'s [affected] with \the [tool].</span>")
-		user.balloon_alert_visible("Begins mending torn tissue in \the [affected]", "Mending torn issue in \the [affected]") // CHOMPEdit
+	else if(istype(tool, /obj/item/surgical/FixOVein) || istype(tool, /obj/item/surgical/bonesetter))
+		user.visible_message(span_notice("[user] begins mending the torn tissue in [target]'s [affected] with \the [tool]."), \
+	span_notice("You begin mending the torn tissue in [target]'s [affected] with \the [tool]."))
+		user.balloon_alert_visible("begins mending torn tissue in \the [affected]", "mending torn issue in \the [affected]")
 	else
-		user.visible_message("<span class='notice'>[user] begins coating the tissue in [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You begin coating the tissue in [target]'s [affected] with \the [tool].</span>")
-		user.balloon_alert_visible("Begins coating tissue in \the [affected]", "Coating tissue in \the [affected]") // CHOMPEdit
+		user.visible_message(span_notice("[user] begins coating the tissue in [target]'s [affected] with \the [tool]."), \
+	span_notice("You begin coating the tissue in [target]'s [affected] with \the [tool]."))
+		user.balloon_alert_visible("begins coating tissue in \the [affected]", "coating tissue in \the [affected]")
 	..()
 
 /datum/surgery_step/repairflesh/repair_brute/end_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	if(istype(tool, /obj/item/weapon/tape_roll) || istype(tool, /obj/item/taperoll))
-		user.visible_message("<span class='notice'>[user] finishes taping up [target]'s [affected] with \the [tool].</span>", \
-	"<span class='notice'>You finish taping up [target]'s [affected] with \the [tool].</span>")
-		user.balloon_alert_visible("Tapes up \the [affected]", "Taped up \the [affected]") // CHOMPEdit
+	if(istype(tool, /obj/item/tape_roll) || istype(tool, /obj/item/taperoll))
+		user.visible_message(span_notice("[user] finishes taping up [target]'s [affected] with \the [tool]."), \
+	span_notice("You finish taping up [target]'s [affected] with \the [tool]."))
+		user.balloon_alert_visible("tapes up \the [affected]", "taped up \the [affected]")
 		affected.createwound(BRUISE, 10)
 	affected.heal_damage(25, 0, 0, 0)
 	if(!(affected.brute_dam))
@@ -216,9 +216,9 @@
 
 /datum/surgery_step/repairflesh/repair_brute/fail_step(mob/living/user, mob/living/carbon/human/target, target_zone, obj/item/tool)
 	var/obj/item/organ/external/affected = target.get_organ(target_zone)
-	user.visible_message("<span class='danger'>[user]'s hand slips, tearing up [target]'s [affected] with \the [tool].</span>", \
-	"<span class='danger'>Your hand slips, tearing up [target]'s [affected] with \the [tool].</span>")
-	user.balloon_alert_visible("Slips, tearing up \the [affected]", "Your hand slips, tearing up \the [affected]") // CHOMPEdit
+	user.visible_message(span_danger("[user]'s hand slips, tearing up [target]'s [affected] with \the [tool]."), \
+	span_danger("Your hand slips, tearing up [target]'s [affected] with \the [tool]."))
+	user.balloon_alert_visible("slips, tearing up \the [affected]", "your hand slips, tearing up \the [affected]")
 	affected.createwound(BRUISE, 10)
 	affected.createwound(CUT, 5)
 	if(istype(tool, /obj/item/stack) && prob(30))

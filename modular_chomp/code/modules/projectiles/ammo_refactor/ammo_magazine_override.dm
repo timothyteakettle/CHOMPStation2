@@ -1,21 +1,22 @@
 //Replace old magazine with new
-/obj/item/ammo_magazine/New(loc)
+/obj/item/ammo_magazine/Initialize(mapload)
+	. = ..()
 	var/replacement_type = magazine_overrides[type]
 	if(replacement_type)
-		qdel(src)
-		return new replacement_type(loc)
+		new replacement_type(loc)
+		return INITIALIZE_HINT_QDEL
 	. = ..()
 
 
 //Override attackby to allow magazine to magazine transfer
-/obj/item/ammo_magazine/attackby(obj/item/weapon/W as obj, mob/user as mob)
+/obj/item/ammo_magazine/attackby(obj/item/W as obj, mob/user as mob)
 	if(istype(W, /obj/item/ammo_casing))
 		var/obj/item/ammo_casing/C = W
 		if(C.caliber != caliber)
-			to_chat(user, "<span class='warning'>[C] does not fit into [src].</span>")
+			to_chat(user, span_warning("[C] does not fit into [src]."))
 			return
 		if(stored_ammo.len >= max_ammo)
-			to_chat(user, "<span class='warning'>[src] is full!</span>")
+			to_chat(user, span_warning("[src] is full!"))
 			return
 		user.remove_from_mob(C)
 		C.forceMove(src)
@@ -24,13 +25,13 @@
 	if(istype(W, /obj/item/ammo_magazine))
 		var/obj/item/ammo_magazine/L = W
 		if(L.caliber != caliber)
-			to_chat(user, "<span class='warning'>The ammo in [L] does not fit into [src].</span>")
+			to_chat(user, span_warning("The ammo in [L] does not fit into [src]."))
 			return
 		if(!L.stored_ammo.len)
-			to_chat(user, "<span class='warning'>There's no more ammo [L]!</span>")
+			to_chat(user, span_warning("There's no more ammo [L]!"))
 			return
 		if(stored_ammo.len >= max_ammo)
-			to_chat(user, "<span class='warning'>[src] is full!</span>")
+			to_chat(user, span_warning("[src] is full!"))
 			return
 		while(L.stored_ammo.len && stored_ammo.len < max_ammo)
 			var/obj/item/ammo_casing/AC = L.stored_ammo[1] //select the next casing.
@@ -113,8 +114,8 @@ var/global/list/magazine_overrides = list(
 	/obj/item/ammo_magazine/ammo_box/b10mm = /obj/item/ammo_magazine/ammo_box/small,
 	/obj/item/ammo_magazine/ammo_box/b44 = /obj/item/ammo_magazine/ammo_box/small,
 	/obj/item/ammo_magazine/ammo_box/b45 = /obj/item/ammo_magazine/ammo_box/small,
-	/obj/item/ammo_magazine/ammo_box/b145 = /obj/item/ammo_magazine/ammo_box/large,
-	/obj/item/ammo_magazine/ammo_box/b145/highvel = /obj/item/ammo_magazine/ammo_box/large/ap,
+	///obj/item/ammo_magazine/ammo_box/b145 = /obj/item/ammo_magazine/ammo_box/large, Seperation of 14.5
+	///obj/item/ammo_magazine/ammo_box/b145/highvel = /obj/item/ammo_magazine/ammo_box/large/ap,
 	/obj/item/ammo_magazine/ammo_box/b762 = /obj/item/ammo_magazine/ammo_box/medium,
 	/obj/item/ammo_magazine/ammo_box/b545 = /obj/item/ammo_magazine/ammo_box/medium,
 	/obj/item/ammo_magazine/ammo_box/b545/large = /obj/item/ammo_magazine/ammo_box/medium/large,
