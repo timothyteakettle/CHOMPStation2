@@ -1,9 +1,6 @@
 /obj/item/gun/projectile/automatic/wt550/lethal
 	magazine_type = /obj/item/ammo_magazine/m9mmt
 
-/obj/item/gun/projectile/automatic/tommygun
-	icon = 'icons/obj/gun_vr.dmi'
-
 ////////////////////////////////////////////////////////////
 //////////////////// Projectile Weapons ////////////////////
 ////////////////////////////////////////////////////////////
@@ -11,16 +8,14 @@
 /obj/item/gun/projectile/automatic/battlerifle
 	name = "\improper USDF service rifle"
 	desc = "You had your chance to be afraid before you joined my beloved Corps! But, to guide you back to the true path, I have brought this motivational device! Uses 9.5x40mm rounds."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "battlerifle"
-	icon_override = 'icons/obj/gun_vr.dmi'
+	icon_override = 'icons/obj/gun.dmi'
 	item_state = "battlerifle_i"
 	item_icons = null
 	w_class = ITEMSIZE_HUGE //CHOMP Edit.
 	recoil = 2 // The battlerifle was known for its nasty recoil.
 	max_shells = 36
 	caliber = "9.5x40mm"
-	origin_tech = list(TECH_COMBAT = 4, TECH_MATERIAL = 2)
 	magazine_type = /obj/item/ammo_magazine/m95
 	allowed_magazines = list(/obj/item/ammo_magazine/m95)
 	fire_sound = 'sound/weapons/battlerifle.ogg'
@@ -31,19 +26,17 @@
 // For general use
 /obj/item/gun/projectile/automatic/stg
 	name = "\improper Sturmgewehr"
-	desc = "An STG-560 built by RauMauser. Experience the terror of the Siegfried line, redone for the 26th century! The Kaiser would be proud. Uses unique 7.92x33mm Kurz rounds."
-	icon = 'icons/obj/gun_vr.dmi'
+	desc = "An STG-560 built by RauMauser. Experience the terror of the Siegfried line, redone for the 26th century! The Kaiser would be proud. Uses unique 7.92x33mm Kurz rounds." //CHOMPEdit: 24th->26th
 	icon_state = "stg60"
 	item_state = "arifle"
 	w_class = ITEMSIZE_LARGE
 	max_shells = 30
 	caliber = "7.92x33mm"
-	origin_tech = list(TECH_COMBAT = 4, TECH_MATERIAL = 2, TECH_ILLEGAL = 6)
 	magazine_type = /obj/item/ammo_magazine/mtg
 	allowed_magazines = list(/obj/item/ammo_magazine/mtg)
 	load_method = MAGAZINE
 
-/obj/item/gun/projectile/automatic/stg/update_icon(var/ignore_inhands)
+/obj/item/gun/projectile/automatic/stg/update_icon(ignore_inhands)
 	..()
 	icon_state = (ammo_magazine)? "stg60" : "stg60-empty"
 	item_state = (ammo_magazine)? "arifle" : "arifle-empty"
@@ -54,7 +47,6 @@
 /obj/item/gun/projectile/automatic/sol
 	name = "\improper \"Sol\" SMG"
 	desc = "The FS 9x19mm \"Sol\" is a compact and reliable submachine gun. Uses 9mm rounds."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "SMG-IS"
 	item_state = "wt550"
 	w_class = ITEMSIZE_LARGE
@@ -65,10 +57,9 @@
 	load_method = MAGAZINE
 	multi_aim = 1
 	burst_delay = 2
-	origin_tech = list(TECH_COMBAT = 4, TECH_MATERIAL = 2)
 	firemodes = list(
-		list(mode_name="semiauto",       burst=1, fire_delay=0.1,    move_delay=null, burst_accuracy=null, dispersion=null),
-		list(mode_name="3-round bursts", burst=3, fire_delay=null, move_delay=4,    burst_accuracy=list(0,-15,-15),       dispersion=list(0.0, 0.6, 1.0)),
+		list(mode_name="semiauto",       burst=1, fire_delay=0.1, burst_accuracy=null, dispersion=null),
+		list(mode_name="3-round bursts", burst=3, fire_delay=null,    burst_accuracy=list(0,-15,-15),       dispersion=list(0.0, 0.6, 1.0)),
 		)
 
 /obj/item/gun/projectile/automatic/sol/proc/update_charge()
@@ -132,9 +123,8 @@
 	name = "\improper SMG magazine (9mm)"
 	icon = 'icons/obj/ammo_vr.dmi'
 	icon_state = "smg"
-	origin_tech = list(TECH_COMBAT = 2)
 	mag_type = MAGAZINE
-	matter = list(MAT_STEEL = 1800)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.9))
 	caliber = "9mm"
 	ammo_type = /obj/item/ammo_casing/a9mm
 	max_ammo = 30

@@ -3,7 +3,7 @@
 	name = "mounted space cleaner launcher"
 	desc = "A shoulder-mounted micro-cleaner dispenser."
 	selectable = 1
-	icon_state = "grenade_launcher"
+	icon_state = "grenadelauncher"
 
 	interface_name = "integrated cleaner launcher"
 	interface_desc = "Discharges loaded cleaner grenades against the wearer's location."
@@ -15,7 +15,7 @@
 		list("cleaner grenade",   "cleaner grenade",   /obj/item/grenade/chem_grenade/cleaner,  9),
 		)
 
-/obj/item/rig_module/cleaner_launcher/accepts_item(var/obj/item/input_device, var/mob/living/user)
+/obj/item/rig_module/cleaner_launcher/accepts_item(obj/item/input_device, mob/living/user)
 
 	if(!istype(input_device) || !istype(user))
 		return 0

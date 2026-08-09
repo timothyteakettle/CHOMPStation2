@@ -68,7 +68,7 @@
 		else
 			user.visible_message("[user] begins securing \the [src] to the floor.", "You start securing \the [src] to the floor.")
 
-		if(do_after(user, 20 * W.toolspeed))
+		if(do_after(user, 2 SECONDS * W.toolspeed, target = src))
 			if(!src) return
 			to_chat(user, span_notice("You [anchored? "un" : ""]secured \the [src]!"))
 			anchored = !anchored
@@ -98,7 +98,7 @@
 	else if(isbroken)
 		return
 
-/obj/machinery/slot_machine/proc/insert_chip(var/obj/item/spacecasinocash/cashmoney, mob/user)
+/obj/machinery/slot_machine/proc/insert_chip(obj/item/spacecasinocash/cashmoney, mob/user)
 	if (ispowered == 0)
 		return
 	if (isbroken)
@@ -300,7 +300,7 @@
 		else
 			user.visible_message("[user] begins securing \the [src] to the floor.", "You start securing \the [src] to the floor.")
 
-		if(do_after(user, 20 * W.toolspeed))
+		if(do_after(user, 2 SECONDS * W.toolspeed, target = src))
 			if(!src) return
 			to_chat(user, span_notice("You [anchored? "un" : ""]secured \the [src]!"))
 			anchored = !anchored
@@ -329,7 +329,7 @@
 	else if(isbroken)
 		return
 
-/obj/machinery/station_slot_machine/proc/insert_cash(var/obj/item/spacecash/cashmoney, mob/user)
+/obj/machinery/station_slot_machine/proc/insert_cash(obj/item/spacecash/cashmoney, mob/user)
 	if (ispowered == 0)
 		return
 	if (isbroken)

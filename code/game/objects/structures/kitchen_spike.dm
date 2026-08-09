@@ -19,8 +19,7 @@
 		to_chat(user, span_danger("The spike already has something on it, finish collecting its meat first!"))
 	else
 		if(spike(G.affecting))
-			var/datum/gender/T = GLOB.gender_datums[G.affecting.get_visible_gender()]
-			visible_message(span_danger("[user] has forced [G.affecting] onto the spike, killing [T.him] instantly!"))
+			visible_message(span_danger("[user] has forced [G.affecting] onto the spike, killing [G.p_them()] instantly!"))
 			var/mob/M = G.affecting
 			M.forceMove(src)
 			qdel(G)
@@ -28,7 +27,7 @@
 		else
 			to_chat(user, span_danger("They are too big for the spike, try something smaller!"))
 
-/obj/structure/kitchenspike/proc/spike(var/mob/living/victim)
+/obj/structure/kitchenspike/proc/spike(mob/living/victim)
 	if(!istype(victim))
 		return
 

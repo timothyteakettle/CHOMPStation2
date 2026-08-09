@@ -5,7 +5,6 @@
 	icon = 'icons/obj/device.dmi'
 	icon_state = "translator"
 	w_class = ITEMSIZE_NORMAL
-	origin_tech = list(TECH_DATA = 3, TECH_ENGINEERING = 3)
 	var/mult_icons = 1	//Changes sprite when it translates
 	var/visual = 1		//If you need to see to get the message
 	var/audio = 0		//If you need to hear to get the message
@@ -15,6 +14,9 @@
 	drop_sound = 'sound/items/drop/device.ogg'
 
 /obj/item/universal_translator/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(!listening) //Turning ON
 		langset = tgui_input_list(user,"Translate to which of your languages?","Language Selection", user.languages)
 		if(langset)
@@ -24,13 +26,13 @@
 				return
 			else
 				listening = 1
-				listening_objects |= src
+				GLOB.listening_objects |= src
 				if(mult_icons)
 					icon_state = "[initial(icon_state)]1"
 				to_chat(user, span_notice("You enable \the [src], translating into [langset.name]."))
 	else	//Turning OFF
 		listening = 0
-		listening_objects -= src
+		GLOB.listening_objects -= src
 		langset = null
 		icon_state = "[initial(icon_state)]"
 		to_chat(user, span_notice("You disable \the [src]."))

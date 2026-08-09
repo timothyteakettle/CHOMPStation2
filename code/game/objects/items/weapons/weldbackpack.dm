@@ -26,14 +26,14 @@
 	nozzle = null
 	return ..()
 
-/obj/item/weldpack/dropped(mob/user)
+/obj/item/weldpack/dropped(mob/user, equipping, slot)
 	..()
 	if(nozzle)
 		user.remove_from_mob(nozzle)
 		return_nozzle()
 		to_chat(user, span_notice("\The [nozzle] retracts to its fueltank."))
 
-/obj/item/weldpack/proc/get_nozzle(var/mob/living/user)
+/obj/item/weldpack/proc/get_nozzle(mob/living/user)
 	if(!ishuman(user))
 		return 0
 
@@ -49,7 +49,7 @@
 
 	return 1
 
-/obj/item/weldpack/proc/return_nozzle(var/mob/living/user)
+/obj/item/weldpack/proc/return_nozzle(mob/living/user)
 	nozzle.forceMove(src)
 	nozzle_attached = 1
 
@@ -121,7 +121,7 @@
 		if (istype(usr.loc,/obj/mecha)) // stops inventory actions in a mech. why?
 			return
 
-		if (!( istype(over_object, /obj/screen) ))
+		if (!( istype(over_object, /atom/movable/screen) ))
 			return ..()
 
 		//makes sure that the thing is equipped, so that we can't drag it into our hand from miles away.
@@ -132,7 +132,7 @@
 		if (( usr.restrained() ) || ( usr.stat ))
 			return
 
-		if ((src.loc == usr) && !(istype(over_object, /obj/screen)) && !usr.unEquip(src))
+		if ((src.loc == usr) && !(istype(over_object, /atom/movable/screen)) && !usr.unEquip(src))
 			return
 
 		switch(over_object.name)

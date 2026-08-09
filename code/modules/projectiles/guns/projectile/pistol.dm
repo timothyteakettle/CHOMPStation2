@@ -10,9 +10,7 @@
 	projectile_type = /obj/item/projectile/bullet/pistol/medium
 	icon_state = "colt"
 	caliber = ".45"
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 	load_method = MAGAZINE
-	move_delay = 0 // CHOMPEdit: Pistols have move_delay of 0
 
 /obj/item/gun/projectile/colt/update_icon()
 	if(ammo_magazine)
@@ -45,7 +43,7 @@
 		to_chat(M, span_notice("You don't feel cool enough to name this gun, chump."))
 		return 0
 
-	var/input = sanitizeSafe(tgui_input_text(M, "What do you want to name the gun?","Rename Gun" ,"",MAX_NAME_LEN))
+	var/input = sanitizeSafe(tgui_input_text(M, "What do you want to name the gun?","Rename Gun" ,"",MAX_NAME_LEN, encode = FALSE))
 
 	if(src && input && !M.stat && in_range(M,src))
 		name = input
@@ -81,15 +79,12 @@
 	desc = "The MT Mk58 is a cheap, ubiquitous sidearm, produced by MarsTech. Found pretty much everywhere humans are. Uses .45 rounds."
 	description_fluff = "The leading civilian-sector high-quality small arms brand of Hephaestus Industries, \
 	MarsTech has been the provider of choice for law enforcement and security forces for over 300 years."
-	icon = 'icons/obj/gun_ch.dmi'
 	icon_state = "secguncomp"
 	magazine_type = /obj/item/ammo_magazine/m45/rubber
 	allowed_magazines = list(/obj/item/ammo_magazine/m45)
 	projectile_type = /obj/item/projectile/bullet/pistol/medium
 	caliber = ".45"
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 	load_method = MAGAZINE
-	move_delay = 0 // CHOMPEdit: Pistols have move_delay of 0
 
 /obj/item/gun/projectile/sec/update_icon()
 	..()
@@ -100,7 +95,6 @@
 
 /obj/item/gun/projectile/sec/flash
 	magazine_type = /obj/item/ammo_magazine/m45/flash
-	move_delay = 0 // CHOMPEdit: Pistols have move_delay of 0
 
 /obj/item/gun/projectile/sec/wood
 	name = "custom .45 pistol"
@@ -125,9 +119,7 @@
 	caliber = ".45"
 	silenced = 1
 	fire_delay = 1
-	move_delay = 0 // CHOMPEdit: Pistols have move_delay of 0
 	recoil = 0
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2, TECH_ILLEGAL = 8)
 	load_method = MAGAZINE
 	magazine_type = /obj/item/ammo_magazine/m45
 	allowed_magazines = list(/obj/item/ammo_magazine/m45)
@@ -188,14 +180,12 @@
 	max_shells = 8
 	caliber = ".75"
 	fire_sound = 'sound/weapons/railgun.ogg'
-	origin_tech = list(TECH_COMBAT = 3)
 	ammo_type = "/obj/item/ammo_casing/a75"
 	load_method = MAGAZINE
 	magazine_type = /obj/item/ammo_magazine/m75
 	allowed_magazines = list(/obj/item/ammo_magazine/m75)
 	auto_eject = 1
 	auto_eject_sound = 'sound/weapons/smg_empty_alarm.ogg'
-	move_delay = 0 // CHOMPEdit: Pistols have move_delay of 0
 
 /obj/item/gun/projectile/gyropistol/update_icon()
 	..()
@@ -225,12 +215,10 @@
 	w_class = ITEMSIZE_SMALL
 	caliber = "9mm"
 	silenced = 0
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2, TECH_ILLEGAL = 2)
 	load_method = MAGAZINE
 	magazine_type = /obj/item/ammo_magazine/m9mm/compact
 	allowed_magazines = list(/obj/item/ammo_magazine/m9mm/compact)
 	projectile_type = /obj/item/projectile/bullet/pistol
-	move_delay = 0 // CHOMPEdit: Pistols have move_delay of 0
 
 /obj/item/gun/projectile/pistol/flash
 	magazine_type = /obj/item/ammo_magazine/m9mm/compact/flash
@@ -285,7 +273,6 @@
 	item_state = null
 	caliber = "9mm"
 	silenced = 0
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2, TECH_ILLEGAL = 2)
 	load_method = MAGAZINE
 	magazine_type = /obj/item/ammo_magazine/m9mm
 	allowed_magazines = list(/obj/item/ammo_magazine/m9mm)
@@ -341,26 +328,9 @@
 	load_method = SINGLE_CASING
 	max_shells = 1 //literally just a barrel
 
-	var/list/ammo_types = list(    //CHOMPEdit why is this global?
-		/obj/item/ammo_casing/a357              = ".357",
-		/obj/item/ammo_casing/a9mm		        = "9mm",
-		/obj/item/ammo_casing/a45				= ".45",
-		/obj/item/ammo_casing/a10mm             = "10mm",
-		/obj/item/ammo_casing/a12g              = "12g",
-		/obj/item/ammo_casing/a12g              = "12g",
-		/obj/item/ammo_casing/a12g/pellet       = "12g",
-		/obj/item/ammo_casing/a12g/pellet       = "12g",
-		/obj/item/ammo_casing/a12g/pellet       = "12g",
-		/obj/item/ammo_casing/a12g/beanbag      = "12g",
-		/obj/item/ammo_casing/a12g/stunshell    = "12g",
-		/obj/item/ammo_casing/a12g/flash        = "12g",
-		/obj/item/ammo_casing/a762              = "7.62mm",
-		/obj/item/ammo_casing/a545              = "5.45mm"
-		)
-
 /obj/item/gun/projectile/pirate/Initialize(mapload)
-	ammo_type = pick(ammo_types)
-	desc += " Uses [ammo_types[ammo_type]] rounds."
+	ammo_type = pick(GLOB.global_ammo_types)
+	desc += " Uses [GLOB.global_ammo_types[ammo_type]] rounds."
 
 	var/obj/item/ammo_casing/ammo = ammo_type
 	caliber = initial(ammo.caliber)
@@ -375,7 +345,6 @@
 	icon_state = "derringer"
 	item_state = "concealed"
 	w_class = ITEMSIZE_SMALL
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2, TECH_ILLEGAL = 3)
 	handle_casings = CYCLE_CASINGS //player has to take the old casing out manually before reloading
 	load_method = SINGLE_CASING
 	max_shells = 2
@@ -395,7 +364,6 @@
 	same cannot be said for the hundreds of low-grade (But technically legal) copies circulating the squalid habitats and smoke-filled \
 	junk ships of the frontier."
 	icon_state = "p08a"
-	origin_tech = list(TECH_COMBAT = 3, TECH_MATERIAL = 2)
 	caliber = "9mm"
 	load_method = MAGAZINE
 	magazine_type = /obj/item/ammo_magazine/m9mm/luger
@@ -423,12 +391,10 @@
 	name = "9mm pistol"
 	desc = "A widespread MarsTech sidearm called the P92X which is used by military, police, and security forces across the galaxy. Uses 9mm rounds."
 	icon_state = "p92x"
-	origin_tech = list(TECH_COMBAT = 3, TECH_MATERIAL = 2)
 	caliber = "9mm"
 	load_method = MAGAZINE
 	magazine_type = /obj/item/ammo_magazine/m9mm
 	allowed_magazines = list(/obj/item/ammo_magazine/m9mm) // Can accept illegal large capacity magazines, or compact magazines.
-	move_delay = 0 // CHOMPEdit: Pistols have move_delay of 0
 
 /obj/item/gun/projectile/p92x/update_icon()
 	..()
@@ -466,7 +432,6 @@
 	load_method = MAGAZINE
 	w_class = ITEMSIZE_SMALL
 	fire_sound = 'sound/weapons/gunshot_pathetic.ogg'
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 3)
 
 /obj/item/gun/projectile/giskard/update_icon()
 	..()
@@ -482,8 +447,8 @@
 	icon_state = "olivawcivil"
 	item_state = "giskardcivil"
 	firemodes = list(
-		list(mode_name="semiauto",       burst=1, fire_delay=1.2,    move_delay=null, burst_accuracy=null, dispersion=null),
-		list(mode_name="2-round bursts", burst=2, fire_delay=0.2, move_delay=4,    burst_accuracy=list(0,-15),       dispersion=list(1.2, 1.8)),
+		list(mode_name="semiauto",       burst=1, fire_delay=1.2, burst_accuracy=null, dispersion=null),
+		list(mode_name="2-round bursts", burst=2, fire_delay=0.2,    burst_accuracy=list(0,-15),       dispersion=list(1.2, 1.8)),
 		)
 
 /obj/item/gun/projectile/giskard/olivaw/update_icon()
@@ -507,7 +472,6 @@
 	projectile_type = /obj/item/projectile/bullet/pistol/medium
 	load_method = MAGAZINE
 	w_class = ITEMSIZE_SMALL
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 
 /obj/item/gun/projectile/makarov/update_icon()
 	if(ammo_magazine)
@@ -531,7 +495,6 @@
 	projectile_type = /obj/item/projectile/bullet/pistol/medium
 	load_method = MAGAZINE
 	w_class = ITEMSIZE_NORMAL
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 
 /obj/item/gun/projectile/n99/update_icon()
 	if(ammo_magazine)
@@ -563,7 +526,6 @@
 	projectile_type = /obj/item/projectile/bullet/pistol/medium
 	load_method = MAGAZINE
 	w_class = ITEMSIZE_NORMAL
-	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 
 /obj/item/gun/projectile/ecureuil/update_icon()
 	if(ammo_magazine)
@@ -605,8 +567,6 @@
 	load_method = MAGAZINE
 	auto_eject = 1
 	auto_eject_sound = 'sound/weapons/smg_empty_alarm.ogg'
-	origin_tech = list(TECH_COMBAT = 4, TECH_MATERIAL = 4)
-	move_delay = 0 // CHOMPEdit: Pistols have move_delay of 0
 
 /obj/item/gun/projectile/lamia/update_icon()
 	cut_overlays()

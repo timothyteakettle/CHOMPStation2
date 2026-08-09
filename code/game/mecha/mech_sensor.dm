@@ -12,7 +12,7 @@
 	var/on = 0
 	var/id_tag = null
 
-	var/frequency = 1379
+	var/frequency = AIRLOCK_FREQ
 	var/datum/radio_frequency/radio_connection
 
 /obj/machinery/mech_sensor/CanPass(atom/movable/mover, turf/target)
@@ -63,7 +63,7 @@
 	if(old_stat != stat)
 		update_icon()
 
-/obj/machinery/mech_sensor/update_icon(var/safety = 0)
+/obj/machinery/mech_sensor/update_icon(safety = 0)
 	if (enabled())
 		icon_state = "airlock_sensor_standby"
 	else
@@ -75,10 +75,10 @@
 
 /obj/machinery/mech_sensor/proc/set_frequency(new_frequency)
 	if(radio_connection)
-		radio_controller.remove_object(src, frequency)
+		SSradio.remove_object(src, frequency)
 	frequency = new_frequency
 	if(frequency)
-		radio_connection = radio_controller.add_object(src, frequency)
+		radio_connection = SSradio.add_object(src, frequency)
 
 /obj/machinery/mech_sensor/receive_signal(datum/signal/signal)
 	if(stat & NOPOWER)

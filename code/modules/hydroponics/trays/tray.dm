@@ -1,9 +1,9 @@
-#define AGE_MOD_MAX 10 //CHOMPedit: Define for age_mod sanity check as a define to allow for easy tweaking.
+#define AGE_MOD_MAX 10 // Define for age_mod sanity check as a define to allow for easy tweaking.
 
 /obj/machinery/portable_atmospherics/hydroponics
 	name = "hydroponics tray"
 	desc = "A tray usually full of fluid for growing plants."
-	icon = 'icons/obj/hydroponics_machines_vr.dmi' //VOREStation Edit
+	icon = 'icons/obj/hydroponics_machines.dmi'
 	icon_state = "hydrotray3"
 	density = TRUE
 	anchored = TRUE
@@ -32,7 +32,7 @@
 	var/toxins = 0             // Toxicity in the tray?
 	var/mutation_level = 0     // When it hits 100, the plant mutates.
 	var/tray_light = 1         // Supplied lighting.
-	var/age_mod = 0            //CHOMPedit: Variable for chems which speed up plant growth. On average, every 3 age mod reduces growing time by 2.5 minutes.
+	var/age_mod = 0            // Variable for chems which speed up plant growth. On average, every 3 age mod reduces growing time by 2.5 minutes.
 
 	// Mechanical concerns.
 	var/health = 0             // Plant health.
@@ -136,13 +136,11 @@
 		REAGENT_ID_MUTAGEN = 15
 		)
 
-	//CHOMPedit: Reagents which double plant growth speed.
 	var/static/list/age_reagents = list(
 	REAGENT_ID_PITCHERNECTAR =  1
 	)
-	//CHOMPedit end
 
-/obj/machinery/portable_atmospherics/hydroponics/AltClick(var/mob/living/user)
+/obj/machinery/portable_atmospherics/hydroponics/click_alt(mob/living/user)
 	if(!istype(user))
 		return
 	if(mechanical && !user.incapacitated() && Adjacent(user))
@@ -150,7 +148,7 @@
 		return 1
 	return ..()
 
-/obj/machinery/portable_atmospherics/hydroponics/attack_ghost(var/mob/observer/dead/user)
+/obj/machinery/portable_atmospherics/hydroponics/attack_ghost(mob/observer/dead/user)
 
 	if(!(harvest && seed && seed.has_mob_product))
 		return
@@ -163,7 +161,7 @@
 		harvest()
 	return
 
-/obj/machinery/portable_atmospherics/hydroponics/attack_generic(var/mob/user)
+/obj/machinery/portable_atmospherics/hydroponics/attack_generic(mob/user)
 
 	// Why did I ever think this was a good idea. TODO: move this onto the nymph mob.
 	if(istype(user,/mob/living/carbon/alien/diona))
@@ -203,7 +201,7 @@
 	if(S)
 		plant_seeds(S)
 
-/obj/machinery/portable_atmospherics/hydroponics/proc/plant_seeds(var/obj/item/seeds/S)
+/obj/machinery/portable_atmospherics/hydroponics/proc/plant_seeds(obj/item/seeds/S)
 	lastproduce = 0
 	seed = S.seed //Grab the seed datum.
 	dead = 0
@@ -219,7 +217,7 @@
 	check_health()
 	update_icon()
 
-/obj/machinery/portable_atmospherics/hydroponics/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/portable_atmospherics/hydroponics/bullet_act(obj/item/projectile/Proj)
 
 	//Don't act on seeds like dionaea that shouldn't change.
 	if(seed && seed.get_trait(TRAIT_IMMUTABLE) > 0)
@@ -317,10 +315,8 @@
 			else if(toxic_reagents[R.id])
 				toxins += toxic_reagents[R.id] * reagent_total
 
-			//CHOMPedit: Agents which speed up plant growth
 			if(age_reagents[R.id])
 				age_mod += age_reagents[R.id]  * reagent_total
-			//CHOMPedit end
 
 		//Handle some general level adjustments. These values are independent of plants existing.
 		if(weedkiller_reagents[R.id])
@@ -347,7 +343,7 @@
 	check_health()
 
 //Harvests the product of a plant.
-/obj/machinery/portable_atmospherics/hydroponics/proc/harvest(var/mob/user)
+/obj/machinery/portable_atmospherics/hydroponics/proc/harvest(mob/user)
 
 	//Harvest the product of the plant,
 	if(!seed || !harvest)
@@ -373,13 +369,13 @@
 		age = 0
 		sampled = 0
 		mutation_mod = 0
-		age_mod = 0 //CHOMPedit
+		age_mod = 0
 
 	check_health()
 	return
 
 //Clears out a dead plant.
-/obj/machinery/portable_atmospherics/hydroponics/proc/remove_dead(var/mob/user)
+/obj/machinery/portable_atmospherics/hydroponics/proc/remove_dead(mob/user)
 	if(!user || !dead) return
 
 	if(closed_system)
@@ -392,7 +388,7 @@
 	age = 0
 	yield_mod = 0
 	mutation_mod = 0
-	age_mod = 0 //CHOMPedit
+	age_mod = 0
 
 	to_chat(user, span_filter_notice("You remove the dead plant."))
 	lastproduce = 0
@@ -412,7 +408,7 @@
 
 	dead = 0
 	age = 0
-	age_mod = 0 //CHOMPedit
+	age_mod = 0
 	health = seed.get_trait(TRAIT_ENDURANCE)
 	lastcycle = world.time
 	harvest = 0
@@ -424,7 +420,7 @@
 
 	return
 
-/obj/machinery/portable_atmospherics/hydroponics/proc/mutate(var/severity)
+/obj/machinery/portable_atmospherics/hydroponics/proc/mutate(severity)
 
 	// No seed, no mutations.
 	if(!seed)
@@ -489,7 +485,7 @@
 	pestlevel =      max(0,min(pestlevel,10))
 	weedlevel =      max(0,min(weedlevel,10))
 	toxins =         max(0,min(toxins,10))
-	age_mod =        max(0,min(age_mod,AGE_MOD_MAX)) //CHOMPedit: age_mod sanity check
+	age_mod =        max(0,min(age_mod,AGE_MOD_MAX)) // age_mod sanity check
 
 /obj/machinery/portable_atmospherics/hydroponics/proc/mutate_species()
 
@@ -513,7 +509,7 @@
 
 	return
 
-/obj/machinery/portable_atmospherics/hydroponics/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/obj/machinery/portable_atmospherics/hydroponics/attackby(obj/item/O as obj, mob/user as mob)
 
 	if(O.is_open_container())
 		return 0
@@ -721,9 +717,9 @@
 		close_lid(usr)
 	return
 
-/obj/machinery/portable_atmospherics/hydroponics/proc/close_lid(var/mob/living/user)
+/obj/machinery/portable_atmospherics/hydroponics/proc/close_lid(mob/living/user)
 	closed_system = !closed_system
 	to_chat(user, span_filter_notice("You [closed_system ? "close" : "open"] the tray's lid."))
 	update_icon()
 
-#undef AGE_MOD_MAX //CHOMPedit
+#undef AGE_MOD_MAX

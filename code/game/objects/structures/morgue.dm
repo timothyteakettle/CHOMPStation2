@@ -35,7 +35,7 @@
 	for(var/obj/structure/closet/body_bag/B in contents)
 		occupants += B.get_occupants()
 
-/obj/structure/morgue/proc/update(var/broadcast=0)
+/obj/structure/morgue/proc/update(broadcast=0)
 	if (src.connected)
 		src.icon_state = "morgue0"
 	else
@@ -227,7 +227,7 @@ GLOBAL_LIST_BOILERPLATE(all_crematoriums, /obj/structure/morgue/crematorium)
 			if (!( A.anchored ))
 				A.forceMove(src)
 		playsound(src, 'sound/items/Deconstruct.ogg', 50, 1)
-		qdel_null(connected)
+		QDEL_NULL(connected)
 	else if (src.locked == 0)
 		playsound(src, 'sound/items/Deconstruct.ogg', 50, 1)
 		src.connected = new /obj/structure/m_tray/c_tray( src.loc )
@@ -241,7 +241,7 @@ GLOBAL_LIST_BOILERPLATE(all_crematoriums, /obj/structure/morgue/crematorium)
 				A.forceMove(src.connected.loc)
 			src.connected.icon_state = "cremat"
 		else
-			qdel_null(connected)
+			QDEL_NULL(connected)
 	src.add_fingerprint(user)
 	update()
 
@@ -336,7 +336,7 @@ GLOBAL_LIST_BOILERPLATE(all_crematoriums, /obj/structure/morgue/crematorium)
 	desc = "Burn baby burn!"
 	icon = 'icons/obj/power.dmi'
 	icon_state = "crema_switch"
-	req_access = list(access_crematorium)
+	req_access = list(ACCESS_CREMATORIUM)
 	id = 1
 
 /obj/machinery/button/crematorium/attack_hand(mob/user as mob)

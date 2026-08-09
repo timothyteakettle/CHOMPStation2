@@ -58,7 +58,7 @@
 	clothing_possibilities |= /obj/item/clothing/shoes/black
 	clothing_possibilities |= /obj/item/radio/headset
 
-/obj/structure/ghost_pod/manual/survivor/create_occupant(var/mob/M)
+/obj/structure/ghost_pod/manual/survivor/create_occupant(mob/M)
 	..()
 	var/turf/T = get_turf(src)
 	var/mob/living/carbon/human/H = new(src)
@@ -113,7 +113,7 @@
 		var/obj/item/C = new newpath(H)
 		H.equip_to_appropriate_slot(C)
 
-	var/newname = sanitize(tgui_input_text(H, "Your mind feels foggy, and you recall your name might be [H.real_name]. Would you like to change your name?", "Name change", null, MAX_NAME_LEN), MAX_NAME_LEN)
+	var/newname = tgui_input_text(H, "Your mind feels foggy, and you recall your name might be [H.real_name]. Would you like to change your name?", "Name change", null, MAX_NAME_LEN)
 	if (newname)
 		H.real_name = newname
 
@@ -122,7 +122,7 @@
 	H.forceMove(T)
 
 	if(special_role)
-		var/datum/antagonist/role = GLOB.all_antag_types[special_role] //Explicitly NOT an antagonist.
+		var/datum/antagonist/role = SSantag_job.all_antag_types[special_role] //Explicitly NOT an antagonist.
 		if(role)
 			if(role.add_antagonist(H.mind, 1, 1, 0, 1, 1))
 				log_admin("\The [src] made [key_name(src)] into a [role.role_text].")

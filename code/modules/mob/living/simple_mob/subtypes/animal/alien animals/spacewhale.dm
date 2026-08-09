@@ -47,16 +47,12 @@
 	vore_default_contamination_flavor = "Wet"
 	vore_default_contamination_color = "grey"
 	vore_default_item_mode = IM_DIGEST
-	can_be_drop_prey = FALSE //CHOMP Add
+	can_be_drop_prey = FALSE
 
 /datum/say_list/spacewhale
 	emote_see = list("ripples and flows", "flashes rhythmically","glows faintly","investigates something")
 
-/mob/living/simple_mob/vore/overmap/spacewhale/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/overmap/spacewhale/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
@@ -142,7 +138,7 @@
 	mauling = TRUE
 	base_wander_delay = 50
 
-/datum/ai_holder/simple_mob/melee/spacewhale/set_stance(var/new_stance)
+/datum/ai_holder/simple_mob/melee/spacewhale/set_stance(new_stance)
 	. = ..()
 	var/mob/living/simple_mob/vore/overmap/spacewhale/W = holder
 	if(stance == STANCE_FIGHT)
@@ -156,7 +152,7 @@
 		W.movement_cooldown = initial(W.movement_cooldown)
 		W.child_om_marker.glide_size = 0.384
 
-/mob/living/simple_mob/vore/overmap/spacewhale/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/vore/overmap/spacewhale/apply_melee_effects(atom/A)
 	. = ..()
 	if(isliving(A))
 		var/mob/living/L = A

@@ -10,7 +10,7 @@
 	icon_keyboard = "security_key"
 	icon_screen = "security"
 	light_color = "#a91515"
-	req_one_access = list(access_security, access_forensics_lockers, access_lawyer)
+	req_one_access = list(ACCESS_SECURITY, ACCESS_FORENSICS_LOCKERS, ACCESS_LAWYER)
 	circuit = /obj/item/circuitboard/secure_data
 	var/obj/item/card/id/scan = null
 	var/authenticated = null
@@ -73,7 +73,7 @@
 		to_chat(usr, "There is nothing to remove from the console.")
 	return
 
-/obj/machinery/computer/secure_data/attackby(var/obj/item/O, var/mob/user)
+/obj/machinery/computer/secure_data/attackby(obj/item/O, mob/user)
 	if(istype(O, /obj/item/card/id) && !scan && user.unEquip(O))
 		O.loc = src
 		scan = O
@@ -403,11 +403,11 @@
 						answer = text2num(answer)
 
 					if(field == "rank")
-						if(answer in joblist)
+						if(answer in SSjob.occupations_by_name)
 							active1.fields["real_rank"] = answer
 
 					if(field == "criminal")
-						for(var/mob/living/carbon/human/H in player_list)
+						for(var/mob/living/carbon/human/H in GLOB.player_list)
 							BITSET(H.hud_updateflag, WANTED_HUD)
 
 					if(istype(active2) && (field in active2.fields))
@@ -476,10 +476,10 @@
 	if(update_now)
 		SStgui.update_uis(src)
 
-/obj/machinery/computer/secure_data/proc/is_not_allowed(var/mob/user)
+/obj/machinery/computer/secure_data/proc/is_not_allowed(mob/user)
 	return !src.authenticated || user.stat || user.restrained() || (!in_range(src, user) && (!istype(user, /mob/living/silicon)))
 
-/obj/machinery/computer/secure_data/proc/get_photo(var/mob/user)
+/obj/machinery/computer/secure_data/proc/get_photo(mob/user)
 	if(istype(user.get_active_hand(), /obj/item/photo))
 		var/obj/item/photo/photo = user.get_active_hand()
 		return photo.img
@@ -489,16 +489,16 @@
 		if (selection)
 			return selection.img
 
-/obj/machinery/computer/secure_data/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
-		..(severity)
+/obj/machinery/computer/secure_data/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF ||stat & (BROKEN|NOPOWER))
 		return
 
 	for(var/datum/data/record/R in GLOB.data_core.security)
 		if(prob(10/severity))
 			switch(rand(1,6))
 				if(1)
-					R.fields["name"] = "[pick(pick(first_names_male), pick(first_names_female))] [pick(last_names)]"
+					R.fields["name"] = "[pick(pick(GLOB.first_names_male), pick(GLOB.first_names_female))] [pick(GLOB.last_names)]"
 				if(2)
 					R.fields["sex"]	= pick("Male", "Female")
 				if(3)
@@ -516,8 +516,6 @@
 		else if(prob(1))
 			qdel(R)
 			continue
-
-	..(severity)
 
 /obj/machinery/computer/secure_data/detective_computer
 	icon_state = "forensic"

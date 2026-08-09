@@ -2,15 +2,13 @@
 	name = "passenger compartment"
 	desc = "A mountable passenger compartment for exosuits. Rather cramped."
 	icon_state = "mecha_passenger"
-	origin_tech = list(TECH_ENGINEERING = 1, TECH_BIO = 1)
 	energy_drain = 10
-	range = MELEE
+	range = MECH_MELEE
 	equip_cooldown = 20
 	var/mob/living/carbon/occupant = null
 	var/door_locked = 1
 	salvageable = 0
 	allow_duplicate = TRUE
-
 	equip_type = EQUIP_HULL
 
 /obj/item/mecha_parts/mecha_equipment/tool/passenger/destroy()
@@ -22,22 +20,22 @@
 /obj/item/mecha_parts/mecha_equipment/tool/passenger/Exit(atom/movable/O)
 	return 0
 
-/obj/item/mecha_parts/mecha_equipment/tool/passenger/proc/move_inside(var/mob/user)
+/obj/item/mecha_parts/mecha_equipment/tool/passenger/proc/move_inside(mob/user)
 	if (chassis)
 		chassis.visible_message(span_notice("[user] starts to climb into [chassis]."))
 
-	if(do_after(user, 40, needhand=0))
+	if(do_after(user, 4 SECONDS, target = src))
 		if(!src.occupant)
 			user.forceMove(src)
 			occupant = user
-			log_message("[user] boarded.")
+			src.mecha_log_message("[user] boarded.")
 			occupant_message("[user] boarded.")
 		else if(src.occupant != user)
 			to_chat(user, span_warning("[src.occupant] was faster. Try harder next time, loser."))
 	else
 		to_chat(user, span_info("You stop entering the exosuit."))
 
-/obj/item/mecha_parts/mecha_equipment/tool/passenger/container_resist(var/mob/living)
+/obj/item/mecha_parts/mecha_equipment/tool/passenger/container_resist(mob/living)
 	if(occupant == living)
 		eject()
 
@@ -62,19 +60,13 @@
 	to_chat(occupant, span_info("You climb out from \the [src]."))
 	go_out()
 	occupant_message("[occupant] disembarked.")
-	log_message("[occupant] disembarked.")
+	src.mecha_log_message("[occupant] disembarked.")
 	add_fingerprint(usr)
 
 /obj/item/mecha_parts/mecha_equipment/tool/passenger/proc/go_out()
 	if(!occupant)
 		return
 	occupant.forceMove(get_turf(src))
-	occupant.reset_view()
-	/*
-	if(occupant.client)
-		occupant.client.eye = occupant.client.mob
-		occupant.client.perspective = MOB_PERSPECTIVE
-	*/
 	occupant = null
 	return
 

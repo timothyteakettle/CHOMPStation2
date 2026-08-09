@@ -2,13 +2,13 @@
 	listening = 0 //CHOMP Edit: Temporary bandaid fix for comms lag.
 	name = "station intercom (General)"
 	desc = "Talk through this."
-	icon = 'icons/obj/radio_vr.dmi'
+	icon = 'icons/obj/radio.dmi'
 	icon_state = "intercom"
 	layer = ABOVE_WINDOW_LAYER
 	anchored = TRUE
 	w_class = ITEMSIZE_LARGE
 	canhear_range = 7
-	flags = NOBLOODY
+	flags = NOBLOODY | WALL_ITEM
 	light_color = "#00ff00"
 	light_power = 0.25
 	blocks_emissive = NONE
@@ -82,10 +82,34 @@
 	name = "entertainment intercom"
 	frequency = ENT_FREQ
 
+/obj/item/radio/intercom/atc
+	name = "Air Traffic Control intercom"
+	frequency = ATC_FREQ
+
+/obj/item/radio/intercom/atc/Initialize(mapload)
+	. = ..()
+	internal_channels = list(
+		num2text(ATC_FREQ) = list()
+	)
+
+/obj/item/radio/intercom/culture
+	name = "culture intercom"
+	frequency = CULTURE_FREQ
+
+/obj/item/radio/intercom/culture/Initialize(mapload)
+	. = ..()
+	internal_channels = list(
+		num2text(CULTURE_FREQ) = list()
+	)
+
+/obj/item/radio/intercom/science
+	name = "station intercom (Science)"
+	channels=list("Science")
+
 /obj/item/radio/intercom/omni
 	name = "global announcer"
 /obj/item/radio/intercom/omni/Initialize(mapload)
-	channels = radiochannels.Copy()
+	channels = GLOB.radiochannels.Copy()
 	return ..()
 
 /obj/item/radio/intercom/Initialize(mapload)
@@ -94,13 +118,13 @@
 
 /obj/item/radio/intercom/department/medbay/Initialize(mapload)
 	. = ..()
-	internal_channels = default_medbay_channels.Copy()
+	internal_channels = GLOB.default_medbay_channels.Copy()
 
 /obj/item/radio/intercom/department/security/Initialize(mapload)
 	. = ..()
 	internal_channels = list(
 		num2text(PUB_FREQ) = list(),
-		num2text(SEC_I_FREQ) = list(access_security)
+		num2text(SEC_I_FREQ) = list(ACCESS_SECURITY)
 	)
 
 /obj/item/radio/intercom/entertainment/Initialize(mapload)
@@ -119,7 +143,7 @@
 
 /obj/item/radio/intercom/syndicate/Initialize(mapload)
 	. = ..()
-	internal_channels[num2text(SYND_FREQ)] = list(access_syndicate)
+	internal_channels[num2text(SYND_FREQ)] = list(ACCESS_SYNDICATE)
 
 /obj/item/radio/intercom/raider
 	name = "illicit intercom"
@@ -130,7 +154,7 @@
 
 /obj/item/radio/intercom/raider/Initialize(mapload)
 	. = ..()
-	internal_channels[num2text(RAID_FREQ)] = list(access_syndicate)
+	internal_channels[num2text(RAID_FREQ)] = list(ACCESS_SYNDICATE)
 
 /obj/item/radio/intercom/attack_ai(mob/user as mob)
 	src.add_fingerprint(user)
@@ -163,7 +187,7 @@
 		A.anchored = TRUE
 		A.state = 2
 		A.update_icon()
-		M.deconstruct(src)
+		M.atom_deconstruct(TRUE, src)
 		qdel(src)
 	else
 		src.attack_hand(user)
@@ -177,7 +201,7 @@
 			return -1
 	if (!src.listening)
 		return -1
-	if(freq in ANTAG_FREQS)
+	if(freq in GLOB.antag_frequencies)
 		if(!(src.syndie))
 			return -1//Prevents broadcast of messages over devices lacking the encryption
 
@@ -209,11 +233,11 @@
 			set_light_on(TRUE)
 
 //VOREStation Add Start
-/obj/item/radio/intercom/AICtrlClick(var/mob/user)
+/obj/item/radio/intercom/ctrl_click_ai(mob/user)
 	ToggleBroadcast()
 	to_chat(user, span_notice("\The [src]'s microphone is now <b>[broadcasting ? "enabled" : "disabled"]</b>."))
 
-/obj/item/radio/intercom/AIAltClick(var/mob/user)
+/obj/item/radio/intercom/AIAltClick(mob/user)
 	if(frequency == AI_FREQ)
 		set_frequency(initial(frequency))
 		to_chat(user, span_notice("\The [src]'s frequency is now set to [span_green(span_bold("Default"))]."))
@@ -224,7 +248,7 @@
 /obj/item/radio/intercom/locked
 	var/locked_frequency
 
-/obj/item/radio/intercom/locked/set_frequency(var/frequency)
+/obj/item/radio/intercom/locked/set_frequency(frequency)
 	if(frequency == locked_frequency)
 		..(locked_frequency)
 
@@ -239,4 +263,9 @@
 
 /obj/item/radio/intercom/locked/confessional
 	name = "confessional intercom"
-	frequency = 1480
+	frequency = LOCKED_COM_FREQ
+
+/obj/item/radio/intercom/locked/entertainment
+	name = "entertainment PA"
+	frequency = ENT_FREQ
+	broadcasting = TRUE

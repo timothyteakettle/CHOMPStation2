@@ -1,7 +1,9 @@
 import {
   CheckboxInput,
+  type Feature,
   FeatureNumberInput,
   type FeatureNumeric,
+  FeatureSliderInput,
   type FeatureToggle,
 } from '../base';
 
@@ -23,6 +25,20 @@ export const SOUND_AMBIENCE: FeatureToggle = {
   name: 'Play Ambience',
   category: 'SOUNDS',
   description: 'Enable hearing ambient sounds and music.',
+  component: CheckboxInput,
+};
+
+export const sound_instruments: Feature<number> = {
+  name: 'Instruments volume',
+  category: 'SOUNDS',
+  description: 'Volume of instruments.',
+  component: FeatureSliderInput,
+};
+
+export const sound_fridgehum: FeatureToggle = {
+  name: 'Play Fridge Hum',
+  category: 'SOUNDS',
+  description: 'Enable hearing the ambient hum fridges make.',
   component: CheckboxInput,
 };
 
@@ -61,6 +77,14 @@ export const SAY_SOUNDS: FeatureToggle = {
   component: CheckboxInput,
 };
 
+export const BLOOP_SOUNDS: FeatureToggle = {
+  name: 'Multiple Say Sounds',
+  category: 'SOUNDS',
+  description:
+    'Enable hearing a say sound play multiple times for longer messages.',
+  component: CheckboxInput,
+};
+
 export const EMOTE_SOUNDS: FeatureToggle = {
   name: 'Me Sounds',
   category: 'SOUNDS',
@@ -79,6 +103,13 @@ export const SUBTLE_SOUNDS: FeatureToggle = {
   name: 'Subtle Sounds',
   category: 'SOUNDS',
   description: 'Enable hearing a sound when somebody uses subtle.',
+  component: CheckboxInput,
+};
+
+export const LOOC_SOUNDS: FeatureToggle = {
+  name: 'LOOC Sounds',
+  category: 'SOUNDS',
+  description: 'Enable hearing a sound when somebody uses LOOC.',
   component: CheckboxInput,
 };
 

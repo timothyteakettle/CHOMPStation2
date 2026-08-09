@@ -78,21 +78,20 @@
 		riding_datum.restore_position(buckled_mob)
 		riding_datum.handle_vehicle_offsets() // So the person in back goes to the front.
 
-/obj/vehicle/Move(var/newloc, var/direction, var/movetime)
-	// VOREstation edit - Zmoving for falling
+/obj/vehicle/Move(atom/newloc, direct = 0, movetime)
 	var/turf/newturf = newloc
 	var/zmove = (newturf && z != newturf.z)
 
-	if(!zmove && world.time < l_move_time + move_delay) //This AND the riding datum move speed limit? // VOREstation edit end
-		return
+	if(!zmove && world.time < l_move_time + move_delay) //This AND the riding datum move speed limit?
+		return FALSE
 
-	if(!zmove && mechanical && on && powered && cell.charge < charge_use) // VOREstation edit - zmove doesn't run this
+	if(!zmove && mechanical && on && powered && cell.charge < charge_use)
 		turn_off()
-		return
+		return FALSE
 
 	. = ..()
 
-	if(!zmove && mechanical && on && powered) // VOREstation edit - zmove doesn't run this
+	if(!zmove && mechanical && on && powered)
 		cell.use(charge_use)
 
 	//Dummy loads do not have to be moved as they are just an overlay
@@ -132,19 +131,19 @@
 			else
 				to_chat(user, span_notice("Unable to repair while [src] is off."))
 
-	else if(hasvar(W,"force") && hasvar(W,"damtype"))
+	else if(W.force && W.damtype)
 		user.setClickCooldown(user.get_attack_speed(W))
 		switch(W.damtype)
-			if("fire")
+			if(BURN)
 				health -= W.force * fire_dam_coeff
-			if("brute")
+			if(BRUTE)
 				health -= W.force * brute_dam_coeff
 		..()
 		healthcheck()
 	else
 		..()
 
-/obj/vehicle/bullet_act(var/obj/item/projectile/Proj)
+/obj/vehicle/bullet_act(obj/item/projectile/Proj)
 	health -= Proj.get_structure_damage()
 	..()
 	healthcheck()
@@ -171,8 +170,9 @@
 				return
 	return
 
-/obj/vehicle/emp_act(severity)
-	if(!mechanical)
+/obj/vehicle/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || !mechanical)
 		return
 
 	var/was_on = on
@@ -230,7 +230,7 @@
 	set_light(0)
 	update_icon()
 
-/obj/vehicle/emag_act(var/remaining_charges, mob/user as mob)
+/obj/vehicle/emag_act(remaining_charges, mob/user as mob)
 	if(!mechanical)
 		return FALSE
 
@@ -290,7 +290,7 @@
 		turn_on()
 		return
 
-/obj/vehicle/proc/insert_cell(var/obj/item/cell/C, var/mob/living/carbon/human/H)
+/obj/vehicle/proc/insert_cell(obj/item/cell/C, mob/living/carbon/human/H)
 	if(!mechanical)
 		return
 	if(cell)
@@ -304,7 +304,7 @@
 	powercheck()
 	to_chat(H, span_notice("You install [C] in [src]."))
 
-/obj/vehicle/proc/remove_cell(var/mob/living/carbon/human/H)
+/obj/vehicle/proc/remove_cell(mob/living/carbon/human/H)
 	if(!mechanical)
 		return
 	if(!cell)
@@ -316,7 +316,7 @@
 	cell = null
 	powercheck()
 
-/obj/vehicle/proc/RunOver(var/mob/living/M)
+/obj/vehicle/proc/RunOver(mob/living/M)
 	return		//write specifics for different vehicles
 
 //-------------------------------------------
@@ -326,7 +326,7 @@
 // the vehicle load() definition before
 // calling this parent proc.
 //-------------------------------------------
-/obj/vehicle/proc/load(var/atom/movable/C, var/mob/living/user)
+/obj/vehicle/proc/load(atom/movable/C, mob/living/user)
 	//This loads objects onto the vehicle so they can still be interacted with.
 	//Define allowed items for loading in specific vehicle definitions.
 	if(!isturf(C.loc)) //To prevent loading things from someone's inventory, which wouldn't get handled properly.
@@ -359,7 +359,7 @@
 	return 1
 
 
-/obj/vehicle/proc/unload(var/mob/user, var/direction)
+/obj/vehicle/proc/unload(mob/user, direction)
 	if(!load)
 		return
 
@@ -415,11 +415,11 @@
 /obj/vehicle/proc/update_stats()
 	return
 
-/obj/vehicle/attack_generic(var/mob/user, var/damage, var/attack_message)
+/obj/vehicle/attack_generic(mob/user, damage, attack_message)
 	if(!damage)
 		return
 	visible_message(span_danger("[user] [attack_message] the [src]!"))
-	user.attack_log += text("\[[time_stamp()]\] [span_red("attacked [src.name]")]")
+	add_attack_logs(user, src, "attacked")
 	user.do_attack_animation(src)
 	src.health -= damage
 	if(mechanical && prob(10))
@@ -427,7 +427,7 @@
 	spawn(1) healthcheck()
 	return 1
 
-/obj/vehicle/take_damage(var/damage)
+/obj/vehicle/take_damage(damage)
 	if(!damage)
 		return
 	src.health -= damage

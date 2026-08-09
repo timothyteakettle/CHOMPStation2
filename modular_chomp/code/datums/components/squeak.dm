@@ -84,7 +84,7 @@
 	qdel(GetComponent(/datum/component/connect_loc_behalf))
 */
 
-/datum/component/squeak/proc/play_squeak(var/volume_mod = 1)
+/datum/component/squeak/proc/play_squeak(volume_mod = 1)
 	SIGNAL_HANDLER
 
 	if(prob(squeak_chance))
@@ -93,7 +93,7 @@
 		else
 			playsound(parent, pick_weight(override_squeak_sounds), volume * volume_mod, TRUE, sound_extra_range)
 
-/datum/component/squeak/proc/step_squeak(obj/item/clothing/shoes/source, var/running)
+/datum/component/squeak/proc/step_squeak(obj/item/clothing/shoes/source, running)
 	SIGNAL_HANDLER
 
 	/*
@@ -141,7 +141,7 @@
 	SIGNAL_HANDLER
 	holder = equipper
 	//RegisterSignal(holder, COMSIG_MOVABLE_DISPOSING, PROC_REF(disposing_react), override=TRUE)
-	RegisterSignal(holder, COMSIG_PARENT_QDELETING, PROC_REF(holder_deleted), override=TRUE)
+	RegisterSignal(holder, COMSIG_QDELETING, PROC_REF(holder_deleted), override=TRUE)
 	//override for the preqdeleted is necessary because putting parent in hands sends the signal that this proc is registered towards,
 	//so putting an object in hands and then equipping the item on a clothing slot (without dropping it first)
 	//will always runtime without override = TRUE
@@ -149,7 +149,7 @@
 /datum/component/squeak/proc/on_drop(datum/source, mob/user)
 	SIGNAL_HANDLER
 	//UnregisterSignal(user, COMSIG_MOVABLE_DISPOSING)
-	UnregisterSignal(user, COMSIG_PARENT_QDELETING)
+	UnregisterSignal(user, COMSIG_QDELETING)
 	holder = null
 
 ///just gets rid of the reference to holder in the case that theyre qdeleted

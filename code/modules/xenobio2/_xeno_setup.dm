@@ -48,52 +48,21 @@
 #define MINOR_MALEABLE 	1
 #define MIN_MALEABLE	0
 
-var/global/list/xenoChemList = list(REAGENT_ID_MUTATIONTOXIN,
-						REAGENT_ID_PSILOCYBIN,
-						REAGENT_ID_MINDBREAKER,
-						REAGENT_ID_IMPEDREZENE,
-						REAGENT_ID_CRYPTOBIOLIN,
-						REAGENT_ID_BLISS,
-						REAGENT_ID_CHLORALHYDRATE,
-						REAGENT_ID_STOXIN,
-						REAGENT_ID_MUTAGEN,
-						REAGENT_ID_LEXORIN,
-						REAGENT_ID_PACID,
-						REAGENT_ID_CYANIDE,
-						REAGENT_ID_PHORON,
-						REAGENT_ID_PLASTICIDE,
-						REAGENT_ID_AMATOXIN,
-						REAGENT_ID_CARBON,
-						REAGENT_ID_RADIUM,
-						REAGENT_ID_SACID,
-						REAGENT_ID_SUGAR,
-						REAGENT_ID_KELOTANE,
-						REAGENT_ID_DERMALINE,
-						REAGENT_ID_ANTITOXIN,
-						REAGENT_ID_DEXALIN,
-						REAGENT_ID_SYNAPTIZINE,
-						REAGENT_ID_ALKYSINE,
-						REAGENT_ID_IMIDAZOLINE,
-						REAGENT_ID_PERIDAXON,
-						REAGENT_ID_REZADONE,
-						REAGENT_ID_MUTATIONTOXIN,
-						REAGENT_ID_MUTATIONTOXIN)
-
 /datum/xeno/traits
 	var/list/traits = list()
 	var/list/chemlist = list()
 	var/list/chems = list()
 	var/source = "unknown"
 
-/datum/xeno/traits/proc/set_trait(var/trait, var/newval)
+/datum/xeno/traits/proc/set_trait(trait, newval)
 	traits["[trait]"] = newval
 	return
 
-/datum/xeno/traits/proc/get_trait(var/trait)
+/datum/xeno/traits/proc/get_trait(trait)
 	var/val = traits["[trait]"]
 	return val
 
-/datum/xeno/traits/proc/copy_traits(var/datum/xeno/traits/target)
+/datum/xeno/traits/proc/copy_traits(datum/xeno/traits/target)
 	target.traits = traits
 	target.chemlist = chemlist
 	target.chems = chems
@@ -123,7 +92,7 @@ var/global/list/xenoChemList = list(REAGENT_ID_MUTATIONTOXIN,
 	set_trait(TRAIT_XENO_STRENGTH, 0)
 	set_trait(TRAIT_XENO_STR_RANGE, 0)
 
-/datum/xeno/traits/proc/get_gene(var/genetype)
+/datum/xeno/traits/proc/get_gene(genetype)
 
 	if(!genetype) return 0
 
@@ -168,7 +137,7 @@ var/global/list/xenoChemList = list(REAGENT_ID_MUTATIONTOXIN,
 
 	return G
 
-/datum/xeno/traits/proc/apply_gene(var/datum/xeno/genes/genes)
+/datum/xeno/traits/proc/apply_gene(datum/xeno/genes/genes)
 	if(!genes.genetype) return 0
 
 	switch(genes.genetype)

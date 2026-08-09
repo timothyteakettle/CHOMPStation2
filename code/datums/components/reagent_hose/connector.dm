@@ -1,6 +1,7 @@
 /datum/component/hose_connector
 	var/name = ""
 	dupe_mode = COMPONENT_DUPE_ALLOWED
+	VAR_PROTECTED/force_name = FALSE // If it gets doesn't do automatic naming
 	VAR_PROTECTED/obj/carrier = null
 	VAR_PROTECTED/flow_direction = HOSE_NEUTRAL
 	VAR_PROTECTED/datum/hose/my_hose = null
@@ -8,15 +9,21 @@
 	// Atom reagent code piggyback
 	var/flags = NOREACT // Prevent reagent explosions runtiming because no turf or by deleting the hose datum
 	var/datum/reagents/reagents = null
+	var/makes_gurgles = TRUE
 
-/datum/component/hose_connector/Initialize()
+/datum/component/hose_connector/Initialize(set_unique_name = null)
 	carrier = parent
-	reagents = new /datum/reagents( 60, src)
-	name = "[flow_direction] hose connector"
-
+	reagents = new /datum/reagents(60, src)
+	// Handle uniquely named connectors
+	if(set_unique_name)
+		name = set_unique_name
+		force_name = TRUE
+	else if(!force_name)
+		name = "[flow_direction] hose connector"
+	// Setup signaling
 	var/list/CL = carrier.GetComponents(type)
 	connector_number = CL.len + 1
-	RegisterSignal(carrier, COMSIG_PARENT_EXAMINE, PROC_REF(on_examine))
+	RegisterSignal(carrier, COMSIG_ATOM_EXAMINE, PROC_REF(on_examine))
 	RegisterSignal(carrier, COMSIG_MOVABLE_MOVED, PROC_REF(move_react))
 	RegisterSignal(carrier, COMSIG_HOSE_FORCEPUMP, PROC_REF(force_pump))
 	carrier.verbs |= /atom/proc/disconnect_hose
@@ -25,14 +32,14 @@
 
 /datum/component/hose_connector/Destroy()
 	STOP_PROCESSING(SSobj, src)
-	UnregisterSignal(carrier, COMSIG_PARENT_EXAMINE)
+	UnregisterSignal(carrier, COMSIG_ATOM_EXAMINE)
 	UnregisterSignal(carrier, COMSIG_MOVABLE_MOVED)
 	UnregisterSignal(carrier, COMSIG_HOSE_FORCEPUMP)
 	carrier.verbs -= /atom/proc/disconnect_hose
 	carrier = null
 	if(my_hose)
-		qdel_null(my_hose)
-	qdel_null(reagents)
+		QDEL_NULL(my_hose)
+	QDEL_NULL(reagents)
 	. = ..()
 
 /datum/component/hose_connector/proc/get_carrier()
@@ -66,7 +73,7 @@
 		return
 	handle_pump(connected_to)
 
-/datum/component/hose_connector/proc/handle_pump(var/datum/reagents/connected_to)
+/datum/component/hose_connector/proc/handle_pump(datum/reagents/connected_to)
 	PROTECTED_PROC(TRUE)
 	ASSERT(connected_to)
 	// Drain our connector back into tank, and then fill it randomly. The hose handles swapping.
@@ -75,11 +82,13 @@
 
 /datum/component/hose_connector/proc/force_pump()
 	SIGNAL_HANDLER
+	if(!my_hose)
+		return
 	process()
-	if(prob(5))
+	if(makes_gurgles && prob(5))
 		carrier.visible_message(span_infoplain(span_bold("\The [carrier]") + " gurgles as it pumps fluid."))
 
-/datum/component/hose_connector/proc/valid_connection(var/datum/component/hose_connector/C)
+/datum/component/hose_connector/proc/valid_connection(datum/component/hose_connector/C)
 	if(istype(C))
 		if(C.my_hose)
 			return FALSE
@@ -89,16 +98,16 @@
 			return TRUE
 	return FALSE
 
-/datum/component/hose_connector/proc/disconnect_action(var/user)
+/datum/component/hose_connector/proc/disconnect_action(user)
 	if(carrier.Adjacent(user))
 		carrier.visible_message("[user] disconnects \the hose from \the [carrier].")
 		my_hose.disconnect(user)
-		qdel_null(my_hose)
+		QDEL_NULL(my_hose)
 
-/datum/component/hose_connector/proc/connect(var/datum/hose/H = null)
+/datum/component/hose_connector/proc/connect(datum/hose/H = null)
 	my_hose = H
 
-/datum/component/hose_connector/proc/setup_hoses(var/datum/component/hose_connector/target, var/distancetonode, var/mob/user)
+/datum/component/hose_connector/proc/setup_hoses(datum/component/hose_connector/target, distancetonode, mob/user)
 	if(!target || QDELETED(target))
 		to_chat(user,span_danger("What you were connecting to has stopped existing! Ohno!"))
 		return FALSE
@@ -207,7 +216,7 @@
 	name = "hose input"
 	flow_direction = HOSE_INPUT
 
-/datum/component/hose_connector/input/handle_pump(var/datum/reagents/connected_to)
+/datum/component/hose_connector/input/handle_pump(datum/reagents/connected_to)
 	ASSERT(connected_to)
 	reagents.trans_to_holder(connected_to, reagents.maximum_volume)
 
@@ -216,6 +225,72 @@
 	name = "hose output"
 	flow_direction = HOSE_OUTPUT
 
-/datum/component/hose_connector/output/handle_pump(var/datum/reagents/connected_to)
+/datum/component/hose_connector/output/handle_pump(datum/reagents/connected_to)
 	ASSERT(connected_to)
 	connected_to.trans_to_holder(reagents, reagents.maximum_volume)
+
+/// Endless source, produces a reagent and pumps it out forever. Does not require attached object to have reagents.
+/datum/component/hose_connector/endless_source
+	name = "source connector"
+	force_name = TRUE
+	flow_direction = HOSE_OUTPUT
+	var/reagent_id = null
+
+/datum/component/hose_connector/endless_source/connected_reagents()
+	if(!carrier)
+		return null
+	return reagents // Ourselves, not our carrier
+
+/datum/component/hose_connector/endless_source/handle_pump(datum/reagents/connected_to)
+	ASSERT(connected_to)
+	connected_to.add_reagent(reagent_id,5)
+
+/datum/component/hose_connector/endless_source/water
+	reagent_id = REAGENT_ID_WATER
+
+/// Endless drain, removes reagents from existance
+/datum/component/hose_connector/endless_drain
+	name = "drain connector"
+	force_name = TRUE
+	flow_direction = HOSE_INPUT
+
+/datum/component/hose_connector/endless_drain/connected_reagents()
+	if(!carrier)
+		return null
+	return reagents // Ourselves, not our carrier
+
+/datum/component/hose_connector/endless_drain/handle_pump(datum/reagents/connected_to)
+	ASSERT(connected_to)
+	connected_to.clear_reagents()
+
+
+/// Moo, needed because it has a seperate reagent container as udder.
+/datum/component/hose_connector/output/cow
+	name = "Udder"
+	force_name = TRUE
+	makes_gurgles = FALSE
+
+/datum/component/hose_connector/output/cow/connected_reagents()
+	var/mob/living/simple_mob/animal/passive/cow/C = carrier
+	return C.udder
+
+/// Only allows oil to be inserted
+/datum/component/hose_connector/input/fryer
+	name = "Oil Storage"
+	force_name = TRUE
+
+/datum/component/hose_connector/input/fryer/handle_pump(datum/reagents/oil_reagents/connected_to)
+	ASSERT(connected_to)
+	if(connected_to.total_volume >= connected_to.optimal_oil) //Don't overfill it.
+		return
+	for(var/datum/reagent/reagent_to_add in reagents.reagent_list)
+		if(istype(reagent_to_add, /datum/reagent/nutriment/triglyceride/oil)) //So we can transfer ALL oil types.
+			var/old_oil_amount = connected_to.total_volume
+			connected_to.add_reagent(reagent_to_add.id, rand(1,reagent_to_add.volume))
+			reagents.remove_reagent(reagent_to_add.id, connected_to.total_volume - old_oil_amount, 1) //Ex: Old was 100. We added 10u. Total_volume is now 110u. 110u-100u = 10u
+			if(connected_to.total_volume >= connected_to.optimal_oil)
+				break
+
+/datum/component/hose_connector/input/fryer/connected_reagents()
+	var/obj/machinery/appliance/cooker/fryer/our_fryer = carrier
+	return our_fryer.oil

@@ -24,7 +24,7 @@
 	. = ..()
 	hud = new /obj/item/clothing/glasses/hud/health/mech(src)
 
-/obj/mecha/medical/odysseus/moved_inside(var/mob/living/carbon/human/H as mob)
+/obj/mecha/medical/odysseus/moved_inside(mob/living/carbon/human/H as mob)
 	if(..())
 		if(H.glasses)
 			occupant_message(span_red("[H.glasses] prevent you from using [src] [hud]!"))
@@ -43,31 +43,7 @@
 			H.recalculate_vis()
 	..()
 	return
-/*
-	verb/set_perspective()
-		set name = "Set client perspective."
-		set category = "Exosuit Interface"
-		set src = usr.loc
-		var/perspective = input(usr, "Select a perspective type.",
-					"Client perspective",
-					occupant.client.perspective) in list(MOB_PERSPECTIVE,EYE_PERSPECTIVE)
-		to_world("[perspective]")
-		occupant.client.perspective = perspective
-		return
 
-	verb/toggle_eye()
-		set name = "Toggle eye."
-		set category = "Exosuit Interface"
-		set src = usr.loc
-		if(occupant.client.eye == occupant)
-			occupant.client.eye = src
-		else
-			occupant.client.eye = occupant
-		to_world("[occupant.client.eye]")
-		return
-*/
-
-//TODO - Check documentation for client.eye and client.perspective...
 /obj/item/clothing/glasses/hud/health/mech
 	name = "Integrated Medical Hud"
 

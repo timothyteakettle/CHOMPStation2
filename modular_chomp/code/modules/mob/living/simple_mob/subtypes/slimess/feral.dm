@@ -29,10 +29,11 @@
 	melee_damage_upper = 5
 	heat_resist = 1
 
-/mob/living/simple_mob/slime/feral/orange/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/slime/feral/orange/apply_melee_effects(atom/A)
 	if(isliving(A))
 		var/mob/living/L = A
-		L.add_modifier(/datum/modifier/fire, 5 SECONDS)
+		L.adjust_fire_stacks(5)
+		L.ignite_mob()
 
 
 /mob/living/simple_mob/slime/feral/blue
@@ -51,25 +52,14 @@
 	coretype = /obj/item/slime_extract/metal
 	maxHealth = 250
 	armor = list(
-				"melee" = 25,
-				"bullet" = 25,
-				"laser" = 25,
+				"melee" = 35,
+				"bullet" = 35,
+				"laser" = 35,
 				"energy" = 50,
 				"bomb" = 80,
 				"bio" = 100,
 				"rad" = 100
 				)
-
-	armor_soak = list(
-				"melee" = 5,
-				"bullet" = 5,
-				"laser" = 5,
-				"energy" = 0,
-				"bomb" = 0,
-				"bio" = 0,
-				"rad" = 0
-				)
-
 
 /mob/living/simple_mob/slime/feral/yellow
 	desc = "This slime is very conductive, and is known to use electricity as a means of defense moreso than usual for slimes."
@@ -113,14 +103,14 @@
 	log_and_message_admins("[src] ignited due to exposure to fire.")
 	ignite()
 
-/mob/living/simple_mob/slime/feral/dark_purple/bullet_act(var/obj/item/projectile/P, var/def_zone)
+/mob/living/simple_mob/slime/feral/dark_purple/bullet_act(obj/item/projectile/P, def_zone)
 	if(P.damage_type && P.damage_type == BURN && P.damage) // Most bullets won't trigger the explosion, as a mercy towards Security.
 		log_and_message_admins("[src] ignited due to bring hit by a burning projectile[P.firer ? " by [key_name(P.firer)]" : ""].")
 		ignite()
 	else
 		..()
 
-/mob/living/simple_mob/slime/feral/dark_purple/attackby(var/obj/item/W, var/mob/user)
+/mob/living/simple_mob/slime/feral/dark_purple/attackby(obj/item/W, mob/user)
 	if(istype(W) && W.force && W.damtype == BURN)
 		log_and_message_admins("[src] ignited due to being hit with a burning weapon ([W]) by [key_name(user)].")
 		ignite()
@@ -134,7 +124,7 @@
 	coretype = /obj/item/slime_extract/silver
 	shiny = TRUE
 
-/mob/living/simple_mob/slime/feral/silver/bullet_act(var/obj/item/projectile/P, var/def_zone)
+/mob/living/simple_mob/slime/feral/silver/bullet_act(obj/item/projectile/P, def_zone)
 	if(istype(P,/obj/item/projectile/beam) || istype(P, /obj/item/projectile/energy))
 		visible_message(span_danger("\The [src] reflects \the [P]!"))
 
@@ -259,7 +249,13 @@
 	..()
 
 /mob/living/simple_mob/slime/feral/green/proc/irradiate()
-	SSradiation.radiate(src, rads)
+	radiation_pulse(
+		src,
+		max_range = 3,
+		threshold = RAD_MEDIUM_INSULATION,
+		chance = URANIUM_IRRADIATION_CHANCE * 3,
+		strength = rads
+	)
 
 /mob/living/simple_mob/slime/feral/pink
 	desc = "This slime has regenerative properties."

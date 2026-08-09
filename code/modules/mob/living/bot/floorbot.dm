@@ -8,7 +8,7 @@
 	name = "Floorbot"
 	desc = "A little floor repairing robot, it looks so excited!"
 	icon_state = "floorbot0"
-	req_one_access = list(access_robotics, access_construction)
+	req_one_access = list(ACCESS_ROBOTICS, ACCESS_CONSTRUCTION)
 	wait_if_pulled = 1
 	min_target_dist = 0
 
@@ -20,7 +20,7 @@
 	var/eattiles = 0
 	var/maketiles = 0
 	var/targetdirection = null
-	var/floor_build_type = /decl/flooring/tiling // Basic steel floor.
+	var/floor_build_type = /datum/decl/flooring/tiling // Basic steel floor.
 
 /mob/living/bot/floorbot/update_icons()
 	if(busy)
@@ -60,10 +60,10 @@
 		data["bmode"] = dir2text(targetdirection)
 	return data
 
-/mob/living/bot/floorbot/attack_hand(var/mob/user)
+/mob/living/bot/floorbot/attack_hand(mob/user)
 	tgui_interact(user)
 
-/mob/living/bot/floorbot/emag_act(var/remaining_charges, var/mob/user)
+/mob/living/bot/floorbot/emag_act(remaining_charges, mob/user)
 	. = ..()
 	if(!emagged)
 		emagged = 1
@@ -160,7 +160,7 @@
 				target = S
 				return
 
-/mob/living/bot/floorbot/confirmTarget(var/atom/A) // The fact that we do some checks twice may seem confusing but remember that the bot's settings may be toggled while it's moving and we want them to stop in that case
+/mob/living/bot/floorbot/confirmTarget(atom/A) // The fact that we do some checks twice may seem confusing but remember that the bot's settings may be toggled while it's moving and we want them to stop in that case
 	if(!..())
 		return 0
 
@@ -193,7 +193,7 @@
 	var/turf/simulated/floor/T = A
 	return (istype(T) && (T.broken || T.burnt || (improvefloors && !T.flooring)) && (get_turf(T) == loc || prob(40)))
 
-/mob/living/bot/floorbot/UnarmedAttack(var/atom/A, var/proximity)
+/mob/living/bot/floorbot/UnarmedAttack(atom/A, proximity)
 	if(!..())
 		return
 
@@ -209,18 +209,18 @@
 		update_icons()
 		if(F.flooring)
 			visible_message(span_warning("\The [src] begins to tear the floor tile from the floor!"))
-			if(do_after(src, 50))
+			if(do_after(src, 5 SECONDS, target = A))
 				F.break_tile_to_plating()
 				addTiles(1)
 		else
 			visible_message(span_danger("\The [src] begins to tear through the floor!"))
-			if(do_after(src, 150)) // Extra time because this can and will kill.
+			if(do_after(src, 15 SECONDS, target = A)) // Extra time because this can and will kill.
 				F.ReplaceWithLattice()
 				addTiles(1)
 		target = null
 		busy = 0
 		update_icons()
-	else if(istype(A, /turf/space) || istype(A, /turf/simulated/mineral/floor))
+	else if(isopenturf(A) || istype(A, /turf/simulated/mineral/floor))
 		var/building = 2
 		if(locate(/obj/structure/lattice, A))
 			building = 1
@@ -229,7 +229,7 @@
 		busy = 1
 		update_icons()
 		visible_message(span_infoplain(span_bold("\The [src]") + " begins to repair the hole."))
-		if(do_after(src, 50))
+		if(do_after(src, 5 SECONDS, target = A))
 			if(A && (locate(/obj/structure/lattice, A) && building == 1 || !locate(/obj/structure/lattice, A) && building == 2)) // Make sure that it still needs repairs
 				var/obj/item/I
 				if(building == 1)
@@ -246,7 +246,7 @@
 			busy = 1
 			update_icons()
 			visible_message(span_infoplain(span_bold("\The [src]") + " begins to remove the broken floor."))
-			if(do_after(src, 50, F))
+			if(do_after(src, 5 SECONDS, target = F))
 				if(F.broken || F.burnt)
 					F.make_plating()
 			target = null
@@ -256,7 +256,7 @@
 			busy = 1
 			update_icons()
 			visible_message(span_infoplain(span_bold("\The [src]") + " begins to improve the floor."))
-			if(do_after(src, 50))
+			if(do_after(src, 5 SECONDS, target = F))
 				if(!F.flooring)
 					F.set_flooring(get_flooring_data(floor_build_type))
 					addTiles(-1)
@@ -268,7 +268,7 @@
 		visible_message(span_infoplain(span_bold("\The [src]") + " begins to collect tiles."))
 		busy = 1
 		update_icons()
-		if(do_after(src, 20))
+		if(do_after(src, 2 SECONDS, target = T))
 			if(T)
 				var/eaten = min(maxAmount - amount, T.get_amount())
 				T.use(eaten)
@@ -282,7 +282,7 @@
 			visible_message(span_infoplain(span_bold("\The [src]") + " begins to make tiles."))
 			busy = 1
 			update_icons()
-			if(do_after(50))
+			if(do_after(src, 5 SECONDS, target = A))
 				if(M)
 					M.use(1)
 					addTiles(4)
@@ -305,7 +305,7 @@
 	//qdel(src)
 	return ..()
 
-/mob/living/bot/floorbot/proc/addTiles(var/am)
+/mob/living/bot/floorbot/proc/addTiles(am)
 	amount += am
 	if(amount < 0)
 		amount = 0
@@ -340,7 +340,7 @@
 
 /* Assembly */
 
-/obj/item/storage/toolbox/mechanical/attackby(var/obj/item/stack/tile/floor/T, mob/living/user as mob)
+/obj/item/storage/toolbox/mechanical/attackby(obj/item/stack/tile/floor/T, mob/living/user as mob)
 	if(!istype(T, /obj/item/stack/tile/floor))
 		..()
 		return
@@ -371,7 +371,7 @@
 	w_class = ITEMSIZE_NORMAL
 	var/created_name = "Floorbot"
 
-/obj/item/toolbox_tiles/attackby(var/obj/item/W, mob/user as mob)
+/obj/item/toolbox_tiles/attackby(obj/item/W, mob/user as mob)
 	..()
 	if(isprox(W))
 		qdel(W)
@@ -382,7 +382,7 @@
 		user.drop_from_inventory(src)
 		qdel(src)
 	else if (istype(W, /obj/item/pen))
-		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN), MAX_NAME_LEN)
+		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 		if(!t)
 			return
 		if(!in_range(src, user) && loc != user)
@@ -401,7 +401,7 @@
 	w_class = ITEMSIZE_NORMAL
 	var/created_name = "Floorbot"
 
-/obj/item/toolbox_tiles_sensor/attackby(var/obj/item/W, mob/user as mob)
+/obj/item/toolbox_tiles_sensor/attackby(obj/item/W, mob/user as mob)
 	..()
 	if(istype(W, /obj/item/robot_parts/l_arm) || istype(W, /obj/item/robot_parts/r_arm) || (istype(W, /obj/item/organ/external/arm) && ((W.name == "robotic right arm") || (W.name == "robotic left arm"))))
 		qdel(W)
@@ -412,7 +412,7 @@
 		user.drop_from_inventory(src)
 		qdel(src)
 	else if(istype(W, /obj/item/pen))
-		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN), MAX_NAME_LEN)
+		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 		if(!t)
 			return
 		if(!in_range(src, user) && loc != user)

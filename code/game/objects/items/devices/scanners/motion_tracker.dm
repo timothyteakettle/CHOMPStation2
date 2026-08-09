@@ -10,8 +10,7 @@
 	throw_speed = 4
 	throw_range = 20
 
-	matter = list(MAT_STEEL = 30,MAT_GLASS = 20)
-	origin_tech = list(TECH_MAGNET = 1, TECH_DATA = 1)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.015),MAT_GLASS = MATERIAL_COST(0.01))
 
 	pickup_sound = 'sound/items/pickup/device.ogg'
 	drop_sound = 'sound/items/drop/device.ogg'
@@ -19,15 +18,18 @@
 /obj/item/motiontracker/Initialize(mapload)
 	RegisterSignal(SSmotiontracker, COMSIG_MOVABLE_MOTIONTRACKER, PROC_REF(handle_motion_tracking))
 	. = ..()
+	if(ismob(loc))
+		var/mob/M = loc
+		M.motiontracker_subscribe()
 
 /obj/item/motiontracker/Destroy(force, ...)
 	if(ismob(loc))
 		var/mob/M = loc
-		M.motiontracker_subscribe()
+		M.motiontracker_unsubscribe()
 	UnregisterSignal(SSmotiontracker, COMSIG_MOVABLE_MOTIONTRACKER)
 	. = ..()
 
-/obj/item/motiontracker/proc/handle_motion_tracking(mob/source, var/datum/weakref/RW, var/turf/T)
+/obj/item/motiontracker/proc/handle_motion_tracking(mob/source, datum/weakref/RW, turf/T)
 	SIGNAL_HANDLER
 	SHOULD_NOT_OVERRIDE(TRUE)
 	PRIVATE_PROC(TRUE)

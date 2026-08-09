@@ -78,7 +78,7 @@ GLOBAL_VAR_INIT(jellyfish_count, 0)
 	vore_default_contamination_flavor = "Wet"
 	vore_default_contamination_color = "grey"
 	vore_default_item_mode = IM_DIGEST
-	can_be_drop_prey = FALSE //CHOMP Add
+	can_be_drop_prey = FALSE
 
 	var/reproduction_cooldown = 0
 
@@ -96,11 +96,7 @@ GLOBAL_VAR_INIT(jellyfish_count, 0)
 	emote_see = list("flickers", "flashes", "looms","pulses","sways","shimmers hypnotically")
 
 
-/mob/living/simple_mob/vore/alienanimals/space_jellyfish/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/alienanimals/space_jellyfish/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "internal chamber"
@@ -113,7 +109,7 @@ GLOBAL_VAR_INIT(jellyfish_count, 0)
 	B.escapechance = 15
 
 
-/mob/living/simple_mob/vore/alienanimals/space_jellyfish/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/vore/alienanimals/space_jellyfish/apply_melee_effects(atom/A)
 	if(isliving(A))
 		var/mob/living/L = A
 		var/leech = rand(1,100)
@@ -155,7 +151,7 @@ GLOBAL_VAR_INIT(jellyfish_count, 0)
 		adjust_nutrition(-400)
 		reproduction_cooldown = 60
 
-/mob/living/simple_mob/vore/alienanimals/space_jellyfish/Process_Spacemove(var/check_drift = 0)
+/mob/living/simple_mob/vore/alienanimals/space_jellyfish/Process_Spacemove(check_drift = 0)
 	return TRUE
 
 /datum/ai_holder/simple_mob/melee/evasive/jellyfish
@@ -168,7 +164,7 @@ GLOBAL_VAR_INIT(jellyfish_count, 0)
 
 /obj/item/reagent_containers/food/snacks/jellyfishcore
 	name = "jellyfish core"
-	icon = 'icons/obj/food_vr.dmi'
+	icon = 'icons/obj/food.dmi'
 	icon_state = "jellyfish_core"
 	desc = "The pulsing core of a space jellyfish! ... It smells delicious."
 	nutriment_amt = 50

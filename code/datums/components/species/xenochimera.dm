@@ -19,13 +19,15 @@
 	owner = parent
 	RegisterSignal(owner, COMSIG_XENOCHIMERA_COMPONENT, PROC_REF(handle_comp))
 	RegisterSignal(owner, COMSIG_HUMAN_DNA_FINALIZED, PROC_REF(handle_record))
+	if(owner.dna)
+		handle_record()
 	add_verb(owner, /mob/living/carbon/human/proc/reconstitute_form)
 
 /datum/component/xenochimera/Destroy(force)
 	UnregisterSignal(owner, COMSIG_XENOCHIMERA_COMPONENT)
 	UnregisterSignal(owner, COMSIG_HUMAN_DNA_FINALIZED)
 	remove_verb(owner, /mob/living/carbon/human/proc/reconstitute_form)
-	qdel_null(revival_record)
+	QDEL_NULL(revival_record)
 	owner = null
 	. = ..()
 
@@ -33,7 +35,7 @@
 	SIGNAL_HANDLER
 	if(QDELETED(owner))
 		return
-	qdel_null(revival_record)
+	QDEL_NULL(revival_record)
 	revival_record = new(owner)
 
 /datum/component/xenochimera/proc/handle_comp()
@@ -45,7 +47,7 @@
 
 /datum/component/xenochimera/proc/handle_regeneration()
 	if(revive_ready == REVIVING_NOW || revive_ready == REVIVING_DONE)
-		owner.stunned = 5
+		owner.SetStunned(5)
 		owner.canmove = 0
 		owner.does_not_breathe = TRUE
 		if(prob(2)) // 2% chance of playing squelchy noise while reviving, which is run roughly every 2 seconds/tick while regenerating.
@@ -54,11 +56,11 @@
 		if(!owner.lying)
 			owner.lay_down()
 
-/datum/component/xenochimera/proc/set_revival_delay(var/time)
+/datum/component/xenochimera/proc/set_revival_delay(time)
 	revive_ready = REVIVING_NOW
 	revive_finished = (world.time + time SECONDS) // When do we finish reviving? Allows us to find out when we're done, called by the alert currently.
 
-/datum/component/xenochimera/proc/trigger_revival(var/from_save_slot)
+/datum/component/xenochimera/proc/trigger_revival(from_save_slot)
 	ASSERT(revival_record)
 	if(owner.isSynthetic())
 		revival_record.revive_xenochimera(owner,TRUE,from_save_slot)
@@ -77,7 +79,7 @@
 	var/shock = 0.75*owner.traumatic_shock
 
 	//Caffeinated or otherwise overexcited xenochimera can become feral and have special messages
-	var/jittery = max(0, owner.jitteriness - 100)
+	var/jittery = max(0, owner.get_jittery() - 100)
 
 	//Are we in danger of ferality?
 	var/danger = FALSE
@@ -217,7 +219,7 @@
 	// HUD update time
 	update_xenochimera_hud(danger, feral_state)
 
-/datum/component/xenochimera/proc/update_xenochimera_hud(var/danger, var/feral)
+/datum/component/xenochimera/proc/update_xenochimera_hud(danger, feral)
 	if(owner.xenochimera_danger_display)
 		owner.xenochimera_danger_display.invisibility = INVISIBILITY_NONE
 		if(danger && feral)
@@ -231,7 +233,7 @@
 
 	return
 
-/datum/component/xenochimera/proc/go_feral(var/stress, var/cause)
+/datum/component/xenochimera/proc/go_feral(stress, cause)
 	// Going feral due to hunger
 	if(cause == "hunger")
 		to_chat(owner,span_danger(span_large("Something in your mind flips, your instincts taking over, no longer able to fully comprehend your surroundings as survival becomes your primary concern - you must feed, survive, there is nothing else. Hunt. Eat. Hide. Repeat.")))
@@ -267,11 +269,11 @@
 		return
 	owner.LoadComponent(/datum/component/hallucinations/xenochimera)
 
-/obj/screen/xenochimera
+/atom/movable/screen/xenochimera
 	icon = 'icons/mob/chimerahud.dmi'
 	invisibility = INVISIBILITY_ABSTRACT
 
-/obj/screen/xenochimera/danger_level
+/atom/movable/screen/xenochimera/danger_level
 	name = "danger level"
 	icon_state = "danger00"		//first number is bool of whether or not we're in danger, second is whether or not we're feral
 	alpha = 200
@@ -329,7 +331,7 @@
 
 		//Scary spawnerization.
 		set_revival_delay(time)
-		owner.throw_alert("regen", /obj/screen/alert/xenochimera/reconstitution)
+		owner.throw_alert("regen", /atom/movable/screen/alert/xenochimera/reconstitution)
 		addtimer(CALLBACK(src, PROC_REF(chimera_regenerate_ready)), time SECONDS, TIMER_DELETE_ME)
 
 	//Clicked regen while NOT dead
@@ -338,7 +340,7 @@
 
 		//Waiting for regen after being alive
 		set_revival_delay(time)
-		owner.throw_alert("regen", /obj/screen/alert/xenochimera/reconstitution)
+		owner.throw_alert("regen", /atom/movable/screen/alert/xenochimera/reconstitution)
 		addtimer(CALLBACK(src, PROC_REF(chimera_regenerate_nutrition)), time SECONDS, TIMER_DELETE_ME)
 	owner.lying = TRUE
 	// open_appearance_editor()
@@ -355,7 +357,7 @@
 	revive_ready = REVIVING_DONE
 	owner << sound('sound/effects/mob_effects/xenochimera/hatch_notification.ogg',0,0,0,30)
 	owner.clear_alert("regen")
-	owner.throw_alert("hatch", /obj/screen/alert/xenochimera/readytohatch)
+	owner.throw_alert("hatch", /atom/movable/screen/alert/xenochimera/readytohatch)
 
 /datum/component/xenochimera/proc/chimera_regenerate_ready()
 	if(!owner)
@@ -365,7 +367,7 @@
 		to_chat(owner, span_notice("Your body has recovered from its ordeal, ready to regenerate itself again."))
 		revive_ready = REVIVING_READY //reset their cooldown
 		owner.clear_alert("regen")
-		owner.throw_alert("hatch", /obj/screen/alert/xenochimera/readytohatch)
+		owner.throw_alert("hatch", /atom/movable/screen/alert/xenochimera/readytohatch)
 
 	// Was dead, still dead.
 	else
@@ -374,7 +376,7 @@
 		revive_ready = REVIVING_DONE
 		owner << sound('sound/effects/mob_effects/xenochimera/hatch_notification.ogg',0,0,0,30)
 		owner.clear_alert("regen")
-		owner.throw_alert("hatch", /obj/screen/alert/xenochimera/readytohatch)
+		owner.throw_alert("hatch", /atom/movable/screen/alert/xenochimera/readytohatch)
 
 /mob/living/carbon/human/proc/hatch()
 	set name = "Hatch"
@@ -392,14 +394,15 @@
 	var/from_slot = ""
 	from_slot = "You'll hatch using your current appearance"
 	if(reload_slot == "From Slot" && client)
-		if(client.prefs.species == SPECIES_PROTEAN) // Exploit protection
+		if(client.prefs.read_preference(/datum/preference/choiced/species) == SPECIES_PROTEAN) // Exploit protection
 			to_chat(src,span_warning("You cannot copy nanoform prosthetic limbs from this species. Please try another character."))
 			return
-		var/slot_is_synth = ((O_BRAIN in client.prefs.organ_data) && client.prefs.organ_data[O_BRAIN])
+		var/list/organ_data = client.prefs.read_preference(/datum/preference/organ_data)
+		var/slot_is_synth = (organ_data && (O_BRAIN in organ_data) && organ_data[O_BRAIN])
 		if(slot_is_synth && !isSynthetic()) // Prevents some pretty weird situations
 			to_chat(src,span_warning("Cannot apply character appearance. [slot_is_synth ? "The slot's character is synthetic." : "The slot's character is organic."] Slot must match the current body's synthetic state. Please try another character."))
 			return
-		from_slot = "You'll hatch using [client.prefs.real_name]'s appearance"
+		from_slot = "You'll hatch using [client.prefs.read_preference(/datum/preference/name/real_name)]'s appearance"
 
 	var/confirm = tgui_alert(src, "Are you sure you want to hatch right now? This will be very obvious to anyone in view. [from_slot]! Are you sure?", "Confirm Regeneration", list("Yes", "No"))
 	if(confirm == "Yes")
@@ -435,7 +438,7 @@
 			//add_modifier(/datum/modifier/resleeving_sickness/chimera, sickness_duration) //CHOMPedit
 			adjustBrainLoss(5) // if they're reviving from dead, they come back with 5 brainloss on top of whatever's unhealed.
 
-/datum/component/xenochimera/proc/chimera_hatch(var/from_save_slot)
+/datum/component/xenochimera/proc/chimera_hatch(from_save_slot)
 	if(!owner)
 		return
 

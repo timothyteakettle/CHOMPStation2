@@ -1,7 +1,7 @@
 /obj/machinery/computer/shuttle_control/specops
 	name = "special operations shuttle console"
 	shuttle_tag = "Special Operations"
-	req_access = list(access_cent_specops)
+	req_access = list(ACCESS_CENT_SPECOPS)
 
 /obj/machinery/computer/shuttle_control/specops/attack_ai(user as mob)
 	to_chat(user, span_warning("Access Denied."))
@@ -23,12 +23,12 @@
 	announcer = new /obj/item/radio/intercom(null)//We need a fake AI to announce some stuff below. Otherwise it will be wonky.
 	announcer.config(list(CHANNEL_RESPONSE_TEAM = 0))
 
-/datum/shuttle/autodock/ferry/specops/proc/radio_announce(var/message)
+/datum/shuttle/autodock/ferry/specops/proc/radio_announce(message)
 	if(announcer)
 		announcer.autosay(message, "A.L.I.C.E.", CHANNEL_RESPONSE_TEAM)
 
 
-/datum/shuttle/autodock/ferry/specops/launch(var/user)
+/datum/shuttle/autodock/ferry/specops/launch(user)
 	if (!can_launch())
 		return
 
@@ -36,7 +36,7 @@
 		var/obj/machinery/computer/C = user
 
 		if(world.time <= reset_time)
-			C.visible_message(span_notice("[global.using_map.boss_name] will not allow the Special Operations shuttle to launch yet."))
+			C.visible_message(span_notice("[using_map.boss_name] will not allow the Special Operations shuttle to launch yet."))
 			if (((world.time - reset_time)/10) > 60)
 				C.visible_message(span_notice("[-((world.time - reset_time)/10)/60] minutes remain!"))
 			else
@@ -153,10 +153,10 @@
 		sleep(10)
 
 		var/spawn_marauder[] = new()
-		for(var/obj/effect/landmark/L in landmarks_list)
+		for(var/obj/effect/landmark/L in GLOB.landmarks_list)
 			if(L.name == "Marauder Entry")
 				spawn_marauder.Add(L)
-		for(var/obj/effect/landmark/L in landmarks_list)
+		for(var/obj/effect/landmark/L in GLOB.landmarks_list)
 			if(L.name == "Marauder Exit")
 				var/obj/effect/portal/P = new(L.loc)
 				P.invisibility = INVISIBILITY_ABSTRACT //So it is not seen by anyone.
@@ -206,7 +206,7 @@
 	brightness_color = "#DA0205"
 	var/state = 0
 
-/obj/machinery/light/small/readylight/proc/set_state(var/new_state)
+/obj/machinery/light/small/readylight/proc/set_state(new_state)
 	state = new_state
 	if(state)
 		brightness_color = "00FF00"

@@ -56,7 +56,7 @@
 		destination = CL
 
 	if(!destination)
-		warning("A gateway is trying to spawn it's mcguffin but there are no mapped in spawner landmarks")
+		WARNING("A gateway is trying to spawn it's mcguffin but there are no mapped in spawner landmarks")
 		destination = get_turf(src)
 
 	key = new mcguffin_type(destination)
@@ -75,5 +75,5 @@
 	icon = 'icons/obj/machines/gateway_vr.dmi'
 
 //No, you can't digest the key to leave the gateway.
-/obj/item/mcguffin/digest_act(var/atom/movable/item_storage = null)
+/obj/item/mcguffin/digest_act(atom/movable/item_storage = null)
 	return FALSE

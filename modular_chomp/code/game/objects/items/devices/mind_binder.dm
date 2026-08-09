@@ -7,18 +7,14 @@
 	item_state = "healthanalyzer"
 	slot_flags = SLOT_BELT
 	w_class = ITEMSIZE_SMALL
-	matter = list(MAT_STEEL = 200)
-	origin_tech = list(TECH_MAGNET = 2, TECH_BIO = 2, TECH_ILLEGAL = 1)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.1))
 	possessed_voice = list()
 	var/self_bind = FALSE
 	flags = NOBLUDGEON
 
-/obj/item/mindbinder/attack(mob/living/M, mob/living/user)
+/obj/item/mindbinder/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
 	usr.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
-	return
-
-/obj/item/mindbinder/attack_self(mob/living/user)
-	return
+	return ITEM_INTERACT_SUCCESS
 
 /obj/item/mindbinder/proc/toggle_self_bind()
 	if(possessed_voice.len == 1)
@@ -34,7 +30,7 @@
 /obj/item/mindbinder/pre_attack(atom/A)
 	if(istype(A, /obj/structure/gargoyle))
 		var/obj/structure/gargoyle/G = A
-		A = G.gargoyle
+		A = G.WR_gargoyle?.resolve()
 	if(istype(A, /obj/item/holder))
 		var/obj/item/holder/H = A
 		A = H.held_mob
@@ -116,7 +112,7 @@
 		to_chat(usr,span_warning("The device beeps a warning that the target is already sentient!"))
 		return
 
-	if(is_type_in_list(item, item_vore_blacklist))
+	if(is_type_in_list(item, GLOB.item_vore_blacklist))
 		to_chat(usr,span_danger("The item resists your transfer attempt!"))
 		return
 

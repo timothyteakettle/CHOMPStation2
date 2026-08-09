@@ -4,7 +4,7 @@
 	icon_state = "knuckledusters"
 	slot = ACCESSORY_SLOT_RING
 	slot_flags = SLOT_GLOVES
-	matter = list(MAT_STEEL = 500)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.25))
 	attack_verb = list("punched", "beaten", "struck")
 	siemens_coefficient = 1
 	force = 10	//base punch strength is 5
@@ -41,7 +41,7 @@
 	if(!M.mind)
 		return 0
 
-	var/input = sanitizeSafe(tgui_input_text(M, "Who do you want to dedicate the bracelet to?","Friendship Bracelet" ,"", MAX_NAME_LEN), MAX_NAME_LEN)
+	var/input = sanitizeSafe(tgui_input_text(M, "Who do you want to dedicate the bracelet to?","Friendship Bracelet" ,"", MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 
 	if(src && input && !M.stat && in_range(M,src))
 		desc = "A beautiful friendship bracelet in all the colors of the rainbow. It's dedicated to [input]."
@@ -54,7 +54,7 @@
 	material_slowdown_multiplier = 0
 	slowdown = 0
 
-/obj/item/clothing/accessory/bracelet/material/Initialize(mapload, var/new_material)
+/obj/item/clothing/accessory/bracelet/material/Initialize(mapload, new_material)
 	. = ..()
 	if(!new_material)
 		new_material = MAT_STEEL

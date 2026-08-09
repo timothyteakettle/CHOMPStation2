@@ -12,10 +12,13 @@
 		else
 			spawning_id = new_chem
 			break
+
+/obj/item/reagent_containers/glass/replenishing/Destroy()
+	STOP_PROCESSING(SSobj, src)
+	. = ..()
+
 /obj/item/reagent_containers/glass/replenishing/process()
 	reagents.add_reagent(spawning_id, 0.3)
-
-
 
 //a talking gas mask!
 /obj/item/clothing/mask/gas/poltergeist
@@ -26,6 +29,10 @@
 /obj/item/clothing/mask/gas/poltergeist/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj, src)
+
+/obj/item/clothing/mask/gas/poltergeist/Destroy()
+	STOP_PROCESSING(SSobj, src)
+	. = ..()
 
 /obj/item/clothing/mask/gas/poltergeist/process()
 	if(heard_talk.len && isliving(src.loc) && prob(10))
@@ -39,8 +46,6 @@
 	heard_talk.Add(multilingual_to_message(message_pieces))
 	if(isliving(src.loc) && world.time - last_twitch > 50)
 		last_twitch = world.time
-
-
 
 //a vampiric statuette
 //todo: cult integration
@@ -60,6 +65,10 @@
 /obj/item/vampiric/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj, src)
+
+/obj/item/vampiric/Destroy()
+	STOP_PROCESSING(SSobj, src)
+	. = ..()
 
 /obj/item/vampiric/process()
 	//see if we've identified anyone nearby
@@ -126,7 +135,7 @@
 	if(world.time - last_bloodcall >= bloodcall_interval && (M in view(7, src)))
 		bloodcall(M)
 
-/obj/item/vampiric/proc/bloodcall(var/mob/living/carbon/human/M)
+/obj/item/vampiric/proc/bloodcall(mob/living/carbon/human/M)
 	last_bloodcall = world.time
 	if(istype(M))
 		playsound(src, pick('sound/hallucinations/wail.ogg','sound/hallucinations/veryfar_noise.ogg','sound/hallucinations/far_noise.ogg'), 50, 1, -3)
@@ -149,6 +158,10 @@
 	. = ..()
 	START_PROCESSING(SSobj, src)
 	loc_last_process = src.loc
+
+/obj/effect/decal/cleanable/blood/splatter/animated/Destroy()
+	STOP_PROCESSING(SSobj, src)
+	. = ..()
 
 /obj/effect/decal/cleanable/blood/splatter/animated/process()
 	if(target_turf && src.loc != target_turf)
@@ -180,6 +193,10 @@
 	. = ..()
 	START_PROCESSING(SSobj, src)
 
+/obj/effect/shadow_wight/Destroy()
+	STOP_PROCESSING(SSobj, src)
+	. = ..()
+
 /obj/effect/shadow_wight/process()
 	if(src.loc)
 		src.loc = get_turf(pick(orange(1,src)))
@@ -208,5 +225,5 @@
 		STOP_PROCESSING(SSobj, src)
 		qdel(src) //Let's not just sit in nullspace forever, yeah?
 
-/obj/effect/shadow_wight/Bump(var/atom/obstacle)
+/obj/effect/shadow_wight/Bump(atom/obstacle)
 	to_chat(obstacle, span_red("You feel a chill run down your spine!"))

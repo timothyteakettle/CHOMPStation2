@@ -7,7 +7,7 @@
 	icon_keyboard = "med_key"
 	icon_screen = "dna"
 	circuit = /obj/item/circuitboard/cloning
-	req_access = list(access_heads) //Only used for record deletion right now.
+	req_access = list(ACCESS_HEADS) //Only used for record deletion right now.
 	var/obj/machinery/dna_scannernew/scanner = null //Linked scanner. For scanning.
 	var/list/pods = null //Linked cloning pods.
 	var/list/temp = null
@@ -116,7 +116,6 @@
 	return attack_hand(user)
 
 /obj/machinery/computer/cloning/attack_hand(mob/user as mob)
-	user.set_machine(src)
 	add_fingerprint(user)
 
 	if(stat & (BROKEN|NOPOWER))
@@ -363,7 +362,7 @@
 
 	add_fingerprint(ui.user)
 
-/obj/machinery/computer/cloning/proc/scan_mob(mob/living/carbon/human/subject as mob, var/scan_brain = 0)
+/obj/machinery/computer/cloning/proc/scan_mob(mob/living/carbon/human/subject as mob, scan_brain = 0)
 	if(stat & NOPOWER)
 		return
 	if(scanner.stat & (NOPOWER|BROKEN))
@@ -434,7 +433,7 @@
 	SStgui.update_uis(src)
 
 //Find a specific record by key.
-/obj/machinery/computer/cloning/proc/find_record(var/find_key)
+/obj/machinery/computer/cloning/proc/find_record(find_key)
 	var/selected_record = null
 	for(var/datum/transhuman/body_record/BR in records)
 		if(BR.mydna.ckey == find_key)

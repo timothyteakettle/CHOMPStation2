@@ -1,55 +1,6 @@
-#define MAT_TYRWOOD			"petrified wood"
-#define MAT_WAGATE			"weathered agate"
 //Hello, welcome to the tyr outsider content.
 //We're going to have some oddities here.
-//Two-ish tiers. The first tier is made from natural stuff around the caverns.
-//Tier 2 armor is made from the hides and such from the dangerous wildlife.
-//Whilst weapons have parts from the wildlife, and the alien ruins.
-//tier 1
-//Agate and wood for weapons
-//cloth and something else is used for armor
-//tier 2
-//monster flesh for armor
-//agate, alien props, and monster bits for weapons.
-/datum/material/wood/tyr
-	name = MAT_TYRWOOD
-	stack_type = /obj/item/stack/material/wood/tyr
-	icon_colour = "#808080" // grey-ish
-	stack_origin_tech = list(TECH_MATERIAL = 8, TECH_BIO = 2)
-
-
-/obj/item/stack/material/wood/tyr
-	name = "petrified bark"
-	color = "#808080"
-	default_type = MAT_TYRWOOD
-
-
-/datum/material/weathered_agate
-	name = MAT_WAGATE
-	display_name = "weathered agate"
-	use_name = "weather agate"
-	icon_colour = "#FF3300"
-	stack_type = /obj/item/stack/material/weathered_agate
-	flags = MATERIAL_UNMELTABLE
-	cut_delay = 60
-	reflectivity = 0
-	conductivity = 1
-	shard_type = SHARD_SHARD
-	tableslam_noise = 'sound/effects/Glasshit.ogg'
-	stack_origin_tech = list(TECH_ARCANE = 1)
-	sheet_singular_name = "gem"
-	sheet_plural_name = "gems"
-	supply_conversion_value = 40	// These are hilariously rare.
-	icon_base = "stone"
-	table_icon_base = "stone"
-
-
-/obj/item/stack/material/weathered_agate
-	name = MAT_WAGATE
-	icon_state = "sheet-void_opal"
-	singular_name = "weathered agate"
-	default_type = MAT_WAGATE
-
+//Otherwise holds stuff meant for outsiders on tyr
 /obj/item/reagent_containers/food/snacks/weatherlily
 	name = "strange leaves"
 	desc = "A strange flower producing an odd substance."
@@ -70,7 +21,6 @@
 	icon = 'modular_chomp/icons/obj/tribal_gear.dmi'
 	density = TRUE
 	throwpass = 1
-	climbable = TRUE
 	anchored = TRUE
 	icon_state = "outcrop"
 	mindrop = 3
@@ -96,7 +46,7 @@
 	name = "flora"
 	desc = "A strange plant."
 	icon_state = "stonetree"
-	harvest_loot = list(/obj/item/stack/material/wood/tyr = 1)
+	harvest_loot = list(/obj/item/stack/material/wood = 1)
 
 /obj/structure/flora/tyr/lilly
 	name = "flora"
@@ -136,19 +86,10 @@
 	w_class = ITEMSIZE_SMALL
 
 	var/static/list/possible_states = list("crystal", "generator","core", "hilt")
-	var/static/list/possible_tech = list(TECH_MATERIAL, TECH_ENGINEERING, TECH_PHORON, TECH_POWER, TECH_BIO, TECH_COMBAT, TECH_MAGNET, TECH_DATA)
 
 /obj/item/prop/alien/prototype/Initialize(mapload)
 	. = ..()
 	icon_state = pick(possible_states)
-	var/list/techs = possible_tech.Copy()
-	origin_tech = list()
-	for(var/i = 1 to rand(1, 4))
-		var/new_tech = pick(techs)
-		techs -= new_tech
-		origin_tech[new_tech] = rand(3, 11)
-
-	origin_tech[TECH_PRECURSOR] = rand(0,3)
 
 /* Yoinked for refrence
 /obj/item/arrow/standard
@@ -217,7 +158,7 @@
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|FEET|ARMS|HANDS //Head be vunerable but cloak covers the other bits.
 	var/block_chance = 20
 
-/obj/item/clothing/suit/armor/tyrtribalcloak/handle_shield(mob/user, var/damage, atom/damage_source = null, mob/attacker = null, var/def_zone = null, var/attack_text = "the attack")
+/obj/item/clothing/suit/armor/tyrtribalcloak/handle_shield(mob/user, damage, atom/damage_source = null, mob/attacker = null, def_zone = null, attack_text = "the attack")
 	if(prob(block_chance))
 		user.visible_message(span_danger("\The [src] completely deflects [attack_text]!"))
 		return TRUE
@@ -246,7 +187,7 @@
 
 //Rad Storm
 /obj/item/pickaxe/diamonddrill/alien
-	name = "strane mining drill"
+	name = "alien mining drill"
 	icon_state = "diamonddrill"
 	item_state = "jackhammer"
 	digspeed = 6
@@ -270,14 +211,193 @@
 	defend_chance = 65
 
 
-//Five player check
-/obj/item/shield_projector/rectangle/automatic/tyrvault
-	shield_health = 250
-	max_shield_health = 250
-	shield_regen_delay = 600 SECONDS
-	shield_regen_amount = 50
+/obj/item/shield_projector/rectangle/automatic/tyrbarrier
+	name = "tyrian energy barrier"
+	desc = "An automatic shield generator made from tyr tech. Wearable as a belt."
+	description_info = "The barrier has 150 health, and does not benefit from armor. It will fully regenerate every 180 seconds."
+	shield_health = 125
+	max_shield_health = 125
+	shield_regen_delay = 180 SECONDS
+	shield_regen_amount = 125
+	w_class = ITEMSIZE_NO_CONTAINER
+	slot_flags = SLOT_BELT
 	size_x = 4
 	size_y = 4
 	color = "#FF3300"
 	high_color = "#FF3300"
 	low_color = "#F08F4F"
+
+
+//other Tyr Loot
+/obj/item/melee/energy/sword/top_shield
+	name = "energy spike shield"
+	desc = "A makeshift shield."
+	icon = 'modular_chomp/icons/mob/tribal_gear.dmi'
+	icon_state = "topshield"
+	item_state = "topshield"
+	active_force = 10
+	active_armourpen = 60
+	active_throwforce = 40
+	throw_speed = 1
+	throw_range = 7
+	slowdown = 2
+	defend_chance = 70
+	projectile_parry_chance = 70
+	active_w_class = ITEMSIZE_HUGE
+	w_class = ITEMSIZE_HUGE
+	item_icons = list(
+		slot_l_hand_str = 'modular_chomp/icons/obj/guns/precursor/lefthand.dmi',
+		slot_r_hand_str = 'modular_chomp/icons/obj/guns/precursor/righthand.dmi',
+		)
+
+//E sword has 30 damage, 50 AP, and 65% projectile block
+//Axe is 60 damage, 65 AP, no guard
+//Normal attackspeed is 8
+//The katar is meant for quick strikes, the real damage from from effects
+/obj/item/melee/energy/tyr_katar
+	name = "tyrian scout katar"
+	slot_flags = SLOT_BELT | SLOT_BACK
+	desc = "A forgien blade made via techniques formly lost. Gains a diffrent effect base off your stance."
+	description_info = "Attacking whilst on grab intent will light a fire, attacking whilst on disarm will increase your speed for a brief moment, and attacking whilst on harm will phase out your foe's armor."
+	lcolor = null
+	colorable = FALSE
+	attackspeed = 4
+	active_force = 5
+	active_armourpen = 70
+
+	projectile_parry_chance = 70
+
+	w_class = ITEMSIZE_SMALL
+	active_w_class = ITEMSIZE_HUGE
+
+	icon = 'modular_chomp/icons/mob/tribal_gear.dmi'
+	icon_state = "katar"
+	item_state = "katar"
+
+	item_icons = list(
+		slot_l_hand_str = 'modular_chomp/icons/obj/guns/precursor/lefthand.dmi',
+		slot_r_hand_str = 'modular_chomp/icons/obj/guns/precursor/righthand.dmi',
+		)
+
+/obj/item/melee/energy/tyr_katar/apply_hit_effect(mob/living/target, mob/living/user, hit_zone)
+	if(active)
+		. = ..()
+		switch(user.a_intent)
+			if(I_GRAB)
+				target.adjust_fire_stacks(7)
+				target.ignite_mob()
+			if(I_DISARM)
+				user.add_modifier(/datum/modifier/technomancer/haste, 2 SECONDS)
+			if(I_HURT)
+				target.add_modifier(/datum/modifier/phase_armor, 5 SECONDS)
+
+/datum/modifier/phase_armor
+	name = "Phased Armor"
+	desc = "Your defense has been phased out."
+	on_created_text = span_notice("Part of your form phases out.")
+	on_expired_text = span_warning("Your missing form phases back in.")
+	stacks = MODIFIER_STACK_EXTEND
+	incoming_damage_percent = 1.5
+
+//Trades speed for defense
+//you are the wall
+/obj/item/melee/energy/tyr_hammer
+	name = "tyrian guardian hammer"
+	slot_flags = SLOT_BELT | SLOT_BACK
+	desc = "A strange hammer made via techniques formly lost. Gains a diffrent effect base off your stance."
+	description_info = "Attacking whilst on grab intent restore the wielder's health, attacking whilst on disarm weakens the target and attacking whilst on harm can throw back the target."
+	lcolor = null
+	colorable = FALSE
+
+	active_force = 35
+	active_armourpen = 40
+
+	attackspeed = 20
+	defend_chance = 50
+	projectile_parry_chance = 50
+
+	active_w_class = ITEMSIZE_HUGE
+	can_cleave = TRUE
+
+	icon = 'modular_chomp/icons/mob/tribal_gear.dmi'
+	icon_state = "hammer"
+	item_state = "hammer"
+
+	item_icons = list(
+		slot_l_hand_str = 'modular_chomp/icons/obj/guns/precursor/lefthand.dmi',
+		slot_r_hand_str = 'modular_chomp/icons/obj/guns/precursor/righthand.dmi',
+		)
+
+/obj/item/melee/energy/tyr_hammer/apply_hit_effect(mob/living/target, mob/living/user, hit_zone)
+	if(active)
+		. = ..()
+		switch(user.a_intent)
+			if(I_GRAB)
+				user.adjustFireLoss(-5)
+				user.adjustFireLoss(-5)
+			if(I_DISARM)
+				target.Weaken(30)
+			if(I_HURT)
+				var/atom/target_zone = get_edge_target_turf(user,get_dir(user, target))
+				if(!target.anchored)
+					target.throw_at(target_zone, 5, 2, user, FALSE)
+
+/obj/item/melee/energy/tyr_chainsaw
+	name = "tyrian butcher blade"
+	slot_flags = SLOT_BELT | SLOT_BACK
+	desc = "What appears to be a weaponized chainsaw."
+	description_info = "Utilizes charge, recharges with time"
+	lcolor = null
+	colorable = FALSE
+
+	active_force = 60
+	active_armourpen = 20
+
+	attackspeed = 15
+	defend_chance = 0
+	projectile_parry_chance = 0
+
+	active_w_class = ITEMSIZE_HUGE
+	can_cleave = TRUE
+
+	hitcost = 320
+	use_cell = TRUE
+
+	icon = 'modular_chomp/icons/mob/tribal_gear.dmi'
+	icon_state = "chainsaw"
+	item_state = "chainsaw"
+
+	item_icons = list(
+		slot_l_hand_str = 'modular_chomp/icons/obj/guns/precursor/lefthand.dmi',
+		slot_r_hand_str = 'modular_chomp/icons/obj/guns/precursor/righthand.dmi',
+		)
+
+/obj/item/melee/energy/tyr_chainsaw/Initialize(mapload)
+	. = ..()
+	bcell = new/obj/item/cell/device/weapon/recharge/alien/tyr(src)
+
+/obj/item/shield/tyr_shield
+	name = "tyrian portable energy barrier"
+	desc = "A shield with a strange property of reducing the damage of projectiles instead of being effective at blocking them."
+	icon = 'modular_chomp/icons/mob/tribal_gear.dmi'
+	icon_state = "barrier"
+	item_state = "barrier"
+
+	slot_flags = SLOT_BACK
+
+	w_class = ITEMSIZE_LARGE
+	attack_verb = list("shoved", "bashed")
+	base_block_chance = 15
+
+/obj/item/shield/tyr_shield/handle_shield(mob/user, damage, atom/damage_source = null, mob/attacker = null, def_zone = null, attack_text = "the attack")
+	if(user.incapacitated())
+		return 0
+	var/bad_arc = reverse_direction(user.dir) //arc of directions from which we cannot block
+	if(check_shield_arc(user, bad_arc, damage_source, attacker))
+		if(prob(get_block_chance(user, damage, damage_source, attacker)))
+			user.visible_message(span_danger("\The [user] blocks [attack_text] with \the [src]!"))
+			return 1
+	else
+		var/obj/item/projectile/P = damage_source
+		P.damage = P.damage / 2
+		return 0

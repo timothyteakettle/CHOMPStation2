@@ -8,7 +8,6 @@
 	throwforce = 0
 	throw_speed = 3
 	throw_range = 6
-	origin_tech = list(TECH_BIO = 4)
 	var/uses = 1 // uses before it goes inert
 	var/enhanced = 0 //has it been enhanced before?
 	flags = OPENCONTAINER
@@ -151,7 +150,7 @@
 
 	qdel(M)
 
-	var/newname = sanitize(tgui_input_text(user, "Would you like to give the slime a name?", "Name your new pet", "pet slime", MAX_NAME_LEN))
+	var/newname = tgui_input_text(user, "Would you like to give the slime a name?", "Name your new pet", "pet slime", MAX_NAME_LEN)
 
 	if (!newname)
 		newname = "pet slime"
@@ -203,7 +202,7 @@
 		pet.colour = "[M.colour]"
 		to_chat(user, "You feed the slime the potion, removing it's powers and calming it.")
 		qdel(M)
-		var/newname = sanitize(tgui_input_text(user, "Would you like to give the slime a name?", "Name your new pet", "pet slime", MAX_NAME_LEN))
+		var/newname = tgui_input_text(user, "Would you like to give the slime a name?", "Name your new pet", "pet slime", MAX_NAME_LEN)
 
 		if (!newname)
 			newname = "pet slime"
@@ -298,7 +297,7 @@
 
 
 	proc/announce_to_ghosts()
-		for(var/mob/observer/dead/G in player_list)
+		for(var/mob/observer/dead/G in GLOB.player_list)
 			if(G.client)
 				var/area/A = get_area(src)
 				if(A)
@@ -321,7 +320,6 @@
 	throwforce = 1.0
 	throw_speed = 2
 	throw_range = 6
-	origin_tech = list(TECH_BIO = 4)
 	var/POWERFLAG = 0 // sshhhhhhh
 	var/Flush = 30
 	var/Uses = 5 // uses before it goes inert
@@ -353,7 +351,6 @@
 	icon = 'icons/mob/mob.dmi'
 	icon_state = "slime egg-growing"
 	bitesize = 12
-	origin_tech = list(TECH_BIO = 4)
 	var/grown = 0
 
 /obj/item/reagent_containers/food/snacks/egg/slime/Initialize(mapload)

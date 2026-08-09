@@ -1,6 +1,6 @@
-var/global/list/active_radio_jammers = list()
+GLOBAL_LIST_EMPTY(active_radio_jammers)
 
-/proc/is_jammed(var/obj/radio)
+/proc/is_jammed(obj/radio)
 	var/turf/Tr = get_turf(radio)
 	if(!Tr) return 0 //Nullspace radios don't get jammed.
 
@@ -9,7 +9,7 @@ var/global/list/active_radio_jammers = list()
 	if(our_area.no_comms)
 		return TRUE
 
-	for(var/obj/item/radio_jammer/J as anything in active_radio_jammers)
+	for(var/obj/item/radio_jammer/J as anything in GLOB.active_radio_jammers)
 		var/turf/Tj = get_turf(J)
 
 		if(J.on && Tj.z == Tr.z) //If we're on the same Z, it's worth checking.
@@ -30,7 +30,6 @@ var/global/list/active_radio_jammers = list()
 	var/obj/item/cell/device/weapon/power_source
 	var/tick_cost = 5 //VOREStation Edit - For the ERPs.
 
-	origin_tech = list(TECH_ILLEGAL = 7, TECH_BLUESPACE = 5) //Such technology! Subspace jamming!
 	pickup_sound = 'sound/items/pickup/device.ogg'
 	drop_sound = 'sound/items/drop/device.ogg'
 
@@ -52,7 +51,7 @@ var/global/list/active_radio_jammers = list()
 	if(user)
 		to_chat(user,span_warning("\The [src] deactivates."))
 	STOP_PROCESSING(SSobj, src)
-	active_radio_jammers -= src
+	GLOB.active_radio_jammers -= src
 	on = FALSE
 	update_icon()
 
@@ -60,7 +59,7 @@ var/global/list/active_radio_jammers = list()
 	if(user)
 		to_chat(user,span_notice("\The [src] is now active."))
 	START_PROCESSING(SSobj, src)
-	active_radio_jammers += src
+	GLOB.active_radio_jammers += src
 	on = TRUE
 	update_icon()
 
@@ -85,6 +84,9 @@ var/global/list/active_radio_jammers = list()
 		return ..()
 
 /obj/item/radio_jammer/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(on)
 		turn_off(user)
 	else
@@ -119,3 +121,18 @@ var/global/list/active_radio_jammers = list()
 		cut_overlays()
 		add_overlay("jammer_overlay_[overlay_percent]")
 		last_overlay_percent = overlay_percent
+
+//Unlimited use, unlimited range jammer for admins. Turn it on, drop it somewhere, it works.
+/obj/item/radio_jammer/admin
+	jam_range = 255
+	tick_cost = 0
+
+///Checks to see if the clothing is in a belly that jams sensors or blocks tracking.
+/proc/is_vore_jammed(atom/current)
+	while(current.loc)
+		if(isbelly(current.loc))
+			var/obj/belly/B = current.loc
+			if(B.mode_flags & DM_FLAG_JAMSENSORS)
+				return TRUE
+		current = current.loc
+	return FALSE

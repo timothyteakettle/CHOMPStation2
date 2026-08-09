@@ -13,8 +13,13 @@
 	color = "#664330"
 	affects_robots = 1	//VOREStation Edit
 	wiki_flag = WIKI_FOOD
+	coolant_modifier = -1
+	scannable = SCANNABLE_BENEFICIAL
 
-/datum/reagent/nutriment/mix_data(var/list/newdata, var/newamount)
+	supply_conversion_value = REFINERYEXPORT_VALUE_UNWANTED
+	industrial_use = REFINERYEXPORT_REASON_FOOD
+
+/datum/reagent/nutriment/mix_data(list/newdata, newamount)
 
 	if(!islist(newdata) || !newdata.len)
 		return
@@ -38,18 +43,18 @@
 			if(data[taste]/totalFlavor < 0.1)
 				data -= taste
 
-/datum/reagent/nutriment/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/nutriment/affect_blood(mob/living/carbon/M, alien, removed)
 	if(!injectable && alien != IS_SLIME && alien != IS_CHIMERA && !M.isSynthetic()) //VOREStation Edit
 		M.adjustToxLoss(0.1 * removed)
 		return
 	affect_ingest(M, alien, removed)
 	//VOREStation Edits Start
 	if(M.isSynthetic())
-		M.adjust_nutrition((nutriment_factor * removed) * M.species.synthetic_food_coeff)
+		M.adjust_nutrition((nutriment_factor * removed) * M.species?.synthetic_food_coeff)
 	//VOREStation Edits End
 	..()
 
-/datum/reagent/nutriment/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/nutriment/affect_ingest(mob/living/carbon/M, alien, removed)
 	switch(alien)
 		if(IS_DIONA) return
 		if(IS_UNATHI) removed *= 0.5
@@ -57,7 +62,7 @@
 	if(issmall(M)) removed *= 2 // Small bodymass, more effect from lower volume.
 	//VOREStation Edits Start
 	if(!M.isSynthetic())
-		if(!(M.species.allergens & allergen_type))	//assuming it doesn't cause a horrible reaction, we'll be ok!
+		if(!(M.species.allergens & allergen_type) && !(M.species.medallergens & medallergen_type))	//assuming it doesn't cause a horrible reaction, we'll be ok!
 			M.heal_organ_damage(0.5 * removed, 0)
 			M.adjust_nutrition(((nutriment_factor + M.food_preference(allergen_type)) * removed) * M.species.organic_food_coeff) //RS edit
 			M.add_chemical_effect(CE_BLOODRESTORE, 4 * removed)
@@ -84,7 +89,7 @@
 	var/coated_adj = "coated"
 	var/cooked_name = "coating"
 
-/datum/reagent/nutriment/coating/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/nutriment/coating/affect_ingest(mob/living/carbon/M, alien, removed)
 
 	//We'll assume that the batter isnt going to be regurgitated and eaten by someone else. Only show this once
 	if(data["cooked"] != 1)
@@ -98,7 +103,7 @@
 			M.vomit()
 	..()
 
-/datum/reagent/nutriment/coating/initialize_data(var/newdata) // Called when the reagent is created.
+/datum/reagent/nutriment/coating/initialize_data(newdata) // Called when the reagent is created.
 	..()
 	if (!data)
 		data = list()
@@ -115,7 +120,7 @@
 
 
 //Handles setting the temperature when oils are mixed
-/datum/reagent/nutriment/coating/mix_data(var/newdata, var/newamount)
+/datum/reagent/nutriment/coating/mix_data(newdata, newamount)
 	if (!data)
 		data = list()
 
@@ -143,7 +148,7 @@
 	coated_adj = "beer-battered"
 	allergen_type = ALLERGEN_GRAINS | ALLERGEN_EGGS //Made with flour(grain), eggs(eggs), and beer(grain)
 
-/datum/reagent/nutriment/coating/beerbatter/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/nutriment/coating/beerbatter/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	M.add_chemical_effect(CE_ALCOHOL, 0.02) //Very slightly alcoholic
 
@@ -160,6 +165,7 @@
 	taste_mult = 0.1
 	nutriment_factor = 27//The caloric ratio of carb/protein/fat is 4:4:9
 	color = "#CCCCCC"
+	coolant_modifier = 1.5
 
 /datum/reagent/nutriment/triglyceride/oil
 	//Having this base class incase we want to add more variants of oil
@@ -172,7 +178,7 @@
 	touch_met = 1.5
 	var/lastburnmessage = 0
 
-/datum/reagent/nutriment/triglyceride/oil/touch_turf(var/turf/simulated/T)
+/datum/reagent/nutriment/triglyceride/oil/touch_turf(turf/simulated/T)
 	if(!istype(T))
 		return
 
@@ -189,13 +195,13 @@
 	if(volume >= 3)
 		T.wet_floor(2)
 
-/datum/reagent/nutriment/triglyceride/oil/initialize_data(var/newdata) // Called when the reagent is created.
+/datum/reagent/nutriment/triglyceride/oil/initialize_data(newdata) // Called when the reagent is created.
 	..()
 	if (!data)
 		data = list("temperature" = T20C)
 
 //Handles setting the temperature when oils are mixed
-/datum/reagent/nutriment/triglyceride/oil/mix_data(var/newdata, var/newamount)
+/datum/reagent/nutriment/triglyceride/oil/mix_data(newdata, newamount)
 
 	if (!data)
 		data = list()
@@ -214,7 +220,7 @@
 
 
 //Calculates a scaling factor for scalding damage, based on the temperature of the oil and creature's heat resistance
-/datum/reagent/nutriment/triglyceride/oil/proc/heatdamage(var/mob/living/carbon/M)
+/datum/reagent/nutriment/triglyceride/oil/proc/heatdamage(mob/living/carbon/M)
 	var/threshold = 360//Human heatdamage threshold
 	var/datum/species/S = M.get_species(1)
 	if (S && istype(S))
@@ -233,7 +239,7 @@
 	. /= step
 	. = min(., 2.5)//Cap multiplier at 2.5
 
-/datum/reagent/nutriment/triglyceride/oil/affect_touch(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/nutriment/triglyceride/oil/affect_touch(mob/living/carbon/M, alien, removed)
 	var/dfactor = heatdamage(M)
 	if (dfactor)
 		M.take_organ_damage(0, removed * 1.5 * dfactor)
@@ -275,6 +281,7 @@
 	cup_prefix = "sweetened"
 
 	injectable = 1
+	coolant_modifier = 1.25
 
 /datum/reagent/nutriment/protein // Bad for Skrell!
 	name = REAGENT_PROTEIN
@@ -283,7 +290,7 @@
 	color = "#440000"
 	allergen_type = ALLERGEN_MEAT //"Animal protein" implies it comes from animals, therefore meat.
 
-/datum/reagent/nutriment/protein/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/nutriment/protein/affect_ingest(mob/living/carbon/M, alien, removed)
 	switch(alien)
 		if(IS_TESHARI)
 			..(M, alien, removed*1.2) // Teshari get a bit more nutrition from meat.
@@ -302,6 +309,13 @@
 	color = "#fdffa8"
 	taste_description = "tofu"
 	allergen_type = ALLERGEN_BEANS //Made from soy beans
+
+/datum/reagent/nutriment/protein/fungi
+	name = REAGENT_FUNGI
+	id = REAGENT_ID_FUNGI
+	taste_description = "some sort of mushroom"
+	color = "#979797"
+	allergen_type = ALLERGEN_FUNGI
 
 /datum/reagent/nutriment/protein/seafood
 	name = REAGENT_SEAFOOD
@@ -349,7 +363,7 @@
 	color = "#FFFF00"
 	cup_prefix = REAGENT_ID_HONEY
 
-/datum/reagent/nutriment/honey/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/nutriment/honey/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	var/effective_dose = dose
@@ -398,7 +412,7 @@
 	color = "#FFFFFF"
 	allergen_type = ALLERGEN_GRAINS //Flour is made from grain
 
-/datum/reagent/nutriment/flour/touch_turf(var/turf/simulated/T)
+/datum/reagent/nutriment/flour/touch_turf(turf/simulated/T)
 	..()
 	if(!istype(T, /turf/space))
 		new /obj/effect/decal/cleanable/flour(T)
@@ -508,7 +522,7 @@
 	reagent_state = LIQUID
 	nutriment_factor = 2
 	color = "#792300"
-	allergen_type = ALLERGEN_BEANS //Soy (beans)
+	allergen_type = ALLERGEN_BEANS | ALLERGEN_SALT //Soy (beans)
 	cup_prefix = "umami"
 
 /datum/reagent/nutriment/vinegar
@@ -606,7 +620,7 @@
 	glass_name = "durian paste"
 	glass_desc = "Durian paste. It smells horrific."
 
-/datum/reagent/nutriment/durian/touch_mob(var/mob/M, var/amount)
+/datum/reagent/nutriment/durian/touch_mob(mob/M, amount)
 	..()
 	if(iscarbon(M) && !M.isSynthetic())
 		var/message = pick("Oh god, it smells disgusting here.", "What is that stench?", "That's an awful odor.")
@@ -616,7 +630,7 @@
 			L.vomit()
 	return ..()
 
-/datum/reagent/nutriment/durian/touch_turf(var/turf/T, var/amount)
+/datum/reagent/nutriment/durian/touch_turf(turf/T, amount)
 	..()
 	if(istype(T))
 		var/obj/effect/decal/cleanable/chemcoating/C = new /obj/effect/decal/cleanable/chemcoating(T)
@@ -660,8 +674,10 @@
 	reagent_state = LIQUID
 	color = "#BBEDA4"
 	overdose = REAGENTS_OVERDOSE
+	supply_conversion_value = REFINERYEXPORT_VALUE_HIGHREFINED
+	industrial_use = REFINERYEXPORT_REASON_DIET
 
-/datum/reagent/lipozine/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/lipozine/affect_blood(mob/living/carbon/M, alien, removed)
 	M.adjust_nutrition(-10 * removed)
 
 /* Non-food stuff like condiments */
@@ -675,14 +691,17 @@
 	color = "#FFFFFF"
 	overdose = REAGENTS_OVERDOSE
 	ingest_met = REM
+	allergen_type = ALLERGEN_SALT
 	cup_prefix = "salty"
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
 
-/datum/reagent/sodiumchloride/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/sodiumchloride/affect_blood(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_SLIME)
 		M.adjustFireLoss(removed)
 
-/datum/reagent/sodiumchloride/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/sodiumchloride/affect_ingest(mob/living/carbon/M, alien, removed)
 	var/pass_mod = rand(3,5)
 	var/passthrough = (removed - (removed/pass_mod)) //Some may be nullified during consumption, between one third and one fifth.
 	affect_blood(M, alien, passthrough)
@@ -697,6 +716,21 @@
 	color = "#000000"
 	cup_prefix = "peppery"
 	wiki_flag = WIKI_FOOD
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
+
+/datum/reagent/mustardpods
+	name = REAGENT_MUSTARDPODS
+	id = REAGENT_ID_MUSTARDPODS
+	description = "Densely-packed seed pods from a mustard plant. Good for making mustard. Not much use for anything else."
+	taste_description = "sharp, bitter, dry mustard"
+	reagent_state = SOLID
+	ingest_met = REM
+	color = "#B2A00D"
+	cup_prefix = "mustardy"
+	wiki_flag = WIKI_FOOD
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
 
 /datum/reagent/enzyme
 	name = REAGENT_ENZYME
@@ -708,6 +742,8 @@
 	color = "#365E30"
 	overdose = REAGENTS_OVERDOSE
 	wiki_flag = WIKI_FOOD
+	supply_conversion_value = REFINERYEXPORT_VALUE_RARE
+	industrial_use = REFINERYEXPORT_REASON_FOOD
 
 /datum/reagent/spacespice
 	name = REAGENT_SPACESPICE
@@ -717,6 +753,8 @@
 	color = "#e08702"
 	cup_prefix = "spicy"
 	wiki_flag = WIKI_FOOD
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
 
 /datum/reagent/browniemix
 	name = REAGENT_BROWNIEMIX
@@ -726,6 +764,8 @@
 	color = "#441a03"
 	allergen_type = ALLERGEN_CHOCOLATE
 	wiki_flag = WIKI_FOOD
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
 
 /datum/reagent/cakebatter
 	name = REAGENT_CAKEBATTER
@@ -734,6 +774,8 @@
 	reagent_state = LIQUID
 	color = "#F0EDDA"
 	wiki_flag = WIKI_FOOD
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
 
 /datum/reagent/frostoil
 	name = REAGENT_FROSTOIL
@@ -745,8 +787,11 @@
 	ingest_met = REM
 	color = "#B31008"
 	wiki_flag = WIKI_FOOD
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
+	coolant_modifier = 2.5
 
-/datum/reagent/frostoil/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/frostoil/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien == IS_DIONA)
 		return
 	M.bodytemperature = min(M.bodytemperature, max(M.bodytemperature - 10 * TEMPERATURE_DAMAGE_COEFFICIENT, 215))
@@ -754,7 +799,7 @@
 		M.emote("shiver")
 	holder.remove_reagent(REAGENT_ID_CAPSAICIN, 5)
 
-/datum/reagent/frostoil/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed) // Eating frostoil now acts like capsaicin. Wee!
+/datum/reagent/frostoil/affect_ingest(mob/living/carbon/M, alien, removed) // Eating frostoil now acts like capsaicin. Wee!
 	if(alien == IS_DIONA)
 		return
 	if(alien == IS_ALRAUNE) // VOREStation Edit: It wouldn't affect plants that much.
@@ -783,6 +828,9 @@
 	reagent_state = LIQUID
 	color = "#B31008"
 	metabolism = REM * 0.5
+	supply_conversion_value = REFINERYEXPORT_VALUE_PROCESSED
+	industrial_use = REFINERYEXPORT_REASON_MATSCI
+	coolant_modifier = 3
 
 /datum/reagent/capsaicin
 	name = REAGENT_CAPSAICIN
@@ -795,17 +843,19 @@
 	color = "#B31008"
 	cup_prefix = "hot"
 	wiki_flag = WIKI_FOOD
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_WEAPONS
 
-/datum/reagent/capsaicin/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/capsaicin/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien == IS_DIONA)
 		return
 	M.adjustToxLoss(0.5 * removed)
 
-/datum/reagent/capsaicin/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/capsaicin/affect_ingest(mob/living/carbon/M, alien, removed)
 	// Do not call parent, we don't want this absorbed into our bloodstream!
 	handle_spicy(M, alien, removed)
 
-/datum/reagent/proc/handle_spicy(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/proc/handle_spicy(mob/living/carbon/M, alien, removed)
 	if(alien == IS_DIONA)
 		return
 	if(alien == IS_ALRAUNE) // VOREStation Edit: It wouldn't affect plants that much.
@@ -831,21 +881,25 @@
 /datum/reagent/condensedcapsaicin
 	name = REAGENT_CONDENSEDCAPSAICIN
 	id = REAGENT_ID_CONDENSEDCAPSAICIN
+	scannable = SCANNABLE_ADVANCED
 	description = "A chemical agent used for self-defense and in police work."
 	taste_description = "fire"
+	dermal_absorption = 0
 	taste_mult = 10
 	reagent_state = LIQUID
 	touch_met = 50 // Get rid of it quickly
 	ingest_met = REM
 	color = "#B31008"
 	cup_prefix = "dangerously hot"
+	supply_conversion_value = REFINERYEXPORT_VALUE_PROCESSED
+	industrial_use = REFINERYEXPORT_REASON_WEAPONS
 
-/datum/reagent/condensedcapsaicin/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/condensedcapsaicin/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien == IS_DIONA)
 		return
 	M.adjustToxLoss(0.5 * removed)
 
-/datum/reagent/condensedcapsaicin/affect_touch(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/condensedcapsaicin/affect_touch(mob/living/carbon/M, alien, removed)
 	var/eyes_covered = 0
 	var/mouth_covered = 0
 
@@ -958,7 +1012,7 @@
 				to_chat(M, span_warning("The exposed flesh on your feet burns!"))
 			M.apply_effect(effective_strength / 2, AGONY, 0)
 
-/datum/reagent/condensedcapsaicin/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/condensedcapsaicin/affect_ingest(mob/living/carbon/M, alien, removed)
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		if(!H.can_feel_pain())
@@ -973,7 +1027,7 @@
 /* Drinks */
 
 /datum/reagent/drink
-	name = REAGENT_DRINK
+	name = REAGENT_DEVELOPER_WARNING // Unit test ignore
 	id = REAGENT_ID_DRINK
 	description = "Uh, some kind of drink."
 	ingest_met = REM
@@ -986,20 +1040,24 @@
 	var/adj_temp = 0
 	var/nutriment_factor = 0 //CHOMPStation addition
 	var/water_based = TRUE
+	dermal_absorption = 0
 	wiki_flag = WIKI_DRINK
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
+	coolant_modifier = 0.8
 
-/datum/reagent/drink/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/affect_blood(mob/living/carbon/M, alien, removed)
 	var/strength_mod = 1
 	if(alien == IS_SLIME && water_based)
 		strength_mod = 3
 	M.adjustToxLoss(removed * strength_mod) // Probably not a good idea; not very deadly though
 	return
 
-/datum/reagent/drink/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
-	if(!(M.species.allergens & allergen_type))
+/datum/reagent/drink/affect_ingest(mob/living/carbon/M, alien, removed)
+	if(!(M.species.allergens & allergen_type) && !(M.species.medallergens & medallergen_type))
 		var/bonus = M.food_preference(allergen_type)
 		M.adjust_nutrition((nutrition + bonus) * removed)
-	M.dizziness = max(0, M.dizziness + adj_dizzy)
+	M.make_dizzy(adj_dizzy)
 	M.drowsyness = max(0, M.drowsyness + adj_drowsy)
 	M.AdjustSleeping(adj_sleepy)
 	if(adj_temp > 0 && M.bodytemperature < 310) // 310 is the normal bodytemp. 310.055
@@ -1010,7 +1068,7 @@
 	if(M.species.organic_food_coeff) //CHOMPStation addition. If this is set to 0, they don't get nutrition from food.
 		M.nutrition += nutriment_factor * removed //CHOMPStation addition For hunger and fatness
 
-/datum/reagent/drink/overdose(var/mob/living/carbon/M, var/alien) //Add special interactions here in the future if desired.
+/datum/reagent/drink/overdose(mob/living/carbon/M, alien) //Add special interactions here in the future if desired.
 	..()
 
 // Juices
@@ -1063,7 +1121,7 @@
 	allergen_type = ALLERGEN_VEGETABLE //Carrots are vegetables
 	cup_prefix = "carrot"
 
-/datum/reagent/drink/juice/carrot/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/juice/carrot/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	M.reagents.add_reagent(REAGENT_ID_IMIDAZOLINE, removed * 0.2)
 
@@ -1091,7 +1149,7 @@
 	allergen_type = ALLERGEN_FRUIT //Grapes are fruit
 	cup_prefix = "grape"
 
-/datum/reagent/drink/juice/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/juice/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	var/effective_dose = dose/2
@@ -1153,7 +1211,7 @@
 	allergen_type = ALLERGEN_FRUIT //Limes are fruit
 	cup_prefix = "lime"
 
-/datum/reagent/drink/juice/lime/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/juice/lime/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
@@ -1171,7 +1229,7 @@
 	allergen_type = ALLERGEN_FRUIT //Oranges are fruit
 	cup_prefix = "orange"
 
-/datum/reagent/drink/juice/orange/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/juice/orange/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
@@ -1188,6 +1246,8 @@
 	glass_name = "poison berry juice"
 	glass_desc = "A glass of deadly juice."
 	cup_prefix = "poison"
+	supply_conversion_value = REFINERYEXPORT_VALUE_UNWANTED
+	industrial_use = REFINERYEXPORT_REASON_BIOHAZARD
 
 /datum/reagent/drink/juice/potato
 	name = REAGENT_POTATOJUICE
@@ -1230,7 +1290,7 @@
 	glass_desc = "Are you sure this is tomato juice?"
 	allergen_type = ALLERGEN_FRUIT //Yes tomatoes are a fruit
 
-/datum/reagent/drink/juice/tomato/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/juice/tomato/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
@@ -1280,7 +1340,7 @@
 	glass_desc = "Deliciously fattening!"
 	allergen_type = ALLERGEN_CHOCOLATE
 
-/datum/reagent/drink/milk/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/milk/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
@@ -1363,7 +1423,7 @@
 	cup_desc = "Tasty black tea, it has antioxidants, it's good for you!"
 	allergen_type = ALLERGEN_STIMULANT //Black tea strong enough to have significant caffeine content
 
-/datum/reagent/drink/tea/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/tea/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
@@ -1402,7 +1462,7 @@
 	cup_name = "iced tea"
 	cup_desc = "No relation to a certain rap artist/ actor."
 
-/datum/reagent/drink/tea/icetea/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/tea/icetea/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_SLIME)
 		if(M.bodytemperature > T0C)
@@ -1411,7 +1471,7 @@
 			M.bodytemperature += 0.5
 		//M.adjustToxLoss(5 * removed) //VOREStation Removal
 
-/datum/reagent/drink/tea/icetea/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/tea/icetea/affect_blood(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_SLIME)
 		if(M.bodytemperature > T0C)
@@ -1607,7 +1667,7 @@
 	glass_desc = "Don't drop it, or you'll send scalding liquid and glass shards everywhere."
 	allergen_type = ALLERGEN_COFFEE | ALLERGEN_STIMULANT //Apparently coffee contains coffee
 
-/datum/reagent/drink/coffee/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/coffee/affect_ingest(mob/living/carbon/M, alien, removed)
 	if(alien == IS_DIONA)
 		return
 	..()
@@ -1618,7 +1678,7 @@
 	if(adj_temp > 0)
 		holder.remove_reagent(REAGENT_ID_FROSTOIL, 10 * removed)
 
-/datum/reagent/drink/coffee/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/coffee/affect_blood(mob/living/carbon/M, alien, removed)
 	..()
 
 	//if(alien == IS_TAJARA)
@@ -1626,7 +1686,7 @@
 		//M.make_jittery(4)
 		//return
 
-/datum/reagent/drink/coffee/overdose(var/mob/living/carbon/M, var/alien)
+/datum/reagent/drink/coffee/overdose(mob/living/carbon/M, alien)
 	if(alien == IS_DIONA)
 		return
 	//if(alien == IS_TAJARA)
@@ -1634,7 +1694,7 @@
 		//M.apply_effect(3, STUTTER) //VOREStation Edit end
 	M.make_jittery(5)
 
-/datum/reagent/drink/coffee/handle_addiction(var/mob/living/carbon/M, var/alien)
+/datum/reagent/drink/coffee/handle_addiction(mob/living/carbon/M, alien)
 	// A copy of the base with withdrawl, but with much less effects, no vomiting and sometimes halloss
 	var/current_addiction = M.get_addiction_to_reagent(id)
 	// slow degrade
@@ -1667,7 +1727,7 @@
 	glass_desc = "A drink to perk you up and refresh you!"
 	glass_special = list(DRINK_ICE)
 
-/datum/reagent/drink/coffee/icecoffee/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/coffee/icecoffee/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_SLIME)
 		if(M.bodytemperature > T0C)
@@ -1676,7 +1736,7 @@
 			M.bodytemperature += 0.5
 		//M.adjustToxLoss(5 * removed) //VOREStation Removal
 
-/datum/reagent/drink/coffee/icecoffee/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/coffee/icecoffee/affect_blood(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_SLIME)
 		if(M.bodytemperature > T0C)
@@ -1701,7 +1761,7 @@
 	cup_desc = "A nice and refreshing beverage while you are reading."
 	allergen_type = ALLERGEN_COFFEE|ALLERGEN_BEANS 	//Soy(beans) and coffee
 
-/datum/reagent/drink/coffee/soy_latte/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/coffee/soy_latte/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	M.heal_organ_damage(0.5 * removed, 0)
 
@@ -1721,7 +1781,7 @@
 	cup_desc = "A nice and refreshing beverage while you are reading."
 	allergen_type = ALLERGEN_COFFEE|ALLERGEN_DAIRY //Cream and coffee
 
-/datum/reagent/drink/coffee/cafe_latte/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/coffee/cafe_latte/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	M.heal_organ_damage(0.5 * removed, 0)
 
@@ -2092,7 +2152,7 @@
 	glass_desc = "Glorious brainfreezing mixture."
 	allergen_type = ALLERGEN_DAIRY //Made with dairy products
 
-/datum/reagent/drink/milkshake/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/milkshake/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	var/effective_dose = dose/2
@@ -2152,7 +2212,7 @@
 	glass_desc = "An energizing coffee milkshake, perfect for hot days at work.."
 	allergen_type = ALLERGEN_DAIRY|ALLERGEN_COFFEE //Made with coffee and dairy products
 
-/datum/reagent/drink/milkshake/coffeeshake/overdose(var/mob/living/carbon/M, var/alien)
+/datum/reagent/drink/milkshake/coffeeshake/overdose(mob/living/carbon/M, alien)
 	M.make_jittery(5)
 
 /datum/reagent/drink/milkshake/peanutshake
@@ -2179,7 +2239,7 @@
 	glass_desc = "The secret of the sanctuary of the Libarian..."
 	allergen_type = ALLERGEN_FRUIT|ALLERGEN_COFFEE|ALLERGEN_STIMULANT //Made with space mountain wind (Fruit, caffeine)
 
-/datum/reagent/drink/rewriter/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/rewriter/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	M.make_jittery(5)
 
@@ -2198,12 +2258,12 @@
 	glass_special = list(DRINK_FIZZ)
 	allergen_type = ALLERGEN_STIMULANT
 
-/datum/reagent/drink/soda/nuka_cola/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/soda/nuka_cola/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	M.add_chemical_effect(CE_SPEEDBOOST, 1)
 	M.make_jittery(20)
 	M.druggy = max(M.druggy, 30)
-	M.dizziness += 5
+	M.make_dizzy(5)
 	M.drowsyness = 0
 
 /datum/reagent/drink/grenadine 	//Description implies that the grenadine we would be working with does not contain fruit, so no allergens.
@@ -2507,23 +2567,23 @@
 	glass_name = REAGENT_DOCTORSDELIGHT
 	glass_desc = "A healthy mixture of juices, guaranteed to keep you healthy until the next toolboxing takes place."
 	allergen_type = ALLERGEN_FRUIT|ALLERGEN_DAIRY //Made from several fruit juices, and cream.
+	medallergen_type = MEDALLERGEN_TRICORD // this too!
 
-/datum/reagent/drink/doctor_delight/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/doctor_delight/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
 	M.adjustOxyLoss(-4 * removed)
 	M.heal_organ_damage(2 * removed, 2 * removed)
 	M.adjustToxLoss(-2 * removed)
-	if(M.dizziness)
-		M.dizziness = max(0, M.dizziness - 15)
+	M.make_dizzy(-15)
 	if(M.confused)
 		M.Confuse(-5)
 
 /datum/reagent/drink/dry_ramen
 	name = REAGENT_DRYRAMEN
 	id = REAGENT_ID_DRYRAMEN
-	description = "Space age food, since August 25, 1958. Contains dried noodles, vegetables, and chemicals that boil in contact with water."
+	description = "Space age food, since August 25, 1958. Contains dried noodles, vegetables, boil in water before serving."
 	taste_description = "dry cheap noodles"
 	reagent_state = SOLID
 	nutrition = 1
@@ -2549,7 +2609,7 @@
 	color = "#302000"
 	nutrition = 5
 
-/datum/reagent/drink/hell_ramen/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/hell_ramen/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	handle_spicy(M, alien, removed)
 
@@ -2577,7 +2637,7 @@
 	glass_desc = "Generally, you're supposed to put something else in there too..."
 	glass_icon = DRINK_ICON_NOISY
 
-/datum/reagent/drink/ice/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/ice/affect_blood(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_SLIME)
 		if(M.bodytemperature > T0C)
@@ -2586,7 +2646,7 @@
 			M.bodytemperature += rand(1,3)
 		//M.adjustToxLoss(5 * removed) //VOREStation Removal
 
-/datum/reagent/drink/ice/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/ice/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_SLIME)
 		if(M.bodytemperature > T0C)
@@ -2603,6 +2663,11 @@
 
 	glass_name = REAGENT_ID_NOTHING
 	glass_desc = "Absolutely nothing."
+
+/datum/reagent/drink/nothing/affect_ingest(mob/living/carbon/M, alien, removed)
+	..()
+	if(HAS_MIND_TRAIT(M, TRAIT_MIMING))
+		M.heal_organ_damage(1 * removed, 1 * removed)
 
 /datum/reagent/drink/dreamcream
 	name = REAGENT_DREAMCREAM
@@ -2706,13 +2771,13 @@
 	glass_special = list(DRINK_FIZZ)
 	allergen_type = ALLERGEN_VEGETABLE //Made from oilslick, so has the same allergens.
 
-/datum/reagent/drink/nuclearwaste/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/nuclearwaste/affect_blood(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
 	M.bloodstr.add_reagent(REAGENT_ID_RADIUM, 0.3)
 
-/datum/reagent/drink/nuclearwaste/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/nuclearwaste/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
@@ -2733,7 +2798,7 @@
 	glass_special = list(DRINK_FIZZ)
 	allergen_type = ALLERGEN_VEGETABLE //Made from corn oil
 
-/datum/reagent/drink/sodaoil/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/sodaoil/affect_blood(mob/living/carbon/M, alien, removed)
 	..()
 	if(M.bloodstr) // If, for some reason, they are injected, dilute them as well.
 		for(var/datum/reagent/R in M.ingested.reagent_list)
@@ -2742,7 +2807,7 @@
 				if(D.water_based)
 					M.adjustToxLoss(removed * -3)
 
-/datum/reagent/drink/sodaoil/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/drink/sodaoil/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(M.ingested) // Find how many drinks are causing tox, and negate them.
 		for(var/datum/reagent/R in M.ingested.reagent_list)
@@ -2851,7 +2916,7 @@
 
 	overdose = REAGENTS_OVERDOSE *1.5
 
-/datum/reagent/drink/syrup/overdose(var/mob/living/carbon/M, var/alien)
+/datum/reagent/drink/syrup/overdose(mob/living/carbon/M, alien)
 	if(alien == IS_DIONA)
 		return
 	M.make_dizzy(1)
@@ -2970,7 +3035,7 @@
 	color = "#c4c6a5"
 	cup_prefix = "white chocolate"
 
-	allergen_type = ALLERGEN_SUGARS|ALLERGEN_CHOCOLATE
+	allergen_type = ALLERGEN_SUGARS //|ALLERGEN_CHOCOLATE //commenting this out and leaving this comment to inform that WHITE CHOCOLATE IS NOT CHOCOLATE!!!!
 
 /datum/reagent/drink/syrup/strawberry
 	name = REAGENT_SYRUPSTRAWBERRY
@@ -3067,13 +3132,13 @@
 
 	allergen_type = ALLERGEN_GRAINS //Made from grains
 
-/datum/reagent/ethanol/beer/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/beer/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(M.species.robo_ethanol_drunk || !(M.isSynthetic()))
 		if(alien == IS_DIONA)
 			return
 		M.adjust_nutrition((M.food_preference(allergen_type) / 2) * removed) //RS edit
-		M.jitteriness = max(M.jitteriness - 3, 0)
+		M.make_jittery(-3)
 
 /datum/reagent/ethanol/beer/lite
 	name = REAGENT_LITEBEER
@@ -3129,12 +3194,12 @@
 	glass_name = "rum"
 	glass_desc = "Now you want to Pray for a pirate suit, don't you?"
 
-/datum/reagent/ethanol/deadrum/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/deadrum/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
 	if(M.species.robo_ethanol_drunk || !(M.isSynthetic()))
-		M.dizziness +=5
+		M.make_dizzy(5)
 
 /datum/reagent/ethanol/firepunch
 	name = REAGENT_FIREPUNCH
@@ -3167,12 +3232,12 @@
 	overdose = REAGENTS_OVERDOSE *1.5
 	allergen_type = ALLERGEN_COFFEE|ALLERGEN_STIMULANT //Contains coffee or is made from coffee
 
-/datum/reagent/ethanol/coffee/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/coffee/affect_ingest(mob/living/carbon/M, alien, removed)
 	if(!(M.isSynthetic()))
 		if(alien == IS_DIONA)
 			return
 		..()
-		M.dizziness = max(0, M.dizziness - 5)
+		M.make_dizzy(-5)
 		M.drowsyness = max(0, M.drowsyness - 3)
 		M.AdjustSleeping(-2)
 		if(M.bodytemperature > 310)
@@ -3182,13 +3247,13 @@
 			//M.adjustToxLoss(0.5 * removed)
 			//M.make_jittery(4) //extra sensitive to caffine
 
-/datum/reagent/ethanol/coffee/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/coffee/affect_blood(mob/living/carbon/M, alien, removed)
 	//if(alien == IS_TAJARA)
 		//M.adjustToxLoss(2 * removed)
 		//M.make_jittery(4)
 		//return
 
-/datum/reagent/ethanol/coffee/overdose(var/mob/living/carbon/M, var/alien)
+/datum/reagent/ethanol/coffee/overdose(mob/living/carbon/M, alien)
 	if(alien == IS_DIONA)
 		return
 	//if(alien == IS_TAJARA)
@@ -3297,7 +3362,7 @@
 	glass_desc = "This is a glass of Thirteen Loko, it appears to be of the highest quality. The drink, not the glass."
 	allergen_type = ALLERGEN_STIMULANT //Holy shit dude.
 
-/datum/reagent/ethanol/thirteenloko/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/thirteenloko/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	if(!(M.isSynthetic()))
@@ -3334,7 +3399,7 @@
 
 	allergen_type = ALLERGEN_GRAINS //Vodka is made from grains
 
-/datum/reagent/ethanol/vodka/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/vodka/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(!(M.isSynthetic()))
 		M.apply_effect(max(M.radiation - 1 * removed, 0), IRRADIATE, check_protection = 0)
@@ -3404,7 +3469,7 @@
 	glass_desc = "A black ichor with an oily purple sheer on top. Are you sure you should drink this?"
 	allergen_type = ALLERGEN_FRUIT //Made from berries which are fruit
 
-/datum/reagent/ethanol/pwine/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/pwine/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	if(!(M.isSynthetic()))
@@ -3618,7 +3683,7 @@
 
 	allergen_type = ALLERGEN_FRUIT|ALLERGEN_GRAINS //Made from whiskey(grains), and limejuice(fruit)
 
-/datum/reagent/ethanol/beepsky_smash/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/beepsky_smash/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	if(M.species.robo_ethanol_drunk || !(M.isSynthetic()))
@@ -4004,7 +4069,7 @@
 	glass_name = REAGENT_ID_MARGARITA
 	glass_desc = "On the rocks with salt on the rim. Arriba~!"
 
-	allergen_type = ALLERGEN_FRUIT //Made from lime juice(fruit)
+	allergen_type = ALLERGEN_FRUIT | ALLERGEN_SALT //Made from lime juice(fruit)
 
 /datum/reagent/ethanol/mead
 	name = REAGENT_MEAD
@@ -4047,7 +4112,7 @@
 
 	allergen_type = ALLERGEN_FRUIT|ALLERGEN_GRAINS //Made from gargle blaster which is made from vodka(grains), gin(fruit), whiskey(grains), cognac(fruit), and lime juice(fruit)
 
-/datum/reagent/ethanol/neurotoxin/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/neurotoxin/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	if(M.species.robo_ethanol_drunk || !(M.isSynthetic()))
@@ -4074,6 +4139,8 @@
 
 	glass_name = "red mead"
 	glass_desc = "A true Viking's beverage, though its color is strange."
+
+	allergen_type = ALLERGEN_SALT
 
 /datum/reagent/ethanol/sbiten
 	name = REAGENT_SBITEN
@@ -4102,6 +4169,19 @@
 	glass_desc = "A simple, yet superb mixture of Vodka and orange juice. Just the thing for the tired engineer."
 
 	allergen_type = ALLERGEN_FRUIT|ALLERGEN_GRAINS //Made from vodka(grains) and orange juice(fruit)
+
+/datum/reagent/ethanol/screwdrivercocktail/on_mob_life(mob/living/carbon/drinker, seconds_per_tick, metabolization_ratio)
+	. = ..()
+//	var/obj/item/organ/internal/liver/liver = drinker.internal_organs_by_name[O_LIVER]
+//	if(HAS_TRAIT(liver, TRAIT_ENGINEER_METABOLISM))
+	ADD_TRAIT(drinker, TRAIT_HALT_RADIATION_EFFECTS, "[type]")
+	if (HAS_TRAIT(drinker, TRAIT_IRRADIATED))
+		if(drinker.adjustToxLoss(-2 * metabolization_ratio * seconds_per_tick))
+			return //UPDATE_MOB_HEALTH
+
+/datum/reagent/ethanol/screwdrivercocktail/on_mob_end_metabolize(mob/living/drinker)
+	. = ..()
+	REMOVE_TRAIT(drinker, TRAIT_HALT_RADIATION_EFFECTS, "[type]")
 
 /datum/reagent/ethanol/silencer
 	name = REAGENT_SILENCER
@@ -4303,7 +4383,7 @@
 	glass_name = "unathi liquor"
 	glass_desc = "This barely qualifies as a drink, and may cause euphoria and numbness. Imbiber beware!"
 
-/datum/reagent/ethanol/unathiliquor/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/unathiliquor/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	if(M.species.robo_ethanol_drunk || !(M.isSynthetic()))
@@ -4541,7 +4621,7 @@
 
 	allergen_type = ALLERGEN_GRAINS|ALLERGEN_FRUIT //Made from manhattan(whiskey(grains), vermouth(fruit))
 
-/datum/reagent/ethanol/soemmerfire/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/soemmerfire/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	handle_spicy(M, alien, removed)
 
@@ -4608,8 +4688,9 @@
 
 	glass_name = REAGENT_VOXDELIGHT
 	glass_desc = "Not recommended if you enjoy having organs."
+	coolant_modifier = 1.25
 
-/datum/reagent/ethanol/voxdelight/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/voxdelight/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
@@ -4683,7 +4764,7 @@
 
 	allergen_type = ALLERGEN_GRAINS //Made from vodka(grains)
 
-/datum/reagent/ethanol/slimeshot/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/slimeshot/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien == IS_DIONA)
 		return
@@ -4809,6 +4890,7 @@
 	glass_desc = "Minty, rich, and painfully cold. It's a blizzard in a cup."
 
 	allergen_type = ALLERGEN_COFFEE|ALLERGEN_STIMULANT //Made from iced coffee(coffee)
+	coolant_modifier = 1.15
 
 /datum/reagent/ethanol/mintjulep
 	name = REAGENT_MINTJULEP
@@ -4847,7 +4929,7 @@
 
 	allergen_type = ALLERGEN_GRAINS //Made from vodka(grain)
 
-/datum/reagent/ethanol/godka/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/godka/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	if(!(M.isSynthetic()))
@@ -5012,7 +5094,7 @@
 
 	allergen_type = ALLERGEN_GRAINS|ALLERGEN_DAIRY|ALLERGEN_FRUIT //Made from antifreeze(vodka(grains),cream(dairy)), gargleblaster(vodka(grains),gin(fruit),whiskey(grains),cognac(fruit),lime juice(fruit)), and syndicate bomb(beer(grain),whiskeycola(whiskey(grain)))
 
-/datum/reagent/ethanol/deathbell/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/ethanol/deathbell/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 
 	if(M.species.robo_ethanol_drunk || !(M.isSynthetic()))
@@ -5030,8 +5112,9 @@
 	reagent_state = LIQUID
 	nutriment_factor = 40 //very filling
 	color = "#d169b2"
+	coolant_modifier = 3 // HOOH!
 
-/datum/reagent/nutriment/magicdust/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/nutriment/magicdust/affect_ingest(mob/living/carbon/M, alien, removed)
 	..()
 	playsound(M, 'sound/items/hooh.ogg', 50, 1, -1)
 	if(prob(5))
@@ -5070,6 +5153,9 @@
 	glass_name = REAGENT_ID_CINNAMONPOWDER
 	glass_desc = "A glass of ground cinnamon. Dare you take the challenge?"
 
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_FOOD
+
 /datum/reagent/gelatin
 	name = REAGENT_GELATIN
 	id = REAGENT_ID_GELATIN
@@ -5079,3 +5165,17 @@
 
 	glass_name = REAGENT_GELATIN
 	glass_desc = "It's like flavourless slime."
+
+	supply_conversion_value = REFINERYEXPORT_VALUE_UNWANTED
+	industrial_use = REFINERYEXPORT_REASON_FOOD
+
+
+/datum/reagent/drink/teamush
+	name = REAGENT_TEAMUSH
+	id = REAGENT_ID_TEAMUSH
+	description = "Mashed tea leaves, a bit like grass clippings. You can't make proper tea out of this now."
+	taste_description = "overwhelmingly bitter plant"
+	color = "#7db72d"
+
+	glass_name = "blended plant"
+	glass_desc = "Chunky, mashed up plant of some sort. Looks kinda gross."

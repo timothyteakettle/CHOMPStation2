@@ -128,7 +128,7 @@
 		our_targets -= SM.prey_excludes // Lazylist, but subtracting a null from the list seems fine.
 	return our_targets
 
-/datum/ai_holder/simple_mob/ranged/pakkun/can_attack(atom/movable/the_target, var/vision_required = TRUE)
+/datum/ai_holder/simple_mob/ranged/pakkun/can_attack(atom/movable/the_target, vision_required = TRUE)
 	.=..()
 	if(isliving(the_target))
 		var/mob/living/L = the_target
@@ -141,33 +141,28 @@
 	else
 		return FALSE
 
-/mob/living/simple_mob/vore/pakkun/on_throw_vore_special(var/pred, var/mob/living/target)
+/mob/living/simple_mob/vore/pakkun/on_throw_vore_special(pred, mob/living/target)
 	if(pred && !extra_possessive && !(LAZYFIND(prey_excludes, target)))
 		LAZYSET(prey_excludes, target, world.time)
 		addtimer(CALLBACK(src, PROC_REF(removeMobFromPreyExcludes), WEAKREF(target)), 5 MINUTES)
 	if(ai_holder)
 		ai_holder.remove_target()
 
-/mob/living/simple_mob/vore/pakkun/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/pakkun/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
-	if(isbelly(B)) //ChompEDIT - fix a runtime
-		B.name = "stomach"
-		B.desc = "you land with a soft bump in what can only be described as a big soft slimy sack, the walls effortlessly stretching to match your every move with no sign of reaching any kind of elastic \
-		limit - and to add insult to injury, it seems the thing is... pressing on you, kneading over the lump you make in its midsection, as though rubbing in the fact that you've just been caught."
-		B.absorbed_desc = "the endless smooshing and kneading has taken its toll, your form softening and sinking into the body of the greedy little reptile. It seems like you might be here for some time - \
-		assuming you ever get out at all. For now though, you're stuck as some extra softness padding out a cute little lizard."
-		B.belly_fullscreen = "a_tumby"
-		B.escapechance = 25
-		B.absorbchance = 0
-		B.digestchance = 0
-		B.digest_mode = DM_SELECT
+	B.name = "stomach"
+	B.desc = "you land with a soft bump in what can only be described as a big soft slimy sack, the walls effortlessly stretching to match your every move with no sign of reaching any kind of elastic \
+	limit - and to add insult to injury, it seems the thing is... pressing on you, kneading over the lump you make in its midsection, as though rubbing in the fact that you've just been caught."
+	B.absorbed_desc = "the endless smooshing and kneading has taken its toll, your form softening and sinking into the body of the greedy little reptile. It seems like you might be here for some time - \
+	assuming you ever get out at all. For now though, you're stuck as some extra softness padding out a cute little lizard."
+	B.belly_fullscreen = "a_tumby"
+	B.escapechance = 25
+	B.absorbchance = 0
+	B.digestchance = 0
+	B.digest_mode = DM_SELECT
 
-/mob/living/simple_mob/vore/pakkun/attackby(var/obj/item/O, var/mob/user) //if they're newspapered, they'll spit out any junk they've eaten for whatever reason
+/mob/living/simple_mob/vore/pakkun/attackby(obj/item/O, mob/user) //if they're newspapered, they'll spit out any junk they've eaten for whatever reason
 	if(istype(O, /obj/item/newspaper) && !ckey && isturf(user.loc))
 		user.visible_message(span_info("[user] swats [src] with [O]!"))
 		release_vore_contents()
@@ -190,7 +185,7 @@
 
 	extra_possessive = TRUE //you're gonna get KEPT, at least the first time you go in
 
-/mob/living/simple_mob/vore/pakkun/snapdragon/on_throw_vore_special(var/pred, var/mob/living/target)
+/mob/living/simple_mob/vore/pakkun/snapdragon/on_throw_vore_special(pred, mob/living/target)
 	..()
 	extra_possessive = !extra_possessive //toggle their possessiveness on and off every time they eat someone
 
@@ -206,7 +201,7 @@
 
 	extra_possessive = TRUE // won't let its prey go if it's awake, luckily, see below.
 
-/mob/living/simple_mob/vore/pakkun/sand/on_throw_vore_special(var/pred, var/mob/living/target)
+/mob/living/simple_mob/vore/pakkun/sand/on_throw_vore_special(pred, mob/living/target)
 	..()
 	autorest_cooldown = 0 // Sand pakkuns, also known as napdragons, like to curl up for an small sleemp after eating. This is your chance to escape.
 
@@ -260,7 +255,7 @@
 			our_targets -= list_target
 	return our_targets
 
-/datum/ai_holder/simple_mob/ranged/pakkun/snappy/can_attack(atom/movable/the_target, var/vision_required = TRUE)
+/datum/ai_holder/simple_mob/ranged/pakkun/snappy/can_attack(atom/movable/the_target, vision_required = TRUE)
 	.=..()
 	var/mob/living/simple_mob/vore/pakkun/snapdragon/snappy/SM = holder
 	if(!(the_target in SM.petters))
@@ -277,16 +272,11 @@
 		petters -= pick(petters)
 	..()
 
-/mob/living/simple_mob/vore/pakkun/snapdragon/snappy/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/pakkun/snapdragon/snappy/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
-	if(isbelly(B)) //ChompEDIT - fix a runtime
-		B.digest_mode = DM_HOLD
-		B.desc = "the lizard gently yet insistently stuffs you down her gullet - evidently enjoying this moment of playtime as you land in a sprawled heap in the stretchy, clinging sack that makes up \
-		most of her girth. Your movements are rewarded only with squeezing from outside, the skin of the reptile easily stretching out to match your movements no matter how hard you try to push. If anything, \
-		wriggling about just seems to prompt the playful creature to mess with you more, mooshing her paws into the bulges you make, wrapping both arms around you and squeezing you tight, making it absolutely \
-		plain that she's more than happy to just keep you in there - and is more than capable of doing so if she so chooses."
+	B.digest_mode = DM_HOLD
+	B.desc = "the lizard gently yet insistently stuffs you down her gullet - evidently enjoying this moment of playtime as you land in a sprawled heap in the stretchy, clinging sack that makes up \
+	most of her girth. Your movements are rewarded only with squeezing from outside, the skin of the reptile easily stretching out to match your movements no matter how hard you try to push. If anything, \
+	wriggling about just seems to prompt the playful creature to mess with you more, mooshing her paws into the bulges you make, wrapping both arms around you and squeezing you tight, making it absolutely \
+	plain that she's more than happy to just keep you in there - and is more than capable of doing so if she so chooses."

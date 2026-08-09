@@ -15,7 +15,7 @@
 	else
 		effect_color = "#6d1212"
 
-/datum/artifact_effect/health/DoEffectTouch(var/mob/toucher)
+/datum/artifact_effect/health/DoEffectTouch(mob/toucher)
 	var/atom/holder = get_master_holder()
 	if(istype(holder, /obj/item/anobattery))
 		var/obj/item/anobattery/battery = holder
@@ -53,7 +53,7 @@
 				C.adjust_nutrition(-50 * weakness)
 				C.nutrition -= min(50 * weakness, C.nutrition)
 				C.make_dizzy(6 * weakness)
-				C.weakened += 6 * weakness
+				C.AdjustWeakened(6 * weakness)
 			return 1
 
 /datum/artifact_effect/health/DoEffectAura()

@@ -41,14 +41,6 @@ type message = {
   target: string;
 };
 
-// Really cursed old API that was deprecated before IE8 but still works in IE11 because lol lmao
-type IeWindow = Window &
-  typeof globalThis & {
-    clipboardData: {
-      setData: (type: 'Text', text: string) => {};
-    };
-  };
-
 const CopyToClipboardButton = (props: { messages: message[] }) => {
   const [showCompletion, setShowCompletion] = useState(false);
 
@@ -86,13 +78,7 @@ const copyToClipboard = (messages: message[]) => {
       string += `Them: ${message.message}\n`;
     }
   }
-
-  if (Byond.TRIDENT) {
-    const ie_window = window as IeWindow;
-    ie_window.clipboardData.setData('Text', string);
-  } else {
-    navigator.clipboard.writeText(string);
-  }
+  navigator.clipboard.writeText(string);
 };
 
 export const pda_messenger = (props) => {
@@ -166,44 +152,46 @@ const MessengerList = (props) => {
   );
 };
 
-const PDAList = (props) => {
+const PDAList = (props: { pdas: pda[]; title: string; msgAct: string }) => {
   const { act, data } = useBackend<Data>();
 
   const { pdas, title, msgAct } = props;
 
   const { charges, plugins = [] } = data;
 
-  if (!pdas || !pdas.length) {
+  if (!pdas?.length) {
     return <Section title={title}>No PDAs found.</Section>;
   }
 
   return (
     <Section title={title}>
-      {pdas.map((pda) => (
-        <Box key={pda.Reference}>
-          <Button
-            icon="arrow-circle-down"
-            onClick={() => act(msgAct, { target: pda.Reference })}
-          >
-            {pda.Name}
-          </Button>
-          {!!charges &&
-            plugins.map((plugin) => (
-              <Button
-                key={plugin.ref}
-                icon={plugin.icon}
-                onClick={() =>
-                  act('Messenger Plugin', {
-                    plugin: plugin.ref,
-                    target: pda.Reference,
-                  })
-                }
-              >
-                {plugin.name}
-              </Button>
-            ))}
-        </Box>
-      ))}
+      {pdas
+        .sort((a, b) => a.Name.localeCompare(b.Name))
+        .map((pda) => (
+          <Box key={pda.Reference}>
+            <Button
+              icon="arrow-circle-down"
+              onClick={() => act(msgAct, { target: pda.Reference })}
+            >
+              {pda.Name}
+            </Button>
+            {!!charges &&
+              plugins.map((plugin) => (
+                <Button
+                  key={plugin.ref}
+                  icon={plugin.icon}
+                  onClick={() =>
+                    act('Messenger Plugin', {
+                      plugin: plugin.ref,
+                      target: pda.Reference,
+                    })
+                  }
+                >
+                  {plugin.name}
+                </Button>
+              ))}
+          </Box>
+        ))}
     </Section>
   );
 };

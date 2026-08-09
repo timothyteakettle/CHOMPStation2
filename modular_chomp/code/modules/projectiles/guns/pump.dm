@@ -4,7 +4,6 @@
 /obj/item/gun/energy/locked/frontier/shotgun
 	name = "frontier shotgun"
 	desc = "A much larger, heavier weapon than the typical frontier-type weapons. This one has a safety interlock that prevents firing while in proximity to the facility."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "oldphaser" //note to self, make a unquie more fitting sprite at some point.
 	item_state = "sniper"
 	item_state_slots = list(slot_r_hand_str = "lsniper", slot_l_hand_str = "lsniper")
@@ -14,7 +13,6 @@
 	one_handed_penalty = 30 //A bit easier to aim then a sniper to aim but still not accurate
 	phase_power = 30 //Same as sniper.
 	projectile_type = /obj/item/projectile/scatter/frontierlaser
-	move_delay = 0
 	charge_cost = 400
 	fire_delay = 8
 	firemodes = list(

@@ -24,7 +24,7 @@
 	src.emag = new /obj/item/reagent_containers/spray(src)
 	src.emag.reagents.add_reagent(REAGENT_ID_LUBE, 250)
 	src.emag.name = "Lube spray"
-	R.icon 		 = 'icons/mob/robots_yw.dmi'
+	R.icon 		 = 'icons/mob/robots_yw.dmi' //Moved to archive
 	R.hands.icon = 'icons/mob/screen1_robot_vr.dmi'
 	. = ..()
 
@@ -51,7 +51,7 @@
 	src.modules += new /obj/item/borg/sight/material(src)
 	src.modules += new /obj/item/tool/wrench(src)
 	src.modules += new /obj/item/tool/screwdriver(src)
-	src.modules += new /obj/item/storage/bag/ore(src)
+	src.modules += new /obj/item/ore_bag(src)
 	src.modules += new /obj/item/pickaxe/borgdrill(src)
 	src.modules += new /obj/item/storage/bag/sheetsnatcher/borg(src)
 	src.modules += new /obj/item/gripper/miner(src)
@@ -59,7 +59,7 @@
 	src.modules += new /obj/item/tool/crowbar(src)
 	src.emag = new /obj/item/pickaxe/plasmacutter(src)
 	src.emag 	 = new /obj/item/gun/energy/laser/mounted(src) //Emag. Not a big problem.
-	R.icon 		 = 'icons/mob/widerobot_yw.dmi'
+	R.icon 		 = 'icons/mob/widerobot_yw.dmi' //Moved to archive
 	R.hands.icon = 'icons/mob/screen1_robot_vr.dmi'
 	R.pixel_x 	 = -16
 	R.old_x 	 = -16
@@ -129,7 +129,7 @@
 	R.icon = 'icons/mob/widerobot_vr.dmi'
 	R.hands.icon = 'icons/mob/screen1_robot_vr.dmi'
 
-/obj/item/robot_module/medical/robot/surgeon/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
+/obj/item/robot_module/medical/robot/surgeon/respawn_consumable(mob/living/silicon/robot/R, amount)
 	if(src.emag)
 		var/obj/item/reagent_containers/spray/PS = src.emag
 		PS.reagents.add_reagent(REAGENT_ID_PACID, 2 * amount)

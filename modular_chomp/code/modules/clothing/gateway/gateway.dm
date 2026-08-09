@@ -62,7 +62,7 @@
 	brainloss_cost = 0
 	armor = list(melee = 70, bullet = 60, laser = 50, energy = 50, bomb = 0, bio = 0, rad = 0)
 
-/obj/item/clothing/head/psy_crown/candycrown/activate_ability(var/mob/living/wearer)
+/obj/item/clothing/head/psy_crown/candycrown/activate_ability(mob/living/wearer)
 	..()
 	wearer.add_modifier(/datum/modifier/aura/candy_orange, 30 SECONDS)
 
@@ -75,7 +75,7 @@
 	siemens_coefficient = 0
 	armor = list(melee = 70, bullet = 60, laser = 50, energy = 50, bomb = 0, bio = 0, rad = 0)
 
-/obj/item/clothing/gloves/stamina/equipped(mob/user)
+/obj/item/clothing/gloves/stamina/equipped(mob/user, slot)
 	..()
 	var/mob/living/carbon/human/H = wearer?.resolve()
 	if(H && H.gloves == src)
@@ -83,7 +83,7 @@
 			to_chat(H, span_danger("You feel strange as hunger vanishes!"))
 			H.custom_pain("Your hands feel strange!",1)
 
-/obj/item/clothing/gloves/stamina/dropped(mob/user)
+/obj/item/clothing/gloves/stamina/dropped(mob/user, equipping, slot)
 	var/mob/living/carbon/human/H = wearer?.resolve()
 	if(H)
 		if(H.can_feel_pain())
@@ -120,21 +120,21 @@
 	var/flavor_activate = null // Ditto, for but activating.
 	var/brainloss_cost = 0
 
-/obj/item/clothing/suit/armor/buffvest/proc/activate_ability(var/mob/living/wearer)
+/obj/item/clothing/suit/armor/buffvest/proc/activate_ability(mob/living/wearer)
 	cooldown = world.time + cooldown_duration
 	to_chat(wearer, flavor_activate)
 	to_chat(wearer, span_danger("The inside of your head hurts..."))
 	wearer.adjustBrainLoss(brainloss_cost)
 	wearer.add_modifier(/datum/modifier/aura/candy_blue, 30 SECONDS)
 
-/obj/item/clothing/suit/armor/buffvest/equipped(var/mob/living/carbon/human/H)
+/obj/item/clothing/suit/armor/buffvest/equipped(mob/living/carbon/human/H, slot)
 	..()
 	if(istype(H) && H.head == src && H.is_sentient())
 		START_PROCESSING(SSobj, src)
 		if(flavor_equip)
 			to_chat(H, span_info(flavor_equip))
 
-/obj/item/clothing/suit/armor/buffvest/dropped(var/mob/living/carbon/human/H)
+/obj/item/clothing/suit/armor/buffvest/dropped(mob/living/carbon/human/H, equipping, slot)
 	..()
 	STOP_PROCESSING(SSobj, src)
 	if(H.is_sentient())
@@ -159,12 +159,11 @@
 /obj/item/clothing/suit/armor/alien/vistor
 	name = "rocky suit"
 	desc = "A strange set of armor made of rocky plates"
-	description_info = "It always reduces all damage by the same amount, with a 12% chance to block."
+	description_info = "Reduces all admage types by 25% with a 12% chance to block."
 	icon_state = "alien_tank"
 	slowdown = 0
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
-	armor = list(melee = 0, bullet = 0, laser = 0, energy = 0, bomb = 0, bio = 0, rad = 0)
-	armorsoak = list( melee = 12, bullet = 12,laser = 12, energy = 12 , bomb = 0, bio = 0, rad = 0)
+	armor = list(melee = 25, bullet = 25, laser = 25, energy = 25, bomb = 25, bio = 25, rad = 25) //Should be good enough to mimic the old '12% reduction'.
 	block_chance = 12
 
 /obj/item/clothing/suit/armor/tesla/vistor

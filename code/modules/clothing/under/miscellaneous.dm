@@ -1149,7 +1149,6 @@
 /obj/item/clothing/under/explorer/armored
 	desc = "A green uniform for operating in hazardous environments. This one looks like it's been modified."
 	armor = list(melee = 10, bullet = 10, laser = 10,energy = 10, bomb = 10, bio = 10, rad = 30)
-	armorsoak = list(melee = 5, bullet = 5, laser = 5,energy = 5, bomb = 5, bio = 5, rad = 0)
 
 /obj/item/clothing/under/cohesion
 	name = "black cohesion suit"
@@ -1717,3 +1716,20 @@
 	name = "reverse bunny suit"
 	desc = "A maid themed reverse bunny suit, literally just covers everything except the bits you're supposed to. Tails and ears sold seperately."
 	icon_state = "reverse_bunnytop_maid"
+
+/obj/item/clothing/under/anthro_skeleton
+	name = "Anthro Skeleton"
+	desc = "A standardized anthropomorphic skeleton commonly used by prometheans who struggle to maintain their outer body shape. It's made of plastic, just like the trusty model in the exam room."
+	icon = 'icons/vore/custom_clothes_item.dmi'
+	default_worn_icon = 'icons/vore/custom_clothes_mob.dmi'
+	icon_state = "anthro_skeleton"
+	body_parts_covered = 0
+	species_restricted = list("exclude", SPECIES_TESHARI)
+
+/obj/item/clothing/under/anthro_skeleton/mob_can_equip(mob/living/carbon/human/H, slot, disable_warning = FALSE, ignore_obstruction, go_over_slot = FALSE)
+	if(!..())
+		return FALSE
+	if(ishuman(H))
+		if(!(H.get_species() == SPECIES_PROMETHEAN))	//Only wearable by slimes, since species_restricted actually checks bodytype, not species
+			return FALSE
+	return TRUE

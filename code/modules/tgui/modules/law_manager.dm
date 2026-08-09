@@ -6,26 +6,12 @@
 	var/inherent_law = "InherentLaw"
 	var/supplied_law = "SuppliedLaw"
 	var/supplied_law_position = MIN_SUPPLIED_LAW_NUMBER
-
-	var/global/list/datum/ai_laws/admin_laws
-	var/global/list/datum/ai_laws/player_laws
 	var/mob/living/silicon/owner = null
 
 /datum/tgui_module/law_manager/New(mob/living/silicon/S)
 	. = ..()
 
 	owner = S
-
-	if(!admin_laws)
-		admin_laws = new()
-		player_laws = new()
-
-		init_subtypes(/datum/ai_laws, admin_laws)
-		admin_laws = dd_sortedObjectList(admin_laws)
-
-		for(var/datum/ai_laws/laws in admin_laws)
-			if(laws.selectable)
-				player_laws += laws
 
 /datum/tgui_module/law_manager/tgui_act(action, list/params, datum/tgui/ui, datum/tgui_state/state)
 	if(..())
@@ -98,7 +84,7 @@
 			if(is_malf(ui.user))
 				var/datum/ai_law/AL = locate(params["edit_law"]) in owner.laws.all_laws()
 				if(AL)
-					var/new_law = sanitize(tgui_input_text(ui.user, "Enter new law. Leaving the field blank will cancel the edit.", "Edit Law", AL.law))
+					var/new_law = tgui_input_text(ui.user, "Enter new law. Leaving the field blank will cancel the edit.", "Edit Law", AL.law, MAX_MESSAGE_LEN)
 					if(new_law && new_law != AL.law && is_malf(ui.user) && can_still_topic(ui.user, state))
 						log_and_message_admins("has changed a law of [owner] from '[AL.law]' to '[new_law]'")
 						AL.law = new_law
@@ -116,27 +102,25 @@
 			return TRUE
 
 		if("state_law_set")
-			var/datum/ai_laws/ALs = locate(params["state_law_set"]) in (is_admin(ui.user) ? admin_laws : player_laws)
+			var/datum/ai_laws/ALs = locate(params["state_law_set"]) in (is_admin(ui.user) ? GLOB.admin_laws : GLOB.player_laws)
 			if(ALs)
 				owner.statelaws(ALs)
 			return TRUE
 
 		if("transfer_laws")
 			if(is_malf(ui.user))
-				var/datum/ai_laws/ALs = locate(params["transfer_laws"]) in (is_admin(ui.user) ? admin_laws : player_laws)
+				var/datum/ai_laws/ALs = locate(params["transfer_laws"]) in (is_admin(ui.user) ? GLOB.admin_laws : GLOB.player_laws)
 				if(ALs)
 					log_and_message_admins("has transfered the [ALs.name] laws to [owner].")
 					ALs.sync(owner, 0)
 			return TRUE
 
 		if("notify_laws")
-			to_chat(owner, span_danger("Law Notice"))
-			owner.laws.show_laws(owner)
+			to_chat(owner, span_danger("Law Notice\n") + owner.laws.get_formatted_laws())
 			if(isAI(owner))
 				var/mob/living/silicon/ai/AI = owner
 				for(var/mob/living/silicon/robot/R in AI.connected_robots)
-					to_chat(R, span_danger("Law Notice"))
-					R.laws.show_laws(R)
+					to_chat(R, span_danger("Law Notice\n") + R.laws.get_formatted_laws())
 			if(ui.user != owner)
 				to_chat(ui.user, span_notice("Laws displayed."))
 			return TRUE
@@ -170,18 +154,18 @@
 		channels[++channels.len] = list("channel" = ch_name)
 	data["channel"] = owner.lawchannel
 	data["channels"] = channels
-	data["law_sets"] = package_multiple_laws(data["isAdmin"] ? admin_laws : player_laws)
+	data["law_sets"] = package_multiple_laws(data["isAdmin"] ? GLOB.admin_laws : GLOB.player_laws)
 
 	return data
 
-/datum/tgui_module/law_manager/proc/package_laws(var/list/data, var/field, var/list/datum/ai_law/laws)
+/datum/tgui_module/law_manager/proc/package_laws(list/data, field, list/datum/ai_law/laws)
 	var/list/packaged_laws = list()
 	for(var/datum/ai_law/AL in laws)
 		packaged_laws[++packaged_laws.len] = list("law" = AL.law, "index" = AL.get_index(), "state" = owner.laws.get_state_law(AL), "ref" = "\ref[AL]")
 	data[field] = packaged_laws
 	data["has_[field]"] = packaged_laws.len
 
-/datum/tgui_module/law_manager/proc/package_multiple_laws(var/list/datum/ai_laws/laws)
+/datum/tgui_module/law_manager/proc/package_multiple_laws(list/datum/ai_laws/laws)
 	var/list/law_sets = list()
 	for(var/datum/ai_laws/ALs in laws)
 		var/list/packaged_laws = list()
@@ -193,10 +177,10 @@
 
 	return law_sets
 
-/datum/tgui_module/law_manager/proc/is_malf(var/mob/user)
+/datum/tgui_module/law_manager/proc/is_malf(mob/user)
 	return (is_admin(user) && !owner.is_slaved()) || is_special_role(user)
 
-/datum/tgui_module/law_manager/proc/is_special_role(var/mob/user)
+/datum/tgui_module/law_manager/proc/is_special_role(mob/user)
 	if(user.mind.special_role)
 		return TRUE
 	else
@@ -208,7 +192,7 @@
 /mob/living/silicon/robot/is_slaved()
 	return lawupdate && connected_ai ? sanitize(connected_ai.name) : null
 
-/datum/tgui_module/law_manager/proc/sync_laws(var/mob/living/silicon/ai/AI)
+/datum/tgui_module/law_manager/proc/sync_laws(mob/living/silicon/ai/AI)
 	if(!AI)
 		return
 	for(var/mob/living/silicon/robot/R in AI.connected_robots)
@@ -221,4 +205,9 @@
 
 /datum/tgui_module/law_manager/admin
 /datum/tgui_module/law_manager/admin/tgui_state(mob/user)
-	return GLOB.tgui_admin_state
+	return ADMIN_STATE(R_ADMIN|R_EVENT|R_DEBUG)
+
+/datum/tgui_module/law_manager/admin/tgui_close(mob/user)
+	. = ..()
+	if(!QDELETED(src))
+		qdel(src)

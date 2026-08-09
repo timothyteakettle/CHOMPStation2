@@ -85,14 +85,14 @@
 /// asset_list - A list of asset filenames to be sent to the client. Can optionally be assoicated with the asset's asset_cache_item datum.
 /// Returns TRUE if any assets were sent.
 /datum/asset_transport/proc/send_assets(client/client, list/asset_list)
-#if defined(UNIT_TEST)
+#if defined(UNIT_TESTS)
 	return
 #endif
 	if (!istype(client))
 		if (ismob(client))
-			var/mob/M = client
-			if (M.client)
-				client = M.client
+			var/mob/our_mob = client
+			if (our_mob.client)
+				client = our_mob.client
 			else //no stacktrace because this will mainly happen because the client went away
 				return
 		else
@@ -139,7 +139,7 @@
 			if (!keep_local_name)
 				new_asset_name = "asset.[ACI.hash][ACI.ext]"
 			log_asset("Sending asset `[asset_name]` to client `[client]` as `[new_asset_name]`")
-			client << browse_rsc(ACI.resource, new_asset_name)
+			send_rsc(client, ACI.resource, new_asset_name)
 
 			client.sent_assets[new_asset_name] = ACI.hash
 

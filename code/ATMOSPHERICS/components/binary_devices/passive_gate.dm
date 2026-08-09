@@ -23,7 +23,7 @@
 
 	var/flowing = 0	//for icons - becomes zero if the valve closes itself due to regulation mode
 
-	var/frequency = 0
+	var/frequency = ZERO_FREQ
 	var/id = null
 	var/datum/radio_frequency/radio_connection
 
@@ -42,15 +42,15 @@
 	icon_state = (unlocked && flowing)? "on" : "off"
 
 /obj/machinery/atmospherics/binary/passive_gate/update_underlays()
-	if(..())
-		underlays.Cut()
-		var/turf/T = get_turf(src)
-		if(!istype(T))
-			return
-		add_underlay(T, node1, turn(dir, 180))
-		add_underlay(T, node2, dir)
+	..()
+	underlays.Cut()
+	var/turf/T = get_turf(src)
+	if(!istype(T))
+		return
+	add_underlay(T, node1, turn(dir, 180))
+	add_underlay(T, node2, dir)
 
-/obj/machinery/atmospherics/binary/passive_gate/hide(var/i)
+/obj/machinery/atmospherics/binary/passive_gate/hide(i)
 	update_underlays()
 
 /obj/machinery/atmospherics/binary/passive_gate/process()
@@ -144,10 +144,10 @@
 //Radio remote control
 
 /obj/machinery/atmospherics/binary/passive_gate/proc/set_frequency(new_frequency)
-	radio_controller.remove_object(src, frequency)
+	SSradio.remove_object(src, frequency)
 	frequency = new_frequency
 	if(frequency)
-		radio_connection = radio_controller.add_object(src, frequency, radio_filter = RADIO_ATMOSIA)
+		radio_connection = SSradio.add_object(src, frequency, radio_filter = RADIO_ATMOSIA)
 
 /obj/machinery/atmospherics/binary/passive_gate/proc/broadcast_status()
 	if(!radio_connection)
@@ -200,7 +200,7 @@
 	update_icon()
 	return
 
-/obj/machinery/atmospherics/binary/passive_gate/attack_hand(user as mob)
+/obj/machinery/atmospherics/binary/passive_gate/attack_hand(mob/user)
 	if(..())
 		return
 	add_fingerprint(user)
@@ -275,7 +275,7 @@
 	update_icon()
 	add_fingerprint(ui.user)
 
-/obj/machinery/atmospherics/binary/passive_gate/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/machinery/atmospherics/binary/passive_gate/attackby(obj/item/W as obj, mob/user as mob)
 	if (!W.has_tool_quality(TOOL_WRENCH))
 		return ..()
 	if (unlocked)
@@ -287,12 +287,12 @@
 		return 1
 	playsound(src, W.usesound, 50, 1)
 	to_chat(user, span_notice("You begin to unfasten \the [src]..."))
-	if (do_after(user, 40 * W.toolspeed))
+	if (do_after(user, 40 * W.toolspeed, target = src))
 		user.visible_message( \
 			span_infoplain(span_bold("\The [user]") + " unfastens \the [src]."), \
 			span_notice("You have unfastened \the [src]."), \
 			"You hear ratchet.")
-		deconstruct()
+		atom_deconstruct()
 
 #undef REGULATE_NONE
 #undef REGULATE_INPUT

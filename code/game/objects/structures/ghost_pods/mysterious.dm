@@ -12,10 +12,11 @@
 /obj/structure/ghost_pod/manual/corgi/trigger()
 	..(span_warning("\The [usr] places their hand on the rune!"), "is attempting to summon a corgi.")
 
-/obj/structure/ghost_pod/manual/corgi/create_occupant(var/mob/M)
+/obj/structure/ghost_pod/manual/corgi/create_occupant(mob/M)
 	lightning_strike(get_turf(src), cosmetic = TRUE)
 	density = FALSE
 	var/mob/living/simple_mob/animal/passive/dog/corgi/R = new(get_turf(src))
+	// R.has_hands = TRUE // Downstream
 	if(M.mind)
 		M.mind.transfer_to(R)
 	to_chat(M, span_notice("You are a <b>Corgi</b>! Woof!"))
@@ -37,7 +38,7 @@
 /obj/structure/ghost_pod/manual/cursedblade/trigger()
 	..(span_warning("\The [usr] attempts to pull out the sword!"), "is activating a cursed blade.")
 
-/obj/structure/ghost_pod/manual/cursedblade/create_occupant(var/mob/M)
+/obj/structure/ghost_pod/manual/cursedblade/create_occupant(mob/M)
 	density = FALSE
 	var/obj/item/melee/cursedblade/R = new(get_turf(src))
 	to_chat(M, span_notice("You are a " + span_bold("Cursed Sword") + ", discovered by a hapless explorer. \

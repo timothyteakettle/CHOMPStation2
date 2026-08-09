@@ -4,7 +4,6 @@
 /obj/item/gun/energy/sizegun
 	name = "size gun" //I have no idea why this was called shrink ray when this increased and decreased size.
 	desc = "A highly advanced ray gun with a knob on the side to adjust the size you desire. Warning: Do not insert into mouth."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "sizegun-shrink100"
 	item_state = "sizegun"
 	var/initial_icon_state = "sizegun"
@@ -12,7 +11,6 @@
 	fire_sound = 'sound/weapons/wave.ogg'
 	charge_cost = 240
 	projectile_type = /obj/item/projectile/beam/sizelaser
-	origin_tech = list(TECH_BLUESPACE = 4)
 	modifystate = "sizegun-shrink"
 	battery_lock = 1
 	var/backfire = 0
@@ -30,7 +28,9 @@
 	verbs += /obj/item/gun/energy/sizegun/proc/spin_dial
 
 /obj/item/gun/energy/sizegun/attack_self(mob/user)
-	. = ..()
+	. = ..(user)
+	if(.)
+		return TRUE
 	select_size(user)
 
 /obj/item/gun/energy/sizegun/proc/spin_dial()
@@ -52,17 +52,17 @@
 	set category = "Object"
 	set src in view(1)
 
-	var/size_select = tgui_input_number(user, "Put the desired size (25-200%), (1-600%) in dormitory areas.", "Set Size", size_set_to * 100, 600, 1)
+	var/size_select = tgui_input_number(user, "Put the desired size (25-200%), (1-600%) in dormitory areas.", "Set Size", size_set_to * 100, RESIZE_MAXIMUM_DORMS * 100, RESIZE_MINIMUM_DORMS * 100)
 	if(!size_select)
 		return //cancelled
 	//We do valid resize testing in actual firings because people move after setting these things.
 	//Just a basic clamp here to the valid ranges.
-	size_set_to = clamp((size_select/100), RESIZE_MINIMUM_DORMS, RESIZE_MAXIMUM_DORMS)
+	size_set_to = clamp((size_select / 100), RESIZE_MINIMUM_DORMS, RESIZE_MAXIMUM_DORMS)
 	to_chat(usr, span_notice("You set the size to [size_select]%"))
 	if(size_set_to < RESIZE_MINIMUM || size_set_to > RESIZE_MAXIMUM)
 		to_chat(usr, span_notice("Note: Resizing limited to 25-200% automatically while outside dormatory areas.")) //hint that we clamp it in resize
 
-/obj/item/gun/energy/sizegun/update_icon(var/ignore_inhands)
+/obj/item/gun/energy/sizegun/update_icon(ignore_inhands)
 	var/grow_mode = "shrink"
 	if(size_set_to > 1)
 		grow_mode = "grow"
@@ -128,9 +128,10 @@
 	set category = "Object"
 	set src in view(1)
 
-	var/size_select = tgui_input_number(user, "Put the desired size (1-600%)", "Set Size", size_set_to * 100, 600, 1)
+	var/size_select = tgui_input_number(user, "Put the desired size (1-600%)", "Set Size", size_set_to * 100, RESIZE_MAXIMUM_DORMS * 100, RESIZE_MINIMUM_DORMS * 100)
 	if(!size_select)
 		return //cancelled
+	size_set_to = clamp((size_select / 100), RESIZE_MINIMUM_DORMS, RESIZE_MAXIMUM_DORMS)
 	to_chat(usr, span_notice("You set the size to [size_select]%"))
 
 /obj/item/gun/energy/sizegun/afterattack(atom/A, mob/living/user, adjacent, params)
@@ -150,7 +151,7 @@
 	else
 		return ..()
 
-/obj/item/gun/energy/sizegun/attack(atom/A, mob/living/user, adjacent, params)
+/obj/item/gun/energy/sizegun/attack(mob/living/A, mob/living/user, target_zone, attack_modifier)
 	if(backfire)
 		if(prob(50))
 			to_chat(user, span_notice("\The [src] backfires and consumes its entire charge!"))
@@ -159,14 +160,14 @@
 			var/mob/living/M = loc // TGMC Ammo HUD
 			if(istype(M)) // TGMC Ammo HUD
 				M?.hud_used.update_ammo_hud(M, src)
-			return
+			return ITEM_INTERACT_SUCCESS
 		else
 			return ..()
 	else
 		return ..()
 
 
-/obj/item/gun/energy/sizegun/attackby(var/obj/item/A as obj, mob/user as mob)
+/obj/item/gun/energy/sizegun/attackby(obj/item/A as obj, mob/user as mob)
 	if(A.has_tool_quality(TOOL_WIRECUTTER))
 		if(backfire)
 			to_chat(user, span_warning("You repair the damage to the \the [src]."))
@@ -202,7 +203,7 @@
 	tracer_type = /obj/effect/projectile/tracer/xray
 	impact_type = /obj/effect/projectile/impact/xray
 
-/obj/item/projectile/beam/sizelaser/on_hit(var/atom/target)
+/obj/item/projectile/beam/sizelaser/on_hit(atom/target)
 	var/mob/living/M = target
 	var/ignoring_prefs = (target == firer ? TRUE : FALSE) // Resizing yourself
 	if(istype(M))
@@ -211,13 +212,13 @@
 			if(istype(H.gloves, /obj/item/clothing/gloves/bluespace))
 				M.visible_message(span_warning("\The [H]'s bracelet flashes and absorbs the beam!"),span_notice("Your bracelet flashes and absorbs the beam!"))
 				return
-		if(!M.resize(set_size, uncapped = M.has_large_resize_bounds(), ignore_prefs = ignoring_prefs))
+		if(!M.resize(set_size, uncapped = M.has_large_resize_bounds(), ignore_prefs = ignoring_prefs, allow_stripping = TRUE))
 			to_chat(M, span_blue("The beam fires into your body, changing your size!"))
 		M.update_icon()
 		return
 	return 1
 
-/obj/item/projectile/beam/sizelaser/admin/on_hit(var/atom/target)
+/obj/item/projectile/beam/sizelaser/admin/on_hit(atom/target)
 	var/mob/living/M = target
 
 	if(istype(M))

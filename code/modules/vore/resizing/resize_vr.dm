@@ -4,7 +4,7 @@
 	var/step_mechanics_pref = TRUE		// Allow participation in macro-micro step mechanics
 	var/pickup_pref = TRUE				// Allow participation in macro-micro pickup mechanics
 	var/center_offset = 0.5				// Center offset for uneven scaling symmetry.
-	var/offset_override = FALSE			// Pref toggle for center offset.
+	var/offset_override = TRUE			// Pref toggle for center offset.
 
 /mob/living
 	var/holder_default
@@ -19,7 +19,7 @@
 	holder_type = /obj/item/holder/micro
 
 // The reverse lookup of player_sizes_list, number to name.
-/proc/player_size_name(var/size_multiplier)
+/proc/player_size_name(size_multiplier)
 	// (This assumes list is sorted big->small)
 	for(var/N in GLOB.player_sizes_list)
 		. = N // So we return the smallest if we get to the end
@@ -50,13 +50,13 @@
  * but in the future we may also incorporate the "mob_size", so that
  * a macro mouse is still only effectively "normal" or a micro dragon is still large etc.
  */
-/mob/proc/get_effective_size(var/micro = FALSE)
+/mob/proc/get_effective_size(micro = FALSE)
 	return 100000 //Whatever it is, it's too big to pick up, or it's a ghost, or something.
 
-/mob/living/get_effective_size(var/micro = FALSE)
+/mob/living/get_effective_size(micro = FALSE)
 	return size_multiplier
 
-/mob/living/carbon/human/get_effective_size(var/micro = FALSE)		// Set micro to TRUE for interactions where you're small, to FALSE for ones where you're large.
+/mob/living/carbon/human/get_effective_size(micro = FALSE)		// Set micro to TRUE for interactions where you're small, to FALSE for ones where you're large.
 	var/effective_size = size_multiplier
 	if(micro)
 		effective_size += species.micro_size_mod
@@ -89,8 +89,9 @@
  * * uncapped - CHANGE_ME. Default: FALSE
  * * ignore_prefs - CHANGE_ME. Default: FALSE
  * * aura_animation - CHANGE_ME. Default: TRUE
+ * * allow_stripping - CHANGE_ME.  Default: FALSE
  */
-/mob/living/proc/resize(var/new_size, var/animate = TRUE, var/uncapped = FALSE, var/ignore_prefs = FALSE, var/aura_animation = FALSE) //CHOMPEdit - Disable aura_animation. Too expensive for something you can't even see.
+/mob/living/proc/resize(new_size, animate = TRUE, uncapped = FALSE, ignore_prefs = FALSE, aura_animation = FALSE, allow_stripping = FALSE) //CHOMPEdit - Disable aura_animation. Too expensive for something you can't even see.
 	if(!uncapped)
 		if((z in using_map.station_levels) && CONFIG_GET(flag/pixel_size_limit))
 			var/size_diff = ((runechat_y_offset() / size_multiplier) * new_size) // This returns 32 multiplied with the new size
@@ -128,12 +129,12 @@
 			var/datum/species/S = H.species
 			special_x = S.icon_scale_x
 			special_y = S.icon_scale_y
-			if(fuzzy || offset_override) //CHOMPEdit Start
+			if(fuzzy || offset_override)
 				center_offset = 0
 			else
 				center_offset = S.center_offset
 		resize.Scale(new_size * icon_scale_x * special_x, new_size * icon_scale_y * special_y) //Change the size of the matrix
-		resize.Translate(center_offset * size_multiplier * icon_scale_x * special_x, (vis_height/2) * (new_size - 1)) //Move the player up in the tile so their feet align with the bottom //CHOMPEdit End
+		resize.Translate(center_offset * size_multiplier * icon_scale_x * special_x, (vis_height/2) * (new_size - 1)) //Move the player up in the tile so their feet align with the bottom
 		animate(src, transform = resize, time = duration) //Animate the player resizing
 
 		if(aura_animation)
@@ -147,10 +148,17 @@
 	else
 		update_transform() //Lame way
 
-/mob/living/carbon/human/resize(var/new_size, var/animate = TRUE, var/uncapped = FALSE, var/ignore_prefs = FALSE, var/aura_animation = FALSE) //CHOMPEdit - Disable aura_animation. Too expensive for something you can't even see.
+/mob/living/carbon/human/resize(new_size, animate = TRUE, uncapped = FALSE, ignore_prefs = FALSE, aura_animation = FALSE, allow_stripping = FALSE) //CHOMPEdit - Disable aura_animation. Too expensive for something you can't even see.
 	if(!resizable && !ignore_prefs)
 		return 1
+	var/previous_scale = size_multiplier
 	. = ..()
+	var/size_difference = previous_scale - size_multiplier
+	if((allow_stripping == TRUE) && (size_difference >= 0.3) || (size_difference <= -0.3))
+		if(size_strip_preference == SIZESTRIP_ITEMS)
+			drop_all_clothing(FALSE)
+		else if(size_strip_preference == SIZESTRIP_ALL)
+			drop_all_clothing(TRUE)
 	if(!ishuman(temporary_form) && isliving(temporary_form))
 		var/mob/living/temp_form = temporary_form
 		temp_form.resize(new_size, animate, uncapped, ignore_prefs, aura_animation)
@@ -162,7 +170,7 @@
 			apply_hud(index, HI)
 
 // Optimize mannequins - never a point to animating or doing HUDs on these.
-/mob/living/carbon/human/dummy/mannequin/resize(var/new_size, var/animate = TRUE, var/uncapped = FALSE, var/ignore_prefs = FALSE, var/aura_animation = TRUE)
+/mob/living/carbon/human/dummy/mannequin/resize(new_size, animate = TRUE, uncapped = FALSE, ignore_prefs = FALSE, aura_animation = TRUE, allow_stripping = FALSE)
 	size_multiplier = new_size
 
 /**
@@ -179,17 +187,10 @@
 	var/new_size = tgui_input_number(src, nagmessage, "Pick a Size", default, 600, 1)
 	if(size_range_check(new_size))
 		resize(new_size/100, uncapped = has_large_resize_bounds(), ignore_prefs = TRUE)
-		if(temporary_form)	//CHOMPEdit - resizing both our forms
+		if(temporary_form)
 			var/mob/living/L = temporary_form
 			L.resize(new_size/100, uncapped = has_large_resize_bounds(), ignore_prefs = TRUE)
-		//CHOMPEDIT - I don't need to be informed every time a prommie changes sizes
-
-/*
-//Add the set_size() proc to usable verbs. By commenting this out, we can leave the proc and hand it to species that need it.
-/hook/living_new/proc/resize_setup(mob/living/H)
-	add_verb(H, /mob/living/proc/set_size)
-	return 1
-*/
+		// log_admin("[key_name(src)] used the resize command in-game to be [new_size]% size. [src ? ADMIN_JMP(src) : "null"]") // CHOMPRemove
 
 /**
  * Attempt to scoop up this mob up into M's hands, if the size difference is large enough.
@@ -197,31 +198,32 @@
  */
 /mob/living/proc/attempt_to_scoop(mob/living/M, mob/living/G, ignore_size = FALSE) //second one is for the Grabber, only exists for animals to self-grab
 	if(src == M)
-		return 0
+		return FALSE
 	if(!(pickup_pref && M.pickup_pref && M.pickup_active))
-		return 0
+		return FALSE
 	if(!(M.a_intent == I_HELP))
-		return 0
+		return FALSE
 	var/size_diff = M.get_effective_size(FALSE) - get_effective_size(TRUE)
 	if(!holder_default && holder_type)
 		holder_default = holder_type
 	if(!istype(M))
-		return 0
+		return FALSE
 	if(isanimal(M))
 		var/mob/living/simple_mob/SA = M
 		if(!SA.has_hands)
-			return 0
+			return FALSE
+		if(mob_size < MOB_SMALL && src == M)
+			return FALSE
 	if(size_diff >= 0.50 || mob_size < MOB_SMALL || size_diff >= get_effective_size() || ignore_size)
 		if(buckled)
 			to_chat(src,span_notice("You have to unbuckle \the [src] before you pick them up."))
-			return 0
+			return FALSE
 		holder_type = /obj/item/holder/micro
 		var/obj/item/holder/m_holder = get_scooped(M, G)
-		holder_type = holder_default
 		if (m_holder)
-			return 1
+			return TRUE
 		else
-			return 0; // Unable to scoop, let other code run
+			return FALSE; // Unable to scoop, let other code run
 
 #define STEP_TEXT_OWNER(x) "[replacetext(x,"%prey",tmob)]"
 #define STEP_TEXT_PREY(x) "[replacetext(x,"%owner",src)]"
@@ -349,13 +351,13 @@
 			return TRUE
 
 	var/size_damage_multiplier = size_multiplier - tmob.size_multiplier
-	// This technically means that I_GRAB will set this value to the same as I_HARM, but
+	// This technically means that I_GRAB will set this value to the same as I_HURT, but
 	// I_GRAB won't ever trigger the damage-giving code, so it doesn't matter.
-	// I_HARM: Rand 1-3 multiplied by 1 min or 1.75 max. 1 min 5.25 max damage to each limb.
+	// I_HURT: Rand 1-3 multiplied by 1 min or 1.75 max. 1 min 5.25 max damage to each limb.
 	// I_DISARM: Perform some HALLOSS damage to the smaller.
 	//           Since stunned is broken, let's do this. Rand 15-30 multiplied by 1 min or 1.75 max. 15 holo to 52.5 holo, depending on RNG and size differnece.
 	var/damage = (a_intent == I_DISARM) ? (rand(15, 30) * size_damage_multiplier) : (rand(1, 3) * size_damage_multiplier)
-	// I_HARM only
+	// I_HURT only
 	var/calculated_damage = damage / 2 //This will sting, but not kill. Does .5 to 2.625 damage, randomly, to each limb.
 
 	var/message_pred = null

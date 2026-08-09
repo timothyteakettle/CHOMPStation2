@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useBackend } from 'tgui/backend';
-import { Button, Input, Section } from 'tgui-core/components';
+import { Button, Input, Section, Stack } from 'tgui-core/components';
 
 import { ColorPicker, ColorType } from '../../helper_components';
-import {
-  type GeneralData,
-  type GeneralDataConstant,
-  type GeneralDataStatic,
+import type {
+  GeneralData,
+  GeneralDataConstant,
+  GeneralDataStatic,
 } from '../data';
 import { BodyPopup } from '../SubtabBody';
 import { EarsImageButton } from './Ears';
@@ -20,6 +20,7 @@ export const EarsSecondaryDimmer = (props: {
 }) => {
   const { act } = useBackend();
   const { setShow, data, serverData, staticData } = props;
+  const { available_ear_styles = [] } = staticData;
 
   const colors = data.ear_secondary_colors;
 
@@ -30,7 +31,7 @@ export const EarsSecondaryDimmer = (props: {
 
   const [search, setSearch] = useState('');
 
-  const styles = staticData.available_ear_styles.filter((x) =>
+  const styles = available_ear_styles.filter((x) =>
     search ? x.toLowerCase().includes(search.toLowerCase()) : true,
   );
   styles.sort();
@@ -39,59 +40,68 @@ export const EarsSecondaryDimmer = (props: {
     <Section
       title="Horns"
       fill
-      scrollable
-      mt={1}
       buttons={
         <Button onClick={() => setShow(BodyPopup.None)} color="bad">
           Close
         </Button>
       }
     >
-      <ColorPicker
-        onClick={(type: ColorType) => {
-          switch (type) {
-            case ColorType.First:
-              act('set_ear_secondary_color', { ear_secondary_color: 1 });
-              break;
-            case ColorType.Second:
-              act('set_ear_secondary_color', { ear_secondary_color: 2 });
-              break;
-            case ColorType.Third:
-              act('set_ear_secondary_color', { ear_secondary_color: 3 });
-              break;
-            case ColorType.Alpha:
-              act('secondary_ears_alpha');
-          }
-        }}
-        color_one={color1 || '#FFFFFF'}
-        color_two={color2 || '#FFFFFF'}
-        color_three={color3 || '#FFFFFF'}
-        alpha={alpha}
-      />
-      <Input
-        fluid
-        expensive
-        onChange={(val) => setSearch(val)}
-        value={search}
-        mt={1}
-      />
-
-      {styles.map((style) => (
-        <EarsImageButton
-          key={style}
-          style={style}
-          color={color1}
-          serverData={serverData}
-          tooltip={style}
-          selected={
-            style === data.ear_secondary_style ||
-            (data.ear_secondary_style === null && style === 'None')
-          }
-          onClick={() => act('set_ear_secondary_style', { ear_style: style })}
-        >
-          {style}
-        </EarsImageButton>
-      ))}
+      <Stack vertical fill>
+        <Stack.Item>
+          <ColorPicker
+            onClick={(type: ColorType) => {
+              switch (type) {
+                case ColorType.First:
+                  act('set_ear_secondary_color', { ear_secondary_color: 1 });
+                  break;
+                case ColorType.Second:
+                  act('set_ear_secondary_color', { ear_secondary_color: 2 });
+                  break;
+                case ColorType.Third:
+                  act('set_ear_secondary_color', { ear_secondary_color: 3 });
+                  break;
+                case ColorType.Alpha:
+                  act('secondary_ears_alpha');
+              }
+            }}
+            color_one={color1 || '#FFFFFF'}
+            color_two={color2 || '#FFFFFF'}
+            color_three={color3 || '#FFFFFF'}
+            alpha={alpha}
+          />
+        </Stack.Item>
+        <Stack.Item>
+          <Input
+            fluid
+            expensive
+            placeholder="Search for horns..."
+            onChange={(val) => setSearch(val)}
+            value={search}
+          />
+        </Stack.Item>
+        <Stack.Item grow>
+          <Section fill scrollable>
+            {styles.map((style) => (
+              <EarsImageButton
+                key={style}
+                style={style}
+                color={color1}
+                serverData={serverData}
+                tooltip={style}
+                selected={
+                  style === data.ear_secondary_style ||
+                  (data.ear_secondary_style === null && style === 'None')
+                }
+                onClick={() =>
+                  act('set_ear_secondary_style', { ear_style: style })
+                }
+              >
+                {style}
+              </EarsImageButton>
+            ))}
+          </Section>
+        </Stack.Item>
+      </Stack>
     </Section>
   );
 };

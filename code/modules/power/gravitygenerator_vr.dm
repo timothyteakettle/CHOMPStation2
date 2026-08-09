@@ -38,10 +38,6 @@ GLOBAL_LIST_EMPTY(gravity_generators)
 	if(prob(20))
 		set_broken()
 
-/obj/machinery/gravity_generator/tesla_act(power, tesla_flags)
-	..()
-	qdel(src)//like the singulo, tesla deletes it. stops it from exploding over and over
-
 /obj/machinery/gravity_generator/update_icon()
 	icon_state = "[get_status()]_[sprite_number]"
 
@@ -330,7 +326,6 @@ GLOBAL_LIST_EMPTY(gravity_generators)
 	update_list()
 	update_gravity(new_state)
 	update_icon()
-	src.updateUsrDialog()
 
 	if(alert)
 		shake_everyone()
@@ -354,7 +349,6 @@ GLOBAL_LIST_EMPTY(gravity_generators)
 			if(charge_count % 4 == 0 && prob(75)) // Let them know it is charging/discharging.
 				playsound(src, 'sound/effects/empulse.ogg', 100, 1)
 
-			updateDialog()
 			if(prob(25)) // To help stop "Your clothes feel warm." spam.
 				pulse_radiation()
 
@@ -380,16 +374,23 @@ GLOBAL_LIST_EMPTY(gravity_generators)
 
 
 /obj/machinery/gravity_generator/main/proc/pulse_radiation()
-	SSradiation.radiate(src, 200)
+	radiation_pulse(
+		src,
+		max_range = 7,
+		threshold = RAD_HEAVY_INSULATION,
+		chance = DEFAULT_RADIATION_CHANCE * 2,
+		minimum_exposure_time = URANIUM_RADIATION_MINIMUM_EXPOSURE_TIME,
+		strength = charge_count * 2
+	)
 
-/obj/machinery/gravity_generator/main/proc/update_gravity(var/on)
+/obj/machinery/gravity_generator/main/proc/update_gravity(on)
 	for(var/area/A in src.areas)
 		A.gravitychange(on)
 
 // Shake everyone on the z level to let them know that gravity was enagaged/disenagaged.
 /obj/machinery/gravity_generator/main/proc/shake_everyone()
 	var/sound/alert_sound = sound('sound/effects/alert.ogg')
-	for(var/mob/M as anything in player_list)
+	for(var/mob/M as anything in GLOB.player_list)
 		if(!(M.z in levels))
 			continue
 		M.update_gravity(M.mob_get_gravity())

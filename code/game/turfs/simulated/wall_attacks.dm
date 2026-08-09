@@ -1,10 +1,8 @@
 //Interactions
-/turf/simulated/wall/proc/toggle_open(var/mob/user)
+/turf/simulated/wall/proc/toggle_open(mob/user)
 
 	if(can_open == WALL_OPENING)
 		return
-
-	SSradiation.resistance_cache.Remove(src)
 
 	if(density)
 		can_open = WALL_OPENING
@@ -43,14 +41,14 @@
 		SSair.mark_for_update(turf)
 
 
-/turf/simulated/wall/proc/update_thermal(var/turf/simulated/source)
+/turf/simulated/wall/proc/update_thermal(turf/simulated/source)
 	if(istype(source))
 		if(density && opacity)
 			source.thermal_conductivity = WALL_HEAT_TRANSFER_COEFFICIENT
 		else
 			source.thermal_conductivity = initial(source.thermal_conductivity)
 
-/turf/simulated/wall/proc/fail_smash(var/mob/user)
+/turf/simulated/wall/proc/fail_smash(mob/user)
 	var/damage_lower = 25
 	var/damage_upper = 75
 	if(isanimal(user))
@@ -65,7 +63,7 @@
 	user.do_attack_animation(src)
 	take_damage(rand(damage_lower,damage_upper))
 
-/turf/simulated/wall/proc/success_smash(var/mob/user)
+/turf/simulated/wall/proc/success_smash(mob/user)
 	to_chat(user, span_danger("You smash through the wall!"))
 	user.do_attack_animation(src)
 	if(isanimal(user))
@@ -74,7 +72,7 @@
 	spawn(1)
 		dismantle_wall(1)
 
-/turf/simulated/wall/proc/try_touch(var/mob/user, var/rotting)
+/turf/simulated/wall/proc/try_touch(mob/user, rotting)
 
 	if(rotting)
 		if(reinf_material)
@@ -92,7 +90,7 @@
 		toggle_open(user)
 	return 0
 
-/turf/simulated/wall/attack_ai(var/mob/user)
+/turf/simulated/wall/attack_ai(mob/user)
 	if(!Adjacent(user))
 		return
 	if(!isrobot((user)))
@@ -100,8 +98,9 @@
 	var/rotting = (locate(/obj/effect/overlay/wallrot) in src)
 	try_touch(user, rotting)
 
-/turf/simulated/wall/attack_hand(var/mob/user)
-
+/turf/simulated/wall/attack_hand(mob/user)
+	if(!Adjacent(user))
+		return
 	radiate()
 	add_fingerprint(user)
 	user.setClickCooldown(user.get_attack_speed())
@@ -115,7 +114,7 @@
 
 	try_touch(user, rotting)
 
-/turf/simulated/wall/attack_generic(var/mob/user, var/damage, var/attack_message)
+/turf/simulated/wall/attack_generic(mob/user, damage, attack_message)
 
 	radiate()
 	user.setClickCooldown(user.get_attack_speed())
@@ -134,7 +133,7 @@
 		return success_smash(user)
 	return fail_smash(user)
 
-/turf/simulated/wall/attackby(var/obj/item/W, var/mob/user, attack_modifier, click_parameters)
+/turf/simulated/wall/attackby(obj/item/W, mob/user, attack_modifier, click_parameters)
 
 	user.setClickCooldown(user.get_attack_speed(W))
 
@@ -155,8 +154,15 @@
 
 	if(W)
 		radiate()
-		if(is_hot(W))
-			burn(is_hot(W))
+		if(W.is_hot())
+			var/burn_temp = 1000
+			if(istype(W, /obj/item/flame/lighter))
+				burn_temp = 1500
+			if(istype(W, /obj/item/melee/energy))
+				burn_temp = 3500
+			if(istype(W, /obj/item/weldingtool) || istype(W, /obj/item/tool/transforming) || istype(W, /obj/item/pickaxe/plasmacutter))
+				burn_temp = 3800
+			burn(burn_temp)
 
 	if(istype(W, /obj/item/electronic_assembly/wallmount))
 		var/obj/item/electronic_assembly/wallmount/IC = W
@@ -240,7 +246,7 @@
 		if(WT.remove_fuel(0,user))
 			to_chat(user, span_notice("You start repairing the damage to [src]."))
 			playsound(src, WT.usesound, 100, 1)
-			if(do_after(user, max(5, damage / 5) * WT.toolspeed) && WT && WT.isOn())
+			if(do_after(user, max(5, damage / 5) * WT.toolspeed, target = src) && WT && WT.isOn())
 				to_chat(user, span_notice("You finish repairing the damage to [src]."))
 				take_damage(-damage)
 		else
@@ -287,7 +293,7 @@
 			if(cut_delay < 0)
 				cut_delay = 0
 
-			if(!do_after(user,cut_delay * W.toolspeed))
+			if(!do_after(user, cut_delay * W.toolspeed, target = src))
 				return
 
 			to_chat(user, span_notice("You remove the outer plating."))
@@ -310,7 +316,7 @@
 				if (W.has_tool_quality(TOOL_SCREWDRIVER))
 					to_chat(user, span_notice("You begin removing the support lines."))
 					playsound(src, W.usesound, 100, 1)
-					if(!do_after(user,40 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 5)
+					if(!do_after(user, 4 SECONDS * W.toolspeed, target = src) || !istype(src, /turf/simulated/wall) || construction_stage != 5)
 						return
 					construction_stage = 4
 					user.update_examine_panel(src)
@@ -340,7 +346,7 @@
 				if(cut_cover)
 					to_chat(user, span_notice("You begin slicing through the metal cover."))
 					playsound(src, W.usesound, 100, 1)
-					if(!do_after(user, 60 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 4)
+					if(!do_after(user, 6 SECONDS * W.toolspeed, target = src) || !istype(src, /turf/simulated/wall) || construction_stage != 4)
 						return
 					construction_stage = 3
 					user.update_examine_panel(src)
@@ -350,7 +356,7 @@
 				else if (W.has_tool_quality(TOOL_SCREWDRIVER))
 					to_chat(user, span_notice("You begin screwing down the support lines."))
 					playsound(src, W.usesound, 100, 1)
-					if(!do_after(user,40 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 4)
+					if(!do_after(user, 4 SECONDS * W.toolspeed, target = src) || !istype(src, /turf/simulated/wall) || construction_stage != 4)
 						return
 					construction_stage = 5
 					user.update_examine_panel(src)
@@ -361,7 +367,7 @@
 				if (W.has_tool_quality(TOOL_CROWBAR))
 					to_chat(user, span_notice("You struggle to pry off the cover."))
 					playsound(src, W.usesound, 100, 1)
-					if(!do_after(user,100 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 3)
+					if(!do_after(user, 10 SECONDS * W.toolspeed, target = src) || !istype(src, /turf/simulated/wall) || construction_stage != 3)
 						return
 					construction_stage = 2
 					user.update_examine_panel(src)
@@ -372,7 +378,7 @@
 				if (W.has_tool_quality(TOOL_WRENCH))
 					to_chat(user, span_notice("You start loosening the anchoring bolts which secure the support rods to their frame."))
 					playsound(src, W.usesound, 100, 1)
-					if(!do_after(user,40 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 2)
+					if(!do_after(user, 4 SECONDS * W.toolspeed, target = src) || !istype(src, /turf/simulated/wall) || construction_stage != 2)
 						return
 					construction_stage = 1
 					user.update_examine_panel(src)
@@ -393,7 +399,7 @@
 				if(cut_cover)
 					to_chat(user, span_notice("You begin slicing through the support rods."))
 					playsound(src, W.usesound, 100, 1)
-					if(!do_after(user,70 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 1)
+					if(!do_after(user, 7 SECONDS * W.toolspeed, target = src) || !istype(src, /turf/simulated/wall) || construction_stage != 1)
 						return
 					construction_stage = 0
 					user.update_examine_panel(src)
@@ -404,7 +410,7 @@
 				if(W.has_tool_quality(TOOL_CROWBAR))
 					to_chat(user, span_notice("You struggle to pry off the outer sheath."))
 					playsound(src, W.usesound, 100, 1)
-					if(!do_after(user,100 * W.toolspeed) || !istype(src, /turf/simulated/wall) || !user || !W || !T )
+					if(!do_after(user, 10 SECONDS * W.toolspeed, target = src) || !istype(src, /turf/simulated/wall) || !user || !W || !T )
 						return
 					if(user.loc == T && user.get_active_hand() == W )
 						to_chat(user, span_notice("You pry off the outer sheath."))

@@ -52,7 +52,10 @@ a creative player the means to solve many problems.  Circuits are held inside an
 		qdel(A)
 	. = ..()
 
-/obj/item/integrated_circuit/emp_act(severity)
+/obj/item/integrated_circuit/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	for(var/datum/integrated_io/io in inputs + outputs + activators)
 		io.scramble()
 
@@ -68,7 +71,7 @@ a creative player the means to solve many problems.  Circuits are held inside an
 	if(!check_interactivity(M))
 		return
 
-	var/input = sanitizeSafe(tgui_input_text(M, "What do you want to name the circuit?", "Rename", src.name, MAX_NAME_LEN), MAX_NAME_LEN)
+	var/input = sanitizeSafe(tgui_input_text(M, "What do you want to name the circuit?", "Rename", src.name, MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 	if(src && input && assembly.check_interactivity(M))
 		to_chat(M, span_notice("The circuit '[src.name]' is now labeled '[input]'."))
 		displayed_name = input
@@ -105,13 +108,13 @@ a creative player the means to solve many problems.  Circuits are held inside an
 	var/list/outputs_list = list()
 	var/list/activators_list = list()
 	for(var/datum/integrated_io/io in inputs)
-		inputs_list.Add(list(tgui_pin_data(io)))
+		UNTYPED_LIST_ADD(inputs_list, tgui_pin_data(io))
 
 	for(var/datum/integrated_io/io in outputs)
-		outputs_list.Add(list(tgui_pin_data(io)))
+		UNTYPED_LIST_ADD(outputs_list, tgui_pin_data(io))
 
 	for(var/datum/integrated_io/io in activators)
-		activators_list.Add(list(tgui_pin_data(io)))
+		UNTYPED_LIST_ADD(activators_list, tgui_pin_data(io))
 
 	data["inputs"] = inputs_list
 	data["outputs"] = outputs_list
@@ -130,12 +133,12 @@ a creative player the means to solve many problems.  Circuits are held inside an
 	pindata["ref"] = REF(io)
 	var/list/linked_list = list()
 	for(var/datum/integrated_io/linked in io.linked)
-		linked_list.Add(list(list(
+		UNTYPED_LIST_ADD(linked_list, list(
 			"ref" = REF(linked),
 			"name" = linked.name,
 			"holder_ref" = REF(linked.holder),
 			"holder_name" = linked.holder.displayed_name,
-		)))
+		))
 	pindata["linked"] = linked_list
 	return pindata
 
@@ -254,7 +257,7 @@ a creative player the means to solve many problems.  Circuits are held inside an
 		return TRUE // Battery has enough.
 	return FALSE // Not enough power.
 
-/obj/item/integrated_circuit/proc/check_then_do_work(var/ignore_power = FALSE)
+/obj/item/integrated_circuit/proc/check_then_do_work(ignore_power = FALSE)
 	if(world.time < next_use) 	// All intergrated circuits have an internal cooldown, to protect from spam.
 		return
 	if(power_draw_per_use && !ignore_power)

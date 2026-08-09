@@ -72,6 +72,11 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	var/strength = null
 	var/desc_holder = null
 
+/obj/structure/particle_accelerator/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/climbable)
+	AddElement(/datum/element/rotatable)
+
 /obj/structure/particle_accelerator/Destroy()
 	construction_state = 0
 	if(master)
@@ -88,28 +93,6 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	..()
 	return
 
-
-/obj/structure/particle_accelerator/verb/rotate_clockwise()
-	set name = "Rotate Clockwise"
-	set category = "Object"
-	set src in oview(1)
-
-	if (src.anchored || usr:stat)
-		to_chat(usr, "It is fastened to the floor!")
-		return 0
-	src.set_dir(turn(src.dir, 270))
-	return 1
-
-/obj/structure/particle_accelerator/verb/rotate_counterclockwise()
-	set name = "Rotate Counter Clockwise"
-	set category = "Object"
-	set src in oview(1)
-
-	if (src.anchored || usr:stat)
-		to_chat(usr, "It is fastened to the floor!")
-		return 0
-	src.set_dir(turn(src.dir, 90))
-	return 1
 
 /obj/structure/particle_accelerator/examine(mob/user)
 	. = ..()
@@ -173,7 +156,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 		return 0
 
 
-/obj/structure/particle_accelerator/proc/report_ready(var/obj/O)
+/obj/structure/particle_accelerator/proc/report_ready(obj/O)
 	if(O && (O == master))
 		if(construction_state >= 3)
 			return 1
@@ -186,7 +169,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	return 0
 
 
-/obj/structure/particle_accelerator/proc/connect_master(var/obj/O)
+/obj/structure/particle_accelerator/proc/connect_master(obj/O)
 	if(O && istype(O,/obj/machinery/particle_accelerator/control_box))
 		if(O.dir == src.dir)
 			master = O
@@ -194,7 +177,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	return 0
 
 
-/obj/structure/particle_accelerator/proc/process_tool_hit(var/obj/item/O, var/mob/user)
+/obj/structure/particle_accelerator/proc/process_tool_hit(obj/item/O, mob/user)
 	if(!(O) || !(user))
 		return 0
 	if(!ismob(user) || !isobj(O))
@@ -263,28 +246,10 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	var/strength = 0
 	var/desc_holder = null
 
-
-/obj/machinery/particle_accelerator/verb/rotate_clockwise()
-	set name = "Rotate Clockwise"
-	set category = "Object"
-	set src in oview(1)
-
-	if (src.anchored || usr:stat)
-		to_chat(usr, "It is fastened to the floor!")
-		return 0
-	src.set_dir(turn(src.dir, 270))
-	return 1
-
-/obj/machinery/particle_accelerator/verb/rotate_counterclockwise()
-	set name = "Rotate Counter-Clockwise"
-	set category = "Object"
-	set src in oview(1)
-
-	if (src.anchored || usr:stat)
-		to_chat(usr, "It is fastened to the floor!")
-		return 0
-	src.set_dir(turn(src.dir, 90))
-	return 1
+/obj/machinery/particle_accelerator/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/climbable)
+	AddElement(/datum/element/rotatable)
 
 /obj/machinery/particle_accelerator/update_icon()
 	return
@@ -328,7 +293,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 /obj/machinery/particle_accelerator/proc/update_state()
 	return 0
 
-/obj/machinery/particle_accelerator/proc/process_tool_hit(var/obj/item/O, var/mob/user)
+/obj/machinery/particle_accelerator/proc/process_tool_hit(obj/item/O, mob/user)
 	if(!(O) || !(user))
 		return 0
 	if(!ismob(user) || !isobj(O))
@@ -381,3 +346,12 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 			update_use_power(USE_POWER_IDLE)
 		update_icon()
 		return 1
+
+/obj/structure/particle_accelerator/end_cap/pre_mapped
+	construction_state = 3
+	anchored = TRUE
+
+/obj/structure/particle_accelerator/end_cap/pre_mapped/Initialize(mapload)
+	. = ..()
+	update_state()
+	update_icon()

@@ -45,7 +45,7 @@ SUBSYSTEM_DEF(pathfinder)
 		instance.ss13_with_access = potential_id.access?.Copy()
 	return run_pathfinding(instance)
 
-/datum/controller/subsystem/pathfinder/proc/default_circuit_pathfinding(obj/item/electronic_assembly/assembly, turf/goal, min_dist = 1, max_path = 128, var/list/access)
+/datum/controller/subsystem/pathfinder/proc/default_circuit_pathfinding(obj/item/electronic_assembly/assembly, turf/goal, min_dist = 1, max_path = 128, list/access)
 	var/datum/pathfinding/jps/instance = new(assembly, get_turf(assembly), goal, min_dist, max_path)
 	instance.ss13_with_access = access.Copy()
 	return jps_output_turfs(run_pathfinding(instance))
@@ -63,21 +63,21 @@ SUBSYSTEM_DEF(pathfinder)
 			stoplag(1)
 			if(world.time > started + PATHFINDER_TIMEOUT)
 				stack_trace("pathfinder timeout; check debug logs.")
-				log_debug("pathfinder timeout of instance with debug variables [instance.debug_log_string()]")
+				log_runtime("pathfinder timeout of instance with debug variables [instance.debug_log_string()]")
 				return
 	else
 		while(pathfinding_mutex)
 			stoplag(3)
 			if(world.time > started + PATHFINDER_TIMEOUT)
 				stack_trace("pathfinder timeout; check debug logs.")
-				log_debug("pathfinder timeout of instance with debug variables [instance.debug_log_string()]")
+				log_runtime("pathfinder timeout of instance with debug variables [instance.debug_log_string()]")
 				return
 	--pathfinding_blocked
 	pathfinding_mutex = TRUE
 	. = instance.search()
 	if(world.time > started + PATHFINDER_TIMEOUT)
 		stack_trace("pathfinder timeout; check debug logs.")
-		log_debug("pathfinder timeout of instance with debug variables [instance.debug_log_string()]")
+		log_runtime("pathfinder timeout of instance with debug variables [instance.debug_log_string()]")
 	pathfinding_mutex = FALSE
 
 #undef PATHFINDER_TIMEOUT

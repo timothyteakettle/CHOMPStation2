@@ -10,7 +10,7 @@
 	throw_range = 20
 	drop_sound = 'sound/items/drop/metalweapon.ogg'
 	pickup_sound = 'sound/items/pickup/metalweapon.ogg'
-	matter = list(MAT_STEEL = SHEET_MATERIAL_AMOUNT / 2)
+	matter = list(MAT_STEEL = REAGENTS_PER_ROD)
 	max_amount = 60
 	attack_verb = list("hit", "bludgeoned", "whacked")
 
@@ -28,7 +28,7 @@
 
 /obj/item/stack/rods/Initialize(mapload)
 	. = ..()
-	recipes = rods_recipes
+	recipes = GLOB.rods_recipes
 	update_icon()
 
 /obj/item/stack/rods/update_icon()
@@ -37,10 +37,6 @@
 		icon_state = "rods-[amount]"
 	else
 		icon_state = "rods"
-
-var/global/list/datum/stack_recipe/rods_recipes = list( \
-	new/datum/stack_recipe("grille", /obj/structure/grille, 2, time = 10, one_per_turf = 1, on_floor = 0),
-	new/datum/stack_recipe("catwalk", /obj/structure/catwalk, 2, time = 80, one_per_turf = 1, on_floor = 1))
 
 /obj/item/stack/rods/attackby(obj/item/W, mob/user)
 	if(W.has_tool_quality(TOOL_WELDER))
@@ -74,6 +70,9 @@ var/global/list/datum/stack_recipe/rods_recipes = list( \
 
 	..()
 
+/obj/item/stack/rods/reagents_per_sheet()
+	return REAGENTS_PER_ROD
+
 /*
 /obj/item/stack/rods/attack_self(mob/user)
 	src.add_fingerprint(user)
@@ -97,7 +96,7 @@ var/global/list/datum/stack_recipe/rods_recipes = list( \
 			return
 		to_chat(user, span_notice("Assembling grille..."))
 		in_use = 1
-		if (!do_after(user, 10))
+		if (!do_after(user, 1 SECOND, target = src))
 			in_use = 0
 			return
 		var/obj/structure/grille/F = new /obj/structure/grille/ ( user.loc )

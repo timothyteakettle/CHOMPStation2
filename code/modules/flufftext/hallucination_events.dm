@@ -39,7 +39,7 @@
 								"IT HURTS.",
 								"Your body feels as if it's trying to rip itself open..."
 								)
-	if(prob(20) && our_human.jitteriness < 50)
+	if(prob(20) && our_human.get_jittery() < 50)
 		our_human.make_jittery(120)
 	to_chat(our_human, span_danger(pick(pain_message)))
 
@@ -160,7 +160,7 @@
 
 	our_human.playsound_local(get_turf(our_human), send_sound, vol = 75, channel = CHANNEL_AMBIENCE_FORCED)
 
-/datum/component/hallucinations/proc/secondary_sound(var/sound_path)
+/datum/component/hallucinations/proc/secondary_sound(sound_path)
 	PRIVATE_PROC(TRUE)
 	SHOULD_NOT_OVERRIDE(TRUE)
 	our_human.playsound_local(get_turf(our_human), sound_path, vol = 75, channel = CHANNEL_AMBIENCE_FORCED)

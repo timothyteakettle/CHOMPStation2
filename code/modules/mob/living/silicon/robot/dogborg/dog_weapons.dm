@@ -30,7 +30,6 @@
 	fire_delay = 6
 	force = 5
 	icon_state = "medbeam"
-	icon = 'icons/obj/gun_vr.dmi'
 	accuracy = 100
 	fire_sound = 'sound/weapons/eluger.ogg'
 	self_recharge = 1
@@ -39,7 +38,7 @@
 /obj/item/projectile/beam/medical_cell/borg
 	range = 4
 
-/obj/item/projectile/beam/medical_cell/borg/on_hit(var/mob/living/carbon/human/target)
+/obj/item/projectile/beam/medical_cell/borg/on_hit(mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
 		if(target.stat != DEAD)
 			target.adjustBruteLoss(-3.75)
@@ -66,7 +65,6 @@
 	name = "EW26 Artemis Mounted"
 	desc = "The RayZar EW26 Artemis, also known as the 'phase carbine', is a downsized energy-based weapon specifically designed for use against wildlife. This one has a safety interlock that prevents firing while in proximity to the facility."
 	description_fluff = "RayZar is Ward-Takahashi’s main consumer weapons brand, known for producing and licensing a wide variety of specialist energy weapons of various types and quality primarily for the civilian market."
-	icon = 'icons/obj/gun.dmi'
 	icon_state = "phasecarbine"
 	charge_cost = 160
 	recharge_time = 16

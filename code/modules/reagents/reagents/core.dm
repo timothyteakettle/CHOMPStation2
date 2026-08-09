@@ -1,5 +1,5 @@
 /datum/reagent/blood
-	data = new/list("donor" = null, "viruses" = null, "species" = SPECIES_HUMAN, "blood_DNA" = null, "blood_type" = null, "blood_colour" = "#A10808", "resistances" = null, "trace_chem" = null, REAGENT_ID_ANTIBODIES = list())
+	data = new/list("donor" = null, "viruses" = null, "species" = SPECIES_HUMAN, "blood_DNA" = null, "blood_type" = null, "blood_colour" = "#A10808", "resistances" = null, "trace_chem" = null, REAGENT_ID_ANTIBODIES = list(), "changeling" = FALSE)
 	name = REAGENT_BLOOD
 	id = REAGENT_ID_BLOOD
 	description = "Blood."
@@ -15,7 +15,12 @@
 	glass_name = "tomato juice"
 	glass_desc = "Are you sure this is tomato juice?"
 
-/datum/reagent/blood/initialize_data(var/newdata)
+	supply_conversion_value = REFINERYEXPORT_VALUE_COMMON
+	industrial_use = REFINERYEXPORT_REASON_BIOHAZARD
+	coolant_modifier = 0.25
+
+
+/datum/reagent/blood/initialize_data(newdata)
 	..()
 	if(data && data["blood_colour"])
 		color = data["blood_colour"]
@@ -29,7 +34,7 @@
 		t["viruses"] = v.Copy()
 	return t
 
-/datum/reagent/blood/touch_turf(var/turf/simulated/T)
+/datum/reagent/blood/touch_turf(turf/simulated/T)
 	if(!istype(T) || volume < 3)
 		return
 
@@ -41,8 +46,11 @@
 		var/mob/living/carbon/alien/A = data["donor"]
 		var/obj/effect/decal/cleanable/blood/B = blood_splatter(T, src, 1)
 		B.add_blooddna(A.dna,A)
+	else
+		var/obj/effect/decal/cleanable/blood/B = blood_splatter(T, src, 1)
+		B.add_blooddna(null,null)
 
-/datum/reagent/blood/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/blood/affect_ingest(mob/living/carbon/M, alien, removed)
 
 	var/effective_dose = dose
 	if(issmall(M)) effective_dose *= 2
@@ -80,9 +88,11 @@
 				var/datum/disease/D = ID
 				if((D.spread_flags & DISEASE_SPREAD_SPECIAL) || (D.spread_flags & DISEASE_SPREAD_NON_CONTAGIOUS))
 					continue
-				M.ContractDisease(D)
+				if(M.HasDisease(D))
+					continue
+				D.try_infect(M)
 
-/datum/reagent/blood/affect_touch(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/blood/affect_touch(mob/living/carbon/M, alien, removed)
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		if(H.isSynthetic())
@@ -104,6 +114,9 @@
 /datum/reagent/blood/mix_data(newdata, newamount)
 	if(!data || !newdata)
 		return
+
+	if(newdata["species"] != "synthetic" && (data["changeling"] || newdata["changeling"]))
+		data["changeling"] = TRUE // Spread to other samples as an antag tactic
 
 	if(data["viruses"] || newdata["viruses"])
 		var/list/mix1 = data["viruses"]
@@ -144,7 +157,7 @@
 
 		data["viruses"] = preserve
 
-/datum/reagent/blood/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/blood/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien == IS_SLIME)	//They don't have blood, so it seems weird that they would instantly 'process' the chemical like another species does.
 		affect_ingest(M, alien, removed)
 		return
@@ -162,11 +175,22 @@
 
 			if(!H.isSynthetic() && data["species"] == "synthetic")	// Remember not to inject oil into your veins, it's bad for you.
 				H.reagents.add_reagent(REAGENT_ID_TOXIN, removed * 1.5)
-
 			return
 
 	M.inject_blood(src, volume * volume_mod)
 	remove_self(volume)
+
+/datum/reagent/blood/proc/changling_blood_test(datum/reagents/holder)
+	if(data["changeling"])
+		var/location = get_turf(holder.my_atom)
+		holder.my_atom.visible_message(span_danger("The blood in \the [holder.my_atom] screams and leaps out!"))
+		if(istype(holder.my_atom,/obj/item/reagent_containers/glass))
+			holder.splash(location, holder.total_volume)
+		holder.clear_reagents() // lets be sure it's all gone if it was in something weird instead
+		playsound(holder.my_atom, 'sound/effects/splat.ogg', 50, 1)
+		playsound(holder.my_atom, 'sound/voice/hiss6.ogg', 50, 1)
+		return TRUE
+	return FALSE
 
 /datum/reagent/blood/proc/get_diseases()
 	. = list()
@@ -181,8 +205,9 @@
 	id = REAGENT_ID_SYNTHBLOOD
 	color = "#999966"
 	volume_mod = 2
+	coolant_modifier = 0.25
 
-/datum/reagent/blood/synthblood/initialize_data(var/newdata)
+/datum/reagent/blood/synthblood/initialize_data(newdata)
 	..()
 	if(data && !data["blood_type"])
 		data["blood_type"] = "O-"
@@ -195,6 +220,7 @@
 	id = REAGENT_ID_SYNTHBLOOD_DILUTE
 	color = "#cacaaf"
 	volume_mod = 1.2
+	coolant_modifier = 0.5
 
 // pure concentrated antibodies
 /datum/reagent/antibodies
@@ -207,7 +233,10 @@
 	color = "#0050F0"
 	mrate_static = TRUE
 
-/datum/reagent/antibodies/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+	supply_conversion_value = REFINERYEXPORT_VALUE_RARE
+	industrial_use = REFINERYEXPORT_REASON_MEDSCI
+
+/datum/reagent/antibodies/affect_blood(mob/living/carbon/M, alien, removed)
 	if(src.data)
 		M.antibodies |= src.data[REAGENT_ID_ANTIBODIES]
 	..()
@@ -220,13 +249,18 @@
 	taste_description = REAGENT_ID_WATER
 	description = "A ubiquitous chemical substance that is composed of hydrogen and oxygen."
 	reagent_state = LIQUID
+	scannable = SCANNABLE_BENEFICIAL
 	color = "#0064C877"
 	metabolism = REM * 10
 
 	glass_name = REAGENT_ID_WATER
 	glass_desc = "The father of all refreshments."
 
-/datum/reagent/water/touch_turf(var/turf/simulated/T)
+	supply_conversion_value = REFINERYEXPORT_VALUE_NO
+	industrial_use = REFINERYEXPORT_REASON_RAW
+	coolant_modifier = 1 // Water!
+
+/datum/reagent/water/touch_turf(turf/simulated/T)
 	if(!istype(T))
 		return
 
@@ -254,7 +288,7 @@
 
 	T.apply_fire_protection() // CHOMPAdd - Apply fire protection so fires can actually be put out.
 
-/datum/reagent/water/touch_obj(var/obj/O, var/amount)
+/datum/reagent/water/touch_obj(obj/O, amount)
 	..()
 	if(istype(O, /obj/item/reagent_containers/food/snacks/monkeycube))
 		var/obj/item/reagent_containers/food/snacks/monkeycube/cube = O
@@ -266,7 +300,7 @@
 	else
 		O.water_act(amount / 5)
 
-/datum/reagent/water/touch_mob(var/mob/living/L, var/amount)
+/datum/reagent/water/touch_mob(mob/living/L, amount)
 	..()
 	if(istype(L))
 		// First, kill slimes.
@@ -278,7 +312,7 @@
 		// Then extinguish people on fire.
 		var/needed = max(0,L.fire_stacks) * 5
 		if(amount > needed)
-			L.ExtinguishMob()
+			L.extinguish_mob()
 		L.water_act(amount / 25) // Div by 25, as water_act multiplies it by 5 in order to calculate firestack modification.
 		remove_self(needed)
 		// Put out cigarettes if splashed.
@@ -292,19 +326,19 @@
 						H.visible_message(span_notice("[H]\'s [S.name] is put out."))
 
 //YWedit start, readds promethean damage that was removed by vorestation.
-/datum/reagent/water/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/water/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien == IS_SLIME)
 		M.adjustToxLoss(6 * removed)
 	else
 		..()
 
-/datum/reagent/water/affect_ingest(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/water/affect_ingest(mob/living/carbon/M, alien, removed)
 	if(alien == IS_SLIME)
 		M.adjustToxLoss(6 * removed)
 	else
 		..()
 
-/datum/reagent/water/affect_touch(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/water/affect_touch(mob/living/carbon/M, alien, removed)
 	if(alien == IS_SLIME && prob(10))
 		M.visible_message(span_warning("[M]'s flesh sizzles where the water touches it!"), span_danger("Your flesh burns in the water!"))
 	..()
@@ -318,22 +352,27 @@
 	description = "Required for welders. Flamable."
 	taste_description = "gross metal"
 	reagent_state = LIQUID
+	scannable = SCANNABLE_ADVANCED
 	color = "#660000"
 
 	glass_name = "welder fuel"
 	glass_desc = "Unless you are an industrial tool, this is probably not safe for consumption."
 
-/datum/reagent/fuel/touch_turf(var/turf/T, var/amount)
+	supply_conversion_value = REFINERYEXPORT_VALUE_PROCESSED
+	industrial_use = REFINERYEXPORT_REASON_RAW
+	coolant_modifier = 0.15
+
+/datum/reagent/fuel/touch_turf(turf/T, amount)
 	..()
 	new /obj/effect/decal/cleanable/liquid_fuel(T, amount, FALSE)
 	remove_self(amount)
 	return
 
-/datum/reagent/fuel/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/fuel/affect_blood(mob/living/carbon/M, alien, removed)
 	if(issmall(M)) removed *= 2
 	M.adjustToxLoss(4 * removed)
 
-/datum/reagent/fuel/touch_mob(var/mob/living/L, var/amount)
+/datum/reagent/fuel/touch_mob(mob/living/L, amount)
 	..()
 	if(istype(L))
 		L.adjust_fire_stacks(amount / 10) // Splashing people with welding fuel to make them easy to ignite!

@@ -99,7 +99,7 @@
 	open_turfs = find_random_turfs(5 + number_of_blobs)
 
 	if(!open_turfs.len)
-		log_debug("Blob infestation event: Giving up after failure to find blob spots.")
+		log_game("Blob infestation event: Giving up after failure to find blob spots.")
 		abort()
 
 /datum/event2/event/blob/start()
@@ -108,7 +108,7 @@
 		var/obj/structure/blob/core/new_blob = new spawn_blob_type(T)
 		blobs += WEAKREF(new_blob)
 		open_turfs -= T // So we can't put two cores on the same tile if doing multiblob.
-		log_debug("Spawned [new_blob.overmind.blob_type.name] blob at [get_area(new_blob)].")
+		log_game("Spawned [new_blob.overmind.blob_type.name] blob at [get_area(new_blob)].")
 
 /datum/event2/event/blob/should_end()
 	for(var/datum/weakref/weakref as anything in blobs)
@@ -122,6 +122,7 @@
 		var/obj/structure/blob/core/B = weakref.resolve()
 		if(istype(B))
 			qdel(B)
+	blobs.Cut()
 
 /datum/event2/event/blob/announce()
 	if(!ended) // Don't announce if the blobs die early.
@@ -157,6 +158,4 @@
 		if(danger_level >= BLOB_DIFFICULTY_SUPERHARD)
 			lines += "Extreme caution is advised."
 
-		//command_announcement.Announce(lines.Join("\n"), "Biohazard Alert", new_sound = 'sound/AI/outbreak7.ogg')
-		command_announcement.Announce(lines.Join("\n"), "Hazardous Biomass - URGENT!", new_sound = 'sound/AI/outbreak5.ogg')
-		// Chomp edit - Better wording and also made the alert level 5. Lower number = More urgent.
+		GLOB.command_announcement.Announce(lines.Join("\n"), "Hazardous Biomass - URGENT!", new_sound = ANNOUNCER_MSG_BIOHAZARD_FIVE) // Chomp edit - Better wording and also made the alert level 5. Lower number = More urgent.

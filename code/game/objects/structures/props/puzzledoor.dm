@@ -12,6 +12,7 @@
 	explosion_resistance = 100
 
 	maxhealth = 9999999 //No.
+	heat_proof = 1 //just so repairing them doesn't try to fireproof something that never takes fire damage
 
 	var/list/locks = list()
 	var/lockID = null
@@ -26,7 +27,7 @@
 			return 0
 	return 1
 
-/obj/machinery/door/blast/puzzle/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/door/blast/puzzle/bullet_act(obj/item/projectile/Proj)
 	if(!istype(Proj, /obj/item/projectile/test))
 		visible_message(span_cult("\The [src] is completely unaffected by \the [Proj]."))
 	qdel(Proj) //No piercing. No.
@@ -37,7 +38,7 @@
 
 /obj/machinery/door/blast/puzzle/Initialize(mapload)
 	. = ..()
-	implicit_material = get_material_by_name("dungeonium")
+	implicit_material = get_material_by_name(MAT_ALIEN_DUNGEON)
 	if(locks.len)
 		return
 	var/check_range = world.view * checkrange_mult
@@ -87,10 +88,13 @@
 			qdel(C)
 			return 0
 
-/obj/machinery/door/blast/puzzle/attack_generic(var/mob/user, var/damage)
+/obj/machinery/door/blast/puzzle/attack_generic(mob/user, damage)
 	if(check_locks())
 		force_toggle(1, user)
 
-/obj/machinery/door/blast/puzzle/attack_alien(var/mob/user)
+/obj/machinery/door/blast/puzzle/attack_alien(mob/user)
 	if(check_locks())
 		force_toggle(1, user)
+
+/obj/machinery/door/blast/puzzle/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
+	return // blast doors are immune to fire completely.

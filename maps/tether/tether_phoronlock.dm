@@ -9,8 +9,8 @@
 // Interior doors: (obj/machinery/door/airlock), id_tag = "[base]_inner"
 // Exterior access button: (obj/machinery/access_button/airlock_exterior),  master_tag = "[base]"
 // Interior access button: (obj/machinery/access_button/airlock_interior),  master_tag = "[base]"
-// Srubbers: (obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary), frequency = "1379", scrub_id = "[base]_scrubber"
-// Pumps: (obj/machinery/atmospherics/unary/vent_pump/high_volume), frequency = 1379 id_tag = "[base]_pump"
+// Srubbers: (obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary), frequency = AIRLOCK_FREQ, scrub_id = "[base]_scrubber"
+// Pumps: (obj/machinery/atmospherics/unary/vent_pump/high_volume), frequency = AIRLOCK_FREQ id_tag = "[base]_pump"
 //
 
 /obj/machinery/airlock_sensor/phoron
@@ -47,7 +47,7 @@
 
 // Radio remote control
 /obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary
-	var/frequency = 0
+	var/frequency = ZERO_FREQ
 	var/datum/radio_frequency/radio_connection
 
 /obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary/Initialize(mapload)
@@ -56,10 +56,10 @@
 		set_frequency(frequency)
 
 /obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary/proc/set_frequency(new_frequency)
-	radio_controller.remove_object(src, frequency)
+	SSradio.remove_object(src, frequency)
 	frequency = new_frequency
 	if(frequency)
-		radio_connection = radio_controller.add_object(src, frequency, radio_filter = RADIO_ATMOSIA)
+		radio_connection = SSradio.add_object(src, frequency, radio_filter = RADIO_ATMOSIA)
 
 /obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary/receive_signal(datum/signal/signal)
 	if(!signal.data["tag"] || (signal.data["tag"] != scrub_id) || (signal.data["sigtype"] != "command"))
@@ -156,7 +156,7 @@
 /datum/embedded_program/airlock/phoron
 	var/tag_scrubber
 
-/datum/embedded_program/airlock/phoron/New(var/obj/machinery/embedded_controller/M)
+/datum/embedded_program/airlock/phoron/New(obj/machinery/embedded_controller/M)
 	..(M)
 	memory["chamber_sensor_phoron"] = 0
 	memory["external_sensor_pressure"] = VIRGO3B_ONE_ATMOSPHERE
@@ -212,7 +212,7 @@
 		if(STATE_PREPARE)
 			if (check_doors_secured())
 				if(target_state == TARGET_INOPEN)
-					playsound(master, 'sound/AI/airlockin.ogg', 100, 0)
+					playsound(master, announcer_airlock_message(AIRLOCK_MSG_IN), 100, 0)
 					if(memory["chamber_sensor_phoron"] > memory["target_phoron"])
 						state = STATE_CLEAN
 						signalScrubber(tag_scrubber, 1) // Start cleaning
@@ -226,13 +226,13 @@
 				else if(memory["pump_status"] != "off")
 					signalPump(tag_airpump, 0)
 				else
-					playsound(master, 'sound/AI/airlockout.ogg', 100, 0)
+					playsound(master, announcer_airlock_message(AIRLOCK_MSG_OUT), 100, 0)
 					cycleDoors(target_state)
 					state = STATE_IDLE
 					target_state = TARGET_NONE
 
 		if(STATE_CLEAN)
-			playsound(master, 'sound/machines/2beep.ogg', 100, 0)
+			playsound(master, announcer_airlock_message(AIRLOCK_MSG_BEEP), 100, 0)
 			if(!check_doors_secured())
 				//the airlock will not allow itself to continue to cycle when any of the doors are forced open.
 				stop_cycling()
@@ -243,14 +243,14 @@
 				state = STATE_PRESSURIZE
 
 		if(STATE_PRESSURIZE)
-			playsound(master, 'sound/machines/2beep.ogg', 100, 0)
+			playsound(master, announcer_airlock_message(AIRLOCK_MSG_BEEP), 100, 0)
 			if(!check_doors_secured())
 				//the airlock will not allow itself to continue to cycle when any of the doors are forced open.
 				stop_cycling()
 			else if(memory["chamber_sensor_pressure"] >= memory["target_pressure"] * 0.95)
 				signalPump(tag_airpump, 0)	// send a signal to stop pumping. No need to wait for it tho.
 				cycleDoors(target_state)
-				playsound(master, 'sound/AI/airlockdone.ogg', 100, 0)
+				playsound(master, announcer_airlock_message(AIRLOCK_MSG_END_IN), 100, 0)
 				state = STATE_IDLE
 				target_state = TARGET_NONE
 
@@ -263,7 +263,7 @@
 	signalPump(tag_airpump, 0)
 	signalScrubber(tag_scrubber, 0)
 
-/datum/embedded_program/airlock/phoron/proc/signalScrubber(var/tag, var/power)
+/datum/embedded_program/airlock/phoron/proc/signalScrubber(tag, power)
 	var/datum/signal/signal = new
 	signal.data = list(
 		"tag" = tag,

@@ -1,6 +1,4 @@
 //This file was auto-corrected by findeclaration.exe on 25.5.2012 20:42:33
-var/global/list/rad_collectors = list()
-
 /obj/machinery/power/rad_collector
 	name = "Radiation Collector Array"
 	desc = "A device which uses Hawking Radiation and phoron to produce power."
@@ -8,7 +6,7 @@ var/global/list/rad_collectors = list()
 	icon_state = "ca"
 	anchored = FALSE
 	density = TRUE
-	req_access = list(access_engine_equip)
+	req_access = list(ACCESS_ENGINE_EQUIP)
 //	use_power = 0
 	var/obj/item/tank/phoron/P = null
 	var/last_power = 0
@@ -16,32 +14,36 @@ var/global/list/rad_collectors = list()
 	var/active = 0
 	var/locked = 0
 	var/drainratio = 1
+	rad_insulation = RAD_EXTREME_INSULATION //It sucks up the radiation. If you're standing behind it, you're pretty safe.
 
 /obj/machinery/power/rad_collector/Initialize(mapload)
 	. = ..()
-	rad_collectors += src
+	GLOB.rad_collectors += src
+	AddElement(/datum/element/climbable)
+	RegisterSignal(src, COMSIG_IN_RANGE_OF_IRRADIATION, PROC_REF(process_rads))
 
 /obj/machinery/power/rad_collector/Destroy()
-	rad_collectors -= src
+	GLOB.rad_collectors -= src
+	UnregisterSignal(src, COMSIG_IN_RANGE_OF_IRRADIATION)
 	return ..()
 
-/obj/machinery/power/rad_collector/process()
+/obj/machinery/power/rad_collector/proc/process_rads(datum/source, datum/radiation_pulse_information/pulse_information)
+	SIGNAL_HANDLER
 	//so that we don't zero out the meter if the SM is processed first.
 	last_power = last_power_new
 	last_power_new = 0
 
 
 	if(P && active)
-		var/rads = SSradiation.get_rads_at_turf(get_turf(src))
-		if(rads)
-			receive_pulse(rads * 5) //Maths is hard
+		if(pulse_information)
+			var/amount_of_rads = pulse_information.strength
+			receive_pulse((amount_of_rads))
 
-	if(P)
-		if(P.air_contents.gas[GAS_PHORON] == 0)
-			investigate_log(span_red("out of fuel") + ".","singulo")
-			eject()
-		else
-			P.air_contents.adjust_gas(GAS_PHORON, -0.001*drainratio)
+			if(P.air_contents.gas[GAS_PHORON] == 0)
+				investigate_log(span_red("out of fuel") + ".","singulo")
+				eject()
+			else
+				P.air_contents.adjust_gas(GAS_PHORON, -0.0001*drainratio)
 	return
 
 
@@ -127,12 +129,15 @@ var/global/list/rad_collectors = list()
 	else
 		update_icons()
 
-/obj/machinery/power/rad_collector/proc/receive_pulse(var/pulse_strength)
+// Continuing here, SM giving us ~170 rads per pulse, a phoron canister full of 30 mols, and * 20 we get:
+// 102000W per collector...So 10 collectors will give us ~1MW.
+/obj/machinery/power/rad_collector/proc/receive_pulse(pulse_strength)
 	if(P && active)
 		var/power_produced = 0
 		power_produced = P.air_contents.gas[GAS_PHORON]*pulse_strength*20
-		add_avail(power_produced)
-		last_power_new = power_produced
+		if(power_produced)
+			add_avail(power_produced)
+			last_power_new = power_produced
 		return
 	return
 

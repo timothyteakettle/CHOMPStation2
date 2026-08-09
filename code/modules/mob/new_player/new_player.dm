@@ -21,10 +21,6 @@
 
 	var/created_for
 
-/mob/new_player/Initialize(mapload)
-	. = ..()
-	add_verb(src, /mob/proc/insidePanel)
-
 /mob/new_player/Destroy()
 	GLOB.new_player_list -= src
 	if(manifest_dialog)
@@ -42,17 +38,17 @@
 	// if(SSvote.mode)
 	// 	. += "Vote: [capitalize(SSvote.mode)] Time Left: [SSvote.time_remaining] s"
 
-	if(SSticker.current_state == GAME_STATE_INIT)
+	if(SSticker.current_state == GAME_STATE_STARTUP)
 		. += "Time To Start: Server Initializing"
 
 	else if(SSticker.current_state == GAME_STATE_PREGAME)
-		. += "Time To Start: [round(SSticker.pregame_timeleft,1)][GLOB.round_progressing ? "" : " (DELAYED)"]"
+		. += "Time To Start: [round(SSticker.timeLeft / 10, 1)][GLOB.round_progressing ? "" : " (DELAYED)"]"
 		. += "Players: [totalPlayers]"
 		. += "Players Ready: [totalPlayersReady]"
 		totalPlayers = 0
 		totalPlayersReady = 0
 		var/datum/job/refJob = null
-		for(var/mob/new_player/player in player_list)
+		for(var/mob/new_player/player in GLOB.player_list)
 			refJob = player.client?.prefs.get_highest_job()
 			var/obfuscate_key = player.read_preference(/datum/preference/toggle/obfuscate_key)
 			var/obfuscate_job = player.read_preference(/datum/preference/toggle/obfuscate_job)
@@ -71,7 +67,6 @@
 	if(!client)	return 0
 
 	if(href_list["privacy_poll"])
-		establish_db_connection()
 		if(!SSdbcore.IsConnected())
 			return
 		var/voted = 0
@@ -209,7 +204,7 @@
 	return timer - world.time
 
 /mob/new_player/proc/IsJobAvailable(rank)
-	var/datum/job/job = job_master.GetJob(rank)
+	var/datum/job/job = SSjob.get_job(rank)
 	if(!job)
 		return 0
 	if(!job.is_position_available())
@@ -227,10 +222,10 @@
 	return 1
 
 
-/mob/new_player/proc/AttemptLateSpawn(rank,var/spawning_at)
+/mob/new_player/proc/AttemptLateSpawn(rank)
 	if (src != usr)
 		return 0
-	if(!ticker || ticker.current_state != GAME_STATE_PLAYING)
+	if(!SSticker || SSticker.current_state != GAME_STATE_PLAYING)
 		to_chat(src, span_red("The round is either not ready, or has already finished..."))
 		return 0
 	if(!CONFIG_GET(flag/enter_allowed))
@@ -244,7 +239,7 @@
 		return 0
 
 	//Find our spawning point.
-	var/list/join_props = job_master.LateSpawn(client, rank)
+	var/list/join_props = SSjob.late_spawn(client, rank)
 
 	if(!join_props)
 		return
@@ -283,10 +278,10 @@
 			qdel(src)
 			return
 
-	job_master.AssignRole(src, rank, 1)
+	SSjob.assign_role(src, rank, 1)
 
 	var/mob/living/character = create_character(T)	//creates the human and transfers vars and mind
-	character = job_master.EquipRank(character, rank, 1)					//equips the human
+	character = SSjob.equip_rank(character, rank, 1)					//equips the human
 	UpdateFactionList(character)
 
 	var/datum/job/J = SSjob.get_job(rank)
@@ -304,7 +299,7 @@
 		character = character.AIize(move = FALSE) // Dupe of code in /datum/controller/subsystem/ticker/proc/create_characters() for non-latespawn, unify?
 
 		AnnounceCyborg(character, rank, "has been transferred to the empty core in \the [character.loc.loc]")
-		ticker.mode.latespawn(character)
+		SSticker.mode.latespawn(character)
 
 		qdel(C) //Deletes empty core (really?)
 		qdel(src) //Deletes new_player
@@ -318,22 +313,22 @@
 		character.buckled.loc = character.loc
 		character.buckled.set_dir(character.dir)
 
-	ticker.mode.latespawn(character)
+	SSticker.mode.latespawn(character)
 
 	if(rank == JOB_OUTSIDER)
 		log_and_message_admins("has joined the round as non-crew. (<A href='byond://?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[T.x];Y=[T.y];Z=[T.z]'>JMP</a>)",character)
 		if(!(J.mob_type & JOB_SILICON))
-			ticker.minds += character.mind
+			SSticker.minds += character.mind
 	else if(rank == JOB_ANOMALY)
 		log_and_message_admins("has joined the round as anomaly. (<A href='byond://?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[T.x];Y=[T.y];Z=[T.z]'>JMP</a>)",character)
 		if(!(J.mob_type & JOB_SILICON))
-			ticker.minds += character.mind
+			SSticker.minds += character.mind
 	else if(J.mob_type & JOB_SILICON)
 		AnnounceCyborg(character, rank, join_message, announce_channel, character.z)
 	else
 		AnnounceArrival(character, rank, join_message, announce_channel, character.z)
 		GLOB.data_core.manifest_inject(character)
-		ticker.minds += character.mind//Cyborgs and AIs handle this in the transform proc.	//TODO!!!!! ~Carn
+		SSticker.minds += character.mind//Cyborgs and AIs handle this in the transform proc.	//TODO!!!!! ~Carn
 	if(ishuman(character))
 		if(character.client.prefs.auto_backup_implant)
 			var/obj/item/implant/backup/imp = new(src)
@@ -351,11 +346,7 @@
 		character.forceMove(cryst)
 		cryst.update_icon()
 	else if(itemtf)
-		itemtf.inhabit_item(character, itemtf.name, character)
-		var/mob/living/possessed_voice = itemtf.possessed_voice
-		itemtf.trash_eatable = character.devourable
-		itemtf.unacidable = !character.digestable
-		character.forceMove(possessed_voice)
+		character.tf_into(itemtf, TRUE, itemtf.name)
 	else if(prey)
 		character.copy_from_prefs_vr(1,1) //Yes I know we're reloading these, shut up
 		var/obj/belly/gut_to_enter
@@ -379,8 +370,8 @@
 	character.client.init_verbs()
 	qdel(src) // Delete new_player mob
 
-/mob/new_player/proc/AnnounceCyborg(var/mob/living/character, var/rank, var/join_message, var/channel, var/zlevel)
-	if (ticker.current_state == GAME_STATE_PLAYING)
+/mob/new_player/proc/AnnounceCyborg(mob/living/character, rank, join_message, channel, zlevel)
+	if (SSticker.current_state == GAME_STATE_PLAYING)
 		var/list/zlevels = zlevel ? using_map.get_map_levels(zlevel, TRUE, om_range = DEFAULT_OVERMAP_RANGE) : null
 		if(character.mind.role_alt_title)
 			rank = character.mind.role_alt_title
@@ -392,7 +383,8 @@
 		late_choices_dialog = new(src)
 	late_choices_dialog.tgui_interact(src)
 
-/mob/new_player/proc/create_character(var/turf/T)
+/mob/new_player/proc/create_character(turf/T)
+	SHOULD_NOT_SLEEP(TRUE)
 	spawning = 1
 	close_spawn_windows()
 
@@ -400,8 +392,9 @@
 
 	var/use_species_name
 	var/datum/species/chosen_species
-	if(client.prefs.species)
-		chosen_species = GLOB.all_species[client.prefs.species]
+	var/pref_species = client.prefs.read_preference(/datum/preference/choiced/species)
+	if(pref_species)
+		chosen_species = GLOB.all_species[pref_species]
 		use_species_name = chosen_species.get_station_variant() //Only used by pariahs atm.
 
 	if(chosen_species && use_species_name)
@@ -412,9 +405,9 @@
 	if(!new_character)
 		new_character = new(T)
 
-	if(ticker.random_players)
+	if(CONFIG_GET(flag/force_random_names))
 		new_character.gender = pick(MALE, FEMALE)
-		client.prefs.real_name = random_name(new_character.gender)
+		client.prefs.update_preference_by_type(/datum/preference/name/real_name, random_name(new_character.gender))
 	else
 		client.prefs.copy_to(new_character, icon_updates = TRUE)
 
@@ -423,7 +416,7 @@
 
 	if(mind)
 		mind.active = 0					//we wish to transfer the key manually
-		mind.original = new_character
+		mind.original_character = WEAKREF(new_character)
 		mind.loaded_from_ckey = client.ckey
 		mind.loaded_from_slot = client.prefs.default_slot
 		mind.transfer_to(new_character)					//won't transfer key since the mind is not active
@@ -483,8 +476,9 @@
 
 /mob/new_player/get_species()
 	var/datum/species/chosen_species
-	if(client.prefs.species)
-		chosen_species = GLOB.all_species[client.prefs.species]
+	var/pref_species = client.prefs.read_preference(/datum/preference/choiced/species)
+	if(pref_species)
+		chosen_species = GLOB.all_species[pref_species]
 
 	if(!chosen_species)
 		return SPECIES_HUMAN
@@ -496,19 +490,19 @@
 
 /mob/new_player/get_gender()
 	if(!client || !client.prefs) ..()
-	return client.prefs.biological_gender
+	return client.prefs.read_preference(/datum/preference/choiced/gender/biological)
 
 /mob/new_player/is_ready()
 	return ready && ..()
 
 // Prevents lobby players from seeing say, even with ghostears
-/mob/new_player/hear_say(var/list/message_pieces, var/verb = "says", var/italics = 0, var/mob/speaker = null)
+/mob/new_player/hear_say(list/message_pieces, verb = "says", italics = 0, mob/speaker = null)
 	return
 
-/mob/new_player/hear_holopad_talk(list/message_pieces, var/verb = "says", var/mob/speaker = null)
+/mob/new_player/hear_holopad_talk(list/message_pieces, verb = "says", mob/speaker = null)
 	return
 
-/mob/new_player/hear_holopad_talk(list/message_pieces, var/verb = "says", var/mob/speaker = null)
+/mob/new_player/hear_holopad_talk(list/message_pieces, verb = "says", mob/speaker = null)
 	return
 
 // Prevents lobby players from seeing emotes, even with ghosteyes
@@ -519,4 +513,4 @@
 	return
 
 /mob/new_player/MayRespawn()
-	return 1
+	return TRUE

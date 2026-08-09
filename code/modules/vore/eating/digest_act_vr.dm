@@ -73,7 +73,7 @@
 				wash(CLEAN_ALL)
 				if(istype(B))
 					gurgled_color = B.contamination_color //Apply the correct color setting so uncontaminable things can still have the right overlay.
-					gurgle_contaminate(B, B.contamination_flavor, B.contamination_color)
+					gurgle_contaminate(B, B.contamination_flavor, B.contamination_color, B)
 	if(digest_stage <= 0)
 		if(istype(src, /obj/item/pda))
 			var/obj/item/pda/P = src
@@ -152,23 +152,23 @@
 /////////////
 // Some indigestible stuff
 /////////////
-/obj/item/hand_tele/digest_act(var/atom/movable/item_storage = null)
+/obj/item/hand_tele/digest_act(atom/movable/item_storage = null)
 	return FALSE
-/obj/item/aicard/digest_act(var/atom/movable/item_storage = null)
+/obj/item/aicard/digest_act(atom/movable/item_storage = null)
 	return FALSE
-/obj/item/paicard/digest_act(var/atom/movable/item_storage = null)
+/obj/item/paicard/digest_act(atom/movable/item_storage = null)
 	return FALSE
-/obj/item/gun/digest_act(var/atom/movable/item_storage = null)
+/obj/item/gun/digest_act(atom/movable/item_storage = null)
 	return FALSE
-/obj/item/pinpointer/digest_act(var/atom/movable/item_storage = null)
+/obj/item/pinpointer/digest_act(atom/movable/item_storage = null)
 	return FALSE
-/obj/item/areaeditor/blueprints/digest_act(var/atom/movable/item_storage = null)
+/obj/item/areaeditor/blueprints/digest_act(atom/movable/item_storage = null)
 	return FALSE
-/obj/item/disk/nuclear/digest_act(var/atom/movable/item_storage = null)
+/obj/item/disk/nuclear/digest_act(atom/movable/item_storage = null)
 	return FALSE
-/obj/item/perfect_tele_beacon/digest_act(var/atom/movable/item_storage = null)
+/obj/item/perfect_tele_beacon/digest_act(atom/movable/item_storage = null)
 	return FALSE //Sorta important to not digest your own beacons.
-/obj/item/organ/internal/brain/slime/digest_act(var/atom/movable/item_storage = null)
+/obj/item/organ/internal/brain/slime/digest_act(atom/movable/item_storage = null)
 	return FALSE //so prometheans can be recovered
 
 /////////////
@@ -178,7 +178,7 @@
 /obj/item/card/id/digest_act(atom/movable/item_storage = null)
 	desc = "A partially digested card that has seen better days. The damage appears to be only cosmetic."
 	if(!sprite_stack || !istype(sprite_stack) || !(sprite_stack.len))
-		icon = 'icons/obj/card_vr.dmi'
+		icon = 'icons/obj/card.dmi'
 		icon_state = "[initial(icon_state)]_digested"
 	else
 		if(!sprite_stack.Find("digested"))
@@ -241,10 +241,3 @@
 	return FALSE
 
 //moved prot organ digest to their appropriate file
-
-// Gradual damage measurement
-/obj/item
-	var/digest_stage = null
-	var/d_mult_old = 1 //digest stage descriptions
-	var/d_mult = 1 //digest stage descriptions
-	var/d_stage_overlay //digest stage effects

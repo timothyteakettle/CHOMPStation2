@@ -24,7 +24,7 @@ They're also cool, and Rykka/Nyria wrote this uwu
 	tt_desc = "Crocuta crocuta"
 	catalogue_data = list(/datum/category_item/catalogue/fauna/hyena)
 
-	icon = 'modular_chomp/icons/mob/animals48x32_ch.dmi'
+	icon = 'icons/mob/hyena.dmi'
 	icon_state = "yeen"
 	icon_living = "yeen"
 	icon_dead = "yeen_dead"
@@ -82,7 +82,7 @@ They're also cool, and Rykka/Nyria wrote this uwu
 
 	say_list_type = /datum/say_list/hyena
 
-	allow_mind_transfer = TRUE //CHOMPAdd
+	allow_mind_transfer = TRUE
 
 	var/obj/item/clothing/head/hat = null // The hat the yeen is wearing when initialized, var will update with the chosen hat.
 
@@ -90,12 +90,12 @@ They're also cool, and Rykka/Nyria wrote this uwu
 /mob/living/simple_mob/animal/hyena/verb/remove_hat()
 	set name = "Remove Hat"
 	set desc = "Remove the yeen's hat. You monster. ;~;"
-	set category = "Abilities.Hyena" //CHOMPEdit
+	set category = "Abilities.Hyena"
 	set src in view(1)
 
 	drop_hat(usr)
 
-/mob/living/simple_mob/animal/hyena/proc/drop_hat(var/mob/user)
+/mob/living/simple_mob/animal/hyena/proc/drop_hat(mob/user)
 	if(hat)
 		hat.forceMove(get_turf(user))
 		hat = null
@@ -113,12 +113,12 @@ They're also cool, and Rykka/Nyria wrote this uwu
 /mob/living/simple_mob/animal/hyena/verb/give_hat()
 	set name = "Give Hat"
 	set desc = "Give the yeen a hat. You wonderful bean. <3"
-	set category = "Abilities.Hyena" //CHOMPEdit
+	set category = "Abilities.Hyena"
 	set src in view(1)
 
 	take_hat(usr)
 
-/mob/living/simple_mob/animal/hyena/proc/take_hat(var/mob/user)
+/mob/living/simple_mob/animal/hyena/proc/take_hat(mob/user)
 	if(hat)
 		if(user == src)
 			to_chat(user, span_notice("You already have a hat!"))

@@ -65,7 +65,7 @@ GLOBAL_LIST_INIT(event_collector_blockers,list()) //ditto
 	. = ..()
 	GLOB.event_collectors |= src
 
-/obj/strucutre/event_collector/Destroy()
+/obj/structure/event_collector/Destroy()
 	GLOB.event_collectors -= src
 	. = ..()
 
@@ -78,7 +78,7 @@ GLOBAL_LIST_INIT(event_collector_blockers,list()) //ditto
 				. += blocker.block_amount
 
 
-/obj/structure/event_collector/proc/jiggle_animation(var/intensity = 1)
+/obj/structure/event_collector/proc/jiggle_animation(intensity = 1)
 	var/matrix/secondary_effect = matrix()
 	var/matrix/effect = matrix()
 	effect.Turn(-5*intensity)
@@ -220,7 +220,7 @@ GLOBAL_LIST_INIT(event_collector_blockers,list()) //ditto
 
 		//put it in
 		user.visible_message("[user] begins to [pick(step_initiation_verbs)] \The [O] into \The [src]")
-		if(do_after(user, step_insertion_time, src)) //wait a second or two
+		if(do_after(user, step_insertion_time, target = src)) //wait a second or two
 			user.visible_message("[user] [pick(step_insertion_verbs)] \The [O] into \The [src]!")
 			if(ishuman(user)) //should always be?
 				var/mob/living/carbon/human/h = user
@@ -255,7 +255,7 @@ GLOBAL_LIST_INIT(event_collector_blockers,list()) //ditto
 	for(var/atom/movable/to_move in contents)
 		to_move.forceMove(get_turf(src))
 
-/obj/structure/event_collector/proc/post_object_insert(var/mob/user)
+/obj/structure/event_collector/proc/post_object_insert(mob/user)
 	return
 
 /obj/structure/event_collector/proc/post_recipe_complete()

@@ -25,7 +25,7 @@
 		..()
 
 // Handles the actual harming by a melee weapon.
-/mob/living/simple_mob/slime/xenobio/hit_with_weapon(obj/item/I, mob/living/user, effective_force, hit_zone)
+/mob/living/simple_mob/slime/xenobio/hit_with_weapon(obj/item/I, mob/living/user, effective_force, hit_zone, hide_attack_message)
 	..() // Apply damage and etc.
 	if(!stat && effective_force > 0)
 		if(!is_justified_to_discipline()) // Wow, buddy, why am I getting attacked??
@@ -44,7 +44,7 @@
 				adjust_discipline(2) // Justified.
 
 // Shocked grilles don't hurt slimes, and in fact give them charge.
-/mob/living/simple_mob/slime/xenobio/electrocute_act(shock_damage, obj/source, siemens_coeff = 1.0, def_zone = null)
+/mob/living/simple_mob/slime/xenobio/electrocute_act(shock_damage, obj/source, siemens_coeff = 1.0, def_zone = null, stun = 1)
 	power_charge = between(0, power_charge + round(shock_damage / 10), 10)
 	to_chat(src, span_notice("\The [source] shocks you, and it charges you."))
 

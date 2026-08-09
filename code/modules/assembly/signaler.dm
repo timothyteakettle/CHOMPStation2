@@ -3,14 +3,13 @@
 	desc = "Used to remotely activate devices.  Tap against another secured signaler to transfer configuration."
 	icon_state = "signaller"
 	item_state = "signaler"
-	origin_tech = list(TECH_MAGNET = 1)
-	matter = list(MAT_STEEL = 1000, MAT_GLASS = 200)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.5), MAT_GLASS = MATERIAL_COST(0.1))
 	wires = WIRE_RECEIVE | WIRE_PULSE | WIRE_RADIO_PULSE | WIRE_RADIO_RECEIVE
 
 	secured = TRUE
 
 	var/code = 30
-	var/frequency = 1457
+	var/frequency = RSD_FREQ
 	var/delay = 0
 	var/airlock_wire = null
 	var/datum/wires/connected = null
@@ -22,7 +21,7 @@
 	set_frequency(frequency)
 
 /obj/item/assembly/signaler/activate()
-	if(!process_cooldown())
+	if(!COOLDOWN_FINISHED(src, next_activate))
 		return FALSE
 	signal()
 	return TRUE
@@ -71,7 +70,7 @@
 
 	update_icon()
 
-/obj/item/assembly/signaler/attackby(var/obj/item/W, mob/user, params)
+/obj/item/assembly/signaler/attackby(obj/item/W, mob/user, params)
 	if(issignaler(W))
 		var/obj/item/assembly/signaler/signaler2 = W
 		if(secured && signaler2.secured)
@@ -82,6 +81,8 @@
 		..()
 
 /obj/item/assembly/signaler/proc/signal()
+	if(!COOLDOWN_FINISHED(src, next_activate))
+		return FALSE
 	if(!radio_connection)
 		return
 	if(is_jammed(src))
@@ -92,8 +93,9 @@
 	signal.encryption = code
 	signal.data["message"] = "ACTIVATE"
 	radio_connection.post_signal(src, signal)
+	COOLDOWN_START(src, next_activate, activation_cooldown)
 
-/obj/item/assembly/signaler/pulse(var/radio = 0)
+/obj/item/assembly/signaler/pulse(radio = 0)
 	if(is_jammed(src))
 		return FALSE
 	if(connected && wires)
@@ -122,14 +124,14 @@
 /obj/item/assembly/signaler/proc/set_frequency(new_frequency)
 	if(!frequency)
 		return
-	if(!radio_controller)
+	if(!SSradio)
 		addtimer(CALLBACK(src, PROC_REF(radio_checkup), new_frequency), 2 SECONDS)
 		return
 	set_radio(new_frequency)
 
 /obj/item/assembly/signaler/proc/radio_checkup(new_frequency)
 	PROTECTED_PROC(TRUE)
-	if(!radio_controller)
+	if(!SSradio)
 		return
 	set_radio(new_frequency)
 
@@ -137,9 +139,9 @@
 /obj/item/assembly/signaler/proc/set_radio(new_frequency)
 	PROTECTED_PROC(TRUE)
 	SHOULD_NOT_OVERRIDE(TRUE)
-	radio_controller.remove_object(src, frequency)
+	SSradio.remove_object(src, frequency)
 	frequency = new_frequency
-	radio_connection = radio_controller.add_object(src, frequency, RADIO_CHAT)
+	radio_connection = SSradio.add_object(src, frequency, RADIO_CHAT)
 //CHOMPedit BEGIN re-adds stealth removal
 /obj/item/assembly/signaler/process()
 	if(!deadman)
@@ -164,7 +166,7 @@
 //CHOMPedit end
 
 /obj/item/assembly/signaler/Destroy()
-	if(radio_controller)
-		radio_controller.remove_object(src,frequency)
-	frequency = 0
+	if(SSradio)
+		SSradio.remove_object(src,frequency)
+	frequency = ZERO_FREQ
 	. = ..()

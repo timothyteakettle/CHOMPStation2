@@ -88,7 +88,7 @@
 				"rad"		= 100
 				)
 
-	can_be_drop_prey = FALSE //CHOMP Add
+	can_be_drop_prey = FALSE
 	glow_override = TRUE
 
 /mob/living/simple_mob/vore/oregrub/lava
@@ -125,7 +125,7 @@
 /datum/say_list/oregrub
 	emote_see = list("burbles", "chitters", "snuffles around for fresh ore")
 
-/mob/living/simple_mob/vore/oregrub/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/vore/oregrub/apply_melee_effects(atom/A)
 	if(isliving(A))
 		var/mob/living/L = A
 		var/target_zone = pick(BP_TORSO,BP_TORSO,BP_TORSO,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_HEAD)
@@ -164,11 +164,7 @@
 		to_chat(L, span_warning("You feel fire running through your veins!"))
 		L.reagents.add_reagent(poison_type, poison_per_bite)
 
-/mob/living/simple_mob/vore/oregrub/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/oregrub/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
@@ -197,11 +193,7 @@
 		"The grub chitters in irritation at your continued solidity, followed by a string of crushingly tight stomach clenches that grind its caustic stomach ooze into your body!",
 		"The deceptively severe heat trapped within the grub works in tandem with its inner muscles and your tingling, prickling stomach juice bath to weaken you!")
 
-/mob/living/simple_mob/vore/oregrub/lava/init_vore() // Should inherit everything from parent, and then change our belly fullscreen color.
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/oregrub/lava/load_default_bellies() // Should inherit everything from parent, and then change our belly fullscreen color.
 	.=..()
 	var/obj/belly/B = vore_selected
 	B.belly_fullscreen_color = "#cf741e"

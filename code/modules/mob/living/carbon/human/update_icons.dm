@@ -74,7 +74,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	//Do any species specific layering updates, such as when hiding.
 	update_icon_special()
 
-/mob/living/carbon/human/update_transform(var/instant = FALSE)
+/mob/living/carbon/human/update_transform(instant = FALSE)
 	var/desired_scale_x = size_multiplier * icon_scale_x
 	var/desired_scale_y = size_multiplier * icon_scale_y
 	desired_scale_x *= species.icon_scale_x
@@ -351,7 +351,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 				base_icon.MapColors(rgb(tone[1],0,0),rgb(0,tone[2],0),rgb(0,0,tone[3]))
 
 		//Handle husk overlay.
-		if(husk && ("overlay_husk" in cached_icon_states(species.icobase)))
+		if(husk && icon_exists(species.icobase, "overlay_husk"))
 			var/icon/mask = new(base_icon)
 			var/icon/husk_over = new(species.icobase,"overlay_husk")
 			mask.MapColors(0,0,0,1, 0,0,0,1, 0,0,0,1, 0,0,0,1, 0,0,0,0)
@@ -376,6 +376,10 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	update_wing_showing()
 	update_vore_belly_sprite()
 	update_vore_tail_sprite()
+	if(species && species.component_requires_late_recalc)
+		var/datum/component/shadekin/SK = GetComponent(/datum/component/shadekin)
+		if(SK)
+			SK.recalc_values()
 
 /mob/living/carbon/human/proc/update_skin()
 	if(QDESTROYING(src))
@@ -401,7 +405,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	var/image/both = image(icon = 'icons/effects/effects.dmi', icon_state = "nothing", layer = BODY_LAYER+BLOOD_LAYER)
 
 	//Bloody hands
-	if(bloody_mess)
+	if(LAZYLEN(bloody_mess))
 		var/image/bloodsies	= image(icon = species.get_blood_mask(src), icon_state = "bloodyhands", layer = BODY_LAYER+BLOOD_LAYER)
 		bloodsies.color = hand_blood_color
 		both.add_overlay(bloodsies)
@@ -456,7 +460,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	var/icon/face_standing = icon(icon = 'icons/mob/human_face.dmi', icon_state = "bald_s")
 
 	if(f_style)
-		var/datum/sprite_accessory/facial_hair_style = facial_hair_styles_list[f_style]
+		var/datum/sprite_accessory/facial_hair_style = GLOB.facial_hair_styles_list[f_style]
 		if(facial_hair_style && facial_hair_style.species_allowed && (src.species.get_bodytype(src) in facial_hair_style.species_allowed))
 			var/icon/facial_s = new/icon("icon" = facial_hair_style.icon, "icon_state" = "[facial_hair_style.icon_state]_s")
 			if(facial_hair_style.do_colouration)
@@ -465,10 +469,10 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 			face_standing.Blend(facial_s, ICON_OVERLAY)
 
 	if(h_style)
-		var/datum/sprite_accessory/hair/hair_style = hair_styles_list[h_style]
+		var/datum/sprite_accessory/hair/hair_style = GLOB.hair_styles_list[h_style]
 		if(head && (head.flags_inv & BLOCKHEADHAIR))
 			if(!(hair_style.flags & HAIR_VERY_SHORT))
-				hair_style = hair_styles_list["Short Hair"]
+				hair_style = GLOB.hair_styles_list["Short Hair"]
 
 		if(hair_style && (src.species.get_bodytype(src) in hair_style.species_allowed))
 			var/icon/grad_s = null
@@ -536,8 +540,8 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	if(!species.has_glowing_eyes)
 		return
 
-	//Our glowy eyes should be hidden if some equipment hides them.
-	if(!should_have_organ(O_EYES) || (head && (head.flags_inv & BLOCKHAIR)) || (wear_mask && (wear_mask.flags_inv & BLOCKHAIR)))
+	//Our glowy eyes should be hidden if some equipment hides them. | Added Promethean/dispersed eyes species support for Glowing Eyes.
+	if((!should_have_organ(O_EYES) && !species.dispersed_eyes) || (head && (head.flags_inv & BLOCKHAIR)) || (wear_mask && (wear_mask.flags_inv & BLOCKHAIR)))
 		return
 
 	//Get the head, we'll need it later.
@@ -551,10 +555,13 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 		return
 
 	var/icon/eyes_icon = new/icon(head_organ.eye_icon_location, head_organ.eye_icon)
-	if(eyes)
-		eyes_icon.Blend(rgb(eyes.eye_colour[1], eyes.eye_colour[2], eyes.eye_colour[3]), ICON_ADD)
-	else
-		eyes_icon.Blend(rgb(128,0,0), ICON_ADD)
+	if(!findtext(head_organ.eye_icon, regex("-colored")))
+		if(species.dispersed_eyes) // Set so all species who would lack eye organs due to dispersed eyes can still use Glowing Eyes.
+			eyes_icon.Blend(rgb(r_eyes, g_eyes, b_eyes))
+		else if(eyes)
+			eyes_icon.Blend(rgb(eyes.eye_colour[1], eyes.eye_colour[2], eyes.eye_colour[3]), ICON_ADD)
+		else
+			eyes_icon.Blend(rgb(128,0,0), ICON_ADD)
 
 	// Convert to emissive at some point
 	if (head_organ.transparent)
@@ -579,7 +586,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	var/image/standing	= image(icon = 'icons/effects/genetics.dmi', layer = BODY_LAYER+MUTATIONS_LAYER)
 
 	for(var/mut in mutations)
-		if(mut == LASER)
+		if(mut == LASER_EYES)
 			standing.overlays += "lasereyes_s" // Leaving this as overlays +=
 
 	overlays_standing[MUTATIONS_LAYER]	= standing
@@ -866,7 +873,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 		suit_sprite = INV_SUIT_DEF_ICON
 
 	var/icon/c_mask = null
-	var/tail_is_rendered = overlays_standing[TAIL_LOWER_LAYER] || overlays_standing[tail_alt]
+	var/tail_is_rendered = overlays_standing[TAIL_LOWER_LAYER] || overlays_standing[tail_layering]
 	var/valid_clip_mask = tail_style?.clip_mask
 
 	if(tail_is_rendered && valid_clip_mask && !(istype(suit) && suit.taurized)) //Clip the lower half of the suit off using the tail's clip mask for taurs since taur bodies aren't hidden.
@@ -952,7 +959,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	if(!legcuffed)
 		return //Not legcuffed, why bother.
 
-	throw_alert("legcuffed", /obj/screen/alert/restrained/legcuffed, new_master = legcuffed)
+	throw_alert("legcuffed", /atom/movable/screen/alert/restrained/legcuffed, new_master = legcuffed)
 
 	overlays_standing[LEGCUFF_LAYER] = legcuffed.make_worn_icon(body_type = species.get_bodytype(src), slot_name = slot_legcuffed_str, default_icon = INV_LCUFF_DEF_ICON, default_layer = LEGCUFF_LAYER)
 
@@ -1007,7 +1014,9 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	if(src.tail_style && src.tail_style.clip_mask_state)
 		tail_layer = TAIL_UPPER_LAYER		// Use default, let clip mask handle everything
 	if(tail_layer == TAIL_UPPER_LAYER)
-		tail_layer = tail_alt
+		tail_layer = tail_layering
+
+	update_vore_tail_sprite()
 
 	var/obj/item/organ/external/chest = organs_by_name[BP_TORSO]
 
@@ -1049,12 +1058,12 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 
 	return tail_icon
 
-/mob/living/carbon/human/proc/set_tail_state(var/t_state)
+/mob/living/carbon/human/proc/set_tail_state(t_state)
 	var/tail_layer = get_tail_layer()
 	if(src.tail_style && src.tail_style.clip_mask_state)
 		tail_layer = TAIL_UPPER_LAYER		// Use default, let clip mask handle everything
 	if(tail_layer == TAIL_UPPER_LAYER)
-		tail_layer = tail_alt
+		tail_layer = tail_layering
 	var/image/tail_overlay = overlays_standing[tail_layer]
 
 	remove_layer(TAIL_UPPER_LAYER)
@@ -1193,6 +1202,10 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	var/atom/A = loc // We'd better be swimming and on a turf
 	var/image/I = image(icon = 'icons/mob/submerged.dmi', icon_state = "human_swimming_[depth]", layer = BODY_LAYER+MOB_WATER_LAYER) //TODO: Improve
 	I.color = A.color
+	if(istype(A, /turf/simulated/floor/water))
+		var/turf/simulated/floor/water/underwater = A
+		if(underwater.watercolor)
+			I.color = underwater.watercolor
 	overlays_standing[MOB_WATER_LAYER] = I
 
 	apply_layer(MOB_WATER_LAYER)
@@ -1213,7 +1226,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 		overlays_standing[SURGERY_LAYER] = total
 		apply_layer(SURGERY_LAYER)
 
-/mob/living/carbon/human/proc/get_wing_image(var/under_layer)
+/mob/living/carbon/human/proc/get_wing_image(under_layer)
 	if(QDESTROYING(src))
 		return
 
@@ -1328,9 +1341,9 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 		if(tail_style.do_colouration)
 			tail_s.Blend(rgb(src.r_tail, src.g_tail, src.b_tail), tail_style.color_blend_mode)
 		if(tail_style.extra_overlay)
-			var/icon/overlay = new/icon("icon" = (tail_style?.can_loaf && resting) ? tail_style.icon_loaf : tail_style.icon, "icon_state" = tail_style.extra_overlay)
+			var/icon/overlay = new/icon("icon" = (tail_style.can_loaf && resting) ? tail_style.icon_loaf : tail_style.icon, "icon_state" = tail_style.extra_overlay)
 			if(wagging && tail_style.ani_state)
-				overlay = new/icon("icon" = (tail_style?.can_loaf && resting) ? tail_style.icon_loaf : tail_style.icon, "icon_state" = tail_style.extra_overlay_w)
+				overlay = new/icon("icon" = (tail_style.can_loaf && resting) ? tail_style.icon_loaf : tail_style.icon, "icon_state" = tail_style.extra_overlay_w)
 				overlay.Blend(rgb(src.r_tail2, src.g_tail2, src.b_tail2), tail_style.color_blend_mode)
 				tail_s.Blend(overlay, ICON_OVERLAY)
 				qdel(overlay)
@@ -1340,9 +1353,9 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 				qdel(overlay)
 
 		if(tail_style.extra_overlay2)
-			var/icon/overlay = new/icon("icon" = (tail_style?.can_loaf && resting) ? tail_style.icon_loaf : tail_style.icon, "icon_state" = tail_style.extra_overlay2)
+			var/icon/overlay = new/icon("icon" = (tail_style.can_loaf && resting) ? tail_style.icon_loaf : tail_style.icon, "icon_state" = tail_style.extra_overlay2)
 			if(wagging && tail_style.ani_state)
-				overlay = new/icon("icon" = (tail_style?.can_loaf && resting) ? tail_style.icon_loaf : tail_style.icon, "icon_state" = tail_style.extra_overlay2_w)
+				overlay = new/icon("icon" = (tail_style.can_loaf && resting) ? tail_style.icon_loaf : tail_style.icon, "icon_state" = tail_style.extra_overlay2_w)
 				overlay.Blend(rgb(src.r_tail3, src.g_tail3, src.b_tail3), tail_style.color_blend_mode)
 				tail_s.Blend(overlay, ICON_OVERLAY)
 				qdel(overlay)
@@ -1430,11 +1443,11 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 	apply_layer(VORE_TAIL_LAYER)
 
 /mob/living/carbon/human/proc/get_vore_tail_image()
-	if(tail_style && istaurtail(tail_style) && tail_style:vore_tail_sprite_variant)
+	if(tail_style && istaurtail(tail_style) && tail_style.vore_tail_sprite_variant)
 		var/vs_fullness = vore_fullness_ex["taur belly"]
-		var/loaf_alt = lying && tail_style:belly_variant_when_loaf
+		var/loaf_alt = lying && tail_style.belly_variant_when_loaf
 		var/fullness_icons = min(tail_style.fullness_icons, vs_fullness)
-		var/icon/vorebelly_s = new/icon(icon = tail_style.bellies_icon_path, icon_state = "Taur[tail_style:vore_tail_sprite_variant]-Belly-[fullness_icons][loaf_alt ? " loaf" : (struggle_anim_taur ? "" : " idle")]")
+		var/icon/vorebelly_s = new/icon(icon = tail_style.bellies_icon_path, icon_state = "Taur[tail_style.vore_tail_sprite_variant]-Belly-[fullness_icons][loaf_alt ? " loaf" : (struggle_anim_taur ? "" : " idle")]")
 		vorebelly_s.Blend(vore_sprite_color["taur belly"], vore_sprite_multiply["taur belly"] ? ICON_MULTIPLY : ICON_ADD)
 		var/image/working = image(vorebelly_s)
 		working.pixel_x = -16
@@ -1451,7 +1464,7 @@ GLOBAL_LIST_EMPTY(damage_icon_parts) //see UpdateDamageIcon()
 			struggle_anim_taur = FALSE
 			update_vore_tail_sprite()
 
-/mob/living/carbon/human/proc/GetAppearanceFromPrefs(var/flavourtext, var/oocnotes)
+/mob/living/carbon/human/proc/GetAppearanceFromPrefs(flavourtext, oocnotes)
 	/* Jank code that effectively creates the client's mob from save, then copies its appearance to our current mob.
 	Intended to be used with shapeshifter species so we don't reset their organs in doing so.*/
 	if(client.prefs)

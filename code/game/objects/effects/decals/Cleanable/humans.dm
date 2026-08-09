@@ -1,7 +1,5 @@
 #define DRYING_TIME 5 * 60*10                        //for 1 unit of depth in puddle (amount var)
 
-var/global/list/image/splatter_cache=list()
-
 /obj/effect/decal/cleanable/blood
 	name = "blood"
 	var/dryname = "dried blood"
@@ -55,7 +53,7 @@ var/global/list/image/splatter_cache=list()
 						qdel(B)
 
 //VOREstation edit - Moved timer call to Init, and made it not call on mapload
-/obj/effect/decal/cleanable/blood/Initialize(mapload, var/_age)
+/obj/effect/decal/cleanable/blood/Initialize(mapload, _age)
 	. = ..()
 	if(!mapload)
 		addtimer(CALLBACK(src, PROC_REF(dry)), DRYING_TIME * (amount+1))
@@ -235,7 +233,7 @@ var/global/list/image/splatter_cache=list()
 	random_icon_states = list("gibmid1", "gibmid2", "gibmid3")
 
 
-/obj/effect/decal/cleanable/blood/gibs/proc/streak(var/list/directions)
+/obj/effect/decal/cleanable/blood/gibs/proc/streak(list/directions)
 	spawn (0)
 		var/direction = pick(directions)
 		for (var/i = 0, i < pick(1, 200; 2, 150; 3, 50; 4), i++)
@@ -270,7 +268,7 @@ var/global/list/image/splatter_cache=list()
 //This version should be used for admin spawns and pre-mapped virus vectors (e.g. in PoIs), this version does not dry
 /obj/effect/decal/cleanable/mucus/mapped/Initialize(mapload)
 	. = ..()
-	viruses |= new /datum/disease/advance
+	viruses |= new /datum/disease/advance/random(rand(3, 6), 9, 4, infected = src)
 
 /obj/effect/decal/cleanable/mucus/mapped/Destroy()
 	viruses.Cut()

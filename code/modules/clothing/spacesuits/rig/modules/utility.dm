@@ -173,7 +173,7 @@
 		list(REAGENT_ID_RADIUM,        REAGENT_ID_RADIUM,        0, 30)
 		)
 
-/obj/item/rig_module/chem_dispenser/accepts_item(var/obj/item/input_item, var/mob/living/user)
+/obj/item/rig_module/chem_dispenser/accepts_item(obj/item/input_item, mob/living/user)
 
 	if(!input_item.is_open_container())
 		return 0
@@ -336,7 +336,7 @@
 			voice_holder.active = 0
 			to_chat(usr, span_blue("You disable the speech synthesiser."))
 		if("Set Name")
-			var/raw_choice = sanitize(tgui_input_text(usr, "Please enter a new name.", max_length=MAX_NAME_LEN))
+			var/raw_choice = tgui_input_text(usr, "Please enter a new name.", max_length=MAX_NAME_LEN)
 			if(!raw_choice)
 				return 0
 			voice_holder.voice = raw_choice
@@ -489,7 +489,7 @@
 		list("cleaner grenade",   "cleaner grenade",   /obj/item/grenade/chem_grenade/cleaner,  9),
 		)
 
-/obj/item/rig_module/cleaner_launcher/accepts_item(var/obj/item/input_device, var/mob/living/user)
+/obj/item/rig_module/cleaner_launcher/accepts_item(obj/item/input_device, mob/living/user)
 
 	if(!istype(input_device) || !istype(user))
 		return 0

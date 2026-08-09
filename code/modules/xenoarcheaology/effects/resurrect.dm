@@ -8,7 +8,12 @@
 	effect_state = "pulsing"
 	effect_color = "#ff0000"
 
-/datum/artifact_effect/resurrect/proc/steal_life(var/mob/living/target = null)
+/datum/artifact_effect/resurrect/New()
+	..()
+	effect = rand(EFFECT_AURA, EFFECT_PULSE)
+	trigger = pick(TRIGGER_WATER, TRIGGER_ACID, TRIGGER_VOLATILE, TRIGGER_TOXIN, TRIGGER_FORCE, TRIGGER_ENERGY, TRIGGER_HEAT, TRIGGER_COLD) //No trigger touch.
+
+/datum/artifact_effect/resurrect/proc/steal_life(mob/living/target = null)
 	var/atom/holder = get_master_holder()
 	if(istype(holder, /obj/item/anobattery))
 		holder = holder.loc
@@ -17,14 +22,20 @@
 	if(!istype(target))
 		return 0
 
+	var/susceptibility = 1
+	if(ishuman(target))
+		var/mob/living/carbon/human/H = target
+		susceptibility = GetAnomalySusceptibility(H)
+
 	if(target.stat != DEAD && stored_life < 200)
 		holder.Beam(target, icon_state = "drain_life", time = 1 SECOND)
-		target.apply_damage(5, SEARING, BP_TORSO)
-		return 5
+		if(!prob(susceptibility * 100)) //Inverse. If they are not susceptible, we don't steal life. We still beam them though.
+			target.apply_damage(5 * susceptibility, SEARING, BP_TORSO)
+		return 25 * susceptibility //nobody actually uses this god damned thing so I'm buffing it so maybe one day someone will ACTUALLY USE IT.
 
 	return 0
 
-/datum/artifact_effect/resurrect/proc/give_life(var/mob/living/target = null)
+/datum/artifact_effect/resurrect/proc/give_life(mob/living/target = null)
 	var/atom/holder = get_master_holder()
 
 	/// ALRIGHT, LET ME EXPLAIN THIS ABOMINATION.
@@ -56,7 +67,7 @@
 			attempt_revive(target)
 			stored_life = 0
 
-/datum/artifact_effect/resurrect/proc/attempt_revive(var/mob/living/L = null)
+/datum/artifact_effect/resurrect/proc/attempt_revive(mob/living/L = null)
 	var/atom/holder = get_master_holder()
 	spawn()
 		if(isanimal(L))
@@ -65,8 +76,8 @@
 			SM.adjustFireLoss(-40)
 			SM.health = SM.getMaxHealth() / 3
 			SM.stat = CONSCIOUS
-			dead_mob_list -= SM
-			living_mob_list += SM
+			GLOB.dead_mob_list -= SM
+			GLOB.living_mob_list += SM
 			SM.update_icon()
 			SM.revive()
 			holder.visible_message(span_alien("\The [SM]'s eyes open in a flash of light!"))
@@ -74,7 +85,7 @@
 			var/mob/living/carbon/human/H = L
 
 			if(!H.client && H.mind)
-				for(var/mob/observer/dead/ghost in player_list)
+				for(var/mob/observer/dead/ghost in GLOB.player_list)
 					if(ghost.mind == H.mind)
 						to_chat(ghost, span_large(span_interface(span_bold("An artifact is trying to \
 						revive you. Return to your body if you want to be resurrected!") + "\
@@ -88,15 +99,15 @@
 			sleep(10 SECONDS)
 			if(H.client)
 				L.stat = CONSCIOUS
-				dead_mob_list -= H
-				living_mob_list += H
+				GLOB.dead_mob_list -= H
+				GLOB.living_mob_list += H
 				H.timeofdeath = null
 
 				holder.visible_message(span_alien("\The [H]'s eyes open in a flash of light!"))
 			else
 				holder.visible_message(span_alien("\The [H]'s body stays still...Perhaps their mind was not ready to rejoin their body."))
 
-/datum/artifact_effect/resurrect/DoEffectTouch(var/mob/user)
+/datum/artifact_effect/resurrect/DoEffectTouch(mob/user)
 	var/atom/holder = get_master_holder()
 	if(istype(holder, /obj/item/anobattery))
 		holder = holder.loc

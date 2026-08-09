@@ -11,15 +11,15 @@
 		return
 
 	if(h_style)
-		var/datum/sprite_accessory/hair/hair_style = hair_styles_list[h_style]
+		var/datum/sprite_accessory/hair/hair_style = GLOB.hair_styles_list[h_style]
 		var/selected_string
 		if(!(hair_style.flags & HAIR_TIEABLE))
 			to_chat(src, span_warning("Your hair isn't long enough to tie."))
 			return
 		else
 			var/list/datum/sprite_accessory/hair/valid_hairstyles = list()
-			for(var/hair_string in hair_styles_list)
-				var/datum/sprite_accessory/hair/test = hair_styles_list[hair_string]
+			for(var/hair_string in GLOB.hair_styles_list)
+				var/datum/sprite_accessory/hair/test = GLOB.hair_styles_list[hair_string]
 				if(test.flags & HAIR_TIEABLE)
 					valid_hairstyles.Add(hair_string)
 			selected_string = tgui_input_list(src, "Select a new hairstyle", "Your hairstyle", valid_hairstyles)
@@ -96,8 +96,6 @@
 
 	text = tgui_input_text(src, "What would you like to say?", "Speak to creature", null, MAX_MESSAGE_LEN)
 
-	text = sanitize(text, MAX_MESSAGE_LEN)
-
 	if(!text) return
 
 	var/mob/M = targets[target]
@@ -106,7 +104,7 @@
 		to_chat(src, span_filter_notice("Not even a [src.species.name] can speak to the dead."))
 		return
 
-	log_say("(COMMUNE to [key_name(M)]) [text]",src)
+	log_talk("(COMMUNE to [key_name(M)]) [text]", LOG_SAY)
 
 	to_chat(M, span_filter_say("[span_blue("Like lead slabs crashing into the ocean, alien thoughts drop into your mind: [text]")]"))
 	if(ishuman(M))
@@ -121,9 +119,9 @@
 	set desc = "Whisper silently to someone over a distance."
 	set category = "Abilities.General"
 
-	var/msg = sanitize(tgui_input_text(src, "Message:", "Psychic Whisper"))
+	var/msg = tgui_input_text(src, "Message:", "Psychic Whisper", "", MAX_MESSAGE_LEN)
 	if(msg)
-		log_say("(PWHISPER to [key_name(M)]) [msg]", src)
+		log_talk("(PWHISPER to [key_name(M)]) [msg]", LOG_WHISPER)
 		to_chat(M, span_filter_say("[span_green("You hear a strange, alien voice in your head... <i>[msg]</i>")]"))
 		to_chat(src, span_filter_say("[span_green("You said: \"[msg]\" to [M]")]"))
 	return
@@ -134,7 +132,7 @@
 	set category = "Abilities.Diona"
 	diona_split_into_nymphs(5)	// Separate proc to void argments being supplied when used as a verb
 
-/mob/living/carbon/human/proc/diona_split_into_nymphs(var/number_of_resulting_nymphs)
+/mob/living/carbon/human/proc/diona_split_into_nymphs(number_of_resulting_nymphs)
 	var/turf/T = get_turf(src)
 
 	var/mob/living/carbon/alien/diona/S = new(T)
@@ -292,7 +290,7 @@
 		src.visible_message(span_filter_notice(span_bold("[src]") + "'s flesh begins to mend..."))
 
 	var/delay_length = round(active_regen_delay * species.active_regen_mult)
-	if(do_after(src,delay_length))
+	if(do_after(src, delay_length, target = src))
 		adjust_nutrition(-200)
 
 		for(var/obj/item/organ/I in internal_organs)
@@ -318,7 +316,7 @@
 				var/limb_path = organ_data["path"]
 				var/obj/item/organ/O = new limb_path(src)
 				organ_data["descriptor"] = O.name
-				to_chat(src, span_notice("You feel a slithering sensation as your [O.name] reform."))
+				to_chat(src, span_notice("You feel a slithering sensation as your [O.name] reforms."))
 
 				var/agony_to_apply = round(0.66 * O.max_damage) // 66% of the limb's health is converted into pain.
 				src.apply_damage(agony_to_apply, HALLOSS)

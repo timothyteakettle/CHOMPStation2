@@ -31,8 +31,6 @@
 	return attack_hand(user)
 
 /obj/machinery/photocopier/attack_hand(mob/user as mob)
-	user.set_machine(src)
-
 	tgui_interact(user)
 
 /obj/machinery/photocopier/tgui_interact(mob/user, datum/tgui/ui, datum/tgui/parent_ui)
@@ -99,7 +97,7 @@
 				toner -= 5
 			. = TRUE
 
-/obj/machinery/photocopier/proc/copy_operation(var/mob/user)
+/obj/machinery/photocopier/proc/copy_operation(mob/user)
 	if(copying)
 		return FALSE
 	copying = TRUE
@@ -195,7 +193,7 @@
 					toner = 0
 	return
 
-/obj/machinery/photocopier/proc/copy(var/obj/item/paper/copy, var/need_toner=1)
+/obj/machinery/photocopier/proc/copy(obj/item/paper/copy, need_toner=1)
 	var/obj/item/paper/c = new /obj/item/paper (loc)
 	if(toner > 10)	//lots of toner, make it dark
 		c.info = "<font color = #101010>"
@@ -218,6 +216,8 @@
 	for (var/j = 1, j <= min(temp_overlays.len, copy.ico.len), j++) //gray overlay onto the copy
 		if (findtext(copy.ico[j], "cap") || findtext(copy.ico[j], "cent"))
 			img = image('icons/obj/bureaucracy.dmi', "paper_stamp-circle")
+		else if (findtext(copy.ico[j], "tal"))
+			img = image('icons/obj/bureaucracy.dmi', "paper_stamp-square")
 		else if (findtext(copy.ico[j], "deny"))
 			img = image('icons/obj/bureaucracy.dmi', "paper_stamp-x")
 		else
@@ -234,7 +234,7 @@
 	return c
 
 
-/obj/machinery/photocopier/proc/photocopy(var/obj/item/photo/photocopy, var/need_toner=1)
+/obj/machinery/photocopier/proc/photocopy(obj/item/photo/photocopy, need_toner=1)
 	var/obj/item/photo/p = photocopy.copy()
 	p.loc = src.loc
 
@@ -298,21 +298,26 @@
 				temp_img = icon('icons/obj/butts_vr.dmi', "vulp") // placeholder until we get fennec butts.
 			if(SPECIES_AKULA)
 				temp_img = icon('icons/obj/butts_vr.dmi', "xeno") // placeholder until we get proper sharkbutt. AKULA BE THICC ASS SHARKS MMMMMMMMMMMMMMKAY?
-			/* // Commented out because no icons exist, BUT if someone wants to sprite some more ASSCHEEKS, then just uncomment these and you have asses for each species. - Rykka.
+			// Butts by Meek the stoat!
 			if(SPECIES_TESHARI)
 				temp_img = icon('icons/obj/butts_vr.dmi', "tesh")
+			if(SPECIES_SERGAL)
+				temp_img = icon('icons/obj/butts_vr.dmi', "sergal")
+			if(SPECIES_NEVREAN)
+				temp_img = icon('icons/obj/butts_vr.dmi', "tesh") // kinda close! but should have it's own someday
+			if(SPECIES_ALTEVIAN)
+				temp_img = icon('icons/obj/butts_vr.dmi', "altevian")
+			/* // Commented out because no icons exist, BUT if someone wants to sprite some more ASSCHEEKS, then just uncomment these and you have asses for each species. - Rykka.
 			if(SPECIES_SHADEKIN || SPECIES_SHADEKIN_CREW)
 				temp_img = icon('icons/obj/butts_vr.dmi', "shadekin")
 			if(SPECIES_ALRAUNE)
 				temp_img = icon('icons/obj/butts_vr.dmi', "alraune")
-			if(SPECIES_NEVREAN)
-				temp_img = icon('icons/obj/butts_vr.dmi', "nevrean")
 			if(SPECIES_RAPALA)
 				temp_img = icon('icons/obj/butts_vr.dmi', "rapala")
 			if(SPECIES_ZADDAT)
 				temp_img = icon('icons/obj/butts_vr.dmi', "zaddat")
-			if(SPECIES_SERGAL)
-				temp_img = icon('icons/obj/butts_vr.dmi', "sergal")
+			if(SPECIES_XENOCHIMERA)
+				temp_img = icon('icons/obj/butts_vr.dmi', "xenochimera")
 			*/
 			else // Sanity/Safety check - does their species not show up or not work, or did something fail, but they're DEFINITELY a /human/ subtype? Print the 'default' ass.
 				temp_img = icon('icons/obj/butts_vr.dmi', "human")
@@ -343,7 +348,7 @@
 // VOREStation Edit Stop
 
 //If need_toner is 0, the copies will still be lightened when low on toner, however it will not be prevented from printing. TODO: Implement print queues for fax machines and get rid of need_toner
-/obj/machinery/photocopier/proc/bundlecopy(var/obj/item/paper_bundle/bundle, var/need_toner=1)
+/obj/machinery/photocopier/proc/bundlecopy(obj/item/paper_bundle/bundle, need_toner=1)
 	var/obj/item/paper_bundle/p = new /obj/item/paper_bundle (src)
 	for(var/obj/item/W in bundle.pages)
 		if(toner <= 0 && need_toner)

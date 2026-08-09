@@ -65,8 +65,6 @@
 	move_direction = EAST
 
 /datum/shuttle/autodock/ferry/emergency
-	var/frequency = 1380 // Why this frequency? BECAUSE! Thats what someone decided once.
-	var/datum/radio_frequency/radio_connection
 	move_direction = EAST
 
 /datum/shuttle/autodock/ferry/emergency/New()
@@ -89,7 +87,7 @@
 	signal.data["command"] = "secure_close"
 	post_signal(signal)
 
-/datum/shuttle/autodock/ferry/emergency/proc/post_signal(datum/signal/signal, var/filter = null)
+/datum/shuttle/autodock/ferry/emergency/proc/post_signal(datum/signal/signal, filter = null)
 	signal.transmission_method = TRANSMISSION_RADIO
 	if(radio_connection)
 		return radio_connection.post_signal(src, signal, filter)

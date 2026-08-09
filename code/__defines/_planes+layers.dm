@@ -59,6 +59,7 @@ What is the naming convention for planes or layers?
 
 // Turf Planes
 #define PLATING_PLANE			-44 // Plating
+	#define FLOOR_HEATER_LAYER	2.03 // Under objects, even when planeswapped
 	#define DISPOSAL_LAYER		2.1 // Under objects, even when planeswapped
 	#define PIPES_LAYER			2.2	// Under objects, even when planeswapped
 	#define WIRES_LAYER			2.3 // Under objects, even when planeswapped
@@ -105,6 +106,8 @@ What is the naming convention for planes or layers?
 
 // Invisible things plane
 #define CLOAKED_PLANE			-15
+
+#define PLANE_INVIS_EVENT		-13 //For events where something should be invisible or only visible to one player
 
 #define PLANE_CH_STOMACH		-11 //Stomach Plane
 
@@ -204,6 +207,12 @@ What is the naming convention for planes or layers?
 #define RADIAL_CONTENT_LAYER 1000
 
 #define PLANE_ADMIN3			99 //Purely for shenanigans (above HUD)
+
+///Plane of the "splash" icon used that shows on the lobby screen
+#define SPLASHSCREEN_PLANE 100
+
+///cinematics are "below" the splash screen
+#define CINEMATIC_LAYER -1
 
 
 //////////////////////////

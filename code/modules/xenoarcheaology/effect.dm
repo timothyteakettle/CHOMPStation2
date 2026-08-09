@@ -24,8 +24,8 @@
 	var/can_start_activated = TRUE
 
 /datum/artifact_effect/Destroy()
-	master = null //Master still exists even if our effect gets destroyed. No need to qdel_null.
-	qdel_null(active_effect)
+	master = null //Master still exists even if our effect gets destroyed. No need to QDEL_NULL.
+	QDEL_NULL(active_effect)
 	. = ..()
 
 /datum/artifact_effect/proc/get_master_holder()	// Return the effectmaster's holder, if it is set to an effectmaster. Otherwise, master is the target object.
@@ -34,7 +34,7 @@
 	else
 		return master
 
-/datum/artifact_effect/New(var/datum/component/artifact_master/newmaster)
+/datum/artifact_effect/New(datum/component/artifact_master/newmaster)
 	..()
 
 	master = newmaster
@@ -76,7 +76,7 @@
 	if(can_start_activated && prob(50))
 		ToggleActivate(TRUE, TRUE)
 
-/datum/artifact_effect/proc/ToggleActivate(var/reveal_toggle = TRUE, var/spawn_toggle = FALSE)
+/datum/artifact_effect/proc/ToggleActivate(reveal_toggle = TRUE, spawn_toggle = FALSE)
 	//so that other stuff happens first
 	set waitfor = FALSE
 
@@ -108,9 +108,9 @@
 				toplevelholder = toplevelholder.loc
 			toplevelholder.visible_message(span_filter_notice("[span_red("[icon2html(toplevelholder, viewers(toplevelholder))] [toplevelholder] [display_msg]")]"))
 
-/datum/artifact_effect/proc/DoEffectTouch(var/mob/user)
-/datum/artifact_effect/proc/DoEffectAura(var/atom/holder)
-/datum/artifact_effect/proc/DoEffectPulse(var/atom/holder)
+/datum/artifact_effect/proc/DoEffectTouch(mob/user)
+/datum/artifact_effect/proc/DoEffectAura(atom/holder)
+/datum/artifact_effect/proc/DoEffectPulse(atom/holder)
 /datum/artifact_effect/proc/UpdateMove()
 
 /datum/artifact_effect/process()
@@ -175,6 +175,8 @@
 			. += "drain the blood of subjects, creating creatures or anomalous artifacts in the process"
 		if(EFFECT_DNASWITCH)
 			. += "mutate the cells of the organism that touches it, resulting in rampant mutations"
+		if(EFFECT_ANOMALY)
+			. += "emit strange, anomalous energies"
 		else
 			. += "have no previously-known anomalous properties"
 
@@ -208,13 +210,14 @@
 	. += "<br>"
 
 //returns 0..1, with 1 being no protection and 0 being fully protected
-/proc/GetAnomalySusceptibility(var/mob/living/carbon/human/H)
+/proc/GetAnomalySusceptibility(mob/living/carbon/human/H)
 	if(!istype(H))
 		return 1
 	var/area/A = get_area(H)
 	if(A.flag_check(AREA_FORBID_EVENTS))
 		return 0
 	var/protected = 0
+	var/susceptibility = 1
 
 	//anomaly suits give best protection, but excavation suits are almost as good
 	if(istype(H.back,/obj/item/rig/hazmat))
@@ -239,4 +242,5 @@
 	if(istype(H.glasses,/obj/item/clothing/glasses/science))
 		protected += 0.1
 
-	return 1 - protected
+	susceptibility = CLAMP01(susceptibility - protected) //Clamp the susceptibility to be between 0 and 1. No negative numbers allowed.
+	return susceptibility

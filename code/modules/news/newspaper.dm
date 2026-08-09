@@ -18,8 +18,12 @@
 	var/scribble_page = null
 	drop_sound = 'sound/items/drop/wrapper.ogg'
 	pickup_sound = 'sound/items/pickup/wrapper.ogg'
+	resistance_flags = FLAMMABLE
 
-/obj/item/newspaper/attack_self(mob/user as mob)
+/obj/item/newspaper/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(ishuman(user))
 		var/mob/living/carbon/human/human_user = user
 		var/dat
@@ -65,7 +69,7 @@
 							dat+="[MESSAGE.title] <BR>"
 							dat+="-[MESSAGE.body] <BR>"
 							if(MESSAGE.img)
-								user << browse_rsc(MESSAGE.img, "tmp_photo[i].png")
+								send_rsc(user, MESSAGE.img, "tmp_photo[i].png")
 								dat+="<img src='tmp_photo[i].png' width = '180'><BR>"
 							dat+=span_small("\[[MESSAGE.message_type] by " + span_maroon("[MESSAGE.author]") + "\]") + "<BR><BR>"
 						dat+="</ul>"
@@ -81,7 +85,7 @@
 					dat+=span_bold("Description") + ": [important_message.body]<BR>"
 					dat+=span_bold("Photo:") + ": "
 					if(important_message.img)
-						user << browse_rsc(important_message.img, "tmp_photow.png")
+						send_rsc(user, important_message.img, "tmp_photow.png")
 						dat+="<BR><img src='tmp_photow.png' width = '180'>"
 					else
 						dat+="None"
@@ -135,8 +139,7 @@
 		if(scribble_page == curr_page)
 			to_chat(user, span_blue("There's already a scribble in this page... You wouldn't want to make things too cluttered, would you?"))
 		else
-			var/s = sanitize(tgui_input_text(user, "Write something", "Newspaper", ""))
-			s = sanitize(s)
+			var/s = tgui_input_text(user, "Write something", "Newspaper", "", MAX_MESSAGE_LEN)
 			if(!s)
 				return
 			if(!in_range(src, user) && src.loc != user)

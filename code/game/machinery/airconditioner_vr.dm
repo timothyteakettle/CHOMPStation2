@@ -23,6 +23,7 @@
 /obj/machinery/power/thermoregulator/Initialize(mapload)
 	. = ..()
 	default_apply_parts()
+	AddElement(/datum/element/climbable)
 
 /obj/machinery/power/thermoregulator/examine(mob/user)
 	. = ..()
@@ -119,7 +120,7 @@
 				add_overlay("lasergen-cool")
 
 /obj/machinery/power/thermoregulator/proc/turn_off()
-	on = 0
+	on = FALSE
 	change_mode(MODE_IDLE)
 	update_icon()
 
@@ -129,14 +130,16 @@
 	mode = new_mode
 	update_icon()
 
-/obj/machinery/power/thermoregulator/emp_act(severity)
+/obj/machinery/power/thermoregulator/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	if(!on)
-		on = 1
+		on = TRUE
 	target_temp += rand(0, 1000)
 	update_icon()
-	..(severity)
 
-/obj/machinery/power/thermoregulator/overload(var/obj/machinery/power/source)
+/obj/machinery/power/thermoregulator/overload(obj/machinery/power/source)
 	if(!anchored || !powernet)
 		return
 	var/power_avail = draw_power(active_power_usage*10)

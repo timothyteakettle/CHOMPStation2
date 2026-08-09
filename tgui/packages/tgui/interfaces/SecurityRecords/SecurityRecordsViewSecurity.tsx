@@ -8,7 +8,7 @@ import type { Data } from './types';
 export const SecurityRecordsViewSecurity = (props) => {
   const { act, data } = useBackend<Data>();
   const { security } = data;
-  if (!security || !security.fields) {
+  if (!security?.fields) {
     return (
       <Box color="bad">
         Security records lost!
@@ -48,8 +48,7 @@ export const SecurityRecordsViewSecurity = (props) => {
         {security.comments && security.comments.length === 0 ? (
           <Box color="label">No comments found.</Box>
         ) : (
-          security.comments &&
-          security.comments.map((comment, i) => (
+          security.comments?.map((comment, i) => (
             <Box key={i}>
               <Box color="label" inline>
                 {comment.header}

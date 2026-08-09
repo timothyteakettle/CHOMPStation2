@@ -13,7 +13,7 @@
 	desc = "It looks pretty sciency."
 	icon = 'icons/obj/rig_modules.dmi'
 	icon_state = "module"
-	matter = list(MAT_STEEL = 20000, MAT_PLASTIC = 30000, MAT_GLASS = 5000)
+	matter = list(MAT_STEEL = MATERIAL_COST(10), MAT_PLASTIC = MATERIAL_COST(15), MAT_GLASS = MATERIAL_COST(2.5))
 
 	var/damage = 0
 	var/obj/item/rig/holder
@@ -75,7 +75,7 @@
 
 		to_chat(user, "You start mending the damaged portions of \the [src]...")
 
-		if(!do_after(user,30) || !W || !src)
+		if(!do_after(user, 3 SECONDS, target = src) || !W || !src)
 			return
 
 		var/obj/item/stack/nanopaste/paste = W
@@ -100,7 +100,7 @@
 			return
 
 		to_chat(user, "You start mending the damaged portions of \the [src]...")
-		if(!do_after(user,30) || !W || !src)
+		if(!do_after(user, 3 SECONDS, target = src) || !W || !src)
 			return
 
 		damage = 1
@@ -136,14 +136,14 @@
 	stat_modules +=	new/atom/movable/stat_rig_module/charge(src)
 
 /obj/item/rig_module/Destroy()
-	holder.installed_modules -= src
+	holder?.installed_modules -= src
 	holder = null
 	QDEL_NULL_LIST(stat_modules)
 	. = ..()
 
 
 // Called when the module is installed into a suit.
-/obj/item/rig_module/proc/installed(var/obj/item/rig/new_holder)
+/obj/item/rig_module/proc/installed(obj/item/rig/new_holder)
 	holder = new_holder
 	return
 
@@ -182,7 +182,7 @@
 	return 1
 
 // Proc for toggling on active abilities.
-/obj/item/rig_module/proc/activate(var/skip_engage = 0) //VOREStation Edit - Allow us to skip the engage call.
+/obj/item/rig_module/proc/activate(skip_engage = 0) //VOREStation Edit - Allow us to skip the engage call.
 	//VOREStation Edit - Allow us to skip the engage call
 	if(active)
 		return 0
@@ -233,7 +233,7 @@
 
 // Called by holder rigsuit attackby()
 // Checks if an item is usable with this module and handles it if it is
-/obj/item/rig_module/proc/accepts_item(var/obj/item/input_device)
+/obj/item/rig_module/proc/accepts_item(obj/item/input_device)
 	return 0
 
 /atom/movable/stat_rig_module
@@ -250,7 +250,7 @@
 	module = null
 	. = ..()
 
-/atom/movable/stat_rig_module/proc/AddHref(var/list/href_list)
+/atom/movable/stat_rig_module/proc/AddHref(list/href_list)
 	return
 
 /atom/movable/stat_rig_module/proc/CanUse()
@@ -332,7 +332,7 @@
 	name = "Change Charge"
 	module_mode = "select_charge_type"
 
-/atom/movable/stat_rig_module/charge/AddHref(var/list/href_list)
+/atom/movable/stat_rig_module/charge/AddHref(list/href_list)
 	var/charge_index = module.charges.Find(module.charge_selected)
 	if(!charge_index)
 		charge_index = 0

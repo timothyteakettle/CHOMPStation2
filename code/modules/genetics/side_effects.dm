@@ -19,7 +19,7 @@
 	// start the side effect, this should give some cue as to what's happening,
 	// such as gasping. These cues need to be unique among side-effects.
 
-/datum/genetics/side_effect/proc/finish(var/datum/weakref/WR)
+/datum/genetics/side_effect/proc/finish(datum/weakref/WR)
 	var/mob/living/carbon/human/H = WR.resolve()
 	if(!H || !ishuman(H)) return FALSE
 	H.genetic_side_effects -= src
@@ -69,8 +69,7 @@
 
 /datum/genetics/side_effect/confuse/start(mob/living/carbon/human/H)
 	..()
-	var/datum/gender/T = GLOB.gender_datums[H.get_visible_gender()]
-	H.automatic_custom_emote(VISIBLE_MESSAGE, "has drool running down from [T.his] mouth.", check_stat = TRUE)
+	H.automatic_custom_emote(VISIBLE_MESSAGE, "has drool running down from [H.p_their()] mouth.", check_stat = TRUE)
 
 /datum/genetics/side_effect/confuse/finish(datum/weakref/WR)
 	if(..()) return

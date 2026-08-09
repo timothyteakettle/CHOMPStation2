@@ -11,14 +11,14 @@
 	qdel(src)
 	return
 
-/obj/effect/weaversilk/attackby(var/obj/item/W, var/mob/user)
+/obj/effect/weaversilk/attackby(obj/item/W, mob/user)
 	user.setClickCooldown(user.get_attack_speed(W))
 
 	if(W.force)
 		visible_message(span_warning("\The [src] has been [LAZYLEN(W.attack_verb) ? pick(W.attack_verb) : "attacked"] with \the [W][(user ? " by [user]." : ".")]"))
 		qdel(src)
 
-/obj/effect/weaversilk/bullet_act(var/obj/item/projectile/Proj)
+/obj/effect/weaversilk/bullet_act(obj/item/projectile/Proj)
 	..()
 	if(Proj.get_structure_damage())
 		qdel(src)
@@ -28,7 +28,7 @@
 	T?.feed_lingering_fire(0.1) // CHOMPAdd - Lingering fire, feeding fires
 	qdel(src)
 
-/obj/effect/weaversilk/attack_generic(mob/user as mob, var/damage)
+/obj/effect/weaversilk/attack_generic(mob/user as mob, damage)
 	if(damage)
 		qdel(src)
 
@@ -59,10 +59,10 @@
 	icon_state = pick(possible_icon_states)
 
 /obj/effect/weaversilk/wall/CanPass(atom/movable/mover, turf/target)
-	var/datum/component/weaver/comp = mover.GetComponent(/datum/component/weaver)
+	var/datum/component/weaver/comp = mover.GetComponent(/datum/component/weaver) //only spooders can move on by
 	if(comp)
-		return
-	..()
+		return TRUE
+	return FALSE
 
 /obj/structure/bed/double/weaversilk_nest
 	name = "weaversilk nest"
@@ -129,7 +129,6 @@
 	name = "weaversilk bindings"
 	desc = "A webbed cocoon that completely restrains the wearer."
 	icon_state = "web_bindings"
-	item_state = "web_bindings_mob"
 	body_parts_covered = CHEST|LEGS|FEET|ARMS|HANDS
 	flags_inv = HIDEGLOVES|HIDESHOES|HIDEJUMPSUIT|HIDETAIL
 	//CHOMPedit - Teshari sprite, this was originally a YW edit of the old web bindings

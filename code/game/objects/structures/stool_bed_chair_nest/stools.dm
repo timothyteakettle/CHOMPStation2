@@ -1,10 +1,9 @@
 //Todo: add leather and cloth for arbitrary coloured stools.
-var/global/list/stool_cache = list() //haha stool
 
 /obj/item/stool
 	name = "stool"
 	desc = "Apply butt."
-	icon = 'icons/obj/furniture_vr.dmi' //VOREStation Edit - new Icons
+	icon = 'icons/obj/furniture.dmi'
 	icon_state = "stool_preview" //set for the map
 	randpixel = 0
 	center_of_mass_x = 0
@@ -19,19 +18,20 @@ var/global/list/stool_cache = list() //haha stool
 /obj/item/stool/padded
 	icon_state = "stool_padded_preview" //set for the map
 
-/obj/item/stool/Initialize(mapload, var/new_material, var/new_padding_material)
+/obj/item/stool/Initialize(mapload, new_material, new_padding_material)
 	. = ..()
 	if(!new_material)
 		new_material = MAT_STEEL
 	material = get_material_by_name(new_material)
+	if(!istype(material))
+		stack_trace("Material of type: [new_material] does not exist.")
+		return INITIALIZE_HINT_QDEL
 	if(new_padding_material)
 		padding_material = get_material_by_name(new_padding_material)
-	if(!istype(material))
-		return INITIALIZE_HINT_QDEL
 	force = round(material.get_blunt_damage()*0.4)
 	update_icon()
 
-/obj/item/stool/padded/Initialize(mapload, var/new_material)
+/obj/item/stool/padded/Initialize(mapload, new_material)
 	. = ..(mapload, MAT_STEEL, MAT_CARPET)
 
 /obj/item/stool/update_icon()
@@ -40,19 +40,19 @@ var/global/list/stool_cache = list() //haha stool
 	cut_overlays()
 	// Base icon.
 	var/cache_key = "[base_icon]-[material.name]"
-	if(isnull(stool_cache[cache_key]))
+	if(isnull(GLOB.stool_cache[cache_key]))
 		var/image/I = image(icon, base_icon)
 		I.color = material.icon_colour
-		stool_cache[cache_key] = I
-	add_overlay(stool_cache[cache_key])
+		GLOB.stool_cache[cache_key] = I
+	add_overlay(GLOB.stool_cache[cache_key])
 	// Padding overlay.
 	if(padding_material)
 		var/padding_cache_key = "[base_icon]-padding-[padding_material.name]"
-		if(isnull(stool_cache[padding_cache_key]))
+		if(isnull(GLOB.stool_cache[padding_cache_key]))
 			var/image/I =  image(icon, "[base_icon]_padding") //VOREStation Edit
 			I.color = padding_material.icon_colour
-			stool_cache[padding_cache_key] = I
-		add_overlay(stool_cache[padding_cache_key])
+			GLOB.stool_cache[padding_cache_key] = I
+		add_overlay(GLOB.stool_cache[padding_cache_key])
 	// Strings.
 	if(padding_material)
 		name = "[padding_material.display_name] [initial(name)]" //this is not perfect but it will do for now.
@@ -61,7 +61,11 @@ var/global/list/stool_cache = list() //haha stool
 		name = "[material.display_name] [initial(name)]"
 		desc = "A stool. Apply butt with care. It's made of [material.use_name]."
 
-/obj/item/stool/proc/add_padding(var/padding_type)
+/obj/item/stool/dropped(mob/user, equipping, slot)
+	. = ..()
+	set_dir(user.dir) //Face the way we're facing when we drop it.
+
+/obj/item/stool/proc/add_padding(padding_type)
 	padding_material = get_material_by_name(padding_type)
 	update_icon()
 
@@ -71,7 +75,7 @@ var/global/list/stool_cache = list() //haha stool
 		padding_material = null
 	update_icon()
 
-/obj/item/stool/attack(mob/M as mob, mob/user as mob)
+/obj/item/stool/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
 	if (prob(5) && isliving(M))
 		user.visible_message(span_danger("[user] breaks [src] over [M]'s back!"))
 		user.setClickCooldown(user.get_attack_speed())
@@ -85,7 +89,7 @@ var/global/list/stool_cache = list() //haha stool
 		var/mob/living/T = M
 		T.Weaken(10)
 		T.apply_damage(20)
-		return
+		return ITEM_INTERACT_SUCCESS
 	..()
 
 /obj/item/stool/ex_act(severity)

@@ -32,7 +32,7 @@
 	hack_state = null
 	return ..()
 
-/obj/item/multitool/hacktool/attackby(var/obj/item/W, var/mob/user)
+/obj/item/multitool/hacktool/attackby(obj/item/W, mob/user)
 	if(W.has_tool_quality(TOOL_SCREWDRIVER))
 		in_hack_mode = !in_hack_mode
 		playsound(src, W.usesound, 50, 1)
@@ -68,7 +68,7 @@
 			D.close()
 	return 1
 
-/obj/item/multitool/hacktool/proc/attempt_hack(var/mob/user, var/atom/target)
+/obj/item/multitool/hacktool/proc/attempt_hack(mob/user, atom/target)
 	if(is_hacking)
 		to_chat(user, span_warning("You are already hacking!"))
 		return 0
@@ -80,7 +80,7 @@
 		var/obj/structure/closet/crate/secure/A = target
 		if(A.locked)
 			to_chat(user, span_notice("Overriding access. Stand by."))
-			if(do_after(user, (((5 SECONDS + rand(0, 5 SECONDS) + rand(0, 5 SECONDS))*hackspeed))))
+			if(do_after(user, (((5 SECONDS + rand(0, 5 SECONDS) + rand(0, 5 SECONDS))*hackspeed)), target = src))
 				to_chat(user, span_notice("Override successful!"))
 				A.locked = FALSE
 				A.update_icon()
@@ -92,7 +92,7 @@
 		var/obj/structure/closet/secure_closet/A = target
 		if(A.locked)
 			to_chat(user, span_notice("Overriding access. Stand by."))
-			if(do_after(user, (((5 SECONDS + rand(0, 5 SECONDS) + rand(0, 5 SECONDS))*hackspeed))))
+			if(do_after(user, (((5 SECONDS + rand(0, 5 SECONDS) + rand(0, 5 SECONDS))*hackspeed)), target = src))
 				to_chat(user, span_notice("Override successful!"))
 				A.locked = FALSE
 				A.update_icon()
@@ -114,12 +114,12 @@
 		is_hacking = 1
 		// On average hackin takes ~15 seconds. Fairly small random span to discourage people from simply aborting and trying again
 		// Reduced hack duration to compensate for the reduced functionality, multiplied by door sec level
-		var/hack_result = do_after(user, (((10 SECONDS + rand(0, 10 SECONDS) + rand(0, 10 SECONDS))*hackspeed)*D.security_level))
+		var/hack_result = do_after(user, (((10 SECONDS + rand(0, 10 SECONDS) + rand(0, 10 SECONDS))*hackspeed)*D.security_level), target = src)
 		is_hacking = 0
 
 		if(hack_result && in_hack_mode)
 			to_chat(user, span_notice("Your hacking attempt was succesful!"))
-			user.playsound_local(get_turf(src), 'sound/instruments/piano/An6.ogg', 50)
+			user.playsound_local(get_turf(src), 'sound/runtime/instruments/piano/An6.ogg', 50)
 		else
 			to_chat(user, span_warning("Your hacking attempt failed!"))
 			return 0
@@ -137,13 +137,13 @@
 			A.unregister(OBSERVER_EVENT_DESTROY, src)
 		known_targets.Cut(max_known_targets + 1)
 
-/obj/item/multitool/hacktool/proc/on_target_destroy(var/target)
+/obj/item/multitool/hacktool/proc/on_target_destroy(target)
 	known_targets -= target
 
 /datum/tgui_state/default/must_hack
 	var/obj/item/multitool/hacktool/hacktool
 
-/datum/tgui_state/default/must_hack/New(var/hacktool)
+/datum/tgui_state/default/must_hack/New(hacktool)
 	src.hacktool = hacktool
 	..()
 

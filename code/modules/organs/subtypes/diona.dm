@@ -1,4 +1,4 @@
-/proc/spawn_diona_nymph(var/turf/target)
+/proc/spawn_diona_nymph(turf/target)
 	if(!istype(target))
 		return 0
 
@@ -32,8 +32,8 @@
 	min_broken_damage = 50
 	w_class = ITEMSIZE_HUGE
 	body_part = UPPER_TORSO
-	vital = 1
-	cannot_amputate = 1
+	vital = TRUE
+	cannot_amputate = TRUE
 	parent_organ = null
 	gendered_icon = 1
 
@@ -141,7 +141,7 @@
 	icon_state = "nymph"
 	organ_tag = "special" // Turns into a nymph instantly, no transplanting possible.
 
-/obj/item/organ/internal/diona/removed(var/mob/living/user, var/skip_nymph)
+/obj/item/organ/internal/diona/removed(mob/living/user, skip_nymph)
 	if(robotic >= ORGAN_ROBOT)
 		return ..()
 	var/mob/living/carbon/human/H = owner
@@ -192,7 +192,7 @@
 	icon = 'icons/mob/alien.dmi'
 	icon_state = "claw"
 
-/obj/item/organ/internal/diona/nutrients/removed(var/mob/user)
+/obj/item/organ/internal/diona/nutrients/removed(mob/user)
 	return ..(user, 1)
 
 /obj/item/organ/internal/diona/node
@@ -225,7 +225,7 @@
 /obj/item/organ/internal/brain/cephalon/digitize()
 	return
 
-/obj/item/organ/internal/brain/cephalon/removed(var/mob/living/user, var/skip_nymph)
+/obj/item/organ/internal/brain/cephalon/removed(mob/living/user, skip_nymph)
 	if(robotic >= ORGAN_ROBOT)
 		return ..()
 	var/mob/living/carbon/human/H = owner
@@ -242,5 +242,5 @@
 	amputation_point = "branch"
 	joint = "structural ligament"
 	dislocated = -1
-	vital = 0
+	vital = FALSE
 	slot_flags = SLOT_BELT

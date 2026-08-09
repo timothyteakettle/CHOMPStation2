@@ -2,7 +2,6 @@
 	name = "repair droid"
 	desc = "Automated repair droid. Scans exosuit for damage and repairs it. Can fix almost any type of external or internal damage."
 	icon_state = "repair_droid"
-	origin_tech = list(TECH_MAGNET = 3, TECH_DATA = 3)
 	equip_cooldown = 20
 	energy_drain = 100
 	range = 0
@@ -44,11 +43,11 @@
 		if(datum_flags & DF_ISPROCESSING)
 			droid_overlay = new(src.icon, icon_state = "repair_droid")
 			STOP_PROCESSING(SSobj, src)
-			log_message("Deactivated.")
+			src.mecha_log_message("Deactivated.")
 			set_ready_state(TRUE)
 		else
 			droid_overlay = new(src.icon, icon_state = "repair_droid_a")
-			log_message("Activated.")
+			src.mecha_log_message("Activated.")
 			START_PROCESSING(SSobj, src)
 		chassis.add_overlay(droid_overlay)
 		send_byjax(chassis.occupant,"exosuit.browser","\ref[src]",src.get_equip_info())

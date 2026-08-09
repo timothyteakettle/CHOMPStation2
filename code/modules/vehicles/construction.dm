@@ -11,7 +11,7 @@
 
 	density = TRUE
 	slowdown = 10 //It's a vehicle frame, what do you expect?
-	w_class = 5
+	w_class = ITEMSIZE_HUGE
 
 	var/build_stage = 0
 	var/obj/item/cell/cell = null
@@ -21,7 +21,7 @@
 	icon_state = "[initial(icon_state)][build_stage]"
 	update_icon()
 
-/obj/item/vehicle_assembly/proc/increase_step(var/new_name = null)
+/obj/item/vehicle_assembly/proc/increase_step(new_name = null)
 	build_stage++
 	if(new_name)
 		name = new_name
@@ -39,7 +39,7 @@
 	icon_state = "quad-frame"
 	pixel_x = -16
 
-/obj/item/vehicle_assembly/quadbike/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/item/vehicle_assembly/quadbike/attackby(obj/item/W as obj, mob/user as mob)
 	..()
 
 	switch(build_stage)
@@ -50,7 +50,7 @@
 					to_chat(user, span_warning("You need eight sheets of plastic to add tires to \the [src]."))
 					return
 				to_chat(user, span_notice("You start to add tires to [src]."))
-				if(do_after(user, 40) && build_stage == 0)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 0)
 					if(P.use(8))
 						to_chat(user, span_notice("You add tires to \the [src]."))
 						increase_step("wheeled [initial(name)]")
@@ -75,7 +75,7 @@
 				var/obj/item/stack/material/steel/S = W
 				if(S.get_amount() < 5)
 					to_chat(user, span_warning("You need five sheets of steel to convert \the [src] into a trailer."))
-				if(do_after(user, 80) && build_stage == 2)
+				if(do_after(user, 8 SECONDS, target = src) && build_stage == 2)
 					if(S.use(5))
 						var/obj/item/vehicle_assembly/quadtrailer/Trailer = new(src)
 						Trailer.forceMove(get_turf(src))
@@ -92,7 +92,7 @@
 					to_chat(user, span_warning("You need two coils of wire to wire [src]."))
 					return
 				to_chat(user, span_notice("You start to wire [src]."))
-				if(do_after(user, 40) && build_stage == 3)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 3)
 					if(C.use(2))
 						to_chat(user, span_notice("You wire \the [src]."))
 						increase_step("wired [initial(name)]")
@@ -122,7 +122,7 @@
 					to_chat(user, span_warning("You need two sheets of plasteel to add reinforcement to \the [src]."))
 					return
 				to_chat(user, span_notice("You start to add reinforcement to [src]."))
-				if(do_after(user, 40) && build_stage == 6)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 6)
 					if(PL.use(2))
 						to_chat(user, span_notice("You add reinforcement to \the [src]."))
 						increase_step("reinforced [initial(name)]")
@@ -132,7 +132,7 @@
 			if(W.has_tool_quality(TOOL_WRENCH) || W.has_tool_quality(TOOL_SCREWDRIVER))
 				playsound(src, W.usesound, 50, 1)
 				to_chat(user, span_notice("You begin your finishing touches on \the [src]."))
-				if(do_after(user, 20) && build_stage == 7)
+				if(do_after(user, 2 SECONDS, target = src) && build_stage == 7)
 					playsound(src, W.usesound, 30, 1)
 					var/obj/vehicle/train/engine/quadbike/built/product = new(src)
 					to_chat(user, span_notice("You finish \the [product]"))
@@ -151,7 +151,7 @@
 	icon_state = "quadtrailer-frame"
 	pixel_x = -16
 
-/obj/item/vehicle_assembly/quadtrailer/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/item/vehicle_assembly/quadtrailer/attackby(obj/item/W as obj, mob/user as mob)
 	..()
 
 	switch(build_stage)
@@ -172,7 +172,7 @@
 					to_chat(user, span_warning("You need two coils of wire to wire [src]."))
 					return
 				to_chat(user, span_notice("You start to wire [src]."))
-				if(do_after(user, 40) && build_stage == 1)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 1)
 					if(C.use(2))
 						to_chat(user, span_notice("You wire \the [src]."))
 						increase_step("wired [initial(name)]")
@@ -200,7 +200,7 @@
 
 	pixel_x = 0
 
-/obj/item/vehicle_assembly/spacebike/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/item/vehicle_assembly/spacebike/attackby(obj/item/W as obj, mob/user as mob)
 	switch(build_stage)
 		if(0)
 			if(istype(W, /obj/item/tank/jetpack) || istype(W, /obj/item/borg/upgrade/advanced/jetpack))
@@ -215,7 +215,7 @@
 					to_chat(user, span_warning("You need two coils of wire to wire [src]."))
 					return
 				to_chat(user, span_notice("You start to wire [src]."))
-				if(do_after(user, 40) && build_stage == 1)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 1)
 					if(C.use(2))
 						to_chat(user, span_notice("You wire \the [src]."))
 						increase_step("wired [initial(name)]")
@@ -228,7 +228,7 @@
 					to_chat(user, span_warning("You need three sheets of plastic to add a seat to \the [src]."))
 					return
 				to_chat(user, span_notice("You start to add a seat to [src]."))
-				if(do_after(user, 40) && build_stage == 2)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 2)
 					if(P.use(3))
 						to_chat(user, span_notice("You add a seat to \the [src]."))
 						increase_step("seated [initial(name)]")
@@ -263,7 +263,7 @@
 			if(W.has_tool_quality(TOOL_WRENCH) || W.has_tool_quality(TOOL_SCREWDRIVER))
 				playsound(src, W.usesound, 50, 1)
 				to_chat(user, span_notice("You begin your finishing touches on \the [src]."))
-				if(do_after(user, 20) && build_stage == 6)
+				if(do_after(user, 2 SECONDS, target = src) && build_stage == 6)
 					playsound(src, W.usesound, 30, 1)
 					var/obj/vehicle/bike/built/product = new(src)
 					to_chat(user, span_notice("You finish \the [product]"))
@@ -285,7 +285,7 @@
 	icon = 'icons/obj/vehicles.dmi'
 	icon_state = "snowmobile-frame"
 
-/obj/item/vehicle_assembly/snowmobile/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/item/vehicle_assembly/snowmobile/attackby(obj/item/W as obj, mob/user as mob)
 	switch(build_stage)
 		if(0)
 			if(istype(W, /obj/item/stack/material/steel))
@@ -294,7 +294,7 @@
 					to_chat(user, span_warning("You need six sheets of steel to add treads to \the [src]."))
 					return
 				to_chat(user, span_notice("You start to add treads to [src]."))
-				if(do_after(user, 40) && build_stage == 0)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 0)
 					if(S.use(6))
 						to_chat(user, span_notice("You add treads to \the [src]."))
 						increase_step("tracked [initial(name)]")
@@ -323,7 +323,7 @@
 					to_chat(user, span_warning("You need two coils of wire to wire [src]."))
 					return
 				to_chat(user, span_notice("You start to wire [src]."))
-				if(do_after(user, 40) && build_stage == 3)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 3)
 					if(C.use(2))
 						to_chat(user, span_notice("You wire \the [src]."))
 						increase_step("wired [initial(name)]")
@@ -353,7 +353,7 @@
 					to_chat(user, span_warning("You need two sheets of plasteel to add reinforcement to \the [src]."))
 					return
 				to_chat(user, span_notice("You start to add reinforcement to [src]."))
-				if(do_after(user, 40) && build_stage == 6)
+				if(do_after(user, 4 SECONDS, target = src) && build_stage == 6)
 					if(PL.use(2))
 						to_chat(user, span_notice("You add reinforcement to \the [src]."))
 						increase_step("reinforced [initial(name)]")
@@ -363,7 +363,7 @@
 			if(W.has_tool_quality(TOOL_WRENCH) || W.has_tool_quality(TOOL_SCREWDRIVER))
 				playsound(src, W.usesound, 50, 1)
 				to_chat(user, span_notice("You begin your finishing touches on \the [src]."))
-				if(do_after(user, 20) && build_stage == 7)
+				if(do_after(user, 2 SECONDS, target = src) && build_stage == 7)
 					playsound(src, W.usesound, 30, 1)
 					var/obj/vehicle/train/engine/quadbike/snowmobile/built/product = new(src)
 					to_chat(user, span_notice("You finish \the [product]"))

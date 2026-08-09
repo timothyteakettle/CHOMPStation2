@@ -50,7 +50,7 @@
 
 
 // This is just fragmentate, but less specific. Don't know how to make either of them less awful, at the moment
-/obj/proc/launch_many_projectiles(var/turf/T=get_turf(src), var/spreading_range = 5, var/list/projectiletypes=list(/obj/item/projectile/bullet/pistol/rubber))
+/obj/proc/launch_many_projectiles(turf/T=get_turf(src), spreading_range = 5, list/projectiletypes=list(/obj/item/projectile/bullet/pistol/rubber))
 	set waitfor = 0
 	var/list/target_turfs = getcircle(T, spreading_range)
 
@@ -73,4 +73,4 @@
 			else if(!M.lying && src.loc != get_turf(src)) //if it's not on the turf, it must be in the mob!
 				P.attack_mob(M, 0, 25) //you're holding a grenade, dude!
 			else
-				P.attack_mob(M, 0, 100) //otherwise, allow a decent amount of fragments to pass
+				P.attack_mob(M, 0, 75) //otherwise, allow a decent amount of fragments to pass

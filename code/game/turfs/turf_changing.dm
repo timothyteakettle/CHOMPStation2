@@ -27,7 +27,7 @@
 	return HAS_VALID_ZONE(T)
 
 //Creates a new turf
-/turf/proc/ChangeTurf(var/turf/N, var/tell_universe=1, var/force_lighting_update = 0, var/preserve_outdoors = FALSE)
+/turf/proc/ChangeTurf(turf/N, tell_universe=1, force_lighting_update = 0, preserve_outdoors = FALSE)
 	if (!N)
 		return
 
@@ -93,6 +93,9 @@
 		W_sim.shandler.manualInit()
 	if(old_fire)
 		old_fire.RemoveFire()
+	if(istype(N, /turf/simulated))
+		var/turf/simulated/new_turf = N
+		new_turf.wet = initial(new_turf.wet)
 
 	if(tell_universe)
 		GLOB.universe.OnTurfChange(W)
@@ -100,8 +103,9 @@
 	if(SSair)
 		SSair.mark_for_update(W)
 
-	for(var/turf/space/S in range(W, 1))
-		S.update_starlight()
+	if(CONFIG_GET(number/starlight))
+		for(var/turf/space/S in range(W, 1))
+			S.update_starlight()
 	W.levelupdate()
 	W.update_icon(1)
 	W.post_change()
@@ -116,7 +120,7 @@
 
 	dynamic_lumcount = old_dynamic_lumcount
 
-	if(SSlighting.subsystem_initialized)
+	if(SSlighting.initialized)
 		lighting_object = old_lighting_object
 
 		directional_opacity = old_directional_opacity
@@ -130,8 +134,9 @@
 		else if(lighting_object && !lighting_object.needs_update)
 			lighting_object.update()
 
-		for(var/turf/space/space_tile in RANGE_TURFS(1, src))
-			space_tile.update_starlight()
+		if(CONFIG_GET(number/starlight))
+			for(var/turf/space/space_tile in RANGE_TURFS(1, src))
+				space_tile.update_starlight()
 
 	var/turf/simulated/sim_self = src
 	if(lighting_object && istype(sim_self) && sim_self.shandler) //sanity check, but this should never be null for either of the switch cases (lighting_object will be null during initializations sometimes)
@@ -167,7 +172,7 @@
 		outdoors = old_outdoors
 
 
-/turf/proc/propogate_sunlight_changes(oldtype, old_density, new_turf, var/above = FALSE)
+/turf/proc/propogate_sunlight_changes(oldtype, old_density, new_turf, above = FALSE)
 	//SEND_SIGNAL(src, COMSIG_TURF_UPDATE, oldtype, old_density, W)
 	//Sends signals in a cross pattern to all tiles that may have their sunlight var affected including this tile.
 	for(var/i = - SUNLIGHT_RADIUS, i <= SUNLIGHT_RADIUS, i++)

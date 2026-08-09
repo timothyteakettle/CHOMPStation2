@@ -1,7 +1,7 @@
 /obj/machinery/artifact_analyser
 	name = "Anomaly Analyser"
 	desc = "Studies the emissions of anomalous materials to discover their uses."
-	icon = 'icons/obj/virology_vr.dmi' //VOREStation Edit
+	icon = 'icons/obj/virology.dmi'
 	icon_state = "isolator"
 	anchored = TRUE
 	density = TRUE
@@ -80,11 +80,11 @@
 						continue
 					if(istype(O, /obj/machinery/artifact))
 						var/obj/machinery/artifact/A = O
-						if(A.being_used)
+						if(A.in_use)
 							artifact_in_use = 1
 						else
 							A.anchored = TRUE
-							A.being_used = 1
+							A.in_use = 1
 
 					if(artifact_in_use)
 						atom_say("Cannot scan. Too much interference.")
@@ -110,7 +110,6 @@
 /obj/machinery/artifact_analyser/process()
 	if(scan_in_progress && world.time > scan_completion_time)
 		scan_in_progress = 0
-		updateDialog()
 
 		var/results = ""
 		if(!owned_scanner)
@@ -134,11 +133,11 @@
 		if(scanned_object && istype(scanned_object, /obj/machinery/artifact))
 			var/obj/machinery/artifact/A = scanned_object
 			A.anchored = FALSE
-			A.being_used = 0
+			A.in_use = 0
 		scanned_object = null
 
 //hardcoded responses, oh well
-/obj/machinery/artifact_analyser/proc/get_scan_info(var/obj/scanned_obj)
+/obj/machinery/artifact_analyser/proc/get_scan_info(obj/scanned_obj)
 	switch(scanned_obj.type)
 		if(/obj/machinery/auto_cloner)
 			return "Automated cloning pod - appears to rely on an artificial ecosystem formed by semi-organic nanomachines and the contained liquid.<br>The liquid resembles protoplasmic residue supportive of unicellular organism developmental conditions.<br>The structure is composed of a titanium alloy."

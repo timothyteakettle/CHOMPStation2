@@ -62,12 +62,8 @@
 /mob/living/simple_mob/vr/alchemistbee/MouseDrop_T(mob/living/M, mob/living/user)
 	return
 
-/mob/living/simple_mob/vr/alchemistbee/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
-	.=..()
+/mob/living/simple_mob/vr/alchemistbee/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
 	B.desc = "The fearsome predator gets a firm grip upon you, before dunking you into it's maw, then with a powerful swift gulp you're sent tumbling into it's stomach."
@@ -246,7 +242,7 @@
 		create_reagents(splatter_volume)
 		ready_chemicals()
 
-/obj/item/projectile/arc/vial/on_impact(var/atom/A)
+/obj/item/projectile/arc/vial/on_impact(atom/A)
 	if(splatter)
 		var/turf/location = get_turf(src)
 		var/datum/effect/effect/system/smoke_spread/chem/blob/S = new /datum/effect/effect/system/smoke_spread/chem/blob

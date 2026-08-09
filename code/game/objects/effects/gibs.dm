@@ -1,4 +1,4 @@
-/proc/gibs(atom/location, var/datum/dna/MobDNA, gibber_type = /obj/effect/gibspawner/generic, var/fleshcolor, var/bloodcolor)
+/proc/gibs(atom/location, datum/dna/MobDNA, gibber_type = /obj/effect/gibspawner/generic, fleshcolor, bloodcolor)
 	new gibber_type(location,MobDNA,fleshcolor,bloodcolor)
 
 /obj/effect/gibspawner
@@ -12,7 +12,7 @@
 	icon = 'icons/effects/map_effects.dmi'
 	icon_state = "gibspawn"
 
-/obj/effect/gibspawner/Initialize(mapload, var/datum/dna/MobDNA, var/fleshcolor, var/bloodcolor)
+/obj/effect/gibspawner/Initialize(mapload, datum/dna/MobDNA, fleshcolor, bloodcolor)
 	. = ..()
 
 	if(fleshcolor) src.fleshcolor = fleshcolor
@@ -20,9 +20,10 @@
 	Gib(loc,MobDNA)
 	return INITIALIZE_HINT_QDEL
 
-/obj/effect/gibspawner/proc/Gib(atom/location, var/datum/dna/MobDNA = null)
+/obj/effect/gibspawner/proc/Gib(atom/location, datum/dna/MobDNA = null)
 	if(gibtypes.len != gibamounts.len || gibamounts.len != gibdirections.len)
-		to_world(span_filter_system(span_warning("Gib list length mismatch!")))
+		to_chat(world, span_filter_system(span_warning("Gib list length mismatch!")))
+		log_world("Gib list length mismatch!")
 		return
 
 	var/obj/effect/decal/cleanable/blood/gibs/gib = null
@@ -47,10 +48,8 @@
 				gib.update_icon()
 
 				gib.init_forensic_data()
-				if(MobDNA)
-					gib.add_blooddna(MobDNA,null)
-				else if(istype(src, /obj/effect/gibspawner/human)) // Probably a monkey
-					gib.add_blooddna(null,null)
+				gib.add_blooddna(MobDNA,null)
+
 				if(istype(location,/turf/))
 					var/list/directions = gibdirections[i]
 					if(directions.len)

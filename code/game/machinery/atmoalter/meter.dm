@@ -1,7 +1,7 @@
 /obj/machinery/meter
 	name = "meter"
 	desc = "It measures something."
-	icon = 'icons/obj/meter_vr.dmi'
+	icon = 'icons/obj/meter.dmi'
 	icon_state = "meterX"
 	var/obj/machinery/atmospherics/pipe/target = null
 	var/list/pipes_on_turf = list()
@@ -9,13 +9,15 @@
 	power_channel = ENVIRON
 	var/frequency = 0
 	var/id
+	var/open = FALSE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 15
 
-/obj/machinery/meter/Initialize(mapload)
+/obj/machinery/meter/Initialize(mapload, pipe_layer_selected)
 	. = ..()
 	if (!target)
 		target = select_target()
+		align_to_target()
 
 /obj/machinery/meter/Destroy()
 	pipes_on_turf.Cut()
@@ -61,7 +63,7 @@
 		icon_state = "meter4"
 
 	if(frequency)
-		var/datum/radio_frequency/radio_connection = radio_controller.return_frequency(frequency)
+		var/datum/radio_frequency/radio_connection = SSradio.return_frequency(frequency)
 
 		if(!radio_connection) return
 
@@ -79,7 +81,7 @@
 /obj/machinery/meter/examine(mob/user)
 	. = ..()
 
-	if(get_dist(user, src) > 3 && !(isAI(user) || isobserver(user)))
+	if(get_dist(user, src) > 6 && !(isAI(user) || isobserver(user)))
 		. += span_warning("You are too far away to read it.")
 
 	else if(stat & (NOPOWER|BROKEN))
@@ -104,11 +106,11 @@
 
 	return ..()
 
-/obj/machinery/meter/attackby(var/obj/item/W, var/mob/user)
+/obj/machinery/meter/attackby(obj/item/W, mob/user)
 	if(W.has_tool_quality(TOOL_WRENCH))
 		playsound(src, W.usesound, 50, 1)
 		to_chat(user, span_notice("You begin to unfasten \the [src]..."))
-		if(do_after(user, 40 * W.toolspeed))
+		if(do_after(user, 4 SECONDS * W.toolspeed, target = src))
 			user.visible_message( \
 				span_infoplain(span_bold("\The [user]") + " unfastens \the [src]."), \
 				span_notice("You have unfastened \the [src]."), \
@@ -117,7 +119,19 @@
 			qdel(src)
 			return
 
-	if(istype(W, /obj/item/multitool))
+	if(W.has_tool_quality(TOOL_SCREWDRIVER))
+		playsound(src, W.usesound, 50, 1)
+		to_chat(user, span_notice("You have [open ? "closed" : "opened"] the maintenance panel for [src]."))
+		open = !open
+		return
+
+	if(W.has_tool_quality(TOOL_MULTITOOL))
+		if(open) // For setting up the meter to be used by other devices over radio.
+			id = tgui_input_text(user, "Please insert an ID tag for [src], example 'exhaust_pipe'.", "Set ID Tag", id, MAX_NAME_LEN)
+			var/obj/item/multitool/tool = W
+			tool.connectable = src
+			return
+
 		for(var/obj/machinery/atmospherics/pipe/P in loc)
 			pipes_on_turf |= P
 		if(!pipes_on_turf.len)
@@ -125,15 +139,35 @@
 		target = pipes_on_turf[1]
 		pipes_on_turf.Remove(target)
 		pipes_on_turf.Add(target)
+		align_to_target()
 		to_chat(user, span_notice("Pipe meter set to moniter \the [target]."))
 		return
 
 	return ..()
+
+/obj/machinery/meter/proc/align_to_target()
+	// Use offsets instead of custom icons
+	switch(target?.piping_layer)
+		if(PIPING_LAYER_SUPPLY)
+			pixel_x = -4
+			pixel_y = -4
+		if(PIPING_LAYER_SCRUBBER)
+			pixel_x = 4
+			pixel_y = 4
+		if(PIPING_LAYER_FUEL)
+			pixel_x = 8
+			pixel_y = 8
+		if(PIPING_LAYER_AUX)
+			pixel_x = -8
+			pixel_y = -8
+		else
+			pixel_x = 0
+			pixel_y = 0
 
 // TURF METER - REPORTS A TILE'S AIR CONTENTS
 
 /obj/machinery/meter/turf/select_target()
 	return loc
 
-/obj/machinery/meter/turf/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/machinery/meter/turf/attackby(obj/item/W, mob/user)
 	return

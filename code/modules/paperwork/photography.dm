@@ -36,17 +36,21 @@ GLOBAL_VAR_INIT(photo_count, 0)
 	var/scribble	//Scribble on the back.
 	var/icon/tiny
 	var/photo_size = 3
+	resistance_flags = FLAMMABLE
 
 /obj/item/photo/Initialize(mapload)
 	. = ..()
 	id = GLOB.photo_count++
 
-/obj/item/photo/attack_self(mob/user as mob)
+/obj/item/photo/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	user.examinate(src)
 
 /obj/item/photo/attackby(obj/item/P as obj, mob/user as mob)
 	if(istype(P, /obj/item/pen))
-		var/txt = sanitize(tgui_input_text(user, "What would you like to write on the back?", "Photo Writing", null, 128), 128)
+		var/txt = tgui_input_text(user, "What would you like to write on the back?", "Photo Writing", null, 128)
 		if(loc == user && user.stat == 0)
 			scribble = txt
 	..()
@@ -61,7 +65,7 @@ GLOBAL_VAR_INIT(photo_count, 0)
 		return list(span_notice("It is too far away to examine."))
 
 /obj/item/photo/proc/show(mob/user as mob)
-	user << browse_rsc(img, "tmp_photo_[id].png")
+	send_rsc(user, img, "tmp_photo_[id].png")
 	user << browse("<html><head><title>[name]</title></head>" \
 		+ "<body style='overflow:hidden;margin:0;text-align:center'>" \
 		+ "<img src='tmp_photo_[id].png' width='[64*photo_size]' style='-ms-interpolation-mode:nearest-neighbor' />" \
@@ -75,7 +79,7 @@ GLOBAL_VAR_INIT(photo_count, 0)
 	set category = "Object"
 	set src in usr
 
-	var/n_name = sanitizeSafe(tgui_input_text(usr, "What would you like to label the photo?", "Photo Labelling", null, MAX_NAME_LEN), MAX_NAME_LEN)
+	var/n_name = sanitizeSafe(tgui_input_text(usr, "What would you like to label the photo?", "Photo Labelling", null, MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 	//loc.loc check is for making possible renaming photos in clipboards
 	if(( (loc == usr || (loc.loc && loc.loc == usr)) && usr.stat == 0))
 		name = "[(n_name ? text("[n_name]") : "photo")]"
@@ -97,7 +101,7 @@ GLOBAL_VAR_INIT(photo_count, 0)
 
 	if(ishuman(usr))
 		var/mob/living/carbon/human/M = usr
-		if(!( istype(over_object, /obj/screen) ))
+		if(!( istype(over_object, /atom/movable/screen) ))
 			return ..()
 		playsound(src, "rustle", 50, 1, -5)
 		if((!( M.restrained() ) && !( M.stat ) && M.back == src))
@@ -128,7 +132,7 @@ GLOBAL_VAR_INIT(photo_count, 0)
 	item_state = "camera"
 	w_class = ITEMSIZE_SMALL
 	slot_flags = SLOT_BELT
-	matter = list(MAT_STEEL = 2000)
+	matter = list(MAT_STEEL = MATERIAL_COST(1))
 	var/pictures_max = 10
 	var/pictures_left = 10
 	var/on = 1
@@ -145,10 +149,13 @@ GLOBAL_VAR_INIT(photo_count, 0)
 		size = nsize
 		to_chat(usr, span_notice("Camera will now take [size]x[size] photos."))
 
-/obj/item/camera/attack(mob/living/carbon/human/M as mob, mob/user as mob)
-	return
+/obj/item/camera/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
+	return NONE
 
-/obj/item/camera/attack_self(mob/user as mob)
+/obj/item/camera/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	on = !on
 	if(on)
 		src.icon_state = icon_on
@@ -311,7 +318,7 @@ GLOBAL_VAR_INIT(photo_count, 0)
 	if(!user.get_inactive_hand())
 		user.put_in_inactive_hand(p)
 
-/obj/item/photo/proc/copy(var/copy_id = 0)
+/obj/item/photo/proc/copy(copy_id = 0)
 	var/obj/item/photo/p = new/obj/item/photo()
 
 	p.name = name

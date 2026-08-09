@@ -43,17 +43,13 @@
 	vore_default_item_mode = IM_DIGEST
 	vore_standing_too = TRUE
 
-/mob/living/simple_mob/vore/turkeygirl/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/turkeygirl/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
 	B.desc = "The hot churning stomach of a turkey girl! The doughy flesh presses inward to form to your figure, thick slime coating everything, and very shortly that includes you as well! There isn't any escaping that constant full body motion, as her body works to ball yours up into a tight little package. Gurgling and glubbing with every shifting movement, while her pulse throbs through the flesh all around you with every beat of her heart. All in all, one thing is for certain! You've become turkey stuffing! Oh no..."
 	B.mode_flags = DM_FLAG_THICKBELLY | DM_FLAG_NUMBING
-	B.belly_fullscreen = "anim_belly"
+	B.belly_fullscreen = "VBOanim_belly1"
 	B.digest_brute = 1
 	B.digest_burn = 6
 	B.digestchance = 0
@@ -77,7 +73,7 @@
 	if(resting)
 		icon_state = "[icon_state]-resting"
 
-/mob/living/simple_mob/vore/turkeygirl/attackby(var/obj/item/reagent_containers/food/snacks/O as obj, var/mob/user as mob)
+/mob/living/simple_mob/vore/turkeygirl/attackby(obj/item/reagent_containers/food/snacks/O as obj, mob/user as mob)
 	if(stat)
 		return ..()
 

@@ -18,7 +18,6 @@ Thus, the two variables affect pump operation are set in New():
 	construction_type = /obj/item/pipe/directional
 	pipe_state = "pump"
 	level = 1
-	var/base_icon = "pump"
 
 	name = "gas pump"
 	desc = "A pump that moves gas from one place to another."
@@ -27,19 +26,19 @@ Thus, the two variables affect pump operation are set in New():
 
 	//var/max_volume_transfer = 10000
 
+	pipe_flags = NONE // Other pumps can be on other layers
 	use_power = USE_POWER_OFF
 	idle_power_usage = 150		//internal circuitry, friction losses and stuff
 	power_rating = 7500			//7500 W ~ 10 HP
 
 	var/max_pressure_setting = 15000	//kPa
 
-	var/frequency = 0
+	var/frequency = ZERO_FREQ
 	var/id = null
 	var/datum/radio_frequency/radio_connection
 
 /obj/machinery/atmospherics/binary/pump/Initialize(mapload)
 	. = ..()
-
 	air1.volume = ATMOS_DEFAULT_VOLUME_PUMP
 	air2.volume = ATMOS_DEFAULT_VOLUME_PUMP
 	if(frequency)
@@ -55,7 +54,6 @@ Thus, the two variables affect pump operation are set in New():
 
 /obj/machinery/atmospherics/binary/pump/fuel
 	icon_state = "map_off-fuel"
-	base_icon = "pump-fuel"
 	icon_connect_type = "-fuel"
 	connect_types = CONNECT_TYPE_FUEL
 
@@ -65,7 +63,6 @@ Thus, the two variables affect pump operation are set in New():
 
 /obj/machinery/atmospherics/binary/pump/aux
 	icon_state = "map_off-aux"
-	base_icon = "pump-aux"
 	icon_connect_type = "-aux"
 	connect_types = CONNECT_TYPE_AUX
 
@@ -73,22 +70,43 @@ Thus, the two variables affect pump operation are set in New():
 	icon_state = "map_on-aux"
 	use_power = USE_POWER_IDLE
 
+/obj/machinery/atmospherics/binary/pump/scrubbers
+	icon_state = "map_off-scrubbers"
+	icon_connect_type = "-scrubbers"
+	connect_types = CONNECT_TYPE_SCRUBBER
+
+/obj/machinery/atmospherics/binary/pump/scrubbers/on
+	icon_state = "map_on-scrubbers"
+	use_power = USE_POWER_IDLE
+
+/obj/machinery/atmospherics/binary/pump/supply
+	icon_state = "map_off-supply"
+	icon_connect_type = "-supply"
+	connect_types = CONNECT_TYPE_SUPPLY
+
+/obj/machinery/atmospherics/binary/pump/supply/on
+	icon_state = "map_on-supply"
+	use_power = USE_POWER_IDLE
+
 /obj/machinery/atmospherics/binary/pump/update_icon()
+	var/base_icon = "pump[icon_connect_type]"
 	if(!powered())
 		icon_state = "[base_icon]-off"
 	else
 		icon_state = "[use_power ? "[base_icon]-on" : "[base_icon]-off"]"
 
 /obj/machinery/atmospherics/binary/pump/update_underlays()
-	if(..())
-		underlays.Cut()
-		var/turf/T = get_turf(src)
-		if(!istype(T))
-			return
-		add_underlay(T, node1, turn(dir, -180), node1?.icon_connect_type)
-		add_underlay(T, node2, dir, node2?.icon_connect_type)
+	..()
+	underlays.Cut()
+	var/turf/T = get_turf(src)
+	if(!istype(T))
+		return
+	if(node1)
+		add_underlay(T, node1, turn(dir, -180), icon_connect_type)
+	if(node2)
+		add_underlay(T, node2, dir, icon_connect_type)
 
-/obj/machinery/atmospherics/binary/pump/hide(var/i)
+/obj/machinery/atmospherics/binary/pump/hide(i)
 	update_underlays()
 
 /obj/machinery/atmospherics/binary/pump/process()
@@ -121,10 +139,10 @@ Thus, the two variables affect pump operation are set in New():
 //Radio remote control
 
 /obj/machinery/atmospherics/binary/pump/proc/set_frequency(new_frequency)
-	radio_controller.remove_object(src, frequency)
+	SSradio.remove_object(src, frequency)
 	frequency = new_frequency
 	if(frequency)
-		radio_connection = radio_controller.add_object(src, frequency, radio_filter = RADIO_ATMOSIA)
+		radio_connection = SSradio.add_object(src, frequency, radio_filter = RADIO_ATMOSIA)
 
 /obj/machinery/atmospherics/binary/pump/proc/broadcast_status()
 	if(!radio_connection)
@@ -236,7 +254,7 @@ Thus, the two variables affect pump operation are set in New():
 	if(old_stat != stat)
 		update_icon()
 
-/obj/machinery/atmospherics/binary/pump/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/machinery/atmospherics/binary/pump/attackby(obj/item/W as obj, mob/user as mob)
 	if (!W.has_tool_quality(TOOL_WRENCH))
 		return ..()
 	if (!(stat & NOPOWER) && use_power)
@@ -248,36 +266,50 @@ Thus, the two variables affect pump operation are set in New():
 		return 1
 	playsound(src, W.usesound, 50, 1)
 	to_chat(user, span_notice("You begin to unfasten \the [src]..."))
-	if (do_after(user, 40 * W.toolspeed))
+	if (do_after(user, 40 * W.toolspeed, target = src))
 		user.visible_message( \
 			span_infoplain(span_bold("\The [user]") + " unfastens \the [src]."), \
 			span_notice("You have unfastened \the [src]."), \
 			"You hear ratchet.")
-		deconstruct()
+		atom_deconstruct()
 
-
-
-//CHOMPEdit Start - Adds TGStation keybinds to save our engineers some time.
-/obj/machinery/atmospherics/binary/pump/AltClick(mob/user)
+/obj/machinery/atmospherics/binary/pump/click_alt(mob/user)
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
-	if(allowed(user))
-		to_chat(user, span_notice("You set the [name] to max output"))
-		target_pressure = max_pressure_setting
-		add_fingerprint(user)
-	else
+	if(!allowed(user))
 		to_chat(user, span_warning("Access denied."))
+		return CLICK_ACTION_BLOCKING
 
-/obj/machinery/atmospherics/binary/pump/CtrlClick(mob/user)
+	to_chat(user, span_notice("You set the [name] to max output"))
+	target_pressure = max_pressure_setting
+	add_fingerprint(user)
+	return CLICK_ACTION_SUCCESS
+
+
+/obj/machinery/atmospherics/binary/pump/click_ctrl(mob/user)
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
-	if(allowed(user))
-		update_use_power(!use_power)
-		update_icon()
-		add_fingerprint(user)
-		if(use_power)
-			to_chat(user, span_notice("You toggle the [name] on."))
-		else
-			to_chat(user, span_notice("You toggle the [name] off."))
-
-	else
+	if(!allowed(user))
 		to_chat(user, span_warning("Access denied."))
-//CHOMPEdit End
+		return CLICK_ACTION_BLOCKING
+
+	update_use_power(!use_power)
+	update_icon()
+	add_fingerprint(user)
+	to_chat(user, span_notice("You toggle the [name] [use_power ? "on" : "off"]."))
+
+	return CLICK_ACTION_SUCCESS
+
+/obj/machinery/atmospherics/binary/pump/high_power
+	icon = 'icons/atmos/volume_pump.dmi'
+	icon_state = "map_off"
+	construction_type = /obj/item/pipe/directional
+	pipe_state = "volumepump"
+	level = 1
+
+	name = "high power gas pump"
+	desc = "A pump that moves gas from one place to another. Has double the power rating of the standard gas pump."
+
+	power_rating = 15000	//15000 W ~ 20 HP
+
+/obj/machinery/atmospherics/binary/pump/high_power/on
+	use_power = USE_POWER_IDLE
+	icon_state = "map_on"

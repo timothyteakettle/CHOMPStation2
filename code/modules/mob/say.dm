@@ -1,4 +1,9 @@
-/mob/proc/say(var/message, var/datum/language/speaking = null, var/whispering = 0)
+/mob/proc/say(message, datum/language/speaking = null, whispering = 0)
+	return
+
+// MUST BE NON-BLOCKING, signals can call this
+/mob/proc/direct_say(message, datum/language/speaking = null, whispering = 0)
+	SHOULD_NOT_SLEEP(TRUE)
 	return
 
 /mob/verb/whisper(message as text)
@@ -46,11 +51,11 @@
 	else
 		emote(message)
 
-/mob/proc/say_dead(var/message)
+/mob/proc/say_dead(message)
 	if(!client)
 		return // Clientless mobs shouldn't be trying to talk in deadchat.
 
-	if(!client.holder)
+	if(!check_rights_for(client, R_HOLDER))
 		if(!CONFIG_GET(flag/dsay_allowed))
 			to_chat(src, span_danger("Deadchat is globally muted."))
 			return
@@ -63,7 +68,7 @@
 
 	say_dead_direct("[pick("complains","moans","whines","laments","blubbers")], " + span_message("\"[message]\""), src)
 
-/mob/proc/say_understands(var/mob/other, var/datum/language/speaking = null)
+/mob/proc/say_understands(mob/other, datum/language/speaking = null)
 	if(stat == DEAD)
 		return TRUE
 
@@ -119,7 +124,7 @@
 
 	return FALSE
 
-/mob/proc/say_quote(var/message, var/datum/language/speaking = null)
+/mob/proc/say_quote(message, datum/language/speaking = null)
 	var/verb = "says"
 	var/ending = copytext(message, length(message))
 
@@ -140,7 +145,7 @@
 
 	return get_turf(src)
 
-/proc/say_test(var/text)
+/proc/say_test(text)
 	var/ending = copytext(text, length(text))
 	if(ending == "?")
 		return "1"
@@ -151,13 +156,13 @@
 //parses the message mode code (e.g. :h, :w) from text, such as that supplied to say.
 //returns the message mode string or null for no message mode.
 //standard mode is the mode returned for the special ';' radio code.
-/mob/proc/parse_message_mode(var/message, var/standard_mode = "headset")
+/mob/proc/parse_message_mode(message, standard_mode = "headset")
 	if(length(message) >= 1 && copytext(message, 1, 2) == ";")
 		return standard_mode
 
 	if(length(message) >= 2)
 		var/channel_prefix = copytext(message, 1, 3)
-		return department_radio_keys[channel_prefix]
+		return GLOB.department_radio_keys[channel_prefix]
 
 	return null
 
@@ -179,6 +184,7 @@
 		// The first character in the selection will always be the prefix (if this is a valid language invocation)
 		var/prefix = copytext(selection, 1, 2)
 		var/language_key = copytext(selection, 2, 3)
+		var/multilingual_mode = client?.prefs?.read_preference(/datum/preference/choiced/multilingual_mode)
 		if(is_language_prefix(prefix))
 			// Okay, we're definitely now trying to invoke a language (probably)
 			// This "[]" is probably unnecessary but BYOND will runtime if a number is used
@@ -187,14 +193,14 @@
 				L = language_keys[language_key]
 
 			// MULTILINGUAL_SPACE enforces a space after the language key
-			if(client && (client.prefs.multilingual_mode == MULTILINGUAL_SPACE) && (text2ascii(copytext(selection, 3, 4)) != 32)) // If we're looking for a space and we don't find one
+			if(client && (multilingual_mode == MULTILINGUAL_SPACE) && (text2ascii(copytext(selection, 3, 4)) != 32)) // If we're looking for a space and we don't find one
 				continue
 
 			// MULTILINGUAL_DOUBLE_DELIMITER enforces a delimiter (valid prefix) after the language key
-			if(client && (client.prefs.multilingual_mode == MULTILINGUAL_DOUBLE_DELIMITER) && !is_language_prefix(copytext(selection, 3, 4)))
+			if(client && (multilingual_mode == MULTILINGUAL_DOUBLE_DELIMITER) && !is_language_prefix(copytext(selection, 3, 4)))
 				continue
 
-			if(client && (client.prefs.multilingual_mode in list(MULTILINGUAL_DEFAULT)))
+			if(client && (multilingual_mode in list(MULTILINGUAL_DEFAULT)))
 				selection = copytext(selection, 1, 3) // These modes only use two characters, not three
 
 			// It's kinda silly that we have to check L != null and this isn't done for us by can_speak (it runtimes instead), but w/e
@@ -211,7 +217,7 @@
 			prefixes[++prefixes.len] = list(get_default_language(), i, i)
 
 		// If multilingualism is disabled, then after the first pass we're guaranteed to have either found a language key at the start, or else there isn't one and we're using the default for the whole message
-		if(client && (client.prefs.multilingual_mode == MULTILINGUAL_OFF))
+		if(client && (multilingual_mode == MULTILINGUAL_OFF))
 			break
 
 	return prefixes
@@ -269,7 +275,7 @@
 /proc/message_to_multilingual(message, datum/language/speaking = null)
 	. = list(new /datum/multilingual_say_piece(speaking, message))
 
-/proc/multilingual_to_message(list/message_pieces, var/requires_machine_understands = FALSE, var/with_capitalization = FALSE)
+/proc/multilingual_to_message(list/message_pieces, requires_machine_understands = FALSE, with_capitalization = FALSE)
 	. = ""
 	for(var/datum/multilingual_say_piece/S in message_pieces)
 		var/message_to_append = S.message

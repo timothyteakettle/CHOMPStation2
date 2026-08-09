@@ -10,18 +10,22 @@
 	preserve_item = 1
 
 	var/flush = null
-	origin_tech = list(TECH_DATA = 4, TECH_MATERIAL = 4)
 
 	var/mob/living/silicon/ai/carded_ai
 
-/obj/item/aicard/attack(mob/living/silicon/decoy/M as mob, mob/user as mob)
-	if (!istype (M, /mob/living/silicon/decoy))
+/obj/item/aicard/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
+	if(!istype(M, /mob/living/silicon/decoy))
 		return ..()
 	else
-		M.death()
+		var/mob/living/silicon/decoy/decoy = M
+		decoy.death()
 		to_chat(user, span_infoplain(span_bold("ERROR ERROR ERROR")))
+		return ITEM_INTERACT_SUCCESS
 
 /obj/item/aicard/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	tgui_interact(user)
 
 /obj/item/aicard/tgui_interact(mob/user, datum/tgui/ui = null, datum/tgui_state/custom_state)
@@ -68,7 +72,7 @@
 
 	switch(action)
 		if("wipe")
-			msg_admin_attack("[key_name_admin(ui.user)] wiped [key_name_admin(AI)] with \the [src].")
+			msg_admin_attack("[key_name_admin(ui.user)] wiped [key_name_admin(AI_DEPT)] with \the [src].")
 			add_attack_logs(ui.user,carded_ai,"Purged from AI Card")
 			INVOKE_ASYNC(src, PROC_REF(wipe_ai))
 		if("radio")
@@ -97,7 +101,7 @@
 	else
 		icon_state = "aicard"
 
-/obj/item/aicard/proc/grab_ai(var/mob/living/silicon/ai/ai, var/mob/living/user)
+/obj/item/aicard/proc/grab_ai(mob/living/silicon/ai/ai, mob/living/user)
 	if(!ai.client && !ai.deployed_shell)
 		to_chat(user, span_danger("ERROR:") + " AI [ai.name] is offline. Unable to transfer.")
 		return 0
@@ -114,7 +118,7 @@
 	user.visible_message("\The [user] starts transferring \the [ai] into \the [src]...", "You start transferring \the [ai] into \the [src]...")
 	show_message(span_critical("\The [user] is transferring you into \the [src]!"))
 
-	if(do_after(user, 100))
+	if(do_after(user, 10 SECONDS, target = src))
 		if(carded_ai)
 			to_chat(user, span_danger("Transfer failed:") + " Existing AI found on remote device. Remove existing AI to install a new one.")
 			return 0
@@ -162,7 +166,7 @@
 		carded_ai.show_message(rendered, type)
 	..()
 
-/obj/item/aicard/relaymove(var/mob/user, var/direction)
+/obj/item/aicard/relaymove(mob/user, direction)
 	if(user.stat || user.stunned)
 		return
 	var/obj/item/rig/rig = src.get_rig()
@@ -170,15 +174,15 @@
 		rig.forced_move(direction, user)
 
 /obj/item/aicard/proc/wipe_ai()
-	var/mob/living/silicon/ai/AI = carded_ai
+	var/mob/living/silicon/ai/our_ai = carded_ai
 	flush = TRUE
-	AI.suiciding = TRUE
-	to_chat(AI, "Your power has been disabled!")
-	while(AI && AI.stat != DEAD)
+	our_ai.suiciding = TRUE
+	to_chat(our_ai, "Your power has been disabled!")
+	while(our_ai && our_ai.stat != DEAD)
 		// This is absolutely evil and I love it.
-		if(AI.deployed_shell && prob(AI.oxyloss)) //You feel it creeping? Eventually will reach 100, resulting in the second half of the AI's remaining life being lonely.
-			AI.disconnect_shell("Disconnecting from remote shell due to insufficent power.")
-		AI.adjustOxyLoss(2)
-		AI.updatehealth()
+		if(our_ai.deployed_shell && prob(our_ai.oxyloss)) //You feel it creeping? Eventually will reach 100, resulting in the second half of the AI's remaining life being lonely.
+			our_ai.disconnect_shell("Disconnecting from remote shell due to insufficent power.")
+		our_ai.adjustOxyLoss(2)
+		our_ai.updatehealth()
 		sleep(10)
 	flush = FALSE

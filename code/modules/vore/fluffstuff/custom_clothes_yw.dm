@@ -1,3 +1,5 @@
+//'icons/vore/custom_clothes_yw.dmi' was moved to archive.
+
 // **************
 // Unleashed_Mana
 // **************
@@ -24,12 +26,12 @@
 			icon_state = "[initial(icon_state)]_open"
 			item_state = "[initial(item_state)]_open"
 			unbuttoned = 1
-			usr << "You unbutton the coat."
+			to_chat(usr, span_notice("You unbutton the coat."))
 		if(1)
 			icon_state = "[initial(icon_state)]"
 			item_state = "[initial(item_state)]"
 			unbuttoned = 0
-			usr << "You button up the coat."
+			to_chat(usr, span_notice("You button up the coat."))
 	usr.update_inv_wear_suit()
 
 
@@ -64,12 +66,12 @@
 			icon_state = "[initial(icon_state)]_open"
 			item_state = "[initial(item_state)]_open"
 			unbuttoned = 1
-			usr << "You unbutton the coat."
+			to_chat(usr, span_notice("You unbutton the coat."))
 		if(1)
 			icon_state = "[initial(icon_state)]"
 			item_state = "[initial(item_state)]"
 			unbuttoned = 0
-			usr << "You button up the coat."
+			to_chat(usr, span_notice("You button up the coat."))
 	usr.update_inv_wear_suit()
 
 /obj/item/clothing/under/fluff/redax_2
@@ -185,12 +187,12 @@
 			icon_state = "[initial(icon_state)]_open"
 			item_state = "[initial(item_state)]_open"
 			unbuttoned = 1
-			usr << "You unbutton the coat."
+			to_chat(usr, span_notice("You unbutton the coat."))
 		if(1)
 			icon_state = "[initial(icon_state)]"
 			item_state = "[initial(item_state)]"
 			unbuttoned = 0
-			usr << "You button up the coat."
+			to_chat(usr, span_notice("You button up the coat."))
 	usr.update_inv_wear_suit()
 
 /obj/item/clothing/mask/fluff/lucerna_1 //Doesn't work for some reason
@@ -377,14 +379,14 @@
 		set_slowdown(0)
 		force = 3
 		if(icon_base) icon_state = "[icon_base]0"
-		user << "You disable the mag-pulse traction system."
+		to_chat(user, span_notice("You disable the mag-pulse traction system."))
 	else
 		item_flags |= NOSLIP
 		magpulse = 1
 		set_slowdown(3)
 		force = 5
 		if(icon_base) icon_state = "[icon_base]1"
-		user << "You enable the mag-pulse traction system."
+		to_chat(user, span_notice("You enable the mag-pulse traction system."))
 	user.update_inv_shoes()	//so our mob-overlays update
 	user.update_action_buttons()
 
@@ -639,14 +641,14 @@
 		set_slowdown(0)
 		force = 3
 		if(icon_base) icon_state = "[icon_base]0"
-		user << "You disable the mag-pulse traction system."
+		to_chat(user, span_notice("You disable the mag-pulse traction system."))
 	else
 		item_flags |= NOSLIP
 		magpulse = 1
 		set_slowdown(3)
 		force = 5
 		if(icon_base) icon_state = "[icon_base]1"
-		user << "You enable the mag-pulse traction system."
+		to_chat(user, span_notice("You enable the mag-pulse traction system."))
 	user.update_inv_shoes()	//so our mob-overlays update
 	user.update_action_buttons()
 
@@ -866,12 +868,12 @@
 			icon_state = "[initial(icon_state)]"
 			item_state = "[initial(item_state)]"
 			hoodup = 1
-			usr << "You take off the hood."
+			to_chat(usr, span_notice("You take off the hood."))
 		if(1)
 			icon_state = "[initial(icon_state)]_up"
 			item_state = "[initial(item_state)]_up"
 			hoodup= 0
-			usr << "You put on the hood."
+			to_chat(usr, span_notice("You put on the hood."))
 	usr.update_inv_wear_suit()
 
 //Kita
@@ -1116,11 +1118,11 @@
 	if(src.icon_state == "ushanka2down")
 		src.icon_state = "ushanka2up"
 		src.item_state = "ushanka2up"
-		user << "You raise the ear flaps on the ushanka."
+		to_chat(user, span_notice("You raise the ear flaps on the ushanka."))
 	else
 		src.icon_state = "ushanka2down"
 		src.item_state = "ushanka2down"
-		user << "You lower the ear flaps on the ushanka."
+		to_chat(user, span_notice("You lower the ear flaps on the ushanka."))
 
 // ******
 // Benl8561
@@ -1211,11 +1213,11 @@
 	if(ring_on)
 		icon_state = "[base_icon]"
 		ring_on = 0
-		usr << span_notice("You remove the right earring.")
+		to_chat(usr, span_notice("You remove the right earring."))
 	else
 		icon_state = "[base_icon]_on"
 		ring_on = 1
-		usr << span_notice("You put on the right earring.")
+		to_chat(usr, span_notice("You put on the right earring."))
 
 	update_clothing_icon()
 
@@ -1243,17 +1245,17 @@
 // ******
 
 //Harpsong
-
+/*
 /obj/item/clothing/suit/armor/vest/harpsong
 	name = "Kentauri Uniform (Tac)"
 	desc = "A typical Kentauri uniform worn by those in Command, Tactical and Security disciplines. It is crafted specifically to fit the typically overweight body of the average Kentauri, and its colours match up with those of station security."
 	species_restricted = null //Species restricted since all it cares about is a taur half
-	icon = 'icons/vore/rigs_taur_yw.dmi'
-	icon_override = 'icons/vore/rigs_taur_yw.dmi'
+	icon = 'icons/vore/rigs_taur_yw.dmi'  //Moved to archive\icons\vore
+	icon_override = 'icons/vore/rigs_taur_yw.dmi'  //Moved to archive\icons\vore
 	icon_state = "kentauri_uniform"
 	item_state = "kentauri_uniform"
 
-/obj/item/clothing/suit/armor/vest/harpsong/mob_can_equip(var/mob/living/carbon/human/H, slot, disable_warning = 0)
+/obj/item/clothing/suit/armor/vest/harpsong/mob_can_equip(mob/living/carbon/human/H, slot, disable_warning = 0)
 	if(..())
 		if(istype(H) && istype(H.tail_style, /datum/sprite_accessory/tail/taur/horse/big))
 			return ..()
@@ -1261,11 +1263,12 @@
 			to_chat(H,span_warning("You need to have a kentauri half to wear this."))
 			return 0
 
-/obj/item/clothing/suit/armor/vest/harpsong/make_worn_icon(var/body_type,var/slot_name,var/inhands,var/default_icon,var/default_layer = 0, var/icon/clip_mask = null)
+/obj/item/clothing/suit/armor/vest/harpsong/make_worn_icon(body_type,slot_name,inhands,default_icon,default_layer = 0, icon/clip_mask = null)
 	var/image/result = ..()
 	result.pixel_x = -16
 	result.layer = BODY_LAYER + 15
 	return result
+*/
 
 // *****
 // SASOperative
@@ -1630,7 +1633,7 @@
 		update_clothing_icon()
 		usr.update_action_buttons()
 
-/obj/item/clothing/glasses/fluff/avigoggles_yw/get_worn_icon_file(var/body_type,var/slot_name,var/default_icon,var/inhands)
+/obj/item/clothing/glasses/fluff/avigoggles_yw/get_worn_icon_file(body_type,slot_name,default_icon,inhands)
 	if(body_type == SPECIES_TESHARI)
 		if(!inhands)
 			return 'icons/vore/custom_clothes_yw_special.dmi'

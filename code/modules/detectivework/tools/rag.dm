@@ -18,16 +18,17 @@
 	icon = 'icons/obj/toy.dmi'
 	icon_state = "rag"
 	amount_per_transfer_from_this = 5
-	possible_transfer_amounts = list(5)
+	max_transfer_amount = 5
 	volume = 10
-	can_be_placed_into = null
 	flags = OPENCONTAINER | NOBLUDGEON
+	container_can_be_placed_into = REAGENT_CONTAINER_CAN_BE_PLACED_INTO_NONE
 	unacidable = FALSE
 	drop_sound = 'sound/items/drop/cloth.ogg'
 	pickup_sound = 'sound/items/pickup/cloth.ogg'
 
 	var/on_fire = 0
 	var/burn_time = 20 //if the rag burns for too long it turns to ashes
+	special_handling = TRUE
 
 /obj/item/reagent_containers/glass/rag/Initialize(mapload)
 	. = ..()
@@ -37,7 +38,10 @@
 	STOP_PROCESSING(SSobj, src) //so we don't continue turning to ash while gc'd
 	return ..()
 
-/obj/item/reagent_containers/glass/rag/attack_self(mob/user as mob)
+/obj/item/reagent_containers/glass/rag/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(on_fire)
 		user.visible_message(span_warning("\The [user] stamps out [src]."), span_warning("You stamp out [src]."))
 		user.unEquip(src)
@@ -84,7 +88,7 @@
 		var/target_text = trans_dest? "\the [trans_dest]" : "\the [user.loc]"
 		user.visible_message(span_danger("\The [user] begins to wring out [src] over [target_text]."), span_notice("You begin to wring out [src] over [target_text]."))
 
-		if(do_after(user, reagents.total_volume*5)) //50 for a fully soaked rag
+		if(do_after(user, reagents.total_volume*5, target = src)) //50 for a fully soaked rag
 			if(trans_dest)
 				reagents.trans_to(trans_dest, reagents.total_volume)
 			else
@@ -98,23 +102,23 @@
 	else
 		user.visible_message("[user] starts to wipe [A] with [src].")
 		update_name()
-		if(do_after(user,30))
+		if(do_after(user, 3 SECONDS, target = src))
 			user.visible_message("[user] finishes wiping [A]!")
 			A.on_rag_wipe(src)
 
-/obj/item/reagent_containers/glass/rag/attack(atom/target as obj|turf|area, mob/user as mob , flag)
+/obj/item/reagent_containers/glass/rag/attack(mob/living/target, mob/living/user, target_zone, attack_modifier)
 	if(isliving(target)) //Leaving this as isliving.
 		var/mob/living/M = target
 		if(on_fire) //Check if rag is on fire, if so igniting them and stopping.
 			user.visible_message(span_danger("\The [user] hits [target] with [src]!"),)
 			user.do_attack_animation(src)
-			M.IgniteMob()
+			M.ignite_mob()
 		else if(user.zone_sel.selecting == O_MOUTH) //Check player target location, provided the rag is not on fire. Then check if mouth is exposed.
 			if(ishuman(target)) //Added this since player species process reagents in majority of cases.
 				var/mob/living/carbon/human/H = target
 				if(H.head && (H.head.body_parts_covered & FACE)) //Check human head coverage.
 					to_chat(user, span_warning("Remove their [H.head] first."))
-					return
+					return ITEM_INTERACT_FAILURE
 				else if(reagents.total_volume) //Final check. If the rag is not on fire and their face is uncovered, smother target.
 					user.do_attack_animation(src)
 					user.visible_message(
@@ -127,13 +131,15 @@
 					update_name()
 				else
 					to_chat(user, span_warning("You can't smother this creature."))
+					return ITEM_INTERACT_FAILURE
 			else
 				to_chat(user, span_warning("You can't smother this creature."))
+				return ITEM_INTERACT_FAILURE
 		else
 			wipe_down(target, user)
 	else
 		wipe_down(target, user)
-	return
+	return ITEM_INTERACT_SUCCESS
 
 /obj/item/reagent_containers/glass/rag/afterattack(atom/A as obj|turf|area, mob/user as mob, proximity)
 	if(!proximity)
@@ -198,7 +204,8 @@
 	update_name()
 	update_icon()
 
-/obj/item/reagent_containers/glass/rag/proc/extinguish()
+/obj/item/reagent_containers/glass/rag/extinguish()
+	. = ..()
 	STOP_PROCESSING(SSobj, src)
 	set_light(0)
 	on_fire = 0
@@ -220,7 +227,7 @@
 	//copied from matches
 	if(isliving(loc))
 		var/mob/living/M = loc
-		M.IgniteMob()
+		M.ignite_mob()
 	var/turf/location = get_turf(src)
 	if(location)
 		location.hotspot_expose(700, 5)

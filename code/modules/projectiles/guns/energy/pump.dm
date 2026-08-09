@@ -15,7 +15,7 @@
  * Gun Locking Mechanism
  */
 /obj/item/gun/energy/locked
-	req_access = list(access_armory) //for toggling safety
+	req_access = list(ACCESS_ARMORY) //for toggling safety
 	var/locked = 1
 	var/lockable = 1
 
@@ -31,7 +31,7 @@
 	else
 		return ..()
 
-/obj/item/gun/energy/locked/emag_act(var/remaining_charges,var/mob/user)
+/obj/item/gun/energy/locked/emag_act(remaining_charges,mob/user)
 	..()
 	if(lockable)
 		locked = !locked
@@ -61,9 +61,8 @@
 	that can be recharged away from civilization."
 	icon_state = "phaserkill"
 	item_state = "phaser"
-	item_icons = list(slot_l_hand_str = 'icons/mob/items/lefthand_guns_vr.dmi', slot_r_hand_str = 'icons/mob/items/righthand_guns_vr.dmi', "slot_belt" = 'icons/inventory/belt/mob_vr.dmi')
+	item_icons = list(slot_l_hand_str = 'icons/mob/items/lefthand_guns_vr.dmi', slot_r_hand_str = 'icons/mob/items/righthand_guns_vr.dmi', "slot_belt" = 'icons/inventory/belt/mob.dmi')
 	fire_sound = 'sound/weapons/laser2.ogg'
-	origin_tech = list(TECH_COMBAT = 4, TECH_MAGNET = 2, TECH_POWER = 4)
 	charge_cost = 300
 
 	battery_lock = 1
@@ -80,7 +79,7 @@
 	)
 	recoil_mode = 0
 
-/obj/item/gun/energy/locked/frontier/unload_ammo(var/mob/user)
+/obj/item/gun/energy/locked/frontier/unload_ammo(mob/user)
 	if(recharging)
 		return
 	recharging = 1
@@ -88,7 +87,7 @@
 	user.visible_message(span_notice("[user] opens \the [src] and starts pumping the handle."), \
 						span_notice("You open \the [src] and start pumping the handle."))
 	while(recharging)
-		if(!do_after(user, 10, src))
+		if(!do_after(user, 1 SECOND, target = src))
 			break
 		playsound(src,'sound/items/change_drill.ogg',25,1)
 		user.hud_used.update_ammo_hud(user, src)
@@ -106,8 +105,11 @@
 		return
 	..()
 
-/obj/item/gun/energy/locked/frontier/emp_act(severity)
-	return ..(severity+2)
+/obj/item/gun/energy/locked/frontier/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
+	return ..(severity+2, recursive)
 
 /obj/item/gun/energy/locked/frontier/ex_act() //|rugged|
 	return
@@ -200,7 +202,7 @@
 	set name = "Use Scope"
 	set popup_menu = 1
 
-	toggle_scope(2.0)
+	toggle_scope(usr, 2.0)
 
 /obj/item/gun/energy/locked/frontier/rifle/update_icon()
 	if(recharging)

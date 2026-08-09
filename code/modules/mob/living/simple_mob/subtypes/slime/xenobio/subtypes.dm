@@ -50,7 +50,7 @@
 		to_chat(L, span_danger("You've been burned by \the [src]!"))
 		L.adjust_fire_stacks(1)
 		if(prob(12))
-			L.IgniteMob()
+			L.ignite_mob()
 
 /mob/living/simple_mob/slime/xenobio/blue
 	desc = "This slime produces 'cryotoxin' and uses it against their foes.  Very deadly to other slimes."
@@ -96,16 +96,6 @@
 				"bomb" = 80,
 				"bio" = 100,
 				"rad" = 100
-				)
-
-	armor_soak = list(
-				"melee" = 5,
-				"bullet" = 5,
-				"laser" = 5,
-				"energy" = 0,
-				"bomb" = 0,
-				"bio" = 0,
-				"rad" = 0
 				)
 
 	slime_mutation = list(
@@ -203,14 +193,14 @@
 	log_and_message_admins("ignited due to exposure to fire.", src)
 	ignite()
 
-/mob/living/simple_mob/slime/xenobio/dark_purple/bullet_act(var/obj/item/projectile/P, var/def_zone)
+/mob/living/simple_mob/slime/xenobio/dark_purple/bullet_act(obj/item/projectile/P, def_zone)
 	if(P.damage_type && P.damage_type == BURN && P.damage) // Most bullets won't trigger the explosion, as a mercy towards Security.
 		log_and_message_admins("ignited due to bring hit by a burning projectile[P.firer ? " by [key_name(P.firer)]" : ""].", src)
 		ignite()
 	else
 		..()
 
-/mob/living/simple_mob/slime/xenobio/dark_purple/attackby(var/obj/item/W, var/mob/user)
+/mob/living/simple_mob/slime/xenobio/dark_purple/attackby(obj/item/W, mob/user)
 	if(istype(W) && W.force && W.damtype == BURN)
 		log_and_message_admins("ignited due to being hit with a burning weapon ([W]) by [key_name(user)].", src)
 		ignite()
@@ -291,7 +281,7 @@
 			/mob/living/simple_mob/slime/xenobio/amber
 		)
 
-/mob/living/simple_mob/slime/xenobio/silver/bullet_act(var/obj/item/projectile/P, var/def_zone)
+/mob/living/simple_mob/slime/xenobio/silver/bullet_act(obj/item/projectile/P, def_zone)
 	if(istype(P,/obj/item/projectile/beam) || istype(P, /obj/item/projectile/energy))
 		visible_message(span_danger("\The [src] reflects \the [P]!"))
 
@@ -417,8 +407,8 @@
 			L.throw_at(get_edge_target_turf(L, throwdir), 3, 1, src)
 		else
 			to_chat(L, span_warning("\The [src] hits you with incredible force, but you remain in place."))
-			visible_message(span_danger("\The [src] hits \the [L] with incredible force, to no visible effect!")) // CHOMPEdit: Visible/audible feedback for *resisting* the slam.
-			playsound(src, "punch", 50, 1) // CHOMPEdit: Visible/audible feedback for *resisting* the slam.
+			visible_message(span_danger("\The [src] hits \the [L] with incredible force, to no visible effect!"))
+			playsound(src, "punch", 50, 1)
 
 
 /mob/living/simple_mob/slime/xenobio/amber
@@ -532,8 +522,14 @@
 	..()
 
 /mob/living/simple_mob/slime/xenobio/green/proc/irradiate()
-	SSradiation.radiate(src, rads)
-
+	radiation_pulse(
+		src,
+		max_range = 5,
+		threshold = RAD_LIGHT_INSULATION,
+		chance = rads * 0.5,
+		minimum_exposure_time = URANIUM_RADIATION_MINIMUM_EXPOSURE_TIME,
+		strength = rads
+	)
 
 
 /mob/living/simple_mob/slime/xenobio/pink
@@ -582,10 +578,10 @@
 		var/mob/living/carbon/human/H = holder
 		for(var/obj/item/organ/external/E in H.organs)
 			var/obj/item/organ/external/O = E
-			O.heal_damage(1, 1, 0, 1) //CHOMPEdit, heal halved
+			O.heal_damage(1, 1, 0, 1)
 	else
-		holder.adjustBruteLoss(-1) //CHOMPEdit, heal halved
-		holder.adjustFireLoss(-1) //CHOMPEdit, heal halved
+		holder.adjustBruteLoss(-1)
+		holder.adjustFireLoss(-1)
 
 	holder.adjustToxLoss(-2)
 	holder.adjustOxyLoss(-2)
@@ -789,7 +785,6 @@
 	pacify() // So the physical mob also gets made harmless.
 	return ..()
 
-//ChompAdd Begins
 // A pacified pink slime for either Admin-spawning or putting in a casino reward or capture crystal.
 /mob/living/simple_mob/slime/xenobio/pink/sana
 	name = "Sana"
@@ -800,4 +795,3 @@
 /mob/living/simple_mob/slime/xenobio/pink/sana/Initialize(mapload)
 	pacify() // So the physical mob also gets made harmless.
 	return ..()
-//ChompAdd End

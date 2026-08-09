@@ -20,7 +20,6 @@
 	volume = 0.5 //CHOMPEdit
 
 	// Vars for hacking
-	var/datum/wires/jukebox/wires = null
 	var/hacked = 0 // Whether to show the hidden songs or not
 	var/freq = 0 // Currently no effect, will return in phase II of mediamanager.
 	//VOREStation Add
@@ -36,6 +35,7 @@
 	update_icon()
 	if(!LAZYLEN(getTracksList()))
 		stat |= BROKEN
+	AddElement(/datum/element/climbable)
 
 /obj/machinery/media/jukebox/Destroy()
 	qdel(wires)
@@ -73,7 +73,6 @@
 			current_track = null
 			playing = 0
 			update_icon()
-	updateDialog()
 	start_stop_song()
 
 // Tells the media manager to start or stop playing based on current settings.
@@ -91,11 +90,10 @@
 		remote.update_music()
 	//VOREStation Add End
 
-/obj/machinery/media/jukebox/proc/set_hacked(var/newhacked)
+/obj/machinery/media/jukebox/proc/set_hacked(newhacked)
 	if(hacked == newhacked)
 		return
 	hacked = newhacked
-	updateDialog()
 
 /obj/machinery/media/jukebox/attackby(obj/item/W as obj, mob/user as mob)
 	src.add_fingerprint(user)
@@ -234,8 +232,7 @@
 						M.Paralyse(4)
 					else
 						M.make_jittery(500)
-				spawn(15)
-					explode()
+				addtimer(CALLBACK(src, PROC_REF(explode)), 1.5 SECONDS, TIMER_DELETE_ME|TIMER_UNIQUE)
 			else if(current_track == null)
 				to_chat(ui.user, "No track selected.")
 			else
@@ -252,8 +249,11 @@
 /obj/machinery/media/jukebox/attack_ai(mob/user as mob)
 	return src.attack_hand(user)
 
-/obj/machinery/media/jukebox/attack_hand(var/mob/user as mob)
+/obj/machinery/media/jukebox/attack_hand(mob/user as mob)
 	interact(user)
+
+/obj/machinery/media/jukebox/allow_pai_interaction(mob/living/silicon/pai/user, proximity_flag)
+	return proximity_flag
 
 /obj/machinery/media/jukebox/proc/explode()
 	walk_to(src,0)
@@ -286,7 +286,7 @@
 		return
 	return ..()
 
-/obj/machinery/media/jukebox/emag_act(var/remaining_charges, var/mob/user)
+/obj/machinery/media/jukebox/emag_act(remaining_charges, mob/user)
 	if(!emagged)
 		emagged = 1
 		StopPlaying()
@@ -307,7 +307,6 @@
 	update_use_power(USE_POWER_ACTIVE)
 	update_icon()
 	start_stop_song()
-	updateDialog()
 
 // Advance to the next track - Don't start playing it unless we were already playing
 /obj/machinery/media/jukebox/proc/NextTrack()
@@ -318,7 +317,6 @@
 	current_track = tracks[newTrackIndex]
 	if(playing)
 		start_stop_song()
-	updateDialog()
 
 // Advance to the next track - Don't start playing it unless we were already playing
 /obj/machinery/media/jukebox/proc/PrevTrack()
@@ -329,7 +327,6 @@
 	current_track = tracks[newTrackIndex]
 	if(playing)
 		start_stop_song()
-	updateDialog()
 
 //Pre-hacked Jukebox, has the full sond list unlocked
 /obj/machinery/media/jukebox/hacked
@@ -367,14 +364,14 @@
 	return
 /obj/machinery/media/jukebox/ghost/attack_ai(mob/user as mob)
 	return
-/obj/machinery/media/jukebox/ghost/attack_hand(var/mob/user as mob)
+/obj/machinery/media/jukebox/ghost/attack_hand(mob/user as mob)
 	return
 /obj/machinery/media/jukebox/ghost/update_use_power(new_use_power)
 	return
 /obj/machinery/media/jukebox/ghost/power_change()
 	return
-/obj/machinery/media/jukebox/ghost/emp_act(severity)
-	return
+/obj/machinery/media/jukebox/ghost/emp_act(severity, recursive)
+	return ..()
 /obj/machinery/media/jukebox/ghost/emag_act(remaining_charges, mob/user)
 	return
 /obj/machinery/media/jukebox/ghost/explode()
@@ -386,7 +383,7 @@
 		animate(src, alpha = initial(alpha), time = 10)
 // End junk
 
-/obj/machinery/media/jukebox/ghost/attack_ghost(var/mob/observer/dead/M)
+/obj/machinery/media/jukebox/ghost/attack_ghost(mob/observer/dead/M)
 	if(!istype(M))
 		return
 
@@ -455,7 +452,7 @@
 	. = ..()
 	IF_VV_OPTION("add_track")
 		manual_track_add()
-		href_list["datumrefresh"] = "\ref[src]"
+		href_list[VV_HK_DATUM_REFRESH] = "\ref[src]"
 	IF_VV_OPTION("remove_track")
 		manual_track_remove()
-		href_list["datumrefresh"] = "\ref[src]"
+		href_list[VV_HK_DATUM_REFRESH] = "\ref[src]"

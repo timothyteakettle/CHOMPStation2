@@ -12,7 +12,7 @@ BLIND     // can't see anything
 ///////////////////////////////////////////////////////////////////////
 
 /obj/item/clothing/glasses
-	name = "glasses"
+	name = DEVELOPER_WARNING_NAME
 	icon = 'icons/inventory/eyes/item.dmi'
 	w_class = ITEMSIZE_SMALL
 	slot_flags = SLOT_EYES
@@ -25,16 +25,29 @@ BLIND     // can't see anything
 	var/off_state = "degoggles"
 	var/active = 1
 	var/activation_sound = 'sound/items/goggles_charge.ogg'
-	var/obj/screen/overlay = null
+	var/atom/movable/screen/overlay = null
 	var/list/away_planes //Holder for disabled planes
 	drop_sound = 'sound/items/drop/accessory.ogg'
 	pickup_sound = 'sound/items/pickup/accessory.ogg'
+	resistance_flags = FIRE_PROOF
 
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/inventory/eyes/mob_teshari.dmi',
-		SPECIES_VOX = 'icons/inventory/eyes/mob_vox.dmi'
+		SPECIES_TESHARI 	= 'icons/inventory/eyes/mob_teshari.dmi',
+		SPECIES_VOX 		= 'icons/inventory/eyes/mob_vox.dmi',
+		SPECIES_WEREBEAST 	= 'icons/inventory/eyes/mob_werebeast.dmi',
+		SPECIES_TAJARAN 	= 'icons/inventory/eyes/mob_tajaran.dmi',
+		SPECIES_UNATHI 		= 'icons/inventory/eyes/mob_unathi.dmi',
+		SPECIES_SERGAL 		= 'icons/inventory/eyes/mob_sergal.dmi',
+		SPECIES_NEVREAN 	= 'icons/inventory/eyes/mob_nevrean.dmi',
+		SPECIES_ZORREN_HIGH	= 'icons/inventory/eyes/mob_fox.dmi',
+		SPECIES_ZORREN_FLAT	= 'icons/inventory/eyes/mob_fennec.dmi',
+		SPECIES_AKULA 		= 'icons/inventory/eyes/mob_akula.dmi',
+		SPECIES_VULPKANIN 	= 'icons/inventory/eyes/mob_vulpkanin.dmi',
+		SPECIES_XENOCHIMERA	= 'icons/inventory/eyes/mob_tajaran.dmi'
 		)
 	var/glasses_layer_above = FALSE
+	///Var for attack_self chain
+	var/specialty_goggles = FALSE
 
 /obj/item/clothing/glasses/update_clothing_icon()
 	if (ismob(src.loc))
@@ -59,7 +72,6 @@ BLIND     // can't see anything
 		icon_state = off_state
 		user.update_inv_glasses()
 		flash_protection = FLASH_PROTECTION_NONE
-		tint = TINT_NONE
 		away_planes = enables_planes
 		enables_planes = null
 
@@ -68,13 +80,17 @@ BLIND     // can't see anything
 		icon_state = initial(icon_state)
 		user.update_inv_glasses()
 		flash_protection = initial(flash_protection)
-		tint = initial(tint)
 		enables_planes = away_planes
 		away_planes = null
 	user.update_mob_action_buttons()
 	user.recalculate_vis()
 
 /obj/item/clothing/glasses/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
+	if(specialty_goggles)
+		return FALSE
 	if(toggleable)
 		if(!can_toggle(user))
 			to_chat(user, span_warning("You don't seem to be able to toggle \the [src] here."))
@@ -84,7 +100,6 @@ BLIND     // can't see anything
 				to_chat(user, span_notice("You activate the optical matrix on the [src]."))
 			else
 				to_chat(user, span_notice("You deactivate the optical matrix on the [src]."))
-	..()
 
 /obj/item/clothing/glasses/meson
 	name = "optical meson scanner"
@@ -92,7 +107,6 @@ BLIND     // can't see anything
 	icon_state = "meson"
 	item_state_slots = list(slot_r_hand_str = "meson", slot_l_hand_str = "meson")
 	actions_types = list(/datum/action/item_action/toggle_goggles)
-	origin_tech = list(TECH_MAGNET = 2, TECH_ENGINEERING = 2)
 	toggleable = 1
 	vision_flags = SEE_TURFS
 	enables_planes = list(VIS_FULLBRIGHT, VIS_MESONS)
@@ -159,7 +173,6 @@ BLIND     // can't see anything
 	desc = "You can totally see in the dark now!"
 	icon_state = "night"
 	item_state_slots = list(slot_r_hand_str = "glasses", slot_l_hand_str = "glasses")
-	origin_tech = list(TECH_MAGNET = 2)
 	darkness_view = 7
 	toggleable = 1
 	actions_types = list(/datum/action/item_action/toggle_goggles)
@@ -236,7 +249,6 @@ BLIND     // can't see anything
 	desc = "Very confusing glasses."
 	icon_state = "material"
 	item_state_slots = list(slot_r_hand_str = "glasses", slot_l_hand_str = "glasses")
-	origin_tech = list(TECH_MAGNET = 3, TECH_ENGINEERING = 3)
 	toggleable = 1
 	actions_types = list(/datum/action/item_action/toggle_goggles)
 	vision_flags = SEE_OBJS
@@ -255,7 +267,6 @@ BLIND     // can't see anything
 	desc = "The secrets of space travel are.. not quite yours."
 	icon_state = "grav"
 	item_state_slots = list(slot_r_hand_str = "glasses", slot_l_hand_str = "glasses")
-	origin_tech = list(TECH_MAGNET = 2, TECH_BLUESPACE = 1)
 	darkness_view = 5
 	toggleable = 1
 	actions_types = list(/datum/action/item_action/toggle_goggles)
@@ -355,7 +366,7 @@ BLIND     // can't see anything
 	. = ..()
 	. += to_chat(user, span_notice("Alt-click to toggle modes."))
 
-/obj/item/clothing/glasses/sunglasses/bigshot/AltClick(mob/user)
+/obj/item/clothing/glasses/sunglasses/bigshot/click_alt(mob/user)
 	set src in usr
 	if(user.canmove && !user.stat && !user.restrained())
 		if(src.ar)
@@ -374,13 +385,16 @@ BLIND     // can't see anything
 	icon_state = "welding-g"
 	item_state_slots = list(slot_r_hand_str = "welding-g", slot_l_hand_str = "welding-g")
 	actions_types = list(/datum/action/item_action/flip_welding_goggles)
-	matter = list(MAT_STEEL = 1500, MAT_GLASS = 1000)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.75), MAT_GLASS = MATERIAL_COST(0.5))
 	item_flags = AIRTIGHT
 	var/up = 0
 	flash_protection = FLASH_PROTECTION_MAJOR
-	tint = TINT_HEAVY
+	specialty_goggles = TRUE
 
-/obj/item/clothing/glasses/welding/attack_self()
+/obj/item/clothing/glasses/welding/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	toggle()
 
 /obj/item/clothing/glasses/welding/verb/toggle()
@@ -395,7 +409,6 @@ BLIND     // can't see anything
 			body_parts_covered |= EYES
 			icon_state = initial(icon_state)
 			flash_protection = initial(flash_protection)
-			tint = initial(tint)
 			to_chat(usr, "You flip \the [src] down to protect your eyes.")
 		else
 			src.up = !src.up
@@ -403,7 +416,6 @@ BLIND     // can't see anything
 			body_parts_covered &= ~EYES
 			icon_state = "[initial(icon_state)]up"
 			flash_protection = FLASH_PROTECTION_NONE
-			tint = TINT_NONE
 			to_chat(usr, "You push \the [src] up out of your face.")
 		update_clothing_icon()
 		usr.update_mob_action_buttons()
@@ -412,7 +424,6 @@ BLIND     // can't see anything
 	name = "superior welding goggles"
 	desc = "Welding goggles made from more expensive materials, strangely smells like potatoes."
 	icon_state = "rwelding-g"
-	tint = TINT_MODERATE
 
 /obj/item/clothing/glasses/sunglasses/blindfold
 	name = "blindfold"
@@ -421,7 +432,6 @@ BLIND     // can't see anything
 	item_state_slots = list(slot_r_hand_str = "blindfold", slot_l_hand_str = "blindfold")
 	flash_protection = FLASH_PROTECTION_MAJOR
 	body_parts_covered = EYES
-	tint = BLIND
 	drop_sound = 'sound/items/drop/gloves.ogg'
 	pickup_sound = 'sound/items/pickup/gloves.ogg'
 
@@ -436,7 +446,6 @@ BLIND     // can't see anything
 	icon_state = "blindfoldwhite"
 	flash_protection = FLASH_PROTECTION_MODERATE //not as thick, only offers some protection
 	body_parts_covered = EYES
-	tint = TINT_HEAVY
 
 /obj/item/clothing/glasses/sunglasses/blindfold/tape
 	name = "length of tape"
@@ -486,8 +495,12 @@ BLIND     // can't see anything
 	var/on = 1
 	toggleable = 1
 	activation_sound = 'sound/effects/pop.ogg'
+	specialty_goggles = TRUE
 
 /obj/item/clothing/glasses/sunglasses/sechud/aviator/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(toggleable && !user.incapacitated())
 		on = !on
 		if(on)
@@ -528,14 +541,16 @@ BLIND     // can't see anything
 	desc = "Thermals in the shape of glasses."
 	icon_state = "thermal"
 	item_state_slots = list(slot_r_hand_str = "glasses", slot_l_hand_str = "glasses")
-	origin_tech = list(TECH_MAGNET = 3)
 	toggleable = 1
 	actions_types = list(/datum/action/item_action/toggle_goggles)
 	vision_flags = SEE_MOBS
 	enables_planes = list(VIS_FULLBRIGHT, VIS_CLOAKED)
 	flash_protection = FLASH_PROTECTION_REDUCED
 
-/obj/item/clothing/glasses/thermal/emp_act(severity)
+/obj/item/clothing/glasses/thermal/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	if(ishuman(src.loc))
 		var/mob/living/carbon/human/M = src.loc
 		to_chat(M, span_red("The Optical Thermal Scanner overloads and blinds you!"))
@@ -547,7 +562,6 @@ BLIND     // can't see anything
 				M.disabilities |= NEARSIGHTED
 				spawn(100)
 					M.disabilities &= ~NEARSIGHTED
-	..()
 
 /obj/item/clothing/glasses/thermal/Initialize(mapload)
 	. = ..()
@@ -558,7 +572,6 @@ BLIND     // can't see anything
 	desc = "Used for seeing walls, floors, and stuff through anything."
 	icon_state = "meson"
 	item_state_slots = list(slot_r_hand_str = "meson", slot_l_hand_str = "meson")
-	origin_tech = list(TECH_MAGNET = 3, TECH_ILLEGAL = 4)
 
 /obj/item/clothing/glasses/thermal/plain
 	toggleable = 0
@@ -572,7 +585,7 @@ BLIND     // can't see anything
 	item_state_slots = list(slot_r_hand_str = "sunglasses", slot_l_hand_str = "sunglasses")
 	toggleable = 1
 	actions_types = list(/datum/action/item_action/toggle_monocle)
-	flags = null //doesn't protect eyes because it's a monocle, duh
+	flags = NONE //doesn't protect eyes because it's a monocle, duh
 
 	body_parts_covered = 0
 
@@ -601,8 +614,12 @@ BLIND     // can't see anything
 	item_flags = AIRTIGHT
 	body_parts_covered = EYES
 	species_restricted = list(SPECIES_TESHARI)
+	specialty_goggles = TRUE
 
-/obj/item/clothing/glasses/aerogelgoggles/attack_self()
+/obj/item/clothing/glasses/aerogelgoggles/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	toggle()
 
 /obj/item/clothing/glasses/aerogelgoggles/verb/toggle()

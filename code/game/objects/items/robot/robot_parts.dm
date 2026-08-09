@@ -9,9 +9,6 @@
 	var/model_info
 	dir = SOUTH
 
-/obj/item/robot_parts/set_dir()
-	return
-
 /obj/item/robot_parts/l_arm
 	name = "cyborg left arm"
 	desc = "A skeletal limb wrapped in pseudomuscles, with a low-conductivity case."
@@ -45,7 +42,7 @@
 	desc = "A heavily reinforced case containing cyborg logic boards, with space for a standard power cell."
 	icon_state = "chest"
 	part = list(BP_GROIN,BP_TORSO)
-	var/wires = 0.0
+	var/wires_const = 0.0
 	var/obj/item/cell/cell = null
 
 /obj/item/robot_parts/head
@@ -139,13 +136,13 @@
 
 	if(istype(W, /obj/item/robot_parts/chest))
 		if(src.chest)	return
-		if(W:wires && W:cell)
+		if(W:wires_const && W:cell)
 			user.drop_item()
 			W.loc = src
 			src.chest = W
 			src.update_icon()
-		else if(!W:wires)
-			to_chat(user, span_warning("You need to attach wires to it first!"))
+		else if(!W:wires_const)
+			to_chat(user, span_warning("You need to attach wires_const to it first!"))
 		else
 			to_chat(user, span_warning("You need to attach a cell to it first!"))
 
@@ -175,7 +172,7 @@
 				if(!M.brainmob.key)
 					var/ghost_can_reenter = 0
 					if(M.brainmob.mind)
-						for(var/mob/observer/dead/G in player_list)
+						for(var/mob/observer/dead/G in GLOB.player_list)
 							if(G.can_reenter_corpse && G.mind == M.brainmob.mind)
 								ghost_can_reenter = 1 //May come in use again at another point.
 								to_chat(user, span_notice("\The [W] is completely unresponsive; though it may be able to auto-resuscitate.")) //Jamming a ghosted brain into a borg is likely detrimental, and may result in some problems.
@@ -221,14 +218,14 @@
 				cell_component.installed = 1
 
 			feedback_inc("cyborg_birth",1)
-			callHook("borgify", list(O))
+			SEND_GLOBAL_SIGNAL(COMSIG_GLOB_BORGIFY, O)
 
 			qdel(src)
 		else
 			to_chat(user, span_warning("The MMI must go in after everything else!"))
 
 	if (istype(W, /obj/item/pen))
-		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", src.name, src.created_name), MAX_NAME_LEN)
+		var/t = tgui_input_text(user, "Enter new robot name", src.name, src.created_name, MAX_NAME_LEN)
 		if (!t)
 			return
 		if (!in_range(src, user) && src.loc != user)
@@ -250,13 +247,13 @@
 			src.cell = W
 			to_chat(user, span_notice("You insert the cell!"))
 	if(istype(W, /obj/item/stack/cable_coil))
-		if(src.wires)
+		if(src.wires_const)
 			to_chat(user, span_warning("You have already inserted wire!"))
 			return
 		else
 			var/obj/item/stack/cable_coil/coil = W
 			coil.use(1)
-			src.wires = 1.0
+			src.wires_const = 1.0
 			to_chat(user, span_notice("You insert the wire!"))
 	return
 
@@ -290,7 +287,7 @@
 		to_chat(user, span_notice("You insert the flash into the eye socket!"))
 
 
-/obj/item/robot_parts/emag_act(var/remaining_charges, var/mob/user)
+/obj/item/robot_parts/emag_act(remaining_charges, mob/user)
 	if(sabotaged)
 		to_chat(user, span_warning("[src] is already sabotaged!"))
 	else

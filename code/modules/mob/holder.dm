@@ -1,5 +1,3 @@
-var/list/holder_mob_icon_cache = list()
-
 //Helper object for picking dionaea (and other creatures) up.
 /obj/item/holder
 	name = "holder"
@@ -16,7 +14,6 @@ var/list/holder_mob_icon_cache = list()
 		SPECIES_VOX = 'icons/inventory/head/mob_vox.dmi'
 		)
 
-	origin_tech = null
 	item_icons = list(
 		slot_l_hand_str = 'icons/mob/items/lefthand_holder.dmi',
 		slot_r_hand_str = 'icons/mob/items/righthand_holder.dmi',
@@ -27,10 +24,11 @@ var/list/holder_mob_icon_cache = list()
 	var/original_vis_flags = NONE
 
 /obj/item/holder/Initialize(mapload, mob/held)
-	ASSERT(ismob(held))
 	. = ..()
+	if(!ismob(held))
+		stack_trace("Holder was not passed a mob.")
+		return INITIALIZE_HINT_QDEL
 	held.forceMove(src)
-	held.reset_view(src)
 	START_PROCESSING(SSobj, src)
 
 /mob/living/get_status_tab_items()
@@ -68,10 +66,10 @@ var/list/holder_mob_icon_cache = list()
 			. += ""
 			. += "Location: [location]"
 
+/// Loads the mob into the holder and sets several vis_flags
 /obj/item/holder/Entered(mob/held, atom/OldLoc)
 	if(held_mob)
 		held.forceMove(get_turf(src))
-		held.reset_view(null)
 		return
 	ASSERT(ismob(held))
 	. = ..()
@@ -83,38 +81,43 @@ var/list/holder_mob_icon_cache = list()
 	original_transform = held.transform
 	held.transform = null
 
+/// Handles restoring the vis flags and scale of the mob, also makes the holder invisible now that it's empty.
 /obj/item/holder/Exited(atom/movable/thing, atom/OldLoc)
 	if(thing == held_mob)
 		held_mob.transform = original_transform
-		held_mob.update_transform() //VOREStation edit
+		held_mob.update_transform()
 		held_mob.vis_flags = original_vis_flags
 		held_mob = null
+		invisibility = INVISIBILITY_ABSTRACT
 	..()
 
+/// Dumps the mob if we still hold one, and if we are held by a mob clears us from its inventory.
 /obj/item/holder/Destroy()
 	STOP_PROCESSING(SSobj, src)
 	if(held_mob)
 		dump_mob()
 	if(ismob(loc))
 		var/mob/M = loc
-		M.drop_from_inventory(src, get_turf(src))
-	return ..()
+		M.drop_from_inventory(src, loc)
+	. = ..()
 
+/// If the mob somehow leaves the holder, clean us up.
 /obj/item/holder/process()
-	if(held_mob?.loc != src || isturf(loc))
+	if(held_mob?.loc != src || isturf(loc) || isbelly(loc))
 		qdel(src)
 
+/// Releases the mob from inside the holder. Calls forceMove() which calls Exited(). Then does cleanup for the client's eye location.
 /obj/item/holder/proc/dump_mob()
 	if(!held_mob)
 		return
 	if (held_mob.loc == src || isnull(held_mob.loc))
-		held_mob.transform = original_transform
-		held_mob.update_transform()
-		held_mob.vis_flags = original_vis_flags
-		held_mob.reset_view(null)
-		held_mob.forceMove(get_turf(src))
-		held_mob = null
-	invisibility = INVISIBILITY_ABSTRACT
+		held_mob.forceMove(loc)
+		// Holders need a bigger refactor, as they do a lot of extremely weird enter/exit stuff, and broke remote views badly even before the component.
+		// This is needed for escaping vore eggs, because it will make you focus on the deleted holder instead. Otherwise no other issues I'm aware of?
+		// This likely also applies to any other object that releases a holder, while instantly deleting them both.
+		spawn(0)
+			if(isturf(held_mob.loc))
+				held_mob.reset_perspective()
 
 /obj/item/holder/throw_at(atom/target, range, speed, thrower)
 	if(held_mob)
@@ -146,12 +149,10 @@ var/list/holder_mob_icon_cache = list()
 			holster.clear_holster()
 		to_chat(held, span_warning("You extricate yourself from [holster]."))
 		forceMove(get_turf(src))
-		held.reset_view(null)
 	else if(isitem(loc))
 		var/obj/item/I = loc
 		to_chat(held, span_warning("You struggle free of [loc]."))
 		forceMove(get_turf(src))
-		held.reset_view(null)
 		if(istype(I))
 			I.on_holder_escape(src)
 
@@ -161,20 +162,16 @@ var/list/holder_mob_icon_cache = list()
 
 //Mob specific holders.
 /obj/item/holder/diona
-	origin_tech = list(TECH_MAGNET = 3, TECH_BIO = 5)
 	slot_flags = SLOT_HEAD | SLOT_OCLOTHING | SLOT_HOLSTER
 	item_state = "diona"
 
 /obj/item/holder/drone
-	origin_tech = list(TECH_MAGNET = 3, TECH_ENGINEERING = 5)
 	item_state = "repairbot"
 
 /obj/item/holder/drone/swarm
-	origin_tech = list(TECH_MAGNET = 6, TECH_ENGINEERING = 7, TECH_PRECURSOR = 2, TECH_ARCANE = 1)
 	item_state = "constructiondrone"
 
 /obj/item/holder/pai
-	origin_tech = list(TECH_DATA = 2)
 
 /obj/item/holder/pai/Initialize(mapload, mob/held)
 	. = ..()
@@ -185,7 +182,6 @@ var/list/holder_mob_icon_cache = list()
 	desc = "It's a small rodent."
 	item_state = "mouse_gray"
 	slot_flags = SLOT_EARS | SLOT_HEAD | SLOT_ID
-	origin_tech = list(TECH_BIO = 2)
 	w_class = ITEMSIZE_TINY
 
 /obj/item/holder/mouse/extrapolator_act(mob/living/user, obj/item/extrapolator/extrapolator, dry_run)
@@ -212,89 +208,67 @@ var/list/holder_mob_icon_cache = list()
 	item_state = "mouse_rat"
 
 /obj/item/holder/possum
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "possum"
 
 /obj/item/holder/possum/poppy
-	origin_tech = list(TECH_BIO = 2, TECH_ENGINEERING = 4)
 	item_state = "poppy"
 
 /obj/item/holder/cat
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "cat"
 
 /obj/item/holder/cat/runtime
 
 /obj/item/holder/fennec
-	origin_tech = list(TECH_BIO = 2)
 
 /obj/item/holder/cat/runtime
 
-	origin_tech = list(TECH_BIO = 2, TECH_DATA = 4)
-
 /obj/item/holder/cat/cak
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "cak"
 
 /obj/item/holder/cat/bluespace
-	origin_tech = list(TECH_BIO = 2, TECH_BLUESPACE = 6)
 	item_state = "bscat"
 
 /obj/item/holder/cat/spacecat
-	origin_tech = list(TECH_BIO = 2, TECH_MATERIAL = 4)
 	item_state = "spacecat"
 
 /obj/item/holder/cat/original
-	origin_tech = list(TECH_BIO = 2, TECH_BLUESPACE = 4)
 	item_state = "original"
 
 /obj/item/holder/cat/breadcat
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "breadcat"
 
 /obj/item/holder/corgi
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "corgi"
 
 /obj/item/holder/lisa
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "lisa"
 
 /obj/item/holder/old_corgi
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "old_corgi"
 
 /obj/item/holder/void_puppy
-	origin_tech = list(TECH_BIO = 2, TECH_BLUESPACE = 3)
 	item_state = "void_puppy"
 
 /obj/item/holder/narsian
-	origin_tech = list(TECH_BIO = 2, TECH_ILLEGAL = 3)
 	item_state = "narsian"
 
 /obj/item/holder/bullterrier
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "bullterrier"
 
 /obj/item/holder/fox
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "fox"
 
 /obj/item/holder/pug
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "pug"
 
 /obj/item/holder/sloth
-	origin_tech = list(TECH_BIO = 2)
 	item_state = "sloth"
 
 /obj/item/holder/borer
-	origin_tech = list(TECH_BIO = 6)
 	item_state = "brainslug"
 
 /obj/item/holder/leech
 	color = "#003366"
-	origin_tech = list(TECH_BIO = 5, TECH_PHORON = 2)
 
 /obj/item/holder/cat/fluff/tabiranth
 	name = "Spirit"
@@ -328,9 +302,8 @@ var/list/holder_mob_icon_cache = list()
 	attack_verb = list("fished", "disrespected", "smacked", "smackereled")
 	hitsound = 'sound/effects/slime_squish.ogg'
 	slot_flags = SLOT_HOLSTER
-	origin_tech = list(TECH_BIO = 3)
 
-/obj/item/holder/fish/afterattack(var/atom/target, var/mob/living/user, proximity)
+/obj/item/holder/fish/afterattack(atom/target, mob/living/user, proximity)
 	if(!target)
 		return
 	if(!proximity)
@@ -357,7 +330,7 @@ var/list/holder_mob_icon_cache = list()
 //Mob procs and vars for scooping up
 /mob/living/var/holder_type
 
-/mob/living/MouseDrop(var/atom/over_object)
+/mob/living/MouseDrop(atom/over_object)
 	var/mob/living/carbon/human/H = over_object
 	if(holder_type && issmall(src) && istype(H) && !H.lying && Adjacent(H) && (src.a_intent == I_HELP && H.a_intent == I_HELP)) //VOREStation Edit
 		if(!issmall(H) || !ishuman(src))
@@ -365,9 +338,15 @@ var/list/holder_mob_icon_cache = list()
 		return
 	return ..()
 
-/mob/living/proc/get_scooped(var/mob/living/carbon/grabber, var/self_grab)
+/mob/living/proc/get_scooped(mob/living/carbon/grabber, self_grab)
 
 	if(!holder_type || buckled || pinned.len)
+		return
+
+	// Dodge pickup if enabled by personal space bubble.
+	if(!self_grab && (touch_reaction_flags & SPECIES_TRAIT_PICKUP_DODGE))
+		grabber.visible_message(span_notice("[src] deftly evades [grabber]'s attempt to pick them up!"))
+		to_chat(grabber, span_notice("[src] evaded your pickup attempt!"))
 		return
 
 	if(self_grab)
@@ -386,7 +365,7 @@ var/list/holder_mob_icon_cache = list()
 	//end YW edit
 
 	var/obj/item/holder/H = new holder_type(get_turf(src), src)
-	H.sync(src)	//CHOMPEdit - See modular_chomp/code/modules/mob/holder.dm for what this does
+	H.sync(src)
 	grabber.put_in_hands(H)
 
 	if(self_grab)
@@ -400,12 +379,7 @@ var/list/holder_mob_icon_cache = list()
 	add_attack_logs(grabber, H.held_mob, "Scooped up", FALSE) // Not important enough to notify admins, but still helpful.
 	return H
 
-/obj/item/holder/human
-	icon = 'icons/mob/holder_complex.dmi'
-	var/list/generate_for_slots = list(slot_l_hand_str, slot_r_hand_str, slot_back_str)
-	slot_flags = SLOT_BACK
-
-/obj/item/holder/proc/sync(var/mob/living/M)
+/obj/item/holder/proc/sync(mob/living/M)
 	dir = 2
 	overlays.Cut()
 	if(M.item_state)

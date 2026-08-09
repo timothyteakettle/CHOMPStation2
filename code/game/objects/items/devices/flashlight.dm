@@ -1,3 +1,4 @@
+#define CAN_USE "can_use"
 /*
  * Contains:
  *		Flashlights
@@ -18,7 +19,7 @@
 	icon_state = "flashlight"
 	w_class = ITEMSIZE_SMALL
 	slot_flags = SLOT_BELT
-	matter = list(MAT_STEEL = 50,MAT_GLASS = 20)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.025),MAT_GLASS = MATERIAL_COST(0.01))
 	actions_types = list(/datum/action/item_action/toggle_flashlight)
 
 	light_system = MOVABLE_LIGHT_DIRECTIONAL
@@ -33,8 +34,13 @@
 	var/cell_type = /obj/item/cell/device
 	var/power_usage = 1
 	var/power_use = 1
+	var/flickering = FALSE
+	var/single_use = FALSE
 	pickup_sound = 'sound/items/pickup/device.ogg'
 	drop_sound = 'sound/items/drop/device.ogg'
+
+	///Var for attack_self chain
+	var/special_handling = FALSE
 
 /obj/item/flashlight/Initialize(mapload)
 	. = ..()
@@ -46,7 +52,7 @@
 
 /obj/item/flashlight/Destroy()
 	STOP_PROCESSING(SSobj, src)
-	qdel_null(cell)
+	QDEL_NULL(cell)
 	return ..()
 
 /obj/item/flashlight/get_cell()
@@ -88,33 +94,38 @@
 			. += "It appears to have a high amount of power remaining."
 
 /obj/item/flashlight/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
+	if(single_use && on)
+		return FALSE
+	if(special_handling)
+		return FALSE
+	if(flickering)
+		to_chat(user, "The light is currently malfunctioning and you're unable to adjust it!") //To prevent some lighting anomalities.
+		return FALSE
 	if(power_use)
 		if(!isturf(user.loc))
 			to_chat(user, "You cannot turn the light on while in this [user.loc].") //To prevent some lighting anomalities.
-			return 0
+			return FALSE
 		if(!cell || cell.charge == 0)
 			to_chat(user, "You flick the switch on [src], but nothing happens.")
-			return 0
+			return FALSE
 	on = !on
 	if(on && power_use)
 		START_PROCESSING(SSobj, src)
 	else if(power_use)
 		STOP_PROCESSING(SSobj, src)
-	playsound(src, 'sound/weapons/empty.ogg', 15, 1, -3) // VOREStation Edit
+	playsound(src, 'sound/weapons/empty.ogg', 15, 1, -3)
 	update_brightness()
 	user.update_mob_action_buttons()
-	return 1
+	return CAN_USE
 
-/obj/item/flashlight/emp_act(severity)
-	for(var/obj/O in contents)
-		O.emp_act(severity)
-	..()
-
-/obj/item/flashlight/attack(mob/living/M as mob, mob/living/user as mob)
+/obj/item/flashlight/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
 	add_fingerprint(user)
 	if(on && user.zone_sel.selecting == O_EYES)
 
-		if((CLUMSY in user.mutations) && prob(50))	//too dumb to use flashlight properly
+		if(CLUMSY_FAIL_CHANCE(user))	//too dumb to use flashlight properly
 			return ..()	//just hit them in the head
 
 		var/mob/living/carbon/human/H = M	//mob has protective eyewear
@@ -122,7 +133,7 @@
 			for(var/obj/item/clothing/C in list(H.head,H.wear_mask,H.glasses))
 				if(istype(C) && (C.body_parts_covered & EYES))
 					to_chat(user, span_warning("You're going to need to remove [C.name] first."))
-					return
+					return ITEM_INTERACT_FAILURE
 
 			var/obj/item/organ/vision
 			if(H.species.vision_organ)
@@ -132,14 +143,14 @@
 										span_notice("You direct [src] at [M]'s face."))
 				to_chat(user, span_warning("You can't find any [H.species.vision_organ ? H.species.vision_organ : "eyes"] on [H]!"))
 				user.setClickCooldown(user.get_attack_speed(src))
-				return
+				return ITEM_INTERACT_FAILURE
 
 			user.visible_message(span_infoplain(span_bold("\The [user]") + " directs [src] to [M]'s eyes."), \
 									span_notice("You direct [src] to [M]'s eyes."))
 			if(H != user)	//can't look into your own eyes buster
 				if(M.stat == DEAD || M.blinded)	//mob is dead or fully blind
 					to_chat(user, span_warning("\The [M]'s pupils do not react to the light!"))
-					return
+					return ITEM_INTERACT_SUCCESS
 				if(XRAY in M.mutations)
 					to_chat(user, span_notice("\The [M] pupils give an eerie glow!"))
 				if(vision.is_bruised())
@@ -160,6 +171,7 @@
 
 			user.setClickCooldown(user.get_attack_speed(src)) //can be used offensively
 			M.flash_eyes()
+			return ITEM_INTERACT_SUCCESS
 	else
 		return ..()
 
@@ -187,7 +199,7 @@
 		if (istype(usr.loc,/obj/mecha)) // stops inventory actions in a mech. why?
 			return
 
-		if (!( istype(over_object, /obj/screen) ))
+		if (!( istype(over_object, /atom/movable/screen) ))
 			return ..()
 
 		//makes sure that the thing is equipped, so that we can't drag it into our hand from miles away.
@@ -198,7 +210,7 @@
 		if (( usr.restrained() ) || ( usr.stat ))
 			return
 
-		if ((src.loc == usr) && !(istype(over_object, /obj/screen)) && !usr.unEquip(src))
+		if ((src.loc == usr) && !(istype(over_object, /atom/movable/screen)) && !usr.unEquip(src))
 			return
 
 		switch(over_object.name)
@@ -239,6 +251,48 @@
 			return
 		var/turf/T = get_turf(target)
 		OL.place_directional_light(T)
+
+/obj/item/flashlight/proc/flicker(amount = rand(10, 20), flicker_color, forced)
+	if(flickering)
+		return
+	if(!flicker_color)
+		flicker_color = light_color //If we don't have a flicker color, use our current light color.
+	if((!power_use && !forced) || (!power_usage && !forced))
+		return //We don't use power / have no power, so we're probably a flare or dead.
+	flickering = TRUE
+	var/original_color = light_color
+	var/original_on = on
+	var/datum/component/overlay_lighting/OL = GetComponent(/datum/component/overlay_lighting) //BEWARE, ESOTERIC BULLSHIT HERE.
+	if(flicker_color && light_color != flicker_color)
+		set_light_color(flicker_color)
+		OL.directional_atom?.color = flicker_color
+	do_flicker(amount, flicker_color, original_color, original_on, OL, 1)
+
+
+/// Args:
+/// amount is how many timer to flicker.
+/// flicker_color is what to set the flashlight to when we flicker.
+/// original_color is what our original color was prior to flickering
+/// original_on is if we were originally on or not.
+/// OL is our overlay for lighting.
+/// ticker is how many times we have flickered so far.
+/obj/item/flashlight/proc/do_flicker(amount = rand(10, 20), flicker_color, original_color, original_on, datum/component/overlay_lighting/OL, ticker)
+	if(ticker >= amount) //We have flickered enough times. Terminate the cycle.
+		finish_flicker(original_color, original_on, OL)
+		return
+	on = !on
+	update_brightness()
+	if(!on) // Only play when the light turns off.
+		playsound(src, 'sound/effects/light_flicker.ogg', 50, 1)
+	addtimer(CALLBACK(src, PROC_REF(do_flicker), amount, flicker_color, original_color, original_on, OL, ++ticker), rand(5,15), TIMER_DELETE_ME)
+
+/obj/item/flashlight/proc/finish_flicker(original_color, original_on, datum/component/overlay_lighting/OL)
+	set_light_color(original_color)
+	OL.directional_atom?.color = original_color
+	on = original_on
+	flickering = FALSE
+	update_brightness()
+
 
 /obj/item/flashlight/pen
 	name = "penlight"
@@ -291,7 +345,7 @@
 	slot_flags = SLOT_BELT
 	w_class = ITEMSIZE_SMALL
 	attack_verb = list ("smacked", "thwacked", "thunked")
-	matter = list(MAT_STEEL = 200,MAT_GLASS = 50)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.1),MAT_GLASS = MATERIAL_COST(0.025))
 	hitsound = "swing_hit"
 
 /obj/item/flashlight/drone
@@ -359,16 +413,17 @@
 	icon_state = "flare"
 	item_state = "flare"
 	actions_types = list() //just pull it manually, neckbeard.
-	var/fuel = 0
+	var/fuel = 800
 	var/on_damage = 7
 	var/produce_heat = 1500
 	power_use = 0
 	drop_sound = 'sound/items/drop/gloves.ogg'
 	pickup_sound = 'sound/items/pickup/gloves.ogg'
 	light_system = MOVABLE_LIGHT
+	single_use = TRUE
 
 /obj/item/flashlight/flare/Initialize(mapload)
-	fuel = rand(800, 1000) // Sorry for changing this so much but I keep under-estimating how long X number of ticks last in seconds.
+	fuel += rand(0, 200)
 	. = ..()
 
 /obj/item/flashlight/flare/process()
@@ -389,27 +444,25 @@
 	update_brightness()
 
 /obj/item/flashlight/flare/attack_self(mob/user)
-
+	. = ..(user)
+	if(.)
+		return TRUE
 	// Usual checks
-	if(!fuel)
+	if(!fuel || on)
 		to_chat(user, span_notice("It's out of fuel."))
 		return
-	if(on)
-		return
-
-	. = ..()
 	// All good, turn it on.
-	if(.)
+	if(. == CAN_USE)
 		user.visible_message(span_notice("[user] activates the flare."), span_notice("You pull the cord on the flare, activating it!"))
-		src.force = on_damage
-		src.damtype = "fire"
+		force = on_damage
+		damtype = BURN
 		START_PROCESSING(SSobj, src)
 
 /obj/item/flashlight/flare/proc/ignite() //Used for flare launchers.
 	on = !on
 	update_brightness()
 	force = on_damage
-	damtype = "fire"
+	damtype = BURN
 	START_PROCESSING(SSobj, src)
 	return 1
 
@@ -427,11 +480,12 @@
 	light_color = "#49F37C"
 	icon_state = "glowstick_green"
 	item_state = "glowstick_green"
-	var/fuel = 0
-	power_use = 0
+	var/fuel = 1600
+	power_use = FALSE
+	single_use = TRUE
 
 /obj/item/flashlight/glowstick/Initialize(mapload)
-	fuel = rand(1600, 2000)
+	fuel += rand(0, 400)
 	. = ..()
 
 /obj/item/flashlight/glowstick/process()
@@ -443,21 +497,28 @@
 		STOP_PROCESSING(SSobj, src)
 
 /obj/item/flashlight/glowstick/proc/turn_off()
-	on = 0
+	on = FALSE
 	update_brightness()
 
 /obj/item/flashlight/glowstick/attack_self(mob/user)
-
-	if(!fuel)
+	. = ..(user)
+	if(.)
+		return TRUE
+	if(!fuel || on)
 		to_chat(user, span_notice("The glowstick has already been turned on."))
 		return
-	if(on)
-		return
 
-	. = ..()
-	if(.)
+	if(. == CAN_USE)
 		user.visible_message(span_notice("[user] cracks and shakes \the [name]."), span_notice("You crack and shake \the [src], turning it on!"))
 		START_PROCESSING(SSobj, src)
+
+/obj/item/flashlight/glowstick/random
+
+/obj/item/flashlight/glowstick/random/Initialize(mapload)
+	. = ..()
+	var/stick_to_pick = pick(typesof(/obj/item/flashlight/glowstick) - /obj/item/flashlight/glowstick/random)
+	new stick_to_pick(loc)
+	return INITIALIZE_HINT_QDEL
 
 /obj/item/flashlight/glowstick/red
 	name = "red glowstick"
@@ -496,3 +557,5 @@
 	light_range = 8
 	light_power = 0.1
 	light_color = "#49F37C"
+
+#undef CAN_USE

@@ -23,7 +23,7 @@
 
 		H.visible_message(span_warning("Thin snakelike tendrils grow from [H] and connect to \the [apc]."),span_notice("Thin snakelike tendrils grow from you and connect to \the [apc]."))
 
-/datum/nifsoft/apc_recharge/deactivate(var/force = FALSE)
+/datum/nifsoft/apc_recharge/deactivate(force = FALSE)
 	if((. = ..()))
 		apc = null
 
@@ -99,7 +99,7 @@
 	access = 999 //Prevents anyone from buying it without an emag.
 	var/laws = "Be nice to people!"
 
-/datum/nifsoft/compliance/New(var/newloc,var/newlaws)
+/datum/nifsoft/compliance/New(newloc,newlaws)
 	laws = newlaws //Sanitize before this (the disk does)
 	..(newloc)
 
@@ -140,7 +140,7 @@
 		spawn(0)
 			deactivate()
 
-/datum/nifsoft/sizechange/deactivate(var/force = FALSE)
+/datum/nifsoft/sizechange/deactivate(force = FALSE)
 	if((. = ..()))
 		return TRUE
 
@@ -157,22 +157,22 @@
 /datum/nifsoft/worldbend/activate()
 	if((. = ..()))
 		var/list/justme = list(nif.human)
-		for(var/human in human_mob_list)
+		for(var/human in GLOB.human_mob_list)
 			if(human == nif.human)
 				continue
 			var/mob/living/carbon/human/H = human
 			H.display_alt_appearance("animals", justme)
-			alt_farmanimals += nif.human
+			GLOB.alt_farmanimals += nif.human
 
-/datum/nifsoft/worldbend/deactivate(var/force = FALSE)
+/datum/nifsoft/worldbend/deactivate(force = FALSE)
 	if((. = ..()))
 		var/list/justme = list(nif.human)
-		for(var/human in human_mob_list)
+		for(var/human in GLOB.human_mob_list)
 			if(human == nif.human)
 				continue
 			var/mob/living/carbon/human/H = human
 			H.hide_alt_appearance("animals", justme)
-			alt_farmanimals -= nif.human
+			GLOB.alt_farmanimals -= nif.human
 
 /datum/nifsoft/malware
 	name = "Cool Kidz Toolbar"
@@ -198,4 +198,4 @@
 	if((. = ..()))
 		if(nif.human.client && world.time - last_ads > rand(10 MINUTES, 15 MINUTES) && prob(1))
 			last_ads = world.time
-			nif.human.client.create_fake_ad_popup_multiple(/obj/screen/popup/default, 5)
+			nif.human.client.create_fake_ad_popup_multiple(/atom/movable/screen/popup/default, 5)

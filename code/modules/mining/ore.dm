@@ -7,34 +7,33 @@
 	var/datum/geosample/geologic_data
 	var/material
 
+/obj/item/ore/archeology_debris
+	name = "rocky debris"
+	desc = "Leftover rocky debris from digging."
+
 /obj/item/ore/uranium
 	name = "pitchblende"
 	icon_state = "ore_uranium"
-	origin_tech = list(TECH_MATERIAL = 5)
 	material = ORE_URANIUM
 
 /obj/item/ore/iron
 	name = ORE_HEMATITE
 	icon_state = "ore_iron"
-	origin_tech = list(TECH_MATERIAL = 1)
 	material = ORE_HEMATITE
 
 /obj/item/ore/coal
 	name = "raw carbon"
 	icon_state = "ore_coal"
-	origin_tech = list(TECH_MATERIAL = 1)
 	material = ORE_CARBON
 
 /obj/item/ore/marble
 	name = "recrystallized carbonate"
 	icon_state = "ore_marble"
-	origin_tech = list(TECH_MATERIAL = 1)
 	material = ORE_MARBLE
 
 /obj/item/ore/glass
 	name = ORE_SAND
 	icon_state = "ore_glass"
-	origin_tech = list(TECH_MATERIAL = 1)
 	material = ORE_SAND
 	slot_flags = SLOT_HOLSTER
 
@@ -53,25 +52,21 @@
 /obj/item/ore/phoron
 	name = "phoron crystals"
 	icon_state = "ore_phoron"
-	origin_tech = list(TECH_MATERIAL = 2)
 	material = ORE_PHORON
 
 /obj/item/ore/silver
 	name = "native silver ore"
 	icon_state = "ore_silver"
-	origin_tech = list(TECH_MATERIAL = 3)
 	material = ORE_SILVER
 
 /obj/item/ore/gold
 	name = "native gold ore"
 	icon_state = "ore_gold"
-	origin_tech = list(TECH_MATERIAL = 4)
 	material = ORE_GOLD
 
 /obj/item/ore/diamond
 	name = "diamonds"
 	icon_state = "ore_diamond"
-	origin_tech = list(TECH_MATERIAL = 6)
 	material = ORE_DIAMOND
 
 /obj/item/ore/osmium
@@ -88,7 +83,6 @@
 	name = "verdantite dust"
 	icon_state = "ore_verdantium"
 	material = ORE_VERDANTIUM
-	origin_tech = list(TECH_MATERIAL = 7)
 
 // POCKET ... Crystal dust.
 /obj/item/ore/verdantium/throw_impact(atom/hit_atom)
@@ -105,8 +99,7 @@
 	name = "lead glance"
 	icon_state = "ore_lead"
 	material = ORE_LEAD
-	origin_tech = list(TECH_MATERIAL = 3)
-/*
+
 /obj/item/ore/copper
 	name = "raw copper"
 	icon_state = "ore_copper"
@@ -121,12 +114,12 @@
 	name = "raw bauxite"
 	icon_state = "ore_bauxite"
 	material = ORE_BAUXITE
-*/
+
 /obj/item/ore/rutile
 	name = "raw rutile"
 	icon_state = "ore_rutile"
 	material = ORE_RUTILE
-/*
+
 /obj/item/ore/void_opal
 	name = "raw void opal"
 	icon_state = "ore_void_opal"
@@ -141,7 +134,7 @@
 	name = "raw quartz"
 	icon_state = "ore_quartz"
 	material = ORE_QUARTZ
-*/
+
 /obj/item/ore/slag
 	name = "Slag"
 	desc = "Someone screwed up..."
@@ -159,22 +152,20 @@
 	else
 		return ..()
 
-//VOREStation Add
-/obj/item/ore/attack(mob/living/M as mob, mob/living/user as mob)
+/obj/item/ore/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
 	if(M.handle_eat_minerals(src, user))
-		return
+		return ITEM_INTERACT_SUCCESS
 	..()
 
-/obj/item/ore/attack_generic(var/mob/living/user) //Allow adminbussed mobs to eat ore if they click it while NOT on help intent.
+/obj/item/ore/attack_generic(mob/living/user) //Allow adminbussed mobs to eat ore if they click it while NOT on help intent.
 	if(user.handle_eat_minerals(src))
-		return
+		return ITEM_INTERACT_SUCCESS
 	..()
-//VOREStation Add End
 
 /obj/item/ore_chunk
 	name = "ore chunk"
 	desc = "A conglomerate of ore."
-	icon = 'icons/obj/mining_ore_vr.dmi'
+	icon = 'icons/obj/mining_ore.dmi'
 	icon_state = "ore2"
 	randpixel = 8
 	w_class = ITEMSIZE_LARGE //CHOMPEdit

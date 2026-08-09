@@ -7,7 +7,6 @@ import {
   Slider,
   Stack,
 } from 'tgui-core/components';
-import { toFixed } from 'tgui-core/math';
 import { capitalize } from 'tgui-core/string';
 
 import type { Cell, Comp, InstalledCell, Target } from '../types';
@@ -33,7 +32,7 @@ export const CellCommp = (props: {
       )}
       <Slider
         stepPixelSize={5}
-        format={(value) => toFixed(value, 2)}
+        format={(value) => value.toFixed(2)}
         disabled={!cell.charge}
         minValue={0}
         maxValue={100}
@@ -51,7 +50,10 @@ export const CellCommp = (props: {
         </Stack>
       </Slider>
       <Dropdown
+        searchInput
+        styledInput
         width="100%"
+        displayText={selectedCell}
         selected={selectedCell}
         options={cell_options}
         onSelected={onSelectedCell}
@@ -128,42 +130,42 @@ export const CompTab = (props: {
   return (
     <Section scrollable fill>
       <Dropdown
-        width="100%"
+        fluid
         selected={selectedAct}
         options={act_options}
         onSelected={onSelectedAct}
       />
       <ComponentInfo comps={acts[selectedAct]} />
       <Dropdown
-        width="100%"
+        fluid
         selected={selectedRad}
         options={rad_options}
         onSelected={onSelectedRad}
       />
       <ComponentInfo comps={rads[selectedRad]} />
       <Dropdown
-        width="100%"
+        fluid
         selected={selectedDiag}
         options={diag_options}
         onSelected={onSelectedDiag}
       />
       <ComponentInfo comps={diags[selectedDiag]} />
       <Dropdown
-        width="100%"
+        fluid
         selected={selectedCam}
         options={cam_options}
         onSelected={onSelectedCam}
       />
       <ComponentInfo comps={cams[selectedCam]} />
       <Dropdown
-        width="100%"
+        fluid
         selected={selectedComm}
         options={comm_options}
         onSelected={onSelectedComm}
       />
       <ComponentInfo comps={comms[selectedComm]} />
       <Dropdown
-        width="100%"
+        fluid
         selected={selectedArm}
         options={arm_options}
         onSelected={onSelectedArm}

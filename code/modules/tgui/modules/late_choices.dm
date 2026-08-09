@@ -49,7 +49,7 @@
 	if(!job.minimum_character_age && !job.min_age_by_species)
 		return TRUE
 
-	var/min_age = job.get_min_age(prefs.species, prefs.organ_data[O_BRAIN])
+	var/min_age = job.get_min_age(prefs.read_preference(/datum/preference/choiced/species), prefs.read_preference(/datum/preference/organ_data)?[O_BRAIN])
 	if(prefs.read_preference(/datum/preference/numeric/human/age) >= min_age)
 		return TRUE
 	return FALSE
@@ -57,15 +57,15 @@
 /datum/tgui_module/late_choices/tgui_data(mob/new_player/user)
 	var/list/data = ..()
 
-	var/name = user.client.prefs.read_preference(/datum/preference/toggle/human/name_is_always_random) ? "friend" : user.client.prefs.real_name
+	var/name = user.client.prefs.read_preference(/datum/preference/toggle/human/name_is_always_random) ? "friend" : user.client.prefs.read_preference(/datum/preference/name/real_name)
 
 	data["name"] = name
 	data["duration"] = roundduration2text()
 
-	if(emergency_shuttle?.going_to_centcom())
+	if(SSemergency_shuttle?.going_to_centcom())
 		data["evac"] = "Gone"
-	else if(emergency_shuttle?.online())
-		if(emergency_shuttle.evac)
+	else if(SSemergency_shuttle?.online())
+		if(SSemergency_shuttle.evac)
 			data["evac"] = "Emergency"
 		else
 			data["evac"] = "Crew Transfer"
@@ -74,20 +74,20 @@
 
 	var/list/jobs = list()
 
-	for(var/datum/job/job in job_master.occupations)
+	for(var/datum/job/job in SSjob.occupations)
 		if(job && user.IsJobAvailable(job.title))
 			// Check for jobs with minimum age requirements
 			if(!character_old_enough_for_job(user.client.prefs, job))
 				continue
 
 			//CHOMPEdit Begin - Check species job bans... (Only used for shadekin)
-			if(job.is_species_banned(user.client.prefs.species, user.client.prefs.organ_data["brain"]))
+			if(job.is_species_banned(user.client.prefs.read_preference(/datum/preference/choiced/species), user.client.prefs.read_preference(/datum/preference/organ_data)?[O_BRAIN]))
 				continue
 			//CHOMPEdit End
 
 			var/active = 0
 			// Only players with the job assigned and AFK for less than 10 minutes count as active
-			for(var/mob/M in player_list)
+			for(var/mob/M in GLOB.player_list)
 				if(M.mind?.assigned_role == job.title && M.client?.inactivity <= 10 MINUTES)
 					active++
 
@@ -126,17 +126,18 @@
 			if(!CONFIG_GET(flag/enter_allowed))
 				to_chat(new_user, span_notice("There is an administrative lock on entering the game!"))
 				return
-			else if(ticker && ticker.mode && ticker.mode.explosion_in_progress)
+			else if(SSticker && SSticker.mode && SSticker.mode.explosion_in_progress)
 				to_chat(new_user, span_danger("The station is currently exploding. Joining would go poorly."))
 				return
 
-			var/datum/species/S = GLOB.all_species[new_user.client.prefs.species]
+			var/pref_species = new_user.client.prefs.read_preference(/datum/preference/choiced/species)
+			var/datum/species/S = GLOB.all_species[pref_species]
 			if(!is_alien_whitelisted(new_user.client, S))
-				tgui_alert(new_user, "You are currently not whitelisted to play [new_user.client.prefs.species].")
+				tgui_alert(new_user, "You are currently not whitelisted to play [pref_species].")
 				return 0
 
 			if(!(S.spawn_flags & SPECIES_CAN_JOIN))
-				tgui_alert_async(new_user,"Your current species, [new_user.client.prefs.species], is not available for play on the station.")
+				tgui_alert_async(new_user,"Your current species, [pref_species], is not available for play on the station.")
 				return 0
 
-			new_user.AttemptLateSpawn(job, new_user.read_preference(/datum/preference/choiced/living/spawnpoint))
+			new_user.AttemptLateSpawn(job)

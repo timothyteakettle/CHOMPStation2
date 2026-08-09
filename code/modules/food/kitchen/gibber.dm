@@ -7,7 +7,7 @@
 	density = TRUE
 	anchored = TRUE
 	unacidable = TRUE
-	req_access = list(access_kitchen,access_morgue)
+	req_access = list(ACCESS_KITCHEN,ACCESS_MORGUE)
 
 	var/operating = 0 //Is it on?
 	var/dirty = 0 // Does it need cleaning?
@@ -35,7 +35,7 @@
 				break
 
 	if(!input_plate)
-		log_misc("a [src] didn't find an input plate.")
+		log_world("## MISC a [src] didn't find an input plate.")
 
 /obj/machinery/gibber/Destroy()
 	occupant = null
@@ -45,7 +45,7 @@
 	input_plate = null
 	return ..()
 
-/obj/machinery/gibber/autogibber/Bumped(var/atom/A)
+/obj/machinery/gibber/autogibber/Bumped(atom/A)
 	if(!input_plate) return
 
 	if(ismob(A))
@@ -91,12 +91,12 @@
 	. = ..()
 	. += "The safety guard is [emagged ? span_danger("disabled") : "enabled"]."
 
-/obj/machinery/gibber/emag_act(var/remaining_charges, var/mob/user)
+/obj/machinery/gibber/emag_act(remaining_charges, mob/user)
 	emagged = !emagged
 	to_chat(user, span_danger("You [emagged ? "disable" : "enable"] the gibber safety guard."))
 	return 1
 
-/obj/machinery/gibber/attackby(var/obj/item/W, var/mob/user)
+/obj/machinery/gibber/attackby(obj/item/W, mob/user)
 	var/obj/item/grab/G = W
 
 	if(default_unfasten_wrench(user, W, 40))
@@ -112,7 +112,7 @@
 	move_into_gibber(user,G.affecting)
 	// Grab() process should clean up the grab item, no need to del it.
 
-/obj/machinery/gibber/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/obj/machinery/gibber/attackby(obj/item/O as obj, mob/user as mob)
 	if(default_deconstruction_screwdriver(user, O)) //CHOMPedit - Allows for deconstruction
 		return
 	if(default_deconstruction_crowbar(user, O))
@@ -126,7 +126,7 @@
 		return
 	move_into_gibber(user,target)
 
-/obj/machinery/gibber/proc/move_into_gibber(var/mob/user,var/mob/living/victim)
+/obj/machinery/gibber/proc/move_into_gibber(mob/user,mob/living/victim)
 
 	if(src.occupant)
 		to_chat(user, span_danger("The gibber is full, empty it first!"))
@@ -151,12 +151,9 @@
 
 	user.visible_message(span_danger("[user] starts to put [victim] into the gibber!"))
 	src.add_fingerprint(user)
-	if(do_after(user, 30) && victim.Adjacent(src) && user.Adjacent(src) && victim.Adjacent(user) && !occupant)
+	if(do_after(user, 3 SECONDS, target = src) && victim.Adjacent(src) && user.Adjacent(src) && victim.Adjacent(user) && !occupant)
 		user.visible_message(span_danger("[user] stuffs [victim] into the gibber!"))
-		if(victim.client)
-			victim.client.perspective = EYE_PERSPECTIVE
-			victim.client.eye = src
-		victim.loc = src
+		victim.forceMove(src)
 		src.occupant = victim
 		update_icon()
 
@@ -176,10 +173,7 @@
 		return
 	for(var/obj/O in src)
 		O.loc = src.loc
-	if (src.occupant.client)
-		src.occupant.client.eye = src.occupant.client.mob
-		src.occupant.client.perspective = MOB_PERSPECTIVE
-	src.occupant.loc = src.loc
+	src.occupant.forceMove(get_turf(src))
 	src.occupant = null
 	update_icon()
 	return

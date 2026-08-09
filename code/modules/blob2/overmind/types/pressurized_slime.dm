@@ -26,11 +26,11 @@
 	if(T)
 		T.wet_floor()
 
-/datum/blob_type/pressurized_slime/on_received_damage(var/obj/structure/blob/B, damage, damage_type)
+/datum/blob_type/pressurized_slime/on_received_damage(obj/structure/blob/B, damage, damage_type)
 	wet_surroundings(B, damage)
 	return ..()
 
-/datum/blob_type/pressurized_slime/on_pulse(var/obj/structure/blob/B)
+/datum/blob_type/pressurized_slime/on_pulse(obj/structure/blob/B)
 	var/turf/simulated/T = get_turf(B)
 	if(!istype(T))
 		return
@@ -40,7 +40,7 @@
 	B.visible_message(span_danger("The blob ruptures, spraying the area with liquid!"))
 	wet_surroundings(B, 50)
 
-/datum/blob_type/pressurized_slime/proc/wet_surroundings(var/obj/structure/blob/B, var/probability = 50)
+/datum/blob_type/pressurized_slime/proc/wet_surroundings(obj/structure/blob/B, probability = 50)
 	for(var/turf/simulated/T in range(1, get_turf(B)))
 		if(prob(probability))
 			T.wet_floor()
@@ -52,5 +52,5 @@
 
 /datum/blob_type/pressurized_slime/on_chunk_use(obj/item/blobcore_chunk/B, mob/living/user)	// Drenches you in water.
 	if(user)
-		user.ExtinguishMob()
-		user.fire_stacks = CLAMP(user.fire_stacks - 1, -25, 25)
+		user.adjust_wet_stacks(2.5)
+		user.extinguish_mob()

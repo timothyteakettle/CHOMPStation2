@@ -73,25 +73,13 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/hallway/primary/firstdeck/auxdockaft/simulated_caves)
 "aay" = (
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/hallway/primary/firstdeck/auxdockaft/simulated_caves)
 "aaz" = (
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/hallway/primary/seconddeck/dockhallway/simulated_caves)
 "aaB" = (
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/hallway/primary/seconddeck/dockhallway/simulated_caves)
 "aaD" = (
 /obj/random/trash,
@@ -185,13 +173,7 @@
 /area/hallway/primary/firstdeck/auxdockaft/simulated_caves)
 "ahM" = (
 /obj/effect/zone_divider,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/hallway/primary/firstdeck/auxdockaft/simulated_caves)
 "ahS" = (
 /obj/random/powercell,
@@ -270,13 +252,7 @@
 "akL" = (
 /obj/random/powercell,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "ald" = (
 /obj/effect/floor_decal/rust,
@@ -1086,13 +1062,7 @@
 /turf/simulated/floor/plating,
 /area/maintenance/firstdeck/simulated_caves)
 "aQS" = (
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/shuttle/arrival/station/simulated_grid)
 "aQZ" = (
 /obj/effect/floor_decal/rust,
@@ -1133,13 +1103,7 @@
 "aTg" = (
 /obj/random/junk,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/foreport/simulated_caves)
 "aTs" = (
 /obj/effect/floor_decal/rust,
@@ -1359,13 +1323,7 @@
 "bdb" = (
 /obj/random/trash,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "bdf" = (
 /obj/structure/table/rack{
@@ -1984,13 +1942,7 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/zone_divider,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "bXG" = (
 /obj/machinery/atmospherics/pipe/simple/visible/cyan,
@@ -2385,13 +2337,7 @@
 /area/maintenance/firstdeck/fore/simulated_caves)
 "cwr" = (
 /obj/effect/shuttle_landmark/relicbase/arrivals/station,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/shuttle/arrival/station/simulated_grid)
 "cwG" = (
 /turf/simulated/mineral/cave,
@@ -2875,13 +2821,7 @@
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "dbJ" = (
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/foreport/simulated_caves)
 "dcT" = (
 /obj/machinery/status_display{
@@ -3177,13 +3117,7 @@
 "dss" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "dsB" = (
 /obj/structure/catwalk,
@@ -3713,13 +3647,7 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "dWn" = (
 /obj/effect/floor_decal/rust,
@@ -4409,7 +4337,7 @@
 /area/hallway/primary/firstdeck/auxdockaft/simulated_caves)
 "eFF" = (
 /obj/machinery/embedded_controller/radio/airlock/docking_port_multi{
-	frequency = 1380;
+	frequency = 1381;
 	id_tag = "arrivals_dock_south_airlock";
 	master_tag = "arrivals_dock";
 	pixel_y = 24;
@@ -4589,13 +4517,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/escape/station/simulated_grid)
 "eRW" = (
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/shuttle/escape/station/simulated_grid)
 "eSy" = (
 /obj/effect/floor_decal/rust,
@@ -5352,13 +5274,7 @@
 "fRL" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/foreport/simulated_caves)
 "fTS" = (
 /obj/random/trash,
@@ -5567,13 +5483,7 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/random/obstruction,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "gfJ" = (
 /obj/structure/catwalk,
@@ -5666,11 +5576,6 @@
 /obj/structure/catwalk,
 /turf/simulated/floor/plating,
 /area/maintenance/firstdeck/forestarboard/simulated_caves)
-"gmA" = (
-/turf/simulated/wall/r_wall{
-	cached_rad_resistance = 150
-	},
-/area/maintenance/firstdeck/foreport/simulated_caves)
 "gnp" = (
 /obj/effect/floor_decal/rust,
 /obj/structure/closet/crate,
@@ -5957,13 +5862,7 @@
 /area/engineering/atmos)
 "gDx" = (
 /obj/effect/zone_divider,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/hallway/primary/seconddeck/dockhallway/simulated_caves)
 "gEx" = (
 /obj/effect/zone_divider,
@@ -6865,13 +6764,7 @@
 /area/hallway/primary/seconddeck/dockhallway/simulated_caves)
 "hBr" = (
 /obj/effect/shuttle_landmark/relicbase/escape/station,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/shuttle/escape/station/simulated_grid)
 "hBA" = (
 /obj/effect/floor_decal/borderfloorblack,
@@ -7343,10 +7236,8 @@
 /turf/simulated/floor/plating,
 /area/maintenance/firstdeck/aft/simulated_caves)
 "ikR" = (
-/obj/machinery/power/smes/buildable{
-	RCon_tag = "Substation - Atmospherics";
-	charge = 2e+006;
-	input_attempt = 1
+/obj/machinery/power/smes/buildable/max_charge_max_input{
+	RCon_tag = "Substation - Atmospherics"
 	},
 /obj/structure/cable{
 	icon_state = "0-2"
@@ -7567,13 +7458,7 @@
 /area/maintenance/firstdeck/simulated_caves)
 "iwA" = (
 /obj/effect/step_trigger/tramblock,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/hallway/primary/firstdeck/auxdockaft/simulated_caves)
 "iwU" = (
 /obj/structure/catwalk,
@@ -7834,11 +7719,6 @@
 /obj/random/maintenance,
 /turf/simulated/floor/plating,
 /area/maintenance/firstdeck/simulated_caves)
-"iKm" = (
-/turf/simulated/wall/r_wall{
-	cached_rad_resistance = 150
-	},
-/area/maintenance/firstdeck/centralport/simulated_caves)
 "iKR" = (
 /obj/effect/floor_decal/borderfloorblack{
 	dir = 1
@@ -8464,13 +8344,7 @@
 /obj/random/trash,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "jrC" = (
 /obj/effect/zone_divider,
@@ -8864,13 +8738,7 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/foreport/simulated_caves)
 "jWz" = (
 /obj/effect/floor_decal/rust,
@@ -9336,13 +9204,7 @@
 "kLJ" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "kLW" = (
 /turf/simulated/floor/water/ocean,
@@ -9540,13 +9402,7 @@
 "lgW" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "lhf" = (
 /obj/machinery/atmospherics/valve/digital/open{
@@ -9681,13 +9537,7 @@
 "lyn" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/zone_divider,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/foreport/simulated_caves)
 "lzT" = (
 /obj/effect/floor_decal/rust,
@@ -11261,11 +11111,6 @@
 /obj/structure/stairs/spawner/south,
 /turf/simulated/floor/plating,
 /area/maintenance/firstdeck/centralport/simulated_caves)
-"oeN" = (
-/turf/simulated/wall/r_wall{
-	cached_rad_resistance = 150
-	},
-/area/engineering/atmos)
 "ofj" = (
 /obj/effect/floor_decal/corner/blue/diagonal{
 	dir = 4
@@ -11520,13 +11365,7 @@
 "ovx" = (
 /obj/random/trash,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "ovy" = (
 /obj/effect/zone_divider,
@@ -11920,13 +11759,7 @@
 "pay" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/zone_divider,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "pbQ" = (
 /obj/random/trash_pile,
@@ -12069,7 +11902,7 @@
 /obj/effect/floor_decal/rust,
 /obj/machinery/embedded_controller/radio/airlock/docking_port_multi{
 	dir = 4;
-	frequency = 1380;
+	frequency = 1381;
 	id_tag = "escape_dock_ssouth_airlock";
 	master_tag = "escape_dock";
 	req_one_access = list(13);
@@ -12289,13 +12122,7 @@
 "pxd" = (
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "pxt" = (
 /obj/machinery/atmospherics/pipe/manifold/hidden/supply,
@@ -13085,13 +12912,7 @@
 "qCn" = (
 /obj/random/powercell,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "qDM" = (
 /obj/machinery/button/remote/blast_door{
@@ -14023,13 +13844,7 @@
 /obj/random/trash,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "rWr" = (
 /obj/structure/curtain/open/privacy,
@@ -14344,13 +14159,7 @@
 "svI" = (
 /obj/structure/girder/displaced,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "swE" = (
 /obj/structure/table/woodentable,
@@ -15082,24 +14891,12 @@
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "twn" = (
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "twz" = (
 /obj/effect/floor_decal/rust,
 /obj/random/contraband,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "twN" = (
 /obj/effect/floor_decal/rust,
@@ -16438,7 +16235,7 @@
 	id = "tox_airlock_pump"
 	},
 /obj/machinery/air_sensor{
-	frequency = 1430;
+	frequency = 1431;
 	id_tag = "toxins_mixing_interior";
 	output = 63;
 	pixel_x = -8;
@@ -16460,7 +16257,7 @@
 /area/rnd/mixing/simulated_caves)
 "vuJ" = (
 /obj/machinery/air_sensor{
-	frequency = 1430;
+	frequency = 1431;
 	id_tag = "toxins_mixing_exterior";
 	output = 63
 	},
@@ -16485,13 +16282,7 @@
 /obj/random/powercell,
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "vwn" = (
 /obj/structure/curtain/open/privacy,
@@ -16692,7 +16483,7 @@
 "vQm" = (
 /obj/machinery/computer/general_air_control{
 	dir = 1;
-	frequency = 1430;
+	frequency = 1431;
 	name = "Mixing Chamber Monitor";
 	sensors = list("toxins_mixing_exterior" = "Mixing Chamber - Exterior", "toxins_mixing_interior" = "Mixing Chamber - Interior")
 	},
@@ -16803,13 +16594,7 @@
 /area/maintenance/firstdeck/foreport/simulated_caves)
 "vVV" = (
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/aftport/simulated_caves)
 "vWy" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -16944,13 +16729,7 @@
 /obj/effect/floor_decal/rust,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/zone_divider,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/foreport/simulated_caves)
 "wgL" = (
 /obj/effect/floor_decal/rust,
@@ -18223,9 +18002,7 @@
 	dir = 4;
 	pixel_y = null
 	},
-/turf/simulated/wall/r_wall{
-	cached_rad_resistance = 150
-	},
+/turf/simulated/wall/r_wall,
 /area/engineering/atmos)
 "xCj" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/yellow{
@@ -18539,13 +18316,7 @@
 /obj/random/trash,
 /obj/effect/floor_decal/rust,
 /obj/effect/floor_decal/rust,
-/turf/simulated/floor/tiled/techfloor/grid{
-	base_name = "maglev rails";
-	desc = "Train go brrrr.";
-	icon = 'icons/turf/flooring/maglevs.dmi';
-	icon_state = "maglevup";
-	name = "maglev rails"
-	},
+/turf/simulated/floor/tiled/techfloor/grid/train,
 /area/maintenance/firstdeck/centralport/simulated_caves)
 "xTH" = (
 /obj/structure/cable/green{
@@ -32944,7 +32715,7 @@ pwQ
 xUe
 nyd
 vVd
-oeN
+nEe
 rlb
 rlb
 rlb
@@ -33201,7 +32972,7 @@ dKh
 peJ
 pxt
 fUi
-oeN
+nEe
 rlb
 rlb
 rlb
@@ -33457,8 +33228,8 @@ ikR
 nQX
 kFw
 jNJ
-oeN
-oeN
+nEe
+nEe
 rlb
 rlb
 rlb
@@ -33702,25 +33473,25 @@ aac
 jbA
 aac
 exi
-gmA
-gmA
-gmA
-gmA
-gmA
-gmA
-gmA
-gmA
-gmA
-iKm
-iKm
-iKm
-iKm
-iKm
-iKm
-iKm
-iKm
-iKm
-iKm
+aac
+aac
+aac
+aac
+aac
+aac
+aac
+aac
+aac
+yjd
+yjd
+yjd
+yjd
+yjd
+yjd
+yjd
+yjd
+yjd
+yjd
 lll
 lll
 lll

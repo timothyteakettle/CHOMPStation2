@@ -721,10 +721,7 @@
 /obj/structure/cable{
 	icon_state = "0-8"
 	},
-/obj/machinery/power/smes/buildable{
-	charge = 1.5e+007;
-	cur_coils = 3
-	},
+/obj/machinery/power/smes/buildable/max_charge,
 /turf/simulated/floor/plating,
 /area/engineering/engine_smes)
 "bC" = (
@@ -1054,6 +1051,7 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/black{
 	dir = 6
 	},
+/obj/machinery/rnd/server/master,
 /turf/simulated/floor/tiled/dark{
 	nitrogen = 100;
 	oxygen = 0;
@@ -1064,6 +1062,7 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/black{
 	dir = 9
 	},
+/obj/machinery/rnd/server,
 /turf/simulated/floor/tiled/dark{
 	nitrogen = 100;
 	oxygen = 0;
@@ -3464,7 +3463,7 @@
 	dir = 8;
 	external_pressure_bound = 100;
 	external_pressure_bound_default = 0;
-	frequency = 1438;
+	frequency = 1433;
 	icon_state = "map_vent_in";
 	id_tag = "cooling_out";
 	initialize_directions = 4;
@@ -3536,6 +3535,10 @@
 	},
 /turf/simulated/floor/tiled,
 /area/crew_quarters/kitchen)
+"ix" = (
+/obj/machinery/mecha_part_fabricator_tg,
+/turf/simulated/floor/tiled,
+/area/bridge)
 "iy" = (
 /obj/structure/lattice,
 /turf/simulated/floor/airless,
@@ -3546,6 +3549,32 @@
 	},
 /turf/simulated/floor/tiled/techmaint,
 /area/engineering/engine_monitoring)
+"iA" = (
+/obj/machinery/mecha_part_fabricator_tg/prosthetics,
+/turf/simulated/floor/tiled,
+/area/bridge)
+"iB" = (
+/obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
+	dir = 4
+	},
+/obj/machinery/rnd/production/circuit_imprinter,
+/turf/simulated/floor/tiled,
+/area/bridge)
+"iC" = (
+/obj/machinery/rnd/production/protolathe,
+/turf/simulated/floor/tiled,
+/area/bridge)
+"iD" = (
+/obj/machinery/computer/rdconsole_tg,
+/turf/simulated/floor/tiled,
+/area/bridge)
+"iE" = (
+/obj/structure/cable{
+	icon_state = "4-8"
+	},
+/obj/machinery/ore_silo,
+/turf/simulated/floor/tiled,
+/area/bridge)
 "iJ" = (
 /obj/structure/cable/yellow{
 	icon_state = "2-4"
@@ -3640,10 +3669,10 @@
 /area/bridge)
 "jC" = (
 /obj/structure/cable/yellow,
-/obj/machinery/power/tesla_coil,
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
 	},
+/obj/machinery/power/tesla_coil/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "jQ" = (
@@ -3825,8 +3854,8 @@
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
 	},
-/obj/machinery/power/tesla_coil,
 /obj/structure/cable/yellow,
+/obj/machinery/power/tesla_coil/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "lZ" = (
@@ -4404,11 +4433,7 @@
 /area/engineering/engine_room)
 "rY" = (
 /obj/structure/cable/cyan,
-/obj/machinery/power/emitter{
-	anchored = 1;
-	icon_state = "emitter1";
-	state = 1
-	},
+/obj/machinery/power/emitter/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "sf" = (
@@ -4511,7 +4536,7 @@
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 1
 	},
-/obj/structure/particle_accelerator/particle_emitter/right{
+/obj/structure/particle_accelerator/particle_emitter/right/pre_mapped{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor,
@@ -5214,10 +5239,10 @@
 /turf/simulated/wall/r_wall,
 /area/submap/pa_room)
 "AE" = (
-/obj/machinery/particle_accelerator/control_box,
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 1
 	},
+/obj/machinery/particle_accelerator/control_box/pre_mapped,
 /turf/simulated/floor/tiled/techfloor,
 /area/submap/pa_room)
 "AI" = (
@@ -5279,7 +5304,7 @@
 	dir = 6
 	},
 /obj/machinery/air_sensor{
-	frequency = 1438;
+	frequency = 1433;
 	id_tag = "engine_sensor";
 	output = 63
 	},
@@ -5311,12 +5336,8 @@
 /turf/simulated/floor,
 /area/engineering/workshop)
 "Bo" = (
-/obj/machinery/power/smes/buildable{
-	RCon_tag = "Engine - Core";
-	charge = 2e+006;
-	input_attempt = 1;
-	input_level = 200000;
-	output_level = 250000
+/obj/machinery/power/smes/buildable/engine_default{
+	RCon_tag = "Engine - Core"
 	},
 /obj/structure/cable/cyan{
 	icon_state = "0-2"
@@ -5342,10 +5363,7 @@
 /turf/simulated/floor/tiled/techmaint,
 /area/engineering/engine_monitoring)
 "BO" = (
-/obj/machinery/field_generator{
-	anchored = 1;
-	state = 1
-	},
+/obj/machinery/field_generator/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "BU" = (
@@ -5374,13 +5392,13 @@
 /turf/simulated/floor,
 /area/submap/pa_room)
 "BX" = (
-/obj/machinery/power/tesla_coil,
 /obj/structure/cable/yellow{
 	icon_state = "0-4"
 	},
 /obj/structure/cable/yellow{
 	icon_state = "0-8"
 	},
+/obj/machinery/power/tesla_coil/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "Cd" = (
@@ -5516,7 +5534,7 @@
 /turf/simulated/floor/tiled,
 /area/engineering/engine_room)
 "DZ" = (
-/obj/structure/particle_accelerator/particle_emitter/center{
+/obj/structure/particle_accelerator/particle_emitter/center/pre_mapped{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor,
@@ -5935,8 +5953,8 @@
 /turf/simulated/floor/tiled/techmaint,
 /area/engineering/engine_monitoring)
 "Ke" = (
-/obj/machinery/power/tesla_coil,
 /obj/structure/cable/yellow,
+/obj/machinery/power/tesla_coil/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "Ki" = (
@@ -5953,7 +5971,7 @@
 	dir = 10
 	},
 /obj/machinery/atmospherics/unary/outlet_injector{
-	frequency = 1438;
+	frequency = 1433;
 	id = "cooling_in";
 	name = "Coolant Injector";
 	pixel_y = 1;
@@ -6193,7 +6211,7 @@
 /area/engineering/engine_monitoring)
 "MW" = (
 /obj/effect/floor_decal/techfloor/orange,
-/obj/structure/particle_accelerator/particle_emitter/left{
+/obj/structure/particle_accelerator/particle_emitter/left/pre_mapped{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor,
@@ -6257,11 +6275,8 @@
 /obj/structure/cable/cyan{
 	icon_state = "0-2"
 	},
-/obj/machinery/power/emitter{
-	anchored = 1;
-	dir = 1;
-	icon_state = "emitter1";
-	state = 1
+/obj/machinery/power/emitter/pre_mapped{
+	dir = 1
 	},
 /turf/simulated/floor/airless,
 /area/space)
@@ -6407,10 +6422,10 @@
 /turf/simulated/floor/tiled,
 /area/engineering/engine_room)
 "OI" = (
-/obj/machinery/power/tesla_coil,
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
 	},
+/obj/machinery/power/tesla_coil/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "OL" = (
@@ -6492,14 +6507,13 @@
 /turf/space,
 /area/space)
 "PH" = (
-/obj/machinery/power/smes/buildable{
-	RCon_tag = "Power - Main";
-	charge = 2e+007;
-	cur_coils = 4;
-	input_attempt = 1;
-	input_level = 500000;
-	output_level = 1e+006
+/obj/machinery/power/smes/buildable/engine_default{
+	RCon_tag = "Power - Main"
 	},
+/obj/item/smes_coil,
+/obj/item/smes_coil,
+/obj/item/smes_coil,
+/obj/item/smes_coil,
 /obj/structure/cable{
 	icon_state = "0-4"
 	},
@@ -6853,9 +6867,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/submap/pa_room)
 "TI" = (
-/obj/machinery/the_singularitygen/tesla{
-	anchored = 1
-	},
+/obj/machinery/the_singularitygen/tesla/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "TL" = (
@@ -6999,7 +7011,7 @@
 /turf/space,
 /area/space)
 "Vk" = (
-/obj/machinery/power/grounding_rod,
+/obj/machinery/power/grounding_rod/pre_mapped,
 /turf/simulated/floor/airless,
 /area/space)
 "Vp" = (
@@ -7083,7 +7095,7 @@
 /turf/simulated/floor,
 /area/submap/pa_room)
 "WR" = (
-/obj/structure/particle_accelerator/fuel_chamber{
+/obj/structure/particle_accelerator/fuel_chamber/pre_mapped{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor,
@@ -7145,14 +7157,14 @@
 /turf/simulated/floor,
 /area/engineering/engine_room)
 "XH" = (
-/obj/structure/particle_accelerator/end_cap{
-	dir = 8
-	},
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 4
 	},
 /obj/effect/floor_decal/techfloor/hole{
 	dir = 4
+	},
+/obj/structure/particle_accelerator/end_cap/pre_mapped{
+	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/submap/pa_room)
@@ -7299,7 +7311,7 @@
 /turf/simulated/floor,
 /area/engineering/workshop)
 "Zi" = (
-/obj/structure/particle_accelerator/power_box{
+/obj/structure/particle_accelerator/power_box/pre_mapped{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor,
@@ -9560,7 +9572,7 @@ aa
 aa
 aa
 fY
-gk
+iE
 gf
 gr
 gf
@@ -9969,9 +9981,9 @@ eM
 eM
 gc
 gh
-gf
-gt
-gf
+iC
+iB
+ix
 gf
 gf
 gf
@@ -10173,9 +10185,9 @@ aa
 aa
 fY
 gf
-gf
+iD
 gv
-gf
+iA
 gf
 pG
 gv

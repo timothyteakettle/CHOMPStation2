@@ -1,4 +1,4 @@
-var/global/list/event_viruses = list() // so that event viruses are kept around for admin logs, rather than being GCed
+GLOBAL_LIST_EMPTY(event_viruses) // so that event viruses are kept around for admin logs, rather than being GCed
 
 /datum/event/viral_infection
 	var/list/viruses = list()
@@ -22,24 +22,25 @@ var/global/list/event_viruses = list() // so that event viruses are kept around 
 		viruses += D
 
 /datum/event/viral_infection/announce()
-	/*var/level
+	var/level
+	var/virus_msg
 	if (severity == EVENT_LEVEL_MUNDANE)
 		return
 	else if (severity == EVENT_LEVEL_MODERATE)
 		level = pick("one", "two", "three", "four")
+		virus_msg = ANNOUNCER_MSG_BIOHAZARD_LOW
 	else
-		level = "five"*/
-	// Chomp removal
+		level = "five"
+		virus_msg = ANNOUNCER_MSG_BIOHAZARD_FIVE
 
 	if (severity == EVENT_LEVEL_MAJOR || prob(60))
-		command_announcement.Announce("Confirmed outbreak of level 7 biohazard aboard \the [station_name()]. All personnel must contain the outbreak.", "Viral Outbreak", new_sound = 'sound/AI/outbreak7.ogg')
-		// Chomp edit: Changed "Biohazard Alert" to "Viral Outbreak" and also changed level level 5 to level 7. Lower = More urgent.
+		command_announcement.Announce("Confirmed outbreak of level [level] biohazard aboard \the [station_name()]. All personnel must contain the outbreak.", "Viral Outbreak", new_sound = virus_msg) // Chomp edit: Changed "Biohazard Alert" to "Viral Outbreak" and also changed level level 5 to level 7. Lower = More urgent.
 
 /datum/event/viral_infection/start()
 	if(!viruses.len) return
 
 	var/list/candidates = list()	//list of candidate keys
-	for(var/mob/living/carbon/human/G in player_list)
+	for(var/mob/living/carbon/human/G in GLOB.player_list)
 		if(G.mind && G.stat != DEAD && G.is_client_active(5) && !player_is_antag(G.mind))
 			var/turf/T = get_turf(G)
 			if(T.z in using_map.station_levels)
@@ -59,7 +60,7 @@ var/global/list/event_viruses = list() // so that event viruses are kept around 
 		actual_severity--
 		used_viruses |= D
 
-	event_viruses |= used_viruses
+	GLOB.event_viruses |= used_viruses
 	var/list/used_viruses_links = list()
 	var/list/used_viruses_text = list()
 	for(var/datum/disease2/disease/D in used_viruses)

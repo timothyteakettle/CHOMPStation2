@@ -27,8 +27,11 @@
 
 	say_list_type = /datum/say_list/bear
 
-	can_be_drop_prey = FALSE //CHOMP Add
+	can_be_drop_prey = FALSE
 	allow_mind_transfer = TRUE
+
+	export_research_value = TECHWEB_TIER_1_POINTS
+	export_research_diminished_max = 3
 
 /datum/say_list/bear
 	speak = list("RAWR!","Rawr!","GRR!","Growl!")

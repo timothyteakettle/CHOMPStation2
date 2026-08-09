@@ -51,10 +51,10 @@
 
 /obj/item/organ/external/head/unbreakable/slime	//They don't need this anymore.
 	nonsolid = 1
-	cannot_gib = 0
-	vital = 0
+	cannot_gib = FALSE
+	vital = FALSE
 	max_damage = 45 //ChompEdit matching our changes to broken bones for less squishy people.
-	encased = 0
+	encased = FALSE
 	spread_dam = 1
 
 /*
@@ -97,7 +97,7 @@
 		var/mob/living/carbon/human/H = loc
 		color = H.species.get_blood_colour(H)
 
-/obj/item/organ/internal/regennetwork/proc/get_strain_percent(var/cost)
+/obj/item/organ/internal/regennetwork/proc/get_strain_percent(cost)
 	adjust_strain(cost)
 
 	if((status & ORGAN_CUT_AWAY) || (status & ORGAN_BROKEN) || (status & ORGAN_DEAD))
@@ -105,7 +105,7 @@
 
 	return round((strain / min_broken_damage) * 10) / 10
 
-/obj/item/organ/internal/regennetwork/proc/adjust_strain(var/amount)
+/obj/item/organ/internal/regennetwork/proc/adjust_strain(amount)
 	if(amount < 0 && world.time < (last_strain_increase + strain_regen_cooldown))
 		return
 

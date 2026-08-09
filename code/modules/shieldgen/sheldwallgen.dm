@@ -6,7 +6,7 @@
 		icon_state = "Shield_Gen"
 		anchored = FALSE
 		density = TRUE
-		req_access = list(access_engine_equip)
+		req_access = list(ACCESS_ENGINE_EQUIP)
 		var/active = 0
 		var/power = 0
 		var/state = 0
@@ -24,6 +24,10 @@
 		var/power_draw = 30000 //30 kW. How much power is drawn from powernet. Increase this to allow the generator to sustain longer shields, at the cost of more power draw.
 		var/max_stored_power = 50000 //50 kW
 		use_power = USE_POWER_OFF	//Draws directly from power net. Does not use APC power.
+
+/obj/machinery/shieldwallgen/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/climbable)
 
 /obj/machinery/shieldwallgen/attack_hand(mob/user as mob)
 	if(state != 1)
@@ -46,7 +50,7 @@
 		for(var/dir in list(1,2,4,8)) src.cleanup(dir)
 	else
 		src.active = 1
-		icon_state = "Shield_Gen +a"
+		icon_state = "Shield_Gen_on"
 		user.visible_message("[user] turned the shield generator on.", \
 			"You turn on the shield generator.", \
 			"You hear heavy droning.")
@@ -111,7 +115,7 @@
 			src.active = 0
 			for(var/dir in list(1,2,4,8)) src.cleanup(dir)
 
-/obj/machinery/shieldwallgen/proc/setup_field(var/NSEW = 0)
+/obj/machinery/shieldwallgen/proc/setup_field(NSEW = 0)
 	var/turf/T = src.loc
 	var/turf/T2 = src.loc
 	var/obj/machinery/shieldwallgen/G
@@ -186,7 +190,7 @@
 		src.add_fingerprint(user)
 		visible_message(span_red("The [src.name] has been hit with \the [W.name] by [user.name]!"))
 
-/obj/machinery/shieldwallgen/proc/cleanup(var/NSEW)
+/obj/machinery/shieldwallgen/proc/cleanup(NSEW)
 	var/obj/machinery/shieldwall/F
 	var/obj/machinery/shieldwallgen/G
 	var/turf/T = src.loc
@@ -211,7 +215,7 @@
 	src.cleanup(8)
 	. = ..()
 
-/obj/machinery/shieldwallgen/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/shieldwallgen/bullet_act(obj/item/projectile/Proj)
 	storedpower -= 400 * Proj.get_structure_damage()
 	..()
 	return
@@ -238,7 +242,7 @@
 		var/power_usage = 2500	//how much power it takes to sustain the shield
 		var/generate_power_usage = 7500	//how much power it takes to start up the shield
 
-/obj/machinery/shieldwall/Initialize(mapload, var/obj/machinery/shieldwallgen/A, var/obj/machinery/shieldwallgen/B)
+/obj/machinery/shieldwall/Initialize(mapload, obj/machinery/shieldwallgen/A, obj/machinery/shieldwallgen/B)
 	. = ..()
 	update_nearby_tiles()
 	src.gen_primary = A
@@ -276,7 +280,7 @@
 			gen_secondary.storedpower -= power_usage
 
 
-/obj/machinery/shieldwall/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/shieldwall/bullet_act(obj/item/projectile/Proj)
 	if(needs_power)
 		var/obj/machinery/shieldwallgen/G
 		if(prob(50))

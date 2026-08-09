@@ -80,7 +80,7 @@
 	if(old_stat != stat)
 		update_icon()
 
-/obj/machinery/atmospherics/omni/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/machinery/atmospherics/omni/attackby(obj/item/W as obj, mob/user as mob)
 	if(!W.has_tool_quality(TOOL_WRENCH))
 		return ..()
 
@@ -90,12 +90,12 @@
 		return 1
 	to_chat(user, span_notice("You begin to unfasten \the [src]..."))
 	playsound(src, W.usesound, 50, 1)
-	if(do_after(user, 40 * W.toolspeed))
+	if(do_after(user, 40 * W.toolspeed, target = src))
 		user.visible_message( \
 			span_infoplain(span_bold("\The [user]") + "unfastens \the [src]."), \
 			span_notice("You have unfastened \the [src]."), \
 			"You hear a ratchet.")
-		deconstruct()
+		atom_deconstruct()
 
 /obj/machinery/atmospherics/omni/attack_hand(user as mob)
 	if(..())
@@ -106,9 +106,6 @@
 	return
 
 /obj/machinery/atmospherics/omni/proc/build_icons()
-	if(!check_icon_cache())
-		return
-
 	var/core_icon = null
 	if(istype(src, /obj/machinery/atmospherics/omni/mixer))
 		core_icon = "mixer"
@@ -119,16 +116,13 @@
 
 	//directional icons are layers 1-4, with the core icon on layer 5
 	if(core_icon)
-		overlays_off[5] = icon_manager.get_atmos_icon("omni", , , core_icon)
-		overlays_on[5] = icon_manager.get_atmos_icon("omni", , , core_icon + "_glow")
+		overlays_off[5] = GLOB.icon_manager.get_atmos_icon("omni", , , core_icon)
+		overlays_on[5] = GLOB.icon_manager.get_atmos_icon("omni", , , core_icon + "_glow")
 
-		overlays_error[1] = icon_manager.get_atmos_icon("omni", , , core_icon)
-		overlays_error[2] = icon_manager.get_atmos_icon("omni", , , "error")
+		overlays_error[1] = GLOB.icon_manager.get_atmos_icon("omni", , , core_icon)
+		overlays_error[2] = GLOB.icon_manager.get_atmos_icon("omni", , , "error")
 
 /obj/machinery/atmospherics/omni/proc/update_port_icons()
-	if(!check_icon_cache())
-		return
-
 	for(var/datum/omni_port/P in ports)
 		if(P.update)
 			var/ref_layer = 0
@@ -160,7 +154,7 @@
 
 	update_icon()
 
-/obj/machinery/atmospherics/omni/proc/select_port_icons(var/datum/omni_port/P)
+/obj/machinery/atmospherics/omni/proc/select_port_icons(datum/omni_port/P)
 	if(!istype(P))
 		return
 
@@ -175,12 +169,12 @@
 			if(ATM_OUTPUT)
 				ic_on += "_out_glow"
 				ic_off += "_out"
-			if(ATM_O2 to ATM_N2O)
+			if(ATM_O2 to ATM_LASTGAS)
 				ic_on += "_filter"
 				ic_off += "_out"
 
-		ic_on = icon_manager.get_atmos_icon("omni", , , ic_on)
-		ic_off = icon_manager.get_atmos_icon("omni", , , ic_off)
+		ic_on = GLOB.icon_manager.get_atmos_icon("omni", , , ic_on)
+		ic_off = GLOB.icon_manager.get_atmos_icon("omni", , , ic_off)
 
 		var/pipe_state
 		var/turf/T = get_turf(src)
@@ -188,10 +182,10 @@
 			return
 		if(!T.is_plating() && istype(P.node, /obj/machinery/atmospherics/pipe) && P.node.level == 1 )
 			//pipe_state = icon_manager.get_atmos_icon("underlay_down", P.dir, color_cache_name(P.node))
-			pipe_state = icon_manager.get_atmos_icon("underlay", P.dir, color_cache_name(P.node), "down")
+			pipe_state = GLOB.icon_manager.get_atmos_icon("underlay", P.dir, color_cache_name(P.node), "down")
 		else
 			//pipe_state = icon_manager.get_atmos_icon("underlay_intact", P.dir, color_cache_name(P.node))
-			pipe_state = icon_manager.get_atmos_icon("underlay", P.dir, color_cache_name(P.node), "intact")
+			pipe_state = GLOB.icon_manager.get_atmos_icon("underlay", P.dir, color_cache_name(P.node), "intact")
 
 		return list("on_icon" = ic_on, "off_icon" = ic_off, "pipe_icon" = pipe_state)
 
@@ -200,7 +194,7 @@
 		P.update = 1
 	update_ports()
 
-/obj/machinery/atmospherics/omni/hide(var/i)
+/obj/machinery/atmospherics/omni/hide(i)
 	update_underlays()
 
 /obj/machinery/atmospherics/omni/proc/update_ports()
@@ -248,7 +242,7 @@
 	for(var/datum/omni_port/P in ports)
 		if(P.node || P.mode == 0)
 			continue
-		for(var/obj/machinery/atmospherics/target in get_step(src, P.dir))
+		for(var/obj/machinery/atmospherics/target in get_prioritized_nodes(get_step(src, P.dir)))
 			if(can_be_node(target, 1))
 				P.node = target
 				break
@@ -303,7 +297,7 @@
 	return null
 
 //CHOMPEdit Start - Keybinds for EVEEERYTHING
-/obj/machinery/atmospherics/omni/CtrlClick(mob/user)
+/obj/machinery/atmospherics/omni/click_ctrl(mob/user)
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 	if(allowed(user))
 		update_use_power(!use_power)

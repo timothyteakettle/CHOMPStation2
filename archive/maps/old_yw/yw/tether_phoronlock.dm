@@ -9,8 +9,8 @@
 // Interior doors: (obj/machinery/door/airlock), id_tag = "[base]_inner"
 // Exterior access button: (obj/machinery/access_button/airlock_exterior),  master_tag = "[base]"
 // Interior access button: (obj/machinery/access_button/airlock_interior),  master_tag = "[base]"
-// Srubbers: (obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary), frequency = "1379", scrub_id = "[base]_scrubber"
-// Pumps: (obj/machinery/atmospherics/unary/vent_pump/high_volume), frequency = 1379 id_tag = "[base]_pump"
+// Srubbers: (obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary), frequency = AIRLOCK_FREQ, scrub_id = "[base]_scrubber"
+// Pumps: (obj/machinery/atmospherics/unary/vent_pump/high_volume), frequency = AIRLOCK_FREQ id_tag = "[base]_pump"
 //
 
 obj/machinery/airlock_sensor/phoron
@@ -47,7 +47,7 @@ obj/machinery/airlock_sensor/phoron/airlock_exterior
 
 // Radio remote control
 /obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary
-	var/frequency = 0
+	var/frequency = ZERO_FREQ
 	var/datum/radio_frequency/radio_connection
 
 /obj/machinery/portable_atmospherics/powered/scrubber/huge/stationary/Initialize(mapload)
@@ -127,7 +127,7 @@ obj/machinery/airlock_sensor/phoron/airlock_exterior
 /obj/machinery/embedded_controller/radio/airlock/phoron
 	name = "Phoron Lock Controller"
 
-/obj/machinery/embedded_controller/radio/airlock/phoron/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
+/obj/machinery/embedded_controller/radio/airlock/phoron/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1)
 	var/data[0]
 
 	data = list(
@@ -190,7 +190,7 @@ obj/machinery/airlock_sensor/phoron/airlock_exterior
 /datum/computer/file/embedded_program/airlock/phoron
 	var/tag_scrubber
 
-/datum/computer/file/embedded_program/airlock/phoron/New(var/obj/machinery/embedded_controller/M)
+/datum/computer/file/embedded_program/airlock/phoron/New(obj/machinery/embedded_controller/M)
 	..(M)
 	memory["chamber_sensor_phoron"] = 0
 	memory["external_sensor_pressure"] = CRYOGAIA_ONE_ATMOSPHERE
@@ -292,7 +292,7 @@ obj/machinery/airlock_sensor/phoron/airlock_exterior
 	signalPump(tag_airpump, 0)
 	signalScrubber(tag_scrubber, 0)
 
-/datum/computer/file/embedded_program/airlock/phoron/proc/signalScrubber(var/tag, var/power)
+/datum/computer/file/embedded_program/airlock/phoron/proc/signalScrubber(tag, power)
 	var/datum/signal/signal = new
 	signal.data = list(
 		"tag" = tag,

@@ -1,4 +1,4 @@
-/mob/living/carbon/human/proc/handle_strip(var/slot_to_strip,var/mob/living/user)
+/mob/living/carbon/human/proc/handle_strip(slot_to_strip,mob/living/user)
 
 	if(!slot_to_strip || !istype(user))
 		return
@@ -13,22 +13,22 @@
 		// Handle things that are part of this interface but not removing/replacing a given item.
 		if("pockets")
 			visible_message(span_danger("\The [user] is trying to empty \the [src]'s pockets!"))
-			if(do_after(user,HUMAN_STRIP_DELAY,src))
+			if(do_after(user, HUMAN_STRIP_DELAY, target = src))
 				empty_pockets(user)
 			return
 		if("splints")
 			visible_message(span_danger("\The [user] is trying to remove \the [src]'s splints!"))
-			if(do_after(user,HUMAN_STRIP_DELAY,src))
+			if(do_after(user, HUMAN_STRIP_DELAY, target = src))
 				remove_splints(user)
 			return
 		if("sensors")
 			visible_message(span_danger("\The [user] is trying to set \the [src]'s sensors!"))
-			if(do_after(user,HUMAN_STRIP_DELAY,src))
+			if(do_after(user, HUMAN_STRIP_DELAY, target = src))
 				toggle_sensors(user)
 			return
 		if("internals")
 			visible_message(span_danger("\The [user] is trying to set \the [src]'s internals!"))
-			if(do_after(user,HUMAN_STRIP_DELAY,src))
+			if(do_after(user, HUMAN_STRIP_DELAY, target = src))
 				toggle_internals(user)
 			return
 		if("tie")
@@ -40,7 +40,7 @@
 				return
 			visible_message(span_danger("\The [user] is trying to remove \the [src]'s [A.name]!"))
 
-			if(!do_after(user,HUMAN_STRIP_DELAY,src))
+			if(!do_after(user, HUMAN_STRIP_DELAY, target = src))
 				return
 
 			if(!A || suit.loc != src || !(A in suit.accessories))
@@ -54,7 +54,7 @@
 			update_inv_w_uniform()
 			return
 		if("underwear")
-			var/datum/category_group/underwear/UWC = tgui_input_list(user, "Choose underwear. (Do not do this without OOC permission from the other player)", "Show/hide underwear", global_underwear.categories)
+			var/datum/category_group/underwear/UWC = tgui_input_list(user, "Choose underwear. (Do not do this without OOC permission from the other player)", "Show/hide underwear", GLOB.global_underwear.categories)
 			if(!UWC) return
 			var/datum/category_item/underwear/UWI = all_underwear[UWC.name]
 			if(!UWI || UWI.name == "None")
@@ -70,12 +70,11 @@
 	var/obj/item/held = user.get_active_hand()
 	if(!istype(held) || is_robot_module(held))
 		stripping = TRUE
-		//CHOMPEdit Start - Let borg grippers put stuff on.
 		if(is_robot_module(held) && istype(held, /obj/item/gripper))
 			var/obj/item/gripper/G = held
-			if(istype(G.wrapped))
+			var/obj/item/wrapped = G.get_wrapped_item()
+			if(istype(wrapped))
 				stripping = FALSE
-		//CHOMPEdit End
 	else
 		var/obj/item/holder/holder = held
 		if(istype(holder) && src == holder.held_mob)
@@ -88,25 +87,24 @@
 	if(stripping)
 		if(!istype(target_slot))  // They aren't holding anything valid and there's nothing to remove, why are we even here?
 			return
-		if(!target_slot.canremove)
+		if(!target_slot.canremove || (target_slot.item_flags & NOSTRIP))
 			to_chat(user, span_warning("You cannot remove \the [src]'s [target_slot.name]."))
 			return
 		visible_message(span_danger("\The [user] is trying to remove \the [src]'s [target_slot.name]!"))
-	else if(!istype(held, /obj/item/gripper)) //CHOMPEdit - Let borg grippers put stuff on.
+	else if(!istype(held, /obj/item/gripper))
 		if(slot_to_strip == slot_wear_mask && istype(held, /obj/item/grenade))
 			visible_message(span_danger("\The [user] is trying to put \a [held] in \the [src]'s mouth!"))
 		else
 			visible_message(span_danger("\The [user] is trying to put \a [held] on \the [src]!"))
-	//CHOMPEdit Start - Let borg grippers put stuff on.
 	else
 		var/obj/item/gripper/G = held
-		if(slot_to_strip == slot_wear_mask && istype(G.wrapped, /obj/item/grenade))
-			visible_message(span_danger("\The [user] is trying to put \a [G.wrapped] in \the [src]'s mouth!"))
+		var/obj/item/wrapped = G.get_wrapped_item()
+		if(slot_to_strip == slot_wear_mask && istype(wrapped, /obj/item/grenade))
+			visible_message(span_danger("\The [user] is trying to put \a [wrapped] in \the [src]'s mouth!"))
 		else
-			visible_message(span_danger("\The [user] is trying to put \a [G.wrapped] on \the [src]!"))
-	//CHOMPEdit End
+			visible_message(span_danger("\The [user] is trying to put \a [wrapped] on \the [src]!"))
 
-	if(!do_after(user,HUMAN_STRIP_DELAY,src))
+	if(!do_after(user, HUMAN_STRIP_DELAY, target = src, max_interact_count = 15))
 		return
 
 	if(!stripping)
@@ -120,21 +118,21 @@
 	if(stripping)
 		add_attack_logs(user,src,"Removed equipment from slot [target_slot]")
 		unEquip(target_slot)
-	//CHOMPEdit Start - Let borg grippers put stuff on.
 	else if(is_robot_module(held) && istype(held, /obj/item/gripper))
 		var/obj/item/gripper/G = held
-		var/obj/item/wrapped = G.wrapped
+		var/obj/item/wrapped = G.get_wrapped_item()
 		if(istype(wrapped))
-			G.drop_item_nm()
-			equip_to_slot_if_possible(wrapped, text2num(slot_to_strip), 0, 1, 1)
-	//CHOMPEdit End
+			if(equip_to_slot_if_possible(wrapped, text2num(slot_to_strip), 0, 1, 1))
+				if(wrapped.loc != src)
+					return
+				G.clear_and_select_item()
 	else if(user.unEquip(held))
 		equip_to_slot_if_possible(held, text2num(slot_to_strip), 0, 1, 1)
 		if(held.loc != src)
 			user.put_in_hands(held)
 
 // Empty out everything in the target's pockets.
-/mob/living/carbon/human/proc/empty_pockets(var/mob/living/user)
+/mob/living/carbon/human/proc/empty_pockets(mob/living/user)
 	if(!r_store && !l_store)
 		to_chat(user, span_warning("\The [src] has nothing in their pockets."))
 		return
@@ -145,7 +143,7 @@
 	visible_message(span_danger("\The [user] empties \the [src]'s pockets!"))
 
 // Modify the current target sensor level.
-/mob/living/carbon/human/proc/toggle_sensors(var/mob/living/user)
+/mob/living/carbon/human/proc/toggle_sensors(mob/living/user)
 	var/obj/item/clothing/under/suit = w_uniform
 	if(!suit)
 		to_chat(user, span_warning("\The [src] is not wearing a suit with sensors."))
@@ -157,7 +155,7 @@
 	suit.set_sensors(user)
 
 // Remove all splints.
-/mob/living/carbon/human/proc/remove_splints(var/mob/living/user)
+/mob/living/carbon/human/proc/remove_splints(mob/living/user)
 
 	var/can_reach_splints = 1
 	if(istype(wear_suit,/obj/item/clothing/suit/space))
@@ -182,7 +180,7 @@
 			to_chat(user, span_warning("\The [src] has no splints to remove."))
 
 // Set internals on or off.
-/mob/living/carbon/human/proc/toggle_internals(var/mob/living/user)
+/mob/living/carbon/human/proc/toggle_internals(mob/living/user)
 	if(internal)
 		internal.add_fingerprint(user)
 		internal = null

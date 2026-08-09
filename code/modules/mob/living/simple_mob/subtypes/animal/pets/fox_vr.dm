@@ -50,11 +50,7 @@
 	wander = TRUE
 	base_wander_delay = 4
 
-/mob/living/simple_mob/animal/passive/fox/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/animal/passive/fox/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "Stomach"
@@ -76,7 +72,7 @@
 		"The fox's stomach churns hungrily over your form, trying to take you.",
 		"With a loud glorp, the stomach spills more acids onto you.")
 
-/mob/living/simple_mob/animal/passive/fox/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/animal/passive/fox/apply_melee_effects(atom/A)
 	if(ismouse(A))
 		var/mob/living/simple_mob/animal/passive/mouse/mouse = A
 		if(mouse.getMaxHealth() < 20) // In case a badmin makes giant mice or something.
@@ -95,7 +91,7 @@
 	else
 		return ..()
 
-/mob/living/simple_mob/animal/passive/fox/get_scooped(var/mob/living/carbon/grabber)
+/mob/living/simple_mob/animal/passive/fox/get_scooped(mob/living/carbon/grabber)
 	if (stat >= DEAD)
 		return //since the holder icon looks like a living cat
 	..()
@@ -106,8 +102,8 @@
 
 	. = ..()
 
-	if(.) // We're pals, but they might be a dirty mouse...
-		if(ismouse(L))
+	if(.) // We're pals, but they might be a dirty mouse (or any other small fun to kill pest)...
+		if(HAS_TRAIT(L, TRAIT_AMBIENT_PEST_MOB))
 			return FALSE // Cats and mice can never get along.
 
 /mob/living/simple_mob/animal/passive/fox/renault/verb/become_friends()
@@ -200,11 +196,7 @@
 	ai_holder_type = /datum/ai_holder/simple_mob/passive
 	makes_dirt = FALSE	// No more dirt
 
-/mob/living/simple_mob/animal/passive/fox/renault/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/animal/passive/fox/renault/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "Stomach"

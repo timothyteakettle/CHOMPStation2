@@ -70,7 +70,7 @@
 	. = ..()
 	icon_state = "[base_icon]_[block_amount ? "off" : "on"]"
 
-/obj/structure/event_collector_blocker/proc/induce_failure(var/intensity = -1) //progress to remove from the machine
+/obj/structure/event_collector_blocker/proc/induce_failure(intensity = -1) //progress to remove from the machine
 	if(intensity == -1)
 		intensity = default_block_amount
 
@@ -100,7 +100,7 @@
 		. += span_notice("Looks like it's functioning normally")
 
 
-/obj/structure/event_collector_blocker/proc/get_repair_message(var/mob/user)
+/obj/structure/event_collector_blocker/proc/get_repair_message(mob/user)
 	return "[user] repairs \the [src]!"
 
 /obj/structure/event_collector_blocker/attack_hand(mob/user)
@@ -116,7 +116,7 @@
 		if(active_repair_steps.len >= 1)
 			if(O.has_tool_quality(active_repair_steps[active_repair_steps.len]))
 				if(!pre_repair_handling(O,active_repair_steps[active_repair_steps.len],user)) return
-				if(do_after(user, 2 SECONDS))
+				if(do_after(user, 2 SECONDS, target = src))
 					post_repair_handling(O,active_repair_steps[active_repair_steps.len],user)
 					to_chat(usr,span_notice(fix_descs[active_repair_steps[active_repair_steps.len]]))
 					active_repair_steps.len = active_repair_steps.len - 1
@@ -125,7 +125,7 @@
 			else
 				to_chat(user,span_notice("this doesn't look like the right tool for the job..."))
 
-/obj/structure/event_collector_blocker/proc/pre_repair_handling(var/obj/item/O,var/toolType,var/mob/user) //can we use this tool?
+/obj/structure/event_collector_blocker/proc/pre_repair_handling(obj/item/O,toolType,mob/user) //can we use this tool?
 	switch(toolType)
 		if(TOOL_WELDER)
 			var/obj/item/weldingtool/welder = O.get_welder()
@@ -150,7 +150,7 @@
 					return FALSE
 	return TRUE
 
-/obj/structure/event_collector_blocker/proc/post_repair_handling(var/obj/item/O,var/toolType,var/mob/user)
+/obj/structure/event_collector_blocker/proc/post_repair_handling(obj/item/O,toolType,mob/user)
 	switch(toolType) //snowflake code time
 		if(TOOL_WELDER)
 			var/obj/item/weldingtool/welder = O.get_welder()
@@ -167,7 +167,7 @@
 	name = "Breaker"
 	desc = "I barely know er!"
 
-/obj/structure/event_collector_blocker/breaker/get_repair_message(var/mob/user)
+/obj/structure/event_collector_blocker/breaker/get_repair_message(mob/user)
 	return "[user] flips \the [src] back on!"
 
 /obj/structure/event_collector_blocker/circuit_panel

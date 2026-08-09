@@ -13,12 +13,12 @@
 	the Tajaran homeworld due to their excellent build quality, precision, and \
 	stopping power. Thier bolt-action rifles and brushguns are a staple amongst \
 	the rural communities that dot this infinite frontier."
+	icon = 'icons/obj/gun.dmi'
 	icon_state = "boltaction"
 	item_state = "boltaction"
 	fire_sound = 'sound/weapons/gunshot_generic_rifle.ogg'
 	max_shells = 5
-	caliber = "7.62mm"
-	origin_tech = list(TECH_COMBAT = 1)// Old as shit rifle doesn't have very good tech.
+	caliber = "7.62mm"// Old as shit rifle doesn't have very good tech.
 	ammo_type = /obj/item/ammo_casing/a762
 	load_method = SINGLE_CASING|SPEEDLOADER
 	action_sound = 'sound/weapons/riflebolt.ogg'
@@ -67,7 +67,7 @@
 
 	var/sawn_off = FALSE
 
-/obj/item/gun/projectile/shotgun/pump/rifle/ceremonial/attackby(var/obj/item/A as obj, mob/user as mob)
+/obj/item/gun/projectile/shotgun/pump/rifle/ceremonial/attackby(obj/item/A as obj, mob/user as mob)
 	if(istype(A, /obj/item/surgical/circular_saw) || istype(A, /obj/item/melee/energy) || istype(A, /obj/item/pickaxe/plasmacutter) && w_class != ITEMSIZE_NORMAL)
 		if(sawn_off)
 			to_chat(user, span_warning("The [src] is already shortened!"))
@@ -78,7 +78,7 @@
 			playsound(src, fire_sound, 50, 1)
 			user.visible_message(span_danger("[src] goes off!"), span_danger("The rifle goes off in your face!"))
 			return
-		if(do_after(user, 30))
+		if(do_after(user, 3 SECONDS, target = src))
 			if(sawn_off)
 				return
 			icon_state = "sawn_rifle"
@@ -108,8 +108,7 @@
 	fire_sound = 'sound/weapons/gunshot_generic_rifle.ogg'
 	max_shells = 4
 	slot_flags = null
-	caliber = "7.62mm"
-	origin_tech = list(TECH_COMBAT = 1) // Old(er) as shit rifle doesn't have very good tech.
+	caliber = "7.62mm" // Old(er) as shit rifle doesn't have very good tech.
 	ammo_type = /obj/item/ammo_casing/a762
 	load_method = SINGLE_CASING|SPEEDLOADER
 	action_sound = 'sound/weapons/riflebolt.ogg'
@@ -134,8 +133,7 @@
 	item_state = "boltaction_scoped"
 	fire_sound = 'sound/weapons/gunshot_generic_rifle.ogg'
 	max_shells = 5
-	caliber = "7.62mm"
-	origin_tech = list(TECH_COMBAT = 2)// Old as shit rifle doesn't have very good tech, but it does have a scope.
+	caliber = "7.62mm"// Old as shit rifle doesn't have very good tech, but it does have a scope.
 	ammo_type = /obj/item/ammo_casing/a762
 	load_method = SINGLE_CASING|SPEEDLOADER
 	action_sound = 'sound/weapons/riflebolt.ogg'

@@ -1,14 +1,13 @@
 import { useBackend } from 'tgui/backend';
+import { modalOpen } from 'tgui/interfaces/common/ComplexModal';
 import { Box, Button, Image, LabeledList, Section } from 'tgui-core/components';
-
-import { modalOpen } from '../common/ComplexModal';
 import { doEdit } from './functions';
 import type { Data } from './types';
 
 export const GeneralRecordsViewGeneral = (props) => {
   const { act, data } = useBackend<Data>();
   const { general } = data;
-  if (!general || !general.fields) {
+  if (!general?.fields) {
     return (
       <Box color="bad">
         General record lost!
@@ -50,8 +49,7 @@ export const GeneralRecordsViewGeneral = (props) => {
           {general.comments && general.comments.length === 0 ? (
             <Box color="label">No comments found.</Box>
           ) : (
-            general.comments &&
-            general.comments.map((comment, i) => (
+            general.comments?.map((comment, i) => (
               <Box key={i}>
                 <Box color="label" inline>
                   {comment.header}

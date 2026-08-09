@@ -1,4 +1,4 @@
-/mob/living/silicon/robot/drone/say(var/message, var/datum/language/speaking = null, var/whispering = 0)
+/mob/living/silicon/robot/drone/say(message, datum/language/speaking = null, whispering = 0)
 	if(local_transmit)
 		if (src.client)
 			if(client.prefs.muted & MUTE_IC)
@@ -29,7 +29,7 @@
 			if(D.client && D.local_transmit)
 				to_chat(D, span_say(span_bold("[src]") + "transmits, \"[message]\""))
 
-		for (var/mob/M in player_list)
+		for (var/mob/M in GLOB.player_list)
 			if (isnewplayer(M))
 				continue
 			else if(M.stat == DEAD &&  M.client?.prefs?.read_preference(/datum/preference/toggle/ghost_ears))

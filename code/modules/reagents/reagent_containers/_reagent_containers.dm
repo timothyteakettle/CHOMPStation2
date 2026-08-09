@@ -5,7 +5,8 @@
 	icon_state = null
 	w_class = ITEMSIZE_SMALL
 	var/amount_per_transfer_from_this = 5
-	var/possible_transfer_amounts = list(5,10,15,25,30)
+	var/max_transfer_amount = 30
+	var/min_transfer_amount = 5
 	var/volume = 30
 	var/list/starts_with
 
@@ -13,13 +14,13 @@
 	set name = "Set transfer amount"
 	set category = "Object"
 	set src in range(0)
-	var/N = tgui_input_list(usr, "Amount per transfer from this:","[src]", possible_transfer_amounts)
+	var/N = tgui_input_number(usr, "Amount per transfer from this: ([min_transfer_amount]-[max_transfer_amount])","[src]",amount_per_transfer_from_this,max_transfer_amount,min_transfer_amount)
 	if(N)
 		amount_per_transfer_from_this = N
 
 /obj/item/reagent_containers/Initialize(mapload)
 	. = ..()
-	if(!possible_transfer_amounts)
+	if(!max_transfer_amount)
 		src.verbs -= /obj/item/reagent_containers/verb/set_APTFT
 	create_reagents(volume)
 
@@ -30,11 +31,8 @@
 			total_so_far += amt
 			reagents.add_reagent(string, amt)
 		if(total_so_far > volume)
-			warning("[src]([src.type]) starts with more reagents than it has total volume")
+			WARNING("[src]([src.type]) starts with more reagents than it has total volume")
 		starts_with = null // it should gc, since it's just strings and numbers
-
-/obj/item/reagent_containers/attack_self(mob/user as mob)
-	return
 
 /obj/item/reagent_containers/afterattack(obj/target, mob/user, flag)
 	return
@@ -44,7 +42,7 @@
 		return reagents.get_reagents()
 	return "No reagent holder"
 
-/obj/item/reagent_containers/proc/standard_dispenser_refill(var/mob/user, var/obj/structure/reagent_dispensers/target) // This goes into afterattack
+/obj/item/reagent_containers/proc/standard_dispenser_refill(mob/user, obj/structure/reagent_dispensers/target) // This goes into afterattack
 	if(!istype(target))
 		return 0
 
@@ -63,7 +61,7 @@
 	balloon_alert(user, "[trans] units transfered to \the [src]")
 	return 1
 
-/obj/item/reagent_containers/proc/standard_splash_mob(var/mob/user, var/mob/target) // This goes into afterattack
+/obj/item/reagent_containers/proc/standard_splash_mob(mob/user, mob/target) // This goes into afterattack
 	if(!istype(target))
 		return
 
@@ -81,19 +79,19 @@
 	reagents.splash(target, reagents.total_volume)
 	return 1
 
-/obj/item/reagent_containers/proc/self_feed_message(var/mob/user)
+/obj/item/reagent_containers/proc/self_feed_message(mob/user)
 	balloon_alert(user, "you eat \the [src]")
 
-/obj/item/reagent_containers/proc/other_feed_message_start(var/mob/user, var/mob/target)
+/obj/item/reagent_containers/proc/other_feed_message_start(mob/user, mob/target)
 	balloon_alert_visible(user, "[user] is trying to feed [target] \the [src]!")
 
-/obj/item/reagent_containers/proc/other_feed_message_finish(var/mob/user, var/mob/target)
+/obj/item/reagent_containers/proc/other_feed_message_finish(mob/user, mob/target)
 	balloon_alert_visible(user, "[user] has fed [target] \the [src]!")
 
-/obj/item/reagent_containers/proc/feed_sound(var/mob/user)
+/obj/item/reagent_containers/proc/feed_sound(mob/user)
 	return
 
-/obj/item/reagent_containers/proc/standard_feed_mob(var/mob/user, var/mob/target) // This goes into attack
+/obj/item/reagent_containers/proc/standard_feed_mob(mob/user, mob/target) // This goes into attack
 	if(!istype(target) || !target.can_feed())
 		return FALSE
 
@@ -117,6 +115,7 @@
 			return FALSE
 
 	user.setClickCooldown(user.get_attack_speed(src)) //puts a limit on how fast people can eat/drink things
+	SEND_SIGNAL(src, COMSIG_GLASS_DRANK, target, user)
 	if(user == target)
 		self_feed_message(user)
 		reagents.trans_to_mob(user, issmall(user) ? CEILING(amount_per_transfer_from_this/2, 1) : amount_per_transfer_from_this, CHEM_INGEST)
@@ -125,7 +124,7 @@
 
 	else
 		other_feed_message_start(user, target)
-		if(!do_mob(user, target))
+		if(!do_after(user, 3 SECONDS, target))
 			return FALSE
 		other_feed_message_finish(user, target)
 
@@ -135,7 +134,7 @@
 		feed_sound(user)
 		return TRUE
 
-/obj/item/reagent_containers/proc/standard_pour_into(var/mob/user, var/atom/target) // This goes into afterattack and yes, it's atom-level
+/obj/item/reagent_containers/proc/standard_pour_into(mob/user, atom/target) // This goes into afterattack and yes, it's atom-level
 	if(!target.is_open_container() || !target.reagents)
 		return 0
 
@@ -164,3 +163,20 @@
 	EXTRAPOLATOR_ACT_SET(., EXTRAPOLATOR_ACT_PRIORITY_ISOLATE)
 	var/datum/reagent/blood/blood = reagents.get_reagent(REAGENT_ID_BLOOD)
 	EXTRAPOLATOR_ACT_ADD_DISEASES(., blood?.get_diseases())
+
+/obj/item/reagent_containers/proc/attempt_changeling_test(obj/item/W,mob/user)
+	if(is_open_container() && W.is_hot())
+		var/datum/reagent/blood/B = reagents.get_reagent("blood")
+		if(B)
+			balloon_alert(user, "\The [W] burns the blood in \the [src].")
+			B.changling_blood_test(reagents)
+
+/obj/item/reagent_containers/click_alt(mob/user)
+	. = ..()
+	if(!Adjacent(user))
+		return
+	if(!max_transfer_amount)
+		return
+	var/N = tgui_input_number(user, "Amount per transfer from this: ([min_transfer_amount]-[max_transfer_amount])","[src]",amount_per_transfer_from_this,max_transfer_amount,min_transfer_amount)
+	if(N)
+		amount_per_transfer_from_this = N

@@ -13,7 +13,7 @@
 	var/forced_dirs = 0 //Force this one to pretend it's an overedge turf
 
 /turf/space/Initialize(mapload)
-	if(CONFIG_GET(flag/starlight))
+	if(CONFIG_GET(number/starlight))
 		update_starlight()
 
 	//Sprite stuff only beyond here
@@ -38,7 +38,7 @@
 
 	return ..()
 
-/turf/space/proc/toggle_transit(var/direction)
+/turf/space/proc/toggle_transit(direction)
 	if(edge) //Not a great way to do this yet. Maybe we'll come up with one. We could pre-make sprites... or tile the overlay over it?
 		return
 
@@ -75,7 +75,7 @@
 
 /turf/space/proc/update_starlight()
 	if(locate(/turf/simulated) in orange(src,1))
-		set_light(CONFIG_GET(flag/starlight))
+		set_light(CONFIG_GET(number/starlight))
 	else
 		set_light(0)
 
@@ -134,10 +134,10 @@
 		// If that's changed, then you'll want to swipe the rest of the roofing code from code/game/turfs/simulated/floor_attackby.dm
 	return
 
-/turf/space/Entered(var/atom/movable/A)
+/turf/space/Entered(atom/movable/A)
 	. = ..()
 
-	if(edge && ticker?.mode && !density) // !density so 'fake' space turfs don't fling ghosts everywhere
+	if(edge && SSticker?.mode && !density) // !density so 'fake' space turfs don't fling ghosts everywhere
 		if(isliving(A))
 			var/mob/living/L = A
 			if(L.pulling)
@@ -260,5 +260,5 @@
 					A.loc.Entered(A)
 	return
 
-/turf/space/ChangeTurf(var/turf/N, var/tell_universe, var/force_lighting_update, var/preserve_outdoors)
+/turf/space/ChangeTurf(turf/N, tell_universe, force_lighting_update, preserve_outdoors)
 	return ..(N, tell_universe, 1, preserve_outdoors)

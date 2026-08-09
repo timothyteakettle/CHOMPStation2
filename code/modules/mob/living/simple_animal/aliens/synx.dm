@@ -107,12 +107,8 @@
 	ai_holder_type = /datum/ai_holder/simple_mob/retaliate
 
 
-/mob/living/simple_mob/animal/synx/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
-	.=..()
+/mob/living/simple_mob/animal/synx/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	//B.human_prey_swallow_time = 6 SECONDS //doesnt work
 	//B.nonhuman_prey_swallow_time = 3 SECONDS //doesnt work
@@ -141,12 +137,8 @@
 	B.mode_flags = DM_FLAG_NUMBING	//Prey are more docile when it doesn't hurt.
 
 /* //OC-insert mob removals. Commenting out instead of full removal as there's some good detail here.
-/mob/living/simple_mob/animal/synx/ai/pet/asteri/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
-	.=..()
+/mob/living/simple_mob/animal/synx/ai/pet/asteri/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.desc    = "The synx eagerly swallows you, taking you from its gullet into its long, serpentine stomach. The internals around you greedily press into your from all sides, keeping you coated in a slick coat of numbing fluids..."
 	B.digest_burn = 2
@@ -231,7 +223,7 @@
 	color = "#FFFFFF"
 	overdose = REAGENTS_OVERDOSE * 4 //But takes a lot to OD
 
-/datum/reagent/inaprovaline/synxchem/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien != IS_DIONA)
 		if(prob(8))
 			M.custom_pain("You [pick("feel numb!","feel dizzy and heavy.","feel strange!")]",60)
@@ -251,7 +243,7 @@
 	color = "#00FFFF"
 	overdose = REAGENTS_OVERDOSE * 20 //it's all fake. But having nanomachines move through you is not good at a certain amount.
 
-/datum/reagent/inaprovaline/synxchem/holo/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/holo/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien != IS_DIONA)
 		if(prob(5))
 			M.custom_pain("You feel no pain!",60)
@@ -273,7 +265,7 @@
 	color = "#FFFFFF"
 	overdose = REAGENTS_OVERDOSE * 200
 
-/datum/reagent/inaprovaline/synxchem/clown/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/clown/affect_blood(mob/living/carbon/M, alien, removed)
 	M.adjustToxLoss(0.01)
 	playsound(M.loc, 'sound/items/bikehorn.ogg', 50, 1)
 	M.adjustBruteLoss(-2)//healing brute
@@ -301,7 +293,7 @@
 		//Since Halloss is not "real" damage this should not cause death
 */
 
-/datum/reagent/inaprovaline/synxchem/overdose(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/overdose(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien != IS_DIONA)
 		M.make_dizzy(10)
@@ -311,10 +303,10 @@
 			M.AdjustParalysis(1)
 
 
-/datum/reagent/inaprovaline/synxchem/holo/overdose(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/holo/overdose(mob/living/carbon/M, alien, removed)
 	return
 
-/datum/reagent/inaprovaline/synxchem/clown/overdose(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/clown/overdose(mob/living/carbon/M, alien, removed)
 	return
 
 
@@ -324,7 +316,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // nevermind. I added any roleplay flavor weird fur mechanics to happen when you touch or attack the synx.
 
-/mob/living/simple_mob/animal/synx/apply_melee_effects(var/atom/A) //Re-adding this for AI synx
+/mob/living/simple_mob/animal/synx/apply_melee_effects(atom/A) //Re-adding this for AI synx
 	if(stomach_distended) //Hacky burn damage code
 		if(isliving(A)) //Only affect living mobs, should include silicons. This could be expanded to deal special effects to acid-vulnerable objects.
 			var/mob/living/L = A
@@ -359,7 +351,7 @@
 
 
 
-/mob/living/simple_mob/animal/synx/hear_say(message,verb,language,fakename,isItalics,var/mob/living/speaker)
+/mob/living/simple_mob/animal/synx/hear_say(message,verb,language,fakename,isItalics,mob/living/speaker)
 	. = ..()
 	if(!message || !speaker)    return
 	if (speaker == src) return
@@ -560,23 +552,15 @@
 	glow_toggle = 1
 	player_msg = "You aren't supposed to be in this. Wrong mob."
 
-/mob/living/simple_mob/animal/synx/ai/pet/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
-	.=..()
+/mob/living/simple_mob/animal/synx/ai/pet/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.vore_verb = "swallow"
 	B.digest_burn = 1
 	B.digest_brute = 0
 
-/mob/living/simple_mob/animal/synx/ai/pet/holo/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
-	.=..()
+/mob/living/simple_mob/animal/synx/ai/pet/holo/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.vore_verb = "swallow"
 	B.digest_burn = 5

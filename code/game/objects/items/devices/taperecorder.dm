@@ -6,7 +6,7 @@
 	item_state = "analyzer"
 	w_class = ITEMSIZE_SMALL
 
-	matter = list(MAT_STEEL = 60,MAT_GLASS = 30)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.03),MAT_GLASS = MATERIAL_COST(0.015))
 
 	var/emagged = 0.0
 	var/recording = 0.0
@@ -26,13 +26,13 @@
 	if(ispath(mytape))
 		mytape = new mytape(src)
 		update_icon()
-	listening_objects += src
+	GLOB.listening_objects += src
 
 /obj/item/taperecorder/empty
 	mytape = null
 
 /obj/item/taperecorder/Destroy()
-	listening_objects -= src
+	GLOB.listening_objects -= src
 	if(mytape)
 		qdel(mytape)
 		mytape = null
@@ -105,7 +105,7 @@
 		mytape.record_speech("[voice] [verb], \"[msg]\"")
 
 
-/obj/item/taperecorder/see_emote(mob/M as mob, text, var/emote_type)
+/obj/item/taperecorder/see_emote(mob/M as mob, text, emote_type)
 	if(emote_type != 2) //only hearable emotes
 		return
 	if(mytape && recording)
@@ -123,7 +123,7 @@
 	if(mytape && recording)
 		mytape.record_noise("[strip_html_properly(recordedtext)]")
 
-/obj/item/taperecorder/emag_act(var/remaining_charges, var/mob/user)
+/obj/item/taperecorder/emag_act(remaining_charges, mob/user)
 	if(emagged == 0)
 		emagged = 1
 		recording = 0
@@ -197,7 +197,9 @@
 	if(ismob(loc))
 		var/mob/M = loc
 		to_chat(M, span_notice("Recording stopped."))
-
+	else if(isturf(loc)) // If not hidden away in a bag
+		playsound(src, 'sound/machines/click.ogg', 50, 1)
+		visible_message("\The [src] clicks as it stops recording.","click")
 
 /obj/item/taperecorder/verb/stop()
 	set name = "Stop"
@@ -344,12 +346,14 @@
 		t1 += "[printedmessage]<BR>"
 	P.info = t1
 	P.name = "Transcript"
-	canprint = 0
-	sleep(300)
-	canprint = 1
+	canprint = FALSE
+	VARSET_IN(src, canprint, TRUE, 30 SECONDS)
 
 
 /obj/item/taperecorder/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(recording || playing)
 		stop()
 	else
@@ -375,7 +379,7 @@
 	icon_state = "tape_white"
 	item_state = "analyzer"
 	w_class = ITEMSIZE_TINY
-	matter = list(MAT_STEEL=20, MAT_GLASS=5)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.01), MAT_GLASS = MATERIAL_COST(0.0025))
 	force = 1
 	throwforce = 0
 	var/max_capacity = 1800
@@ -395,6 +399,9 @@
 	ruin()
 
 /obj/item/rectape/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(!ruined)
 		to_chat(user, span_notice("You pull out all the tape!"))
 		ruin()
@@ -425,7 +432,7 @@
 	if(ruined && I.has_tool_quality(TOOL_SCREWDRIVER))
 		to_chat(user, span_notice("You start winding the tape back in..."))
 		playsound(src, I.usesound, 50, 1)
-		if(do_after(user, 120 * I.toolspeed, target = src))
+		if(do_after(user, 12 SECONDS * I.toolspeed, target = src))
 			to_chat(user, span_notice("You wound the tape back in."))
 			fix()
 		return

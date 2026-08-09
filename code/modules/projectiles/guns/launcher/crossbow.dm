@@ -68,6 +68,10 @@
 	var/current_user                        // Used to check if the crossbow has changed hands since being drawn.
 	w_class = ITEMSIZE_HUGE //CHOMP Edit.
 
+	///Var for attack_self chain
+	var/is_bow = FALSE
+	special_handling = TRUE
+
 /obj/item/gun/launcher/crossbow/update_release_force()
 	release_force = tension*release_speed
 
@@ -83,7 +87,12 @@
 	update_icon()
 	..()
 
-/obj/item/gun/launcher/crossbow/attack_self(mob/living/user as mob)
+/obj/item/gun/launcher/crossbow/attack_self(mob/living/user)
+	. = ..(user)
+	if(.)
+		return TRUE
+	if(is_bow)
+		return FALSE
 	if(tension)
 		if(bolt)
 			user.visible_message("[user] relaxes the tension on [src]'s string and removes [bolt].","You relax the tension on [src]'s string and remove [bolt].")
@@ -98,7 +107,7 @@
 	else
 		draw(user)
 
-/obj/item/gun/launcher/crossbow/proc/draw(var/mob/user as mob)
+/obj/item/gun/launcher/crossbow/proc/draw(mob/user as mob)
 
 	if(!bolt)
 		to_chat(user, "You don't have anything nocked to [src].")
@@ -112,7 +121,7 @@
 	tension = 1
 
 	while(bolt && tension && loc == current_user)
-		if(!do_after(user, 25)) //crossbow strings don't just magically pull back on their own.
+		if(!do_after(user, 25, target = src)) //crossbow strings don't just magically pull back on their own.
 			user.visible_message("[user] stops drawing and relaxes the string of [src].",span_warning("You stop drawing back and relax the string of [src]."))
 			tension = 0
 			update_icon()
@@ -132,7 +141,7 @@
 
 		user.visible_message("[user] draws back the string of [src]!",span_notice("You continue drawing back the string of [src]!"))
 
-/obj/item/gun/launcher/crossbow/proc/increase_tension(var/mob/user as mob)
+/obj/item/gun/launcher/crossbow/proc/increase_tension(mob/user as mob)
 
 	if(!bolt || !tension || current_user != user) //Arrow has been fired, bow has been relaxed or user has changed.
 		return
@@ -180,7 +189,7 @@
 	else
 		..()
 
-/obj/item/gun/launcher/crossbow/proc/superheat_rod(var/mob/user)
+/obj/item/gun/launcher/crossbow/proc/superheat_rod(mob/user)
 	if(!user || !cell || !bolt) return
 	if(cell.charge < 500) return
 	if(bolt.throwforce >= 15) return

@@ -1,7 +1,7 @@
 /obj/vehicle/train/engine
 	name = "cargo train tug"
 	desc = "A ridable electric car designed for pulling cargo trolleys."
-	icon = 'icons/obj/vehicles_vr.dmi'	//VOREStation Edit
+	icon = 'icons/obj/vehicles.dmi'
 	description_info = "Use ctrl-click to quickly toggle the engine if you're adjacent (only when vehicle is stationary). Alt-click will grab the keys, if present."
 	icon_state = "cargo_engine"
 	on = 0
@@ -28,7 +28,7 @@
 /obj/vehicle/train/trolley
 	name = "cargo train trolley"
 	desc = "A large, flat platform made for putting things on. Or people."
-	icon = 'icons/obj/vehicles_vr.dmi'	//VOREStation Edit
+	icon = 'icons/obj/vehicles.dmi'
 	icon_state = "cargo_trailer"
 	anchored = FALSE
 	passenger_allowed = 0
@@ -36,7 +36,7 @@
 
 	load_item_visible = 1
 	load_offset_x = 0
-	load_offset_y = 7		//VOREStation Edit
+	load_offset_y = 7
 	mob_offset_y = 8
 
 //-------------------------------------------
@@ -46,12 +46,12 @@
 	. = ..()
 	cell = new /obj/item/cell/high(src)
 	key = new key_type(src)
-	var/image/I = new(icon = 'icons/obj/vehicles_vr.dmi', icon_state = "cargo_engine_overlay", layer = src.layer + 0.2) //over mobs		//VOREStation edit
+	var/image/I = new(icon = 'icons/obj/vehicles.dmi', icon_state = "cargo_engine_overlay", layer = src.layer + 0.2) //over mobs
 	add_overlay(I)
 	update_icon()
 	turn_off()	//so engine verbs are correctly set
 
-/obj/vehicle/train/engine/Move(var/turf/destination)
+/obj/vehicle/train/engine/Move(atom/newloc, direct = 0, movetime)
 	if(on && cell.charge < charge_use)
 		turn_off()
 		update_stats()
@@ -59,11 +59,11 @@
 			to_chat(load, "The drive motor briefly whines, then drones to a stop.")
 
 	if(is_train_head() && !on)
-		return 0
+		return FALSE
 
 	//space check ~no flying space trains sorry
-	if(on && istype(destination, /turf/space))
-		return 0
+	if(on && is_vehicle_inpassable(newloc))
+		return FALSE
 
 	return ..()
 
@@ -86,7 +86,7 @@
 
 /*
 //cargo trains are open topped, so there is a chance the projectile will hit the mob ridding the train instead
-/obj/vehicle/train/cargo/bullet_act(var/obj/item/projectile/Proj)
+/obj/vehicle/train/cargo/bullet_act(obj/item/projectile/Proj)
 	if(has_buckled_mobs() && prob(70))
 		var/mob/living/L = pick(buckled_mobs)
 		L.bullet_act(Proj)
@@ -100,14 +100,14 @@
 		icon_state = initial(icon_state)
 */
 
-/obj/vehicle/train/trolley/insert_cell(var/obj/item/cell/C, var/mob/living/carbon/human/H)
+/obj/vehicle/train/trolley/insert_cell(obj/item/cell/C, mob/living/carbon/human/H)
 	return
 
-/obj/vehicle/train/engine/insert_cell(var/obj/item/cell/C, var/mob/living/carbon/human/H)
+/obj/vehicle/train/engine/insert_cell(obj/item/cell/C, mob/living/carbon/human/H)
 	..()
 	update_stats()
 
-/obj/vehicle/train/engine/remove_cell(var/mob/living/carbon/human/H)
+/obj/vehicle/train/engine/remove_cell(mob/living/carbon/human/H)
 	..()
 	update_stats()
 
@@ -155,8 +155,8 @@
 	else
 		verbs += /obj/vehicle/train/engine/verb/stop_engine
 
-/obj/vehicle/train/RunOver(var/mob/living/M)
-	if(pulledby == M) // VOREstation edit: Don't destroy people pulling vehicles up stairs
+/obj/vehicle/train/RunOver(mob/living/M)
+	if(pulledby == M) // Don't destroy people pulling vehicles up stairs
 		return
 
 	var/list/parts = list(BP_HEAD, BP_TORSO, BP_L_LEG, BP_R_LEG, BP_L_ARM, BP_R_ARM)
@@ -165,11 +165,11 @@
 	for(var/i = 0, i < rand(1,3), i++)
 		M.apply_damage(rand(1,5), BRUTE, pick(parts))
 
-/obj/vehicle/train/trolley/RunOver(var/mob/living/M)
+/obj/vehicle/train/trolley/RunOver(mob/living/M)
 	..()
 	attack_log += text("\[[time_stamp()]\] [span_red("ran over [M.name] ([M.ckey])")]")
 
-/obj/vehicle/train/engine/RunOver(var/mob/living/M)
+/obj/vehicle/train/engine/RunOver(mob/living/M)
 	..()
 
 	if(is_train_head() && ishuman(load))
@@ -203,21 +203,23 @@
 
 /obj/vehicle/train/engine/examine(mob/user)
 	. = ..()
-	if(ishuman(user) && Adjacent(user))
+	if(Adjacent(user))
 		. += "The power light is [on ? "on" : "off"].\nThere are[key ? "" : " no"] keys in the ignition."
 		. += "The charge meter reads [cell? round(cell.percent(), 0.01) : 0]%"
 
 
-/obj/vehicle/train/engine/CtrlClick(var/mob/user)
+/obj/vehicle/train/engine/click_ctrl(mob/user)
 	if(Adjacent(user))
 		if(on)
 			stop_engine()
-		else
-			start_engine()
-	else
-		return ..()
+			return CLICK_ACTION_SUCCESS
 
-/obj/vehicle/train/engine/AltClick(var/mob/user)
+		start_engine()
+		return CLICK_ACTION_SUCCESS
+
+	return ..()
+
+/obj/vehicle/train/engine/click_alt(mob/user)
 	if(Adjacent(user))
 		remove_key()
 	else
@@ -286,7 +288,7 @@
 //-------------------------------------------
 // Loading/unloading procs
 //-------------------------------------------
-/obj/vehicle/train/trolley/load(var/atom/movable/C, var/mob/user)
+/obj/vehicle/train/trolley/load(atom/movable/C, mob/user)
 	if(ismob(C) && !passenger_allowed)
 		return 0
 	if(!istype(C,/obj/machinery) && !istype(C,/obj/structure/closet) && !istype(C,/obj/structure/largecrate) && !istype(C,/obj/structure/reagent_dispensers) && !istype(C,/obj/structure/ore_box) && !ishuman(C))
@@ -302,7 +304,7 @@
 	if(load)
 		return 1
 
-/obj/vehicle/train/engine/load(var/atom/movable/C, var/mob/user)
+/obj/vehicle/train/engine/load(atom/movable/C, mob/user)
 	if(!ishuman(C))
 		return 0
 
@@ -312,7 +314,7 @@
 //This prevents the object from being interacted with until it has
 // been unloaded. A dummy object is loaded instead so the loading
 // code knows to handle it correctly.
-/obj/vehicle/train/trolley/proc/load_object(var/atom/movable/C)
+/obj/vehicle/train/trolley/proc/load_object(atom/movable/C)
 	if(!isturf(C.loc)) //To prevent loading things from someone's inventory, which wouldn't get handled properly.
 		return 0
 	if(load || C.anchored)
@@ -338,7 +340,7 @@
 		C.pixel_y = initial(C.pixel_y)
 		C.layer = initial(C.layer)
 
-/obj/vehicle/train/trolley/unload(var/mob/user, var/direction)
+/obj/vehicle/train/trolley/unload(mob/user, direction)
 	if(istype(load, /datum/vehicle_dummy_load))
 		var/datum/vehicle_dummy_load/dummy_load = load
 		load = dummy_load.actual_load
@@ -357,7 +359,7 @@
 
 	//if we are attaching a trolley to an engine we don't care what direction
 	// it is in and it should probably be attached with the engine in the lead
-	if(istype(T, /obj/vehicle/train/trolley))
+	if(istype(T, /obj/vehicle/train/trolley) || istype(T, /obj/vehicle/train/trolley_tank))
 		T.attach_to(src, user)
 	else
 		var/T_dir = get_dir(src, T)	//figure out where T is wrt src
@@ -378,7 +380,7 @@
 // more engines increases this limit by car_limit per
 // engine.
 //-------------------------------------------------------
-/obj/vehicle/train/engine/update_car(var/train_length, var/active_engines)
+/obj/vehicle/train/engine/update_car(train_length, active_engines)
 	src.train_length = train_length
 	src.active_engines = active_engines
 
@@ -391,7 +393,7 @@
 		move_delay += CONFIG_GET(number/run_speed) 											//base reference speed
 		move_delay *= speed_mod																//makes cargo trains 10% slower than running when not overweight
 
-/obj/vehicle/train/trolley/update_car(var/train_length, var/active_engines)
+/obj/vehicle/train/trolley/update_car(train_length, active_engines)
 	src.train_length = train_length
 	src.active_engines = active_engines
 
@@ -400,11 +402,10 @@
 	else
 		anchored = TRUE
 
-// VOREStation Edit Start - Overlay stuff for the chair-like effect
 /obj/vehicle/train/engine/update_icon()
 	..()
 	cut_overlays()
-	var/image/O = image(icon = 'icons/obj/vehicles_vr.dmi', icon_state = "cargo_engine_overlay", dir = src.dir)
+	var/image/O = image(icon = 'icons/obj/vehicles.dmi', icon_state = "cargo_engine_overlay", dir = src.dir)
 	O.layer = FLY_LAYER
 	O.plane = MOB_PLANE
 	add_overlay(O)
@@ -412,4 +413,130 @@
 /obj/vehicle/train/engine/set_dir()
 	..()
 	update_icon()
-// VOREStation Edit End - Overlay stuff for the chair-like effect
+
+//-------------------------------------------------------
+// Cargo tugs for reagent transport from chemical refinery
+//-------------------------------------------------------
+/obj/vehicle/train/trolley_tank
+	name = "cargo train tanker"
+	desc = "A large, tank made for transporting liquids."
+	icon = 'icons/obj/vehicles.dmi'
+	icon_state = "cargo_tank"
+	anchored = FALSE
+	flags = OPENCONTAINER
+	paint_color = "#efdd16"
+
+/obj/vehicle/train/trolley_tank/Initialize(mapload)
+	. = ..()
+	create_reagents(CARGOTANKER_VOLUME)
+	update_icon()
+	AddComponent(/datum/component/hose_connector/input)
+	AddComponent(/datum/component/hose_connector/output)
+	AddElement(/datum/element/climbable)
+	AddElement(/datum/element/sellable/trolley_tank)
+
+/obj/vehicle/train/trolley_tank/insert_cell(obj/item/cell/C, mob/living/carbon/human/H)
+	return
+
+/obj/vehicle/train/trolley_tank/Bump(atom/Obstacle)
+	if(!lead)
+		return //so people can't knock others over by pushing a trolley around
+	..()
+
+/obj/vehicle/train/trolley_tank/MouseDrop_T(atom/movable/C, mob/user as mob)
+	if(C == user)
+		SEND_SIGNAL(src, COMSIG_CLIMBABLE_START_CLIMB, user)
+		return
+
+	if(istype(C,/obj/item/reagent_containers/glass))
+		var/obj/item/reagent_containers/glass/G = C
+		G.reagents.trans_to(src,G.reagents.total_volume)
+		to_chat(usr,"You empty \the [G] into the \the [src].")
+		return
+
+	if(istype(C,/obj/vehicle/train)) // Only allow latching
+		. = ..()
+
+/obj/vehicle/train/trolley_tank/load(atom/movable/C, mob/living/user)
+	return FALSE // Cannot load anything onto this
+
+/obj/vehicle/train/trolley_tank/RunOver(mob/living/M)
+	..()
+	attack_log += text("\[[time_stamp()]\] [span_red("ran over [M.name] ([M.ckey])")]")
+
+/obj/vehicle/train/trolley_tank/attackby(obj/item/W, mob/user)
+
+	if(istype(W,/obj/item/reagent_containers/glass))
+		var/obj/item/reagent_containers/glass/G = W
+		if(reagents.total_volume <= 0)
+			to_chat(usr,"\The [src] is empty.")
+			return
+		if(G.reagents.total_volume >= G.reagents.maximum_volume)
+			to_chat(usr,"\The [G] is full.")
+			return
+		playsound(src, 'sound/machines/reagent_dispense.ogg', 25, 1)
+		to_chat(usr,"You drain \the [src] into the \the [G].")
+		reagents.trans_to_holder( G.reagents, G.reagents.maximum_volume)
+		update_icon()
+		return
+
+	if(istype(W, /obj/item/multitool))
+		var/new_paint = input(usr, "Please select paint color.", "Paint Color", paint_color) as color|null
+		if(new_paint)
+			paint_color = new_paint
+			update_icon()
+			return
+
+	if(istype(W, /obj/item/pen))
+		var/t = tgui_input_text(user, "What would you like the label to be?", text("[]", src.name), null, MAX_NAME_LEN)
+		if (user.get_active_hand() != W)
+			return
+		if((!in_range(src, user) && src.loc != user))
+			return
+		t = sanitizeSafe(t, MAX_NAME_LEN)
+		if(t)
+			src.name = "[initial(name)] - '[t]'"
+		else
+			src.name = initial(name)
+		return
+
+	. = ..()
+
+/obj/vehicle/train/trolley_tank/update_car(train_length, active_engines)
+	src.train_length = train_length
+	src.active_engines = active_engines
+
+	if(!lead && !tow)
+		anchored = FALSE
+	else
+		anchored = TRUE
+
+/obj/vehicle/train/trolley_tank/examine(mob/user, infix, suffix)
+	. = ..()
+	. += "The meter shows [reagents.total_volume]u / [reagents.maximum_volume]u."
+
+/obj/vehicle/train/trolley_tank/update_icon()
+	. = ..()
+	cut_overlays()
+	if(reagents && reagents.total_volume > 0)
+		var/percent = (reagents.total_volume / reagents.maximum_volume) * 100
+		switch(percent)
+			if(5 to 10)			percent = 10
+			if(10 to 20) 		percent = 20
+			if(20 to 30) 		percent = 30
+			if(30 to 40) 		percent = 40
+			if(40 to 50)		percent = 50
+			if(50 to 60)		percent = 60
+			if(60 to 70)		percent = 70
+			if(70 to 80)		percent = 80
+			if(80 to 90)		percent = 90
+			if(90 to INFINITY)	percent = 100
+		var/image/chems = image(icon, icon_state = "[icon_state]_r_[percent]", dir = NORTH)
+		chems.color = reagents.get_color()
+		add_overlay(chems)
+	var/image/Bodypaint = image(icon, icon_state = "[icon_state]_c", dir = NORTH)
+	Bodypaint.color = paint_color
+	add_overlay(Bodypaint)
+
+/obj/vehicle/train/trolley_tank/on_reagent_change(changetype)
+	update_icon()

@@ -2,7 +2,6 @@
 	name = "energy relay"
 	desc = "Wirelessly drains energy from any available power channel in area. The performance index is quite low."
 	icon_state = "tesla"
-	origin_tech = list(TECH_MAGNET = 4, TECH_ILLEGAL = 2)
 	equip_cooldown = 10
 	energy_drain = 0
 	range = 0
@@ -68,7 +67,7 @@
 		return chassis.dyngetcharge()
 	return charge
 
-/obj/item/mecha_parts/mecha_equipment/tesla_energy_relay/proc/get_power_channel(var/area/A)
+/obj/item/mecha_parts/mecha_equipment/tesla_energy_relay/proc/get_power_channel(area/A)
 	var/pow_chan
 	if(A)
 		for(var/c in use_channels)
@@ -83,11 +82,11 @@
 		if(datum_flags & DF_ISPROCESSING)
 			STOP_PROCESSING(SSfastprocess, src)
 			set_ready_state(TRUE)
-			log_message("Deactivated.")
+			src.mecha_log_message("Deactivated.")
 		else
 			START_PROCESSING(SSfastprocess, src)
 			set_ready_state(FALSE)
-			log_message("Activated.")
+			src.mecha_log_message("Activated.")
 	return
 
 /obj/item/mecha_parts/mecha_equipment/tesla_energy_relay/get_equip_info()

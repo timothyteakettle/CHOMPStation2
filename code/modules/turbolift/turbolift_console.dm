@@ -8,7 +8,7 @@
 
 	var/datum/turbolift/lift
 
-/obj/structure/lift/set_dir(var/newdir)
+/obj/structure/lift/set_dir(newdir)
 	. = ..()
 	pixel_x = 0
 	pixel_y = 0
@@ -21,7 +21,7 @@
 	else if(dir & WEST)
 		pixel_x = 32
 
-/obj/structure/lift/proc/pressed(var/mob/user)
+/obj/structure/lift/proc/pressed(mob/user)
 	if(!istype(user, /mob/living/silicon))
 		if(user.a_intent == I_HURT)
 			user.visible_message(span_danger("\The [user] hammers on the lift button!"))
@@ -29,20 +29,20 @@
 			user.visible_message(span_infoplain(span_bold("\The [user]") + " presses the lift button."))
 
 
-/obj/structure/lift/Initialize(mapload, var/datum/turbolift/_lift)
+/obj/structure/lift/Initialize(mapload, datum/turbolift/_lift)
 	. = ..()
 	lift = _lift
 
-/obj/structure/lift/attack_ai(var/mob/user)
+/obj/structure/lift/attack_ai(mob/user)
 	return attack_hand(user)
 
-/obj/structure/lift/attack_generic(var/mob/user)
+/obj/structure/lift/attack_generic(mob/user)
 	return attack_hand(user)
 
-/obj/structure/lift/attack_hand(var/mob/user)
+/obj/structure/lift/attack_hand(mob/user)
 	return interact(user)
 
-/obj/structure/lift/interact(var/mob/user)
+/obj/structure/lift/interact(mob/user)
 	if(!lift.is_functional())
 		return 0
 	return 1
@@ -54,7 +54,7 @@
 	desc = "A call button for an elevator. Be sure to hit it three hundred times."
 	icon_state = "button"
 	var/light_up = FALSE
-	req_access = list(access_eva)
+	req_access = list(ACCESS_EVA)
 	var/datum/turbolift_floor/floor
 
 /obj/structure/lift/button/Destroy()
@@ -82,7 +82,7 @@
 		return
 	. = ..()
 
-/obj/structure/lift/button/interact(var/mob/user)
+/obj/structure/lift/button/interact(mob/user)
 	if(!..())
 		return
 	if(lift.fire_mode || lift.priority_mode)
@@ -96,6 +96,9 @@
 			reset()
 		return
 	lift.queue_move_to(floor)
+
+/obj/structure/lift/button/allow_pai_interaction(mob/living/silicon/pai/user, proximity_flag)
+	return proximity_flag
 
 /obj/structure/lift/button/proc/light_up()
 	light_up = TRUE
@@ -118,8 +121,8 @@
 	name = "elevator control panel"
 	desc = "A control panel for moving the elevator. There's a slot for swiping IDs to enable additional controls."
 	icon_state = "panel"
-	req_access = list(access_eva)
-	req_one_access = list(access_heads, access_atmospherics, access_medical)
+	req_access = list(ACCESS_EVA)
+	req_one_access = list(ACCESS_HEADS, ACCESS_ATMOSPHERICS, ACCESS_MEDICAL)
 
 // Hit it with a PDA or ID to enable priority call mode
 /obj/structure/lift/panel/attackby(obj/item/W as obj, mob/user as mob)
@@ -137,10 +140,13 @@
 		return
 	. = ..()
 
-/obj/structure/lift/panel/attack_ghost(var/mob/user)
+/obj/structure/lift/panel/attack_ghost(mob/user)
 	return interact(user)
 
-/obj/structure/lift/panel/interact(var/mob/user)
+/obj/structure/lift/panel/allow_pai_interaction(mob/living/silicon/pai/user, proximity_flag)
+	return proximity_flag
+
+/obj/structure/lift/panel/interact(mob/user)
 	if(!..())
 		return
 

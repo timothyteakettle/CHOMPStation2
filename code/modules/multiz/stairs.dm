@@ -57,10 +57,10 @@
 	return TRUE
 
 // Used to actually move stuff up/down stairs. Removed from Crossed for special cases
-/obj/structure/stairs/proc/use_stairs(var/atom/movable/AM, var/atom/oldloc)
+/obj/structure/stairs/proc/use_stairs(atom/movable/AM, atom/oldloc)
 	return
 
-/obj/structure/stairs/proc/use_stairs_instant(var/atom/movable/AM)
+/obj/structure/stairs/proc/use_stairs_instant(atom/movable/AM)
 	return
 
 //////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@
 /obj/structure/stairs/bottom/Initialize(mapload)
 	. = ..()
 	if(!GetAbove(src))
-		warning("Stair created without level above: ([loc.x], [loc.y], [loc.z])")
+		WARNING("Stair created without level above: ([loc.x], [loc.y], [loc.z])")
 		return INITIALIZE_HINT_QDEL
 
 /obj/structure/stairs/bottom/Destroy()
@@ -134,14 +134,14 @@
 	// Out of the dir check, we have no valid neighbors, and thus are not complete.
 	return FALSE
 
-/obj/structure/stairs/bottom/Crossed(var/atom/movable/AM, var/atom/oldloc)
+/obj/structure/stairs/bottom/Crossed(atom/movable/AM, atom/oldloc)
 	if(isliving(AM))
 		var/mob/living/L = AM
 		if(L.has_AI())
 			use_stairs(AM, oldloc)
 	..()
 
-/obj/structure/stairs/bottom/use_stairs(var/atom/movable/AM, var/atom/oldloc)
+/obj/structure/stairs/bottom/use_stairs(atom/movable/AM, atom/oldloc)
 	// If we're coming from the top of the stairs, don't trap us in an infinite staircase
 	// Or if we fell down the openspace
 	if((top in oldloc) || oldloc == GetAbove(src))
@@ -193,10 +193,10 @@
 				var/mob/living/L = P
 				if(L.client)
 					L.client.Process_Grab() // Update any miscellanous grabs, possibly break grab-chains
-
+		SEND_SIGNAL(AM, COMSIG_MOVED_UP_STAIRS, AM, oldloc)
 	return TRUE
 
-/obj/structure/stairs/bottom/use_stairs_instant(var/atom/movable/AM)
+/obj/structure/stairs/bottom/use_stairs_instant(atom/movable/AM)
 	if(isobserver(AM)) // Ghosts have their own methods for going up and down
 		return
 	//VOREStation Addition Start
@@ -231,6 +231,7 @@
 			L.client.Process_Grab()
 	else
 		AM.forceMove(get_turf(top))
+	SEND_SIGNAL(AM, COMSIG_MOVED_UP_STAIRS, AM)
 
 
 //////////////////////////////////////////////////////////////////////
@@ -240,7 +241,6 @@
 	icon_state = "stair_u"
 	opacity   = TRUE
 	density   = TRUE // Too high to simply step up on
-	climbable = TRUE // But they can be climbed if the bottom is out
 
 	var/obj/structure/stairs/top/top = null
 	var/obj/structure/stairs/bottom/bottom = null
@@ -248,8 +248,9 @@
 /obj/structure/stairs/middle/Initialize(mapload)
 	. = ..()
 	if(!GetAbove(src))
-		warning("Stair created without level above: ([loc.x], [loc.y], [loc.z])")
+		WARNING("Stair created without level above: ([loc.x], [loc.y], [loc.z])")
 		return INITIALIZE_HINT_QDEL
+	AddElement(/datum/element/climbable)
 
 /obj/structure/stairs/middle/Destroy()
 	if(top)
@@ -313,7 +314,6 @@
 /obj/structure/stairs/middle/MouseDrop_T(mob/target, mob/user)
 	. = ..()
 	if(check_integrity())
-		do_climb(user)
 		user.forceMove(get_turf(top)) // You can't really drag things when you have to climb up the gap in the stairs yourself
 
 /obj/structure/stairs/middle/Bumped(mob/user)
@@ -331,7 +331,7 @@
 /obj/structure/stairs/top/Initialize(mapload)
 	. = ..()
 	if(!GetBelow(src))
-		warning("Stair created without level below: ([loc.x], [loc.y], [loc.z])")
+		WARNING("Stair created without level below: ([loc.x], [loc.y], [loc.z])")
 		return INITIALIZE_HINT_QDEL
 
 /obj/structure/stairs/top/Destroy()
@@ -390,20 +390,20 @@
 	// Out of the dir check, we have no valid neighbors, and thus are not complete. `.` was set by ..()
 	return
 
-/obj/structure/stairs/top/Crossed(var/atom/movable/AM, var/atom/oldloc)
+/obj/structure/stairs/top/Crossed(atom/movable/AM, atom/oldloc)
 	if(isliving(AM))
 		var/mob/living/L = AM
 		if(L.has_AI())
 			use_stairs(AM, oldloc)
 	..()
 
-/obj/structure/stairs/top/Uncrossed(var/atom/movable/AM)
+/obj/structure/stairs/top/Uncrossed(atom/movable/AM)
 	// Going down stairs from the topstair piece
 	if(AM.dir == turn(dir, 180) && isturf(AM.loc) && check_integrity())
 		use_stairs_instant(AM)
 		return
 
-/obj/structure/stairs/top/use_stairs(var/atom/movable/AM, var/atom/oldloc)
+/obj/structure/stairs/top/use_stairs(atom/movable/AM, atom/oldloc)
 	// If we're coming from the bottom of the stairs, don't trap us in an infinite staircase
 	// Or if we climb up the middle
 	if((bottom in oldloc) || oldloc == GetBelow(src))
@@ -453,10 +453,10 @@
 				var/mob/living/L = P
 				if(L.client)
 					L.client.Process_Grab() // Update any miscellanous grabs, possibly break grab-chains
-
+		SEND_SIGNAL(AM, COMSIG_MOVED_DOWN_STAIRS, AM, oldloc)
 	return TRUE
 
-/obj/structure/stairs/top/use_stairs_instant(var/atom/movable/AM)
+/obj/structure/stairs/top/use_stairs_instant(atom/movable/AM)
 	if(isobserver(AM)) // Ghosts have their own methods for going up and down
 		return
 	//VOREStation Addition Start
@@ -490,6 +490,7 @@
 			L.client.Process_Grab()
 	else
 		AM.forceMove(get_turf(bottom))
+	SEND_SIGNAL(AM, COMSIG_MOVED_DOWN_STAIRS, AM)
 
 // Mapping pieces, placed at the bottommost part of the stairs
 /obj/structure/stairs/spawner
@@ -505,10 +506,10 @@
 	var/turf/T2 = GetAbove(B2)
 
 	if(!istype(B1) || !istype(B2))
-		warning("Stair created at invalid loc: ([loc.x], [loc.y], [loc.z])")
+		WARNING("Stair created at invalid loc: ([loc.x], [loc.y], [loc.z])")
 		return INITIALIZE_HINT_QDEL
 	if(!istype(T1) || !istype(T2))
-		warning("Stair created without level above: ([loc.x], [loc.y], [loc.z])")
+		WARNING("Stair created without level above: ([loc.x], [loc.y], [loc.z])")
 		return INITIALIZE_HINT_QDEL
 
 	// Spawn the stairs

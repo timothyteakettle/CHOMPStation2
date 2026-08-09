@@ -16,7 +16,7 @@
 /obj/item/personal_shield_generator
 	name = "personal shield generator"
 	desc = "A personal shield generator."
-	icon = 'icons/obj/items_vr.dmi'
+	icon = 'icons/obj/items.dmi'
 	icon_state = "shieldpack_basic"
 	item_state = "defibunit" //Placeholder
 	slot_flags = SLOT_BACK
@@ -25,7 +25,6 @@
 	preserve_item = 1
 	w_class = ITEMSIZE_HUGE //It's a giant shield generator!!!
 	unacidable = TRUE
-	origin_tech = list(TECH_MATERIAL = 6, TECH_COMBAT = 8, TECH_POWER = 6, TECH_DATA = 4) //These are limited AND high tech. Breaking one of them down is massive.
 	actions_types = list(/datum/action/item_action/toggle_shield)
 	var/obj/item/gun/energy/gun/generator/active_weapon
 	var/obj/item/cell/device/bcell = null
@@ -52,23 +51,20 @@
 	if(has_weapon)
 		if(ispath(active_weapon))
 			active_weapon = new active_weapon(src, src)
-			active_weapon.power_supply = bcell
 		else
 			active_weapon = new(src, src)
-			active_weapon.power_supply = bcell
 	else
 		verbs -= /obj/item/personal_shield_generator/verb/weapon_toggle
 	STOP_PROCESSING(SSobj, src) //We do this so it doesn't start processing until it's first used.
 	update_icon()
 
 /obj/item/personal_shield_generator/Destroy()
-	. = ..()
 	QDEL_NULL(active_weapon)
 	QDEL_NULL(bcell)
+	. = ..()
 
 /obj/item/personal_shield_generator/loaded //starts with a cell
 	bcell = /obj/item/cell/device/shield_generator/backpack
-
 
 /obj/item/personal_shield_generator/update_icon()
 	if(shield_active)
@@ -112,12 +108,15 @@
 		add_overlay("[initial(icon_state)]-nocell")
 */
 
-/obj/item/personal_shield_generator/emp_act(severity)
+/obj/item/personal_shield_generator/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	if(bcell && shield_active)
 		switch(severity)
 			if(1) //Point blank EMP shots have a good chance of burning the cell charge.
 				if(prob(50))
-					bcell.emp_act(severity)
+					bcell.emp_act(severity, recursive)
 					if(prob(5)) //1 in 20% chance to fry the battery completly, which has a 1/10 chance of making the battery explode on next use.
 						bcell.corrupt() //Not too bad if you slotted a battery in. Disasterous if it has a self-charging battery.
 					if(bcell.rigged) //Did the above just rig the cell? Turn it off. Don't immediately have it go boom. Instead have the cell blow soon-ish.
@@ -125,6 +124,9 @@
 						s.set_up(5, 1, src)
 						s.start()
 						shield_active = 0
+						if(isliving(loc))
+							var/mob/living/our_user = loc
+							our_user.remove_modifiers_of_type(/datum/modifier/shield_projection)
 						if(bcell.charge_delay) //It WILL blow up soon. Downside of self-charging cells.
 							to_chat(src.loc, span_critical("Your shield generator sparks and suddenly goes down! A warning message pops up on screen: \
 							'WARNING, INTERNAL CELL MELTDOWN IMMINENT. TIME TILL EXPLOSION: [bcell.charge_delay/10] SECONDS. DISCARD UNIT IMMEDIATELY!'"))
@@ -135,8 +137,8 @@
 						update_icon()
 			else
 				if(prob(25))
-					bcell.emp_act(severity)
-	..()
+					bcell.emp_act(severity, recursive)
+	//Intentionally not calling ..() here, as we have special cell handling.
 
 /obj/item/personal_shield_generator/ui_action_click(mob/user, actiontype)
 	toggle_shield()
@@ -147,7 +149,7 @@
 	else
 		..()
 
-/obj/item/personal_shield_generator/AltClick(mob/living/user)
+/obj/item/personal_shield_generator/click_alt(mob/living/user)
 	weapon_toggle()
 
 /obj/item/personal_shield_generator/MouseDrop()
@@ -174,8 +176,6 @@
 				return
 			W.forceMove(src)
 			bcell = W
-			if(active_weapon)
-				active_weapon.power_supply = bcell
 			to_chat(user, span_notice("You install a cell in \the [src]."))
 			update_icon()
 
@@ -186,30 +186,25 @@
 				return //CHOMPedit: No cell removal.
 			if(istype(bcell, /obj/item/cell/device/shield_generator)) //No stealing self charging batteries!
 				var/choice = tgui_alert(user, "A popup appears on the device 'REMOVING THE INTERNAL CELL WILL DESTROY THE BATTERY. DO YOU WISH TO CONTINUE?'...Well, do you?", "Selection List", list("Cancel", "Remove"))
-				if(choice == "Remove") //Warned you...
-					var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
-					s.set_up(5, 1, src)
-					s.start()
-					bcell.forceMove(get_turf(src.loc))
-					qdel(bcell)
-					bcell = null //Sanity.
-					if(active_weapon)
-						reattach_gun() //Put the gun back if it's out. No shooting if we don't have a cell!
-						active_weapon.power_supply = null //No power cell anymore!
-					to_chat(user, span_notice("You remove the cell from \the [src], destroying the battery."))
-					update_icon()
+				if(choice != "Remove") //Warned you...
 					return
-				else
-					return
-			else
-				bcell.update_icon()
-				bcell.forceMove(get_turf(src.loc))
-				bcell = null
+				var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
+				s.set_up(5, 1, src)
+				s.start()
+				QDEL_NULL(bcell)
 				if(active_weapon)
 					reattach_gun() //Put the gun back if it's out. No shooting if we don't have a cell!
-					active_weapon.power_supply = null //No power cell anymore!
-				to_chat(user, span_notice("You remove the cell from \the [src]."))
+				to_chat(user, span_notice("You remove the cell from \the [src], destroying the battery."))
 				update_icon()
+				return
+
+			bcell.update_icon()
+			bcell.forceMove(get_turf(src.loc))
+			bcell = null
+			if(active_weapon)
+				reattach_gun() //Put the gun back if it's out. No shooting if we don't have a cell!
+			to_chat(user, span_notice("You remove the cell from \the [src]."))
+			update_icon()
 	else if(istype(W,/obj/item/multitool))
 		var/new_color = tgui_color_picker(usr, "Choose a color to set the shield to!", "", effect_color)
 		if(new_color)
@@ -225,7 +220,7 @@
 // Making it so emagging the weapon it comes with would also be a good idea. Different modes, perhaps?
 
 /*
-/obj/item/personal_shield_generator/emag_act(var/remaining_charges, var/mob/user)
+/obj/item/personal_shield_generator/emag_act(remaining_charges, mob/user)
 	if(active_weapon)
 		. = active_weapon.emag_act(user)
 		update_icon()
@@ -319,7 +314,6 @@
 
 			if(active_weapon) //Retract the gun. There's about to be no cell anymore.
 				reattach_gun()
-				active_weapon.power_supply = null
 
 			bcell.use(generator_active_cost) //Causes it to go boom.
 			bcell = null
@@ -362,7 +356,7 @@
 
 	return 0
 
-/obj/item/personal_shield_generator/dropped(mob/user)
+/obj/item/personal_shield_generator/dropped(mob/user, equipping, slot)
 	..()
 	reattach_gun(user) //A gun attached to a base unit should never exist outside of their base unit or the mob equipping the base unit
 
@@ -388,6 +382,7 @@
 	fire_delay = 8
 	use_external_power = TRUE
 	cell_type = null //No cell! It runs off the cell in the shield_gen!
+	battery_lock = TRUE
 
 	projectile_type = /obj/item/projectile/beam/stun/med
 	modifystate = "egunstun"
@@ -405,7 +400,15 @@
 /obj/item/gun/energy/gun/generator/Initialize(mapload, obj/item/personal_shield_generator/shield_gen)
 	. = ..()
 	shield_generator = shield_gen
-	power_supply = shield_generator.bcell
+
+/obj/item/gun/energy/gun/generator/Destroy()
+	shield_generator = null
+	. = ..()
+
+/obj/item/gun/energy/gun/generator/get_external_power_supply()
+	if(shield_generator)
+		return shield_generator.bcell
+	return null
 
 /* //Unused. Use for large guns.
 /obj/item/gun/energy/gun/generator/update_held_icon()
@@ -434,29 +437,21 @@
 		return 0
 	return 1
 
-// TODO: EMP ACT
-// The cell already gets hit and can have some nasty effects when EMP'd, so this isn't too much of a concern.
-
-/*
-/obj/item/gun/energy/gun/generator/emp_act(severity)
-	..()
-*/
-
-/obj/item/gun/energy/gun/generator/dropped(mob/user)
+/obj/item/gun/energy/gun/generator/dropped(mob/user, equipping, slot)
 	..() //update twohanding
 	if(shield_generator)
 		shield_generator.reattach_gun(user)
 
-/obj/item/gun/energy/proc/check_charge(var/charge_amt) //In case using any other guns.
+/obj/item/gun/energy/proc/check_charge(charge_amt) //In case using any other guns.
 	return 0
 
-/obj/item/gun/energy/proc/checked_use(var/charge_amt) //In case using any other guns.
+/obj/item/gun/energy/proc/checked_use(charge_amt) //In case using any other guns.
 	return 0
 
-/obj/item/gun/energy/gun/generator/check_charge(var/charge_amt)
+/obj/item/gun/energy/gun/generator/check_charge(charge_amt)
 	return (shield_generator.bcell && shield_generator.bcell.check_charge(charge_amt))
 
-/obj/item/gun/energy/gun/generator/checked_use(var/charge_amt)
+/obj/item/gun/energy/gun/generator/checked_use(charge_amt)
 	return (shield_generator.bcell && shield_generator.bcell.checked_use(charge_amt))
 
 

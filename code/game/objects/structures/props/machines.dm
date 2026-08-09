@@ -184,6 +184,15 @@
 /obj/structure/prop/machine/core/starts_on
 	icon_state = "core_active"
 
+/obj/structure/prop/machine/core/allinone
+	icon_state = "allinone"
+
+/obj/structure/prop/machine/core/bus
+	icon_state = "bus"
+
+/obj/structure/prop/machine/core/comm_server
+	icon_state = "comm_server"
+
 /**
  * Possible 'state' options for change_state(state) are:
  * down: In the ground, glowing
@@ -606,7 +615,7 @@
 /obj/structure/prop/machine/nt_pod/Entered(atom/movable/mover)
 	abduct(mover)
 
-/obj/structure/prop/machine/nt_pod/proc/abduct(var/atom/movable/AM)
+/obj/structure/prop/machine/nt_pod/proc/abduct(atom/movable/AM)
 	// Save old settings
 	contents_vis_flags = AM.vis_flags
 	contents_original_pixel_y = AM.pixel_y
@@ -623,7 +632,7 @@
 	// TRAP THEM
 	change_state("closed")
 
-/obj/structure/prop/machine/nt_pod/proc/unduct(var/atom/movable/AM)
+/obj/structure/prop/machine/nt_pod/proc/unduct(atom/movable/AM)
 	// Geddout
 	vis_contents -= AM
 	if(ismob(AM))
@@ -635,12 +644,12 @@
 	AM.vis_flags = contents_vis_flags
 	AM.pixel_y = contents_original_pixel_y
 
-/obj/structure/prop/machine/nt_pod/MouseDrop_T(var/atom/movable/AM, var/mob/user)
+/obj/structure/prop/machine/nt_pod/MouseDrop_T(atom/movable/AM, mob/user)
 	if(contents.len)
 		return
 	if(!ismovable(AM))
 		return
-	if(!user.client?.holder)
+	if(!check_rights_for(user.client, R_HOLDER))
 		return
 	if(changing_state)
 		return
@@ -685,7 +694,7 @@
 
 // Old Virology stuff
 
-/obj/structure/prop/machine/nt_pod/proc/delayed_flick(var/obj/effect/overlay/ovrl, var/icon_state, var/flicked, var/get_out_time)
+/obj/structure/prop/machine/nt_pod/proc/delayed_flick(obj/effect/overlay/ovrl, icon_state, flicked, get_out_time)
 	ovrl.icon_state = icon_state
 	flick(flicked, ovrl)
 	// GET OUT
@@ -704,7 +713,7 @@
 /obj/structure/prop/machine/centrifuge
 	name = "centrifuge"
 	desc = "Used to separate things with different weight. Spin 'em round, round, right round."
-	icon = 'icons/obj/virology_vr.dmi'
+	icon = 'icons/obj/virology.dmi'
 	icon_state = "centrifuge"
 	var/on = FALSE
 
@@ -725,7 +734,7 @@
 /obj/structure/prop/machine/incubator
 	name = "incubator"
 	desc = "Encourages the growth of diseases. This model comes with a dispenser system and a small radiation generator."
-	icon = 'icons/obj/virology_vr.dmi'
+	icon = 'icons/obj/virology.dmi'
 	icon_state = "incubator"
 	var/on = FALSE
 
@@ -746,7 +755,7 @@
 /obj/structure/prop/machine/disease_analyser
 	name = "disease analyser"
 	desc = "Analyzes diseases to find out information about them!"
-	icon = 'icons/obj/virology_vr.dmi'
+	icon = 'icons/obj/virology.dmi'
 	icon_state = "analyser"
 	var/on = FALSE
 
@@ -767,7 +776,7 @@
 /obj/structure/prop/machine/isolator
 	name = "disease isolator"
 	desc = "Used to isolate and identify diseases, allowing for comparison with a remote database."
-	icon = 'icons/obj/virology_vr.dmi'
+	icon = 'icons/obj/virology.dmi'
 	icon_state = "isolator_in"
 	var/on = FALSE
 

@@ -104,14 +104,14 @@ GLOBAL_VAR_INIT(dynamic_sector_master, null)
 			return i
 	return 0
 
-/obj/effect/overmap/visitable/dynamic/proc/is_empty(var/index, var/mob/observer)
+/obj/effect/overmap/visitable/dynamic/proc/is_empty(index, mob/observer)
 	if(!LAZYLEN(map_z))
 		log_and_message_admins("CANARY: [src] tried to check is_empty, but map_z is `[map_z || "null"]`")
 		return TRUE
 	if(!index)
 		index = 1
 	testing("Checking if sector at [map_z[index]] has no players.")
-	for(var/mob/M in global.player_list)
+	for(var/mob/M in GLOB.player_list)
 		if(M != observer && (M.z == map_z[index]))
 			testing("There are people on it.")
 			return FALSE
@@ -140,7 +140,7 @@ GLOBAL_VAR_INIT(dynamic_sector_master, null)
 	var/loaded = FALSE
 	var/my_index = 0 // Tracks which z-level we're using in the parent. Corresponds to index in parent's active_pois[]
 
-/obj/effect/overmap/visitable/dynamic/poi/Initialize(mapload, dyn_poi, var/template)
+/obj/effect/overmap/visitable/dynamic/poi/Initialize(mapload, dyn_poi, template)
 	if(!global.using_map.use_overmap || !template)
 		return INITIALIZE_HINT_QDEL
 	my_template = template
@@ -211,7 +211,7 @@ GLOBAL_VAR_INIT(dynamic_sector_master, null)
 
 	var/turf/T = locate(round(world.maxx/2), round(world.maxy/2), map_z[1]) // Find center turf, or near center for even-dimension maps.
 	if(!istype(T))
-		log_debug("Dynamic overmap POI found [T] instead of a valid turf.")
+		log_mapping("Dynamic overmap POI found [T] instead of a valid turf.")
 		return
 
 	// Move the shuttle landmarks.
@@ -238,7 +238,7 @@ GLOBAL_VAR_INIT(dynamic_sector_master, null)
 
 /obj/effect/overmap/visitable/dynamic/poi/proc/destroy_poi(mob/user)
 	if(!loaded) // Ideally this should never happen.
-		log_debug("Dynamic overmap POI tried to unload itself but is not loaded.")
+		log_mapping("Dynamic overmap POI tried to unload itself but is not loaded.")
 		return
 	if(!parent) // Also shouldn't happen.
 		log_and_message_admins("Dynamic overmap POI attempted to unload without a parent z-level.")
@@ -246,7 +246,7 @@ GLOBAL_VAR_INIT(dynamic_sector_master, null)
 		qdel(src)
 		return
 	if(!((my_index >= 1) && (my_index <= MAX_DYNAMIC_LEVELS))) // Make sure my_index is sane
-		log_debug("Dynamic overmap POI attempted to unload with an invalid index.")
+		log_mapping("Dynamic overmap POI attempted to unload with an invalid index.")
 		loaded = FALSE
 		qdel(src)
 		return
@@ -260,7 +260,7 @@ GLOBAL_VAR_INIT(dynamic_sector_master, null)
 		return
 
 	to_chat(user, "Destabilization initiated...")
-	log_debug("Dynamic overmap POI unloading initiated...")
+	log_mapping("Dynamic overmap POI unloading initiated...")
 	// Some math to return a block of block_size turfs (+ 1 to each dimension to account for even-size maps lacking a true center to safely do math with). Basically, start from center turf and subtract half of block_size for bottom left corner, add for top right corner.
 	var/list/turfs_to_reset = block(locate(round(world.maxx/2 - my_template.block_size/2 - 1), round(world.maxy/2 - my_template.block_size/2 - 1), map_z[1]), locate(round(world.maxx/2 + my_template.block_size/2 + 1), round(world.maxy/2 + my_template.block_size/2 + 1), map_z[1]))
 	var/deleted_atoms = 0
@@ -282,7 +282,7 @@ GLOBAL_VAR_INIT(dynamic_sector_master, null)
 	loaded = FALSE
 	map_z = null
 	icon_state = "ring_destroyed"
-	log_debug("Dynamic POI unload complete, [deleted_atoms] atoms destroyed.")
+	log_mapping("Dynamic POI unload complete, [deleted_atoms] atoms destroyed.")
 	to_chat(user, "Subspace pocket collapse successful.")
 	qdel(src)
 
@@ -321,7 +321,7 @@ GLOBAL_VAR_INIT(dynamic_sector_master, null)
 	base_area = /area/space
 	base_turf = /turf/space
 
-/obj/effect/shuttle_landmark/om_poi/Initialize(mapload, var/new_name, var/new_tag)
+/obj/effect/shuttle_landmark/om_poi/Initialize(mapload, new_name, new_tag)
 	name = new_name
 	landmark_tag = new_tag
 	. = ..()

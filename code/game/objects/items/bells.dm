@@ -5,8 +5,8 @@
 	icon_state = "deskbell"
 	force = 2
 	throwforce = 2
-	w_class = 2.0
-	matter = list(MAT_STEEL = 50)
+	w_class = ITEMSIZE_SMALL
+	matter = list(MAT_STEEL = MATERIAL_COST(0.025))
 	var/broken
 	attack_verb = list("annoyed")
 	var/static/radial_examine = image(icon = 'icons/mob/radial.dmi', icon_state = "radial_examine")
@@ -18,7 +18,7 @@
 	if(broken)
 		. += span_bold("It looks damaged, the ringer is stuck firmly inside.")
 
-/obj/item/deskbell/attack(mob/target as mob, mob/living/user as mob)
+/obj/item/deskbell/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
 	if(!broken)
 		playsound(src, 'sound/effects/deskbell.ogg', 50, 1)
 	..()
@@ -71,7 +71,7 @@
 		to_chat(user,span_notice("You gracefully ring [src]."))
 
 /obj/item/deskbell/proc/check_ability(mob/user)
-	if (ishuman(user))
+	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		var/obj/item/organ/external/temp = H.organs_by_name[BP_R_HAND]
 		if (H.hand)
@@ -88,7 +88,7 @@
 	if(!istype(W))
 		return
 	if(W.has_tool_quality(TOOL_WRENCH) && isturf(loc))
-		if(do_after(5))
+		if(do_after(user, 5, target = src))
 			if(!src) return
 			to_chat(user, span_notice("You dissasemble the desk bell"))
 			new /obj/item/stack/material/steel(get_turf(src), 1)

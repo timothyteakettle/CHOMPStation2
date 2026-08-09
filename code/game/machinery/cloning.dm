@@ -4,12 +4,12 @@
 //Potential replacement for genetics revives or something I dunno (?)
 
 //Find a dead mob with a brain and client.
-/proc/find_dead_player(var/find_key)
+/proc/find_dead_player(find_key)
 	if(isnull(find_key))
 		return
 
 	var/mob/selected = null
-	for(var/mob/living/M in player_list)
+	for(var/mob/living/M in GLOB.player_list)
 		//Dead people only thanks!
 		if((M.stat != 2) || (!M.client))
 			continue
@@ -30,10 +30,11 @@
 	desc = "An electronically-lockable pod for growing organic tissue."
 	density = TRUE
 	anchored = TRUE
+	flags = REMOTEVIEW_ON_ENTER
 	circuit = /obj/item/circuitboard/clonepod
 	icon = 'icons/obj/cloning.dmi'
 	icon_state = "pod_0"
-	req_access = list(access_genetics) // For premature unlocking.
+	req_access = list(ACCESS_GENETICS) // For premature unlocking.
 	VAR_PRIVATE/datum/weakref/weakref_occupant = null
 	var/heal_level = 20				// The clone is released once its health reaches this level.
 	var/heal_rate = 1
@@ -54,7 +55,15 @@
 	default_apply_parts()
 	update_icon()
 
-/obj/machinery/clonepod/proc/set_occupant(var/mob/living/L)
+/obj/machinery/clonepod/Destroy()
+	for(var/obj/container in containers)
+		container.forceMove(get_turf(src))
+	containers.Cut()
+	locked = FALSE
+	go_out()
+	. = ..()
+
+/obj/machinery/clonepod/proc/set_occupant(mob/living/L)
 	SHOULD_NOT_OVERRIDE(TRUE)
 	if(!L)
 		weakref_occupant = null
@@ -81,7 +90,7 @@
 	return
 
 //Start growing a human clone in the pod!
-/obj/machinery/clonepod/proc/growclone(var/datum/transhuman/body_record/BR)
+/obj/machinery/clonepod/proc/growclone(datum/transhuman/body_record/BR)
 	if(mess || attempting)
 		return 0
 	var/datum/mind/clonemind = locate(BR.mydna.mind)
@@ -94,7 +103,7 @@
 		if(ckey(clonemind.key) != BR.ckey)
 			return 0
 	else
-		for(var/mob/observer/dead/G in player_list)
+		for(var/mob/observer/dead/G in GLOB.player_list)
 			if(G.ckey == BR.ckey)
 				if(G.can_reenter_corpse)
 					break
@@ -123,6 +132,7 @@
 	var/damage_to_deal = H.getMaxHealth() * 1.5 //If you have 100, you get 150. Have 200? Get 300. 25hp? get 37.5
 	H.adjustCloneLoss(damage_to_deal) // New damage var so you can't eject a clone early then stab them to abuse the current damage system --NeoFite
 	H.Paralyse(4)
+	H.Sleeping(4)
 	H.updatehealth()
 	H.set_cloned_appearance()
 
@@ -131,11 +141,7 @@
 	H.ckey = BR.ckey
 	to_chat(H, span_warning(span_bold("Consciousness slowly creeps over you as your body regenerates.") + "<br>" + span_bold(span_large("Your recent memories are fuzzy, and it's hard to remember anything from today...")) + \
 		"<br>" + span_notice(span_italics("So this is what cloning feels like?"))))
-
-	// -- Mode/mind specific stuff goes here
-	callHook("clone", list(H))
-	update_antag_icons(H.mind)
-	// -- End mode specific stuff
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_RESLEEVED_MIND, H, clonemind)
 
 	// A modifier is added which makes the new clone be unrobust.
 	// Upgraded cloners can reduce the time of the modifier, up to 80%
@@ -175,6 +181,7 @@
 
 		else if(occupant.health < heal_level && occupant.getCloneLoss() > 0)
 			occupant.Paralyse(4)
+			occupant.Sleeping(4)
 
 			//Slowly get that clone healed and finished.
 			occupant.adjustCloneLoss(-2 * heal_rate)
@@ -233,7 +240,7 @@
 	else if(istype(W,/obj/item/reagent_containers/glass))
 		if(LAZYLEN(containers) >= container_limit)
 			to_chat(user, span_warning("\The [src] has too many containers loaded!"))
-		else if(do_after(user, 1 SECOND))
+		else if(do_after(user, 1 SECOND, target = src))
 			user.visible_message("[user] has loaded \the [W] into \the [src].", "You load \the [W] into \the [src].")
 			containers += W
 			user.drop_item()
@@ -263,7 +270,7 @@
 	else
 		..()
 
-/obj/machinery/clonepod/emag_act(var/remaining_charges, var/mob/user)
+/obj/machinery/clonepod/emag_act(remaining_charges, mob/user)
 	if(isnull(get_occupant()))
 		return
 	to_chat(user, "You force an emergency ejection.")
@@ -272,14 +279,13 @@
 	return 1
 
 //Put messages in the connected computer's temp var for display.
-/obj/machinery/clonepod/proc/connected_message(var/message)
+/obj/machinery/clonepod/proc/connected_message(message)
 	if((isnull(connected)) || (!istype(connected, /obj/machinery/computer/cloning)))
 		return 0
 	if(!message)
 		return 0
 
 	connected.temp = "[name] : [message]"
-	connected.updateUsrDialog()
 	return 1
 
 /obj/machinery/clonepod/RefreshParts()
@@ -320,9 +326,6 @@
 	if(!(occupant))
 		return
 
-	if(occupant.client)
-		occupant.client.eye = occupant.client.mob
-		occupant.client.perspective = MOB_PERSPECTIVE
 	occupant.forceMove(get_turf(src))
 	eject_wait = 0 //If it's still set somehow.
 	if(ishuman(occupant)) //Need to be safe.
@@ -347,7 +350,7 @@
 	return biomass_count
 
 // Removes [amount] biomass, spread across all containers. Doesn't have any check that you actually HAVE enough biomass, though.
-/obj/machinery/clonepod/proc/remove_biomass(var/amount = CLONE_BIOMASS)		//Just in case it doesn't get passed a new amount, assume one clone
+/obj/machinery/clonepod/proc/remove_biomass(amount = CLONE_BIOMASS)		//Just in case it doesn't get passed a new amount, assume one clone
 	var/to_remove = 0	// Tracks how much biomass has been found so far
 	if(LAZYLEN(containers))
 		for(var/obj/item/reagent_containers/glass/G in containers)
@@ -406,9 +409,11 @@
 		return
 	go_out()
 
-/obj/machinery/clonepod/emp_act(severity)
-	if(prob(100/severity))
-		malfunction()
+/obj/machinery/clonepod/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || !(prob(100/severity)))
+		return
+	malfunction()
 	..()
 
 /obj/machinery/clonepod/ex_act(severity)

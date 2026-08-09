@@ -38,9 +38,9 @@
 			num++
 
 	// Display the results.
-	to_world(text)
+	to_chat(world, text)
 
-/datum/antagonist/proc/print_objective(var/datum/objective/O, var/num, var/append_success)
+/datum/antagonist/proc/print_objective(datum/objective/O, num, append_success)
 	var/text = "<br>" + span_bold("Objective [num]:") + " [O.explanation_text] "
 	if(append_success)
 		if(O.check_completion())
@@ -49,7 +49,7 @@
 			text += span_red("Fail.")
 	return text
 
-/datum/antagonist/proc/print_player_lite(var/datum/mind/ply)
+/datum/antagonist/proc/print_player_lite(datum/mind/ply)
 	var/role = ply.assigned_role ? "\improper[ply.assigned_role]" : "\improper[ply.special_role]"
 	var/text = "<br>" + span_bold("[ply.name]") + " (" + span_bold("[ply.key]") + ") as " + span_bold("\a [role]") + " ("
 	if(ply.current)
@@ -67,13 +67,13 @@
 
 	return text
 
-/datum/antagonist/proc/print_player_full(var/datum/mind/ply)
+/datum/antagonist/proc/print_player_full(datum/mind/ply)
 	var/text = print_player_lite(ply)
 
 	var/TC_uses = FALSE
 	var/uplink_true = FALSE
 	var/purchases = ""
-	for(var/mob/M in player_list)
+	for(var/mob/M in GLOB.player_list)
 		if(M.mind && M.mind.used_TC)
 			TC_uses += M.mind.used_TC
 			uplink_true = TRUE
@@ -85,7 +85,7 @@
 
 	return text
 
-/proc/get_uplink_purchases(var/datum/mind/M)
+/proc/get_uplink_purchases(datum/mind/M)
 	var/list/refined_log = new()
 	for(var/datum/uplink_item/UI in M.purchase_log)
 		refined_log.Add("[M.purchase_log[UI]]x[UI.log_icon()][UI.name]")

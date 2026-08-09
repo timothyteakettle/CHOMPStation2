@@ -61,7 +61,7 @@
 	update_icon()
 
 //Allow a small chance of parrying melee attacks when wielded - maybe generalize this to other weapons someday
-/obj/item/material/twohanded/handle_shield(mob/user, var/damage, atom/damage_source = null, mob/attacker = null, var/def_zone = null, var/attack_text = "the attack")
+/obj/item/material/twohanded/handle_shield(mob/user, damage, atom/damage_source = null, mob/attacker = null, def_zone = null, attack_text = "the attack")
 	if(wielded && default_parry_check(user, attacker, damage_source) && prob(15))
 		user.visible_message(span_danger("\The [user] parries [attack_text] with \the [src]!"))
 		playsound(src, 'sound/weapons/punchmiss.ogg', 50, 1)
@@ -72,7 +72,9 @@
 	icon_state = "[base_icon][wielded]"
 	item_state = icon_state
 
-/obj/item/material/twohanded/dropped(mob/user)
+/obj/item/material/twohanded/dropped(mob/user, equipping, slot)
+	if(equipping)
+		return ..()
 	..()
 	if(wielded)
 		spawn(0)
@@ -121,7 +123,10 @@
 	if(!proximity) return
 	..()
 	if(A && wielded)
-		if(istype(A,/obj/structure/window))
+		if(istype(A,/obj/structure/window/maintenance_panel))
+			var/obj/structure/window/maintenance_panel/P = A
+			P.take_damage(75,TRUE) // Not instant break, but still useful
+		else if(istype(A,/obj/structure/window))
 			var/obj/structure/window/W = A
 			W.shatter()
 		else if(istype(A,/obj/structure/grille))
@@ -136,7 +141,6 @@
 	name = "scythe"
 	desc = "A sharp and curved blade on a long fibremetal handle, this tool makes it easy to reap what you sow."
 	force_divisor = 0.65
-	origin_tech = list(TECH_MATERIAL = 2, TECH_COMBAT = 2)
 	attack_verb = list("chopped", "sliced", "cut", "reaped")
 
 //spears, bay edition

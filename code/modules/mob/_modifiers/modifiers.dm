@@ -13,7 +13,7 @@
 	var/on_expired_text = null			// Text to show to holder when it expires.
 	var/hidden = FALSE					// If true, it will not show up on the HUD in the Future(tm)
 	var/stacks = MODIFIER_STACK_FORBID	// If true, attempts to add a second instance of this type will refresh expire_at instead.
-	var/flags = 0						// Flags for the modifier, see mobs.dm defines for more details.
+	var/flags = NONE						// Flags for the modifier, see mobs.dm defines for more details.
 
 	var/light_color = null				// If set, the mob possessing the modifier will glow in this color.  Not implemented yet.
 	var/light_range = null				// How far the light for the above var goes. Not implemented yet.
@@ -57,7 +57,6 @@
 
 	// Note that these are combined with the mob's real armor values additatively. You can also omit specific armor types.
 	var/list/armor_percent = null		// List of armor values to add to the holder when doing armor calculations. This is for percentage based armor. E.g. 50 = half damage.
-	var/list/armor_flat = null			// Same as above but only for flat armor calculations. E.g. 5 = 5 less damage (this comes after percentage).
 	// Unlike armor, this is multiplicative. Two 50% protection modifiers will be combined into 75% protection (assuming no base protection on the mob).
 	var/heat_protection = null			// Modifies how 'heat' protection is calculated, like wearing a firesuit. 1 = full protection.
 	var/cold_protection = null			// Ditto, but for cold, like wearing a winter coat.
@@ -65,7 +64,7 @@
 
 	var/vision_flags					// Vision flags to add to the mob. SEE_MOB, SEE_OBJ, etc.
 
-/datum/modifier/New(var/new_holder, var/new_origin)
+/datum/modifier/New(new_holder, new_origin)
 	holder = new_holder
 	if(new_origin)
 		origin = WEAKREF(new_origin)
@@ -73,9 +72,13 @@
 		origin = WEAKREF(holder)
 	..()
 
+/datum/modifier/Destroy(force)
+	. = ..()
+	origin = null
+
 // Checks if the modifier should be allowed to be applied to the mob before attaching it.
 // Override for special criteria, e.g. forbidding robots from receiving it.
-/datum/modifier/proc/can_apply(var/mob/living/L, var/suppress_output = FALSE)
+/datum/modifier/proc/can_apply(mob/living/L, suppress_output = FALSE)
 	return TRUE
 
 // Checks to see if this datum should continue existing.
@@ -83,7 +86,7 @@
 	if(expire_at && expire_at < world.time) // Is our time up?
 		src.expire()
 
-/datum/modifier/proc/expire(var/silent = FALSE)
+/datum/modifier/proc/expire(silent = FALSE)
 	if(on_expired_text && !silent)
 		to_chat(holder, on_expired_text)
 	on_expire()
@@ -128,7 +131,7 @@
 // Third argument is the 'source' of the modifier, if it's from someone else.  If null, it will default to the mob being applied to.
 // The SECONDS/MINUTES macro is very helpful for this.  E.g. M.add_modifier(/datum/modifier/example, 5 MINUTES)
 // The fourth argument is a boolean to suppress failure messages, set it to true if the modifier is repeatedly applied (as chem-based modifiers are) to prevent chat-spam
-/mob/living/proc/add_modifier(var/modifier_type, var/expire_at = null, var/mob/living/origin = null, var/suppress_failure = FALSE)
+/mob/living/proc/add_modifier(modifier_type, expire_at = null, mob/living/origin = null, suppress_failure = FALSE)
 	// First, check if the mob already has this modifier.
 	for(var/datum/modifier/M in modifiers)
 		if(ispath(modifier_type, M))
@@ -167,33 +170,33 @@
 	return mod
 
 // Removes a specific instance of modifier
-/mob/living/proc/remove_specific_modifier(var/datum/modifier/M, var/silent = FALSE)
+/mob/living/proc/remove_specific_modifier(datum/modifier/M, silent = FALSE)
 	M.expire(silent)
 
 // Removes one modifier of a type
-/mob/living/proc/remove_a_modifier_of_type(var/modifier_type, var/silent = FALSE)
+/mob/living/proc/remove_a_modifier_of_type(modifier_type, silent = FALSE)
 	for(var/datum/modifier/M in modifiers)
 		if(ispath(M.type, modifier_type))
 			M.expire(silent)
 			break
 
 // Removes all modifiers of a type
-/mob/living/proc/remove_modifiers_of_type(var/modifier_type, var/silent = FALSE)
+/mob/living/proc/remove_modifiers_of_type(modifier_type, silent = FALSE)
 	for(var/datum/modifier/M in modifiers)
 		if(ispath(M.type, modifier_type))
 			M.expire(silent)
 
 // Removes all modifiers, useful if the mob's being deleted
-/mob/living/proc/remove_all_modifiers(var/silent = FALSE)
+/mob/living/proc/remove_all_modifiers(silent = FALSE)
 	for(var/datum/modifier/M in modifiers)
 		M.expire(silent)
 
 // Checks if the mob has a modifier type.
-/mob/living/proc/has_modifier_of_type(var/modifier_type)
+/mob/living/proc/has_modifier_of_type(modifier_type)
 	return get_modifier_of_type(modifier_type) ? TRUE : FALSE
 
 // Gets the first instance of a specific modifier type or subtype.
-/mob/living/proc/get_modifier_of_type(var/modifier_type)
+/mob/living/proc/get_modifier_of_type(modifier_type)
 	for(var/datum/modifier/M in modifiers)
 		if(istype(M, modifier_type))
 			return M
@@ -269,7 +272,7 @@
 
 
 // Helper to format multiplers (e.g. 1.4) to percentages (like '40%')
-/proc/multipler_to_percentage(var/multi, var/abs = FALSE)
+/proc/multipler_to_percentage(multi, abs = FALSE)
 	if(abs)
 		return "[abs( ((multi - 1) * 100) )]%"
 	return "[((multi - 1) * 100)]%"

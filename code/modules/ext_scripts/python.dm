@@ -1,5 +1,5 @@
 // Ported from /vg/.
-/proc/escape_shell_arg(var/arg)
+/proc/escape_shell_arg(arg)
 	// RCE prevention
 	// - Encloses arg in single quotes
 	// - Escapes single quotes
@@ -16,7 +16,7 @@
 		arg = "'[arg]'"
 	return arg
 
-/proc/ext_python(var/script, var/args, var/scriptsprefix = 1)
+/proc/ext_python(script, arguments, scriptsprefix = 1)
 	return  // VOREStation Edit - Can't exploit shell if we never call shell!
 	/* Unreachable with above vorestation edit
 	if(scriptsprefix)
@@ -25,6 +25,6 @@
 	if(world.system_type == MS_WINDOWS)
 		script = replacetext(script, "/", "\\")
 
-	var/command = CONFIG_GET(string/python_path) + " " + script + " " + args // CHOMPEdit
+	var/command = CONFIG_GET(string/python_path) + " " + script + " " + arguments
 	return shell(command)
 	*/

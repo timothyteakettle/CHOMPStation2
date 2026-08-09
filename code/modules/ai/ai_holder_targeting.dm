@@ -34,7 +34,8 @@
 //CHOMPEdit Begin
 // Step 1, find out what we can see.
 /datum/ai_holder/proc/list_targets()
-	. = hearers(vision_range, holder) - holder // Remove ourselves to prevent suicidal decisions. ~ SRC is the ai_holder.
+	. = ohearers(vision_range, holder) - holder // CHOMPEdit Remove ourselves to prevent suicidal decisions. ~ SRC is the ai_holder.
+	. -= GLOB.dview_mob // Not the dview mob!
 
 	var/static/list/hostile_machines = typecacheof(list(/obj/machinery/porta_turret, /obj/mecha))
 	var/static/list/ignore = typecacheof(list(/mob/observer))
@@ -46,7 +47,7 @@
 //CHOMPEdit End
 
 // Step 2, filter down possible targets to things we actually care about.
-/datum/ai_holder/proc/find_target(var/list/possible_targets, var/has_targets_list = FALSE)
+/datum/ai_holder/proc/find_target(list/possible_targets, has_targets_list = FALSE)
 	ai_log("find_target() : Entered.", AI_LOG_TRACE)
 	if(!hostile) // So retaliating mobs only attack the thing that hit it.
 		return null
@@ -89,7 +90,7 @@
 
 	target = new_target
 
-	RegisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(remove_target))
+	RegisterSignal(target, COMSIG_QDELETING, PROC_REF(remove_target))
 
 	if(target != null)
 		lose_target_time = 0
@@ -129,7 +130,7 @@
 			closest_targets += A
 	return closest_targets
 
-/datum/ai_holder/proc/can_attack(atom/movable/the_target, var/vision_required = TRUE)
+/datum/ai_holder/proc/can_attack(atom/movable/the_target, vision_required = TRUE)
 	//CHOMP Removal (optimizing by making most intense check last)
 	if(!belly_attack)
 		if(isbelly(holder.loc))
@@ -194,7 +195,7 @@
 //CHOMPEdit Begin
 //It may seem a bit funny to define a proc above and then immediately override it in the same file
 //But this is basically layering the checks so that the vision check will always come last
-/datum/ai_holder/can_attack(atom/movable/the_target, var/vision_required = TRUE)
+/datum/ai_holder/can_attack(atom/movable/the_target, vision_required = TRUE)
 	if(!..())
 		return FALSE
 	if(vision_required && !can_see_target(the_target))
@@ -207,7 +208,7 @@
 	ai_log("lose_target() : Entering.", AI_LOG_TRACE)
 	if(target)
 		ai_log("lose_target() : Had a target, setting to null and LTT.", AI_LOG_DEBUG)
-		UnregisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(remove_target))
+		UnregisterSignal(target, COMSIG_QDELETING, PROC_REF(remove_target))
 		target = null
 		lose_target_time = world.time
 
@@ -224,7 +225,7 @@
 	SIGNAL_HANDLER
 	ai_log("remove_target() : Entering.", AI_LOG_TRACE)
 	if(target)
-		UnregisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(remove_target))
+		UnregisterSignal(target, COMSIG_QDELETING, PROC_REF(remove_target))
 		target = null
 
 	lose_target_time = 0
@@ -322,15 +323,15 @@
 	add_attacker(AM)
 
 // Checks to see if an atom attacked us lately
-/datum/ai_holder/proc/check_attacker(var/atom/movable/A)
+/datum/ai_holder/proc/check_attacker(atom/movable/A)
 	return (A.name in attackers)
 
 // We were attacked by this thing recently
-/datum/ai_holder/proc/add_attacker(var/atom/movable/A)
+/datum/ai_holder/proc/add_attacker(atom/movable/A)
 	attackers |= A.name
 
 // Forgive this attacker
-/datum/ai_holder/proc/remove_attacker(var/atom/movable/A)
+/datum/ai_holder/proc/remove_attacker(atom/movable/A)
 	attackers -= A.name
 
 // Causes targeting to prefer targeting the taunter if possible.
@@ -347,14 +348,12 @@
 	preferred_target = null
 
 /datum/ai_holder/proc/vore_check(mob/living/L)
-	//CHOMPEdit Start
-	var/mob/living/simple_mob/simple = holder
-	if(istype(simple))	//We probably don't have a belly so don't even try
-		if (!simple.vore_active)
-			return FALSE
-	else if (holder.vore_selected == null)
+	if(isanimal(holder))
+		var/mob/living/simple_mob/M = holder
+		if(!M.voremob_loaded)	//init vore if it's not already
+			M.init_vore(TRUE)
+	if(!holder.vore_selected)	//We probably don't have a belly so don't even try
 		return FALSE
-	// CHOMPEdit End
 	if(!isliving(L))	//We only want mob/living
 		return FALSE
 	if(!L.devourable || !L.allowmobvore)	//Check their prefs

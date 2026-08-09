@@ -1,15 +1,11 @@
 //Called when the mob is hit with an item in combat.
-/mob/living/carbon/resolve_item_attack(obj/item/I, mob/living/user, var/effective_force, var/hit_zone)
+/mob/living/carbon/resolve_item_attack(obj/item/I, mob/living/user, effective_force, hit_zone)
 	if(check_neckgrab_attack(I, user, hit_zone))
 		return null
 	..()
 
-/mob/living/carbon/standard_weapon_hit_effects(obj/item/I, mob/living/user, var/effective_force, var/blocked, var/soaked, var/hit_zone)
+/mob/living/carbon/standard_weapon_hit_effects(obj/item/I, mob/living/user, effective_force, blocked, hit_zone)
 	if(!effective_force || blocked >= 100)
-		return 0
-
-	//If the armor soaks all of the damage, it just skips the rest of the checks
-	if(effective_force <= soaked)
 		return 0
 
 	//Apply weapon damage
@@ -21,7 +17,7 @@
 		weapon_edge = 0
 		hit_embed_chance = I.force/(I.w_class*3)
 
-	apply_damage(effective_force, I.damtype, hit_zone, blocked, soaked, sharp=weapon_sharp, edge=weapon_edge, used_weapon=I)
+	apply_damage(effective_force, I.damtype, hit_zone, blocked, weapon_sharp, weapon_edge, I)
 
 	//Melee weapon embedded object code.
 	if (I && I.damtype == BRUTE && !I.anchored && !is_robot_module(I) && I.embed_chance > 0)
@@ -39,7 +35,7 @@
 	return 1
 
 // Attacking someone with a weapon while they are neck-grabbed
-/mob/living/carbon/proc/check_neckgrab_attack(obj/item/W, mob/user, var/hit_zone)
+/mob/living/carbon/proc/check_neckgrab_attack(obj/item/W, mob/user, hit_zone)
 	if(user.a_intent == I_HURT)
 		for(var/obj/item/grab/G in src.grabbed_by)
 			if(G.assailant == user)
@@ -61,7 +57,7 @@
 	user.visible_message(span_danger("\The [user] begins to slit [src]'s throat with \the [W]!"))
 
 	user.next_move = world.time + 20 //also should prevent user from triggering this repeatedly
-	if(!do_after(user, 20))
+	if(!do_after(user, 2 SECONDS, target = src))
 		return 0
 	if(!(G && G.assailant == user && G.affecting == src)) //check that we still have a grab
 		return 0

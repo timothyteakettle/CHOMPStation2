@@ -9,7 +9,6 @@
 	icon_state = ""
 	item_state = "autopsy_scanner"
 	w_class = ITEMSIZE_SMALL
-	origin_tech = list(TECH_MATERIAL = 1, TECH_BIO = 1)
 	var/list/datum/autopsy_data_scanner/wdata = list()
 	var/list/datum/autopsy_data_scanner/chemtraces = list()
 	var/target_name = null
@@ -39,7 +38,7 @@
 	W.time_inflicted = time_inflicted
 	return W
 
-/obj/item/autopsy_scanner/proc/add_data(var/obj/item/organ/external/O)
+/obj/item/autopsy_scanner/proc/add_data(obj/item/organ/external/O)
 	if(!O.autopsy_data.len && !O.trace_chemicals.len) return
 
 	for(var/V in O.autopsy_data)
@@ -180,5 +179,7 @@
 	M.visible_message(span_infoplain(span_bold("\The [user]") + " scans the wounds on [M]'s [S.name] with [src]"))
 
 	src.add_data(S)
+	SEND_SIGNAL(src,COMSIG_AUTOPSY_PERFORMED, user, M)
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_AUTOPSY_PERFORMED, user, M)
 
 	return 1

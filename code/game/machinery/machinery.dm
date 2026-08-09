@@ -146,16 +146,14 @@ Class Procs:
 			if(A.loc == src) // If the components are inside the machine, delete them.
 				qdel(A)
 			else // Otherwise we assume they were dropped to the ground during deconstruction, and were not removed from the component_parts list by deconstruction code.
-				warning("[A] was still in [src]'s component_parts when it was Destroy()'d")
+				WARNING("[A] was still in [src]'s component_parts when it was Destroy()'d")
 		component_parts.Cut()
 		component_parts = null
 	if(contents) // The same for contents.
 		for(var/atom/A in contents)
 			if(ishuman(A))
 				var/mob/living/carbon/human/H = A
-				H.client.eye = H.client.mob
-				H.client.perspective = MOB_PERSPECTIVE
-				H.loc = src.loc
+				H.forceMove(loc)
 			else
 				qdel(A)
 	return ..()
@@ -163,7 +161,10 @@ Class Procs:
 /obj/machinery/process() // Steady power usage is handled separately. If you dont use process why are you here?
 	return PROCESS_KILL
 
-/obj/machinery/emp_act(severity)
+/obj/machinery/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	if(use_power && stat == 0)
 		use_power(7500/severity)
 
@@ -173,10 +174,7 @@ Class Procs:
 		pulse2.name = "emp sparks"
 		pulse2.anchored = TRUE
 		pulse2.set_dir(pick(GLOB.cardinal))
-
-		spawn(10)
-			qdel(pulse2)
-	..()
+		QDEL_IN(pulse2, 1 SECOND)
 
 /obj/machinery/ex_act(severity)
 	switch(severity)
@@ -193,7 +191,7 @@ Class Procs:
 				return
 	return
 
-/obj/machinery/vv_edit_var(var/var_name, var/new_value)
+/obj/machinery/vv_edit_var(var_name, new_value)
 	if(var_name == NAMEOF(src, use_power))
 		update_use_power(new_value)
 		return TRUE
@@ -208,10 +206,10 @@ Class Procs:
 		return TRUE
 	return ..()
 
-/obj/machinery/proc/operable(var/additional_flags = 0)
+/obj/machinery/proc/operable(additional_flags = 0)
 	return !inoperable(additional_flags)
 
-/obj/machinery/proc/inoperable(var/additional_flags = 0)
+/obj/machinery/proc/inoperable(additional_flags = 0)
 	return (stat & (NOPOWER | BROKEN | additional_flags))
 
 // Duplicate of below because we don't want to fuck around with CanUseTopic in TGUI
@@ -221,17 +219,10 @@ Class Procs:
 		return STATUS_CLOSE
 	return ..()
 
-/obj/machinery/CanUseTopic(var/mob/user)
+/obj/machinery/CanUseTopic(mob/user)
 	if(!interact_offline && (stat & (NOPOWER | BROKEN)))
 		return STATUS_CLOSE
 	return ..()
-
-/obj/machinery/CouldUseTopic(var/mob/user)
-	..()
-	user.set_machine(src)
-
-/obj/machinery/CouldNotUseTopic(var/mob/user)
-	user.unset_machine()
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -239,7 +230,7 @@ Class Procs:
 	if(isrobot(user))
 		// For some reason attack_robot doesn't work
 		// This is to stop robots from using cameras to remotely control machines.
-		if(user.client && user.client.eye == user)
+		if(user.client && !user.is_remote_viewing())
 			return attack_hand(user)
 	else
 		return attack_hand(user)
@@ -276,7 +267,7 @@ Class Procs:
 	uid = gl_uid
 	gl_uid++
 
-/obj/machinery/proc/state(var/msg)
+/obj/machinery/proc/state(msg)
 	for(var/mob/O in hearers(src, null))
 		O.show_message("[icon2html(src,O.client)] " + span_notice("[msg]"), 2)
 
@@ -295,6 +286,8 @@ Class Procs:
 	var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 	s.set_up(5, 1, src)
 	s.start()
+	if(!isliving(user))
+		return 0
 	if(electrocute_mob(user, get_area(src), src, 0.7))
 		var/area/temp_area = get_area(src)
 		if(temp_area)
@@ -323,7 +316,7 @@ Class Procs:
 		RefreshParts()
 		return C
 
-/obj/machinery/proc/default_part_replacement(var/mob/user, var/obj/item/storage/part_replacer/R)
+/obj/machinery/proc/default_part_replacement(mob/user, obj/item/storage/part_replacer/R)
 	var/parts_replaced = FALSE
 	if(!istype(R))
 		return 0
@@ -357,8 +350,13 @@ Class Procs:
 				R.play_rped_sound()
 	return 1
 
+// This is it's own proc so it can be more easily found when looking for machines that can upgrade themselves from mapped parts
+// Should be called from LateInitialize()
+/obj/machinery/proc/apply_mapped_upgrades()
+	return
+
 // Default behavior for wrenching down machines.  Supports both delay and instant modes.
-/obj/machinery/proc/default_unfasten_wrench(var/mob/user, var/obj/item/W, var/time = 0)
+/obj/machinery/proc/default_unfasten_wrench(mob/user, obj/item/W, time = 0)
 	if(!W.has_tool_quality(TOOL_WRENCH))
 		return FALSE
 	if(panel_open)
@@ -378,14 +376,14 @@ Class Procs:
 		update_icon()
 	return TRUE
 
-/obj/machinery/proc/default_deconstruction_crowbar(var/mob/user, var/obj/item/C)
+/obj/machinery/proc/default_deconstruction_crowbar(mob/user, obj/item/C)
 	if(!C.has_tool_quality(TOOL_CROWBAR))
 		return 0
 	if(!panel_open)
 		return 0
 	. = dismantle()
 
-/obj/machinery/proc/default_deconstruction_screwdriver(var/mob/user, var/obj/item/S)
+/obj/machinery/proc/default_deconstruction_screwdriver(mob/user, obj/item/S)
 	if(!S.has_tool_quality(TOOL_SCREWDRIVER))
 		return 0
 	playsound(src, S.usesound, 50, 1)
@@ -394,14 +392,14 @@ Class Procs:
 	update_icon()
 	return 1
 
-/obj/machinery/proc/computer_deconstruction_screwdriver(var/mob/user, var/obj/item/S)
+/obj/machinery/proc/computer_deconstruction_screwdriver(mob/user, obj/item/S)
 	if(!S.has_tool_quality(TOOL_SCREWDRIVER))
 		return 0
 	if(!circuit)
 		return 0
 	to_chat(user, span_notice("You start disconnecting the monitor."))
 	playsound(src, S.usesound, 50, 1)
-	if(do_after(user, 20 * S.toolspeed))
+	if(do_after(user, 2 SECONDS * S.toolspeed, target = src))
 		if(stat & BROKEN)
 			to_chat(user, span_notice("The broken glass falls out."))
 			new /obj/item/material/shard(src.loc)
@@ -409,7 +407,7 @@ Class Procs:
 			to_chat(user, span_notice("You disconnect the monitor."))
 		. = dismantle()
 
-/obj/machinery/proc/alarm_deconstruction_screwdriver(var/mob/user, var/obj/item/S)
+/obj/machinery/proc/alarm_deconstruction_screwdriver(mob/user, obj/item/S)
 	if(!S.has_tool_quality(TOOL_SCREWDRIVER))
 		return 0
 	playsound(src, S.usesound, 50, 1)
@@ -418,7 +416,7 @@ Class Procs:
 	update_icon()
 	return 1
 
-/obj/machinery/proc/alarm_deconstruction_wirecutters(var/mob/user, var/obj/item/W)
+/obj/machinery/proc/alarm_deconstruction_wirecutters(mob/user, obj/item/W)
 	if(!W.has_tool_quality(TOOL_WIRECUTTER))
 		return 0
 	if(!panel_open)
@@ -429,6 +427,7 @@ Class Procs:
 	. = dismantle()
 
 /obj/machinery/proc/dismantle()
+	SEND_SIGNAL(src, COMSIG_OBJ_DECONSTRUCT)
 	playsound(src, 'sound/items/Crowbar.ogg', 50, 1)
 	for(var/obj/I in contents)
 		if(istype(I,/obj/item/card/id))
@@ -475,7 +474,7 @@ Class Procs:
 	A.update_desc()
 	A.update_icon()
 	M.loc = null
-	M.deconstruct(src)
+	M.atom_deconstruct(TRUE, src)
 	qdel(src)
 	return 1
 
@@ -489,7 +488,7 @@ Class Procs:
  ** severity: Same severities as ex_act (so lower is more destructive)
  ** scatter: If you want the parts to slide around 1 turf in random directions
  */
-/obj/machinery/proc/fall_apart(var/severity = 3, var/scatter = TRUE)
+/obj/machinery/proc/fall_apart(severity = 3, scatter = TRUE)
 	var/datum/effect/effect/system/spark_spread/spark_system = new /datum/effect/effect/system/spark_spread()
 	spark_system.set_up(5, 0, src)
 	spark_system.attach(src)
@@ -556,10 +555,3 @@ Class Procs:
 	spark_system.start()
 	qdel(spark_system)
 	qdel(src)
-
-/datum/proc/apply_visual(mob/M)
-	M.sight = 0 //Just reset their mesons and stuff so they can't use them, by default.
-	return
-
-/datum/proc/remove_visual(mob/M)
-	return

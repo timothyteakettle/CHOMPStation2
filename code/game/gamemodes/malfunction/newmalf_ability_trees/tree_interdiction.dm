@@ -56,7 +56,7 @@
 	cancel_call_proc(user)
 
 
-/datum/game_mode/malfunction/verb/unlock_cyborg(var/mob/living/silicon/robot/target = null as mob in get_linked_cyborgs(usr))
+/datum/game_mode/malfunction/verb/unlock_cyborg(mob/living/silicon/robot/target = null as mob in get_linked_cyborgs(usr))
 	set name = "Unlock Cyborg"
 	set desc = "125 CPU - Bypasses firewalls on Cyborg lock mechanism, allowing you to override lock command from robotics control console."
 	set category = "Software"
@@ -82,7 +82,7 @@
 	if(!target)
 		var/list/robots = list()
 		var/list/robot_names = list()
-		for(var/mob/living/silicon/robot/R in silicon_mob_list)
+		for(var/mob/living/silicon/robot/R in GLOB.silicon_mob_list)
 			if(istype(R, /mob/living/silicon/robot/drone))	// No drones.
 				continue
 			if(R.connected_ai != user)						// No robots linked to other AIs
@@ -128,7 +128,7 @@
 		user.hacking = 0
 
 
-/datum/game_mode/malfunction/verb/hack_cyborg(var/mob/living/silicon/robot/target as mob in get_unlinked_cyborgs(usr))
+/datum/game_mode/malfunction/verb/hack_cyborg(mob/living/silicon/robot/target as mob in get_unlinked_cyborgs(usr))
 	set name = "Hack Cyborg"
 	set desc = "350 CPU - Allows you to hack cyborgs which are not slaved to you, bringing them under your control."
 	set category = "Software"
@@ -187,13 +187,13 @@
 			// Connect the cyborg to AI
 			target.connected_ai = user
 			user.connected_robots += target
-			target.lawupdate = 1
+			target.lawupdate = TRUE
 			target.sync()
 			target.show_laws()
 			user.hacking = 0
 
 
-/datum/game_mode/malfunction/verb/hack_ai(var/mob/living/silicon/ai/target as mob in get_other_ais(usr))
+/datum/game_mode/malfunction/verb/hack_ai(mob/living/silicon/ai/target as mob in get_other_ais(usr))
 	set name = "Hack AI"
 	set desc = "600 CPU - Allows you to hack other AIs, slaving them under you."
 	set category = "Software"

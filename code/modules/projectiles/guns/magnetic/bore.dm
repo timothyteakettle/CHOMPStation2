@@ -53,7 +53,7 @@
 	overlays = overlays_to_add
 	..()
 
-/obj/item/gun/magnetic/matfed/attack_hand(var/mob/user) // It doesn't keep a loaded item inside.
+/obj/item/gun/magnetic/matfed/attack_hand(mob/user) // It doesn't keep a loaded item inside.
 	if(user.get_inactive_hand() == src)
 		var/obj/item/removing
 
@@ -84,7 +84,7 @@
 		return span_warning("It\'s out of [ammo_material]!")
 
 
-/obj/item/gun/magnetic/matfed/attackby(var/obj/item/thing, var/mob/user)
+/obj/item/gun/magnetic/matfed/attackby(obj/item/thing, mob/user)
 	. = ..()
 	update_rating_mod()
 	if(removable_components)
@@ -125,7 +125,7 @@
 				to_chat(user, span_warning("\The [src] cannot hold more [ammo_material]."))
 				return
 			loading = TRUE
-			while(mat_storage + SHEET_MATERIAL_AMOUNT <= max_mat_storage && do_after(user,1.5 SECONDS))
+			while(mat_storage + SHEET_MATERIAL_AMOUNT <= max_mat_storage && do_after(user,1.5 SECONDS, target = src))
 				mat_storage += SHEET_MATERIAL_AMOUNT
 				playsound(src, 'sound/effects/phasein.ogg', 15, 1)
 				M.use(1)

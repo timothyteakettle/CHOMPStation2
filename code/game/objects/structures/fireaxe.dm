@@ -8,6 +8,7 @@
 	layer = ABOVE_WINDOW_LAYER
 	anchored = TRUE
 	density = FALSE
+	flags = WALL_ITEM
 	var/open = 0
 	var/hitstaken = 0
 	var/locked = 1
@@ -20,7 +21,7 @@
 		fireaxe = new /obj/item/material/twohanded/fireaxe()
 	update_icon()
 
-/obj/structure/fireaxecabinet/attackby(var/obj/item/O as obj, var/mob/user as mob)  //Marker -Agouri
+/obj/structure/fireaxecabinet/attackby(obj/item/O as obj, mob/user as mob)  //Marker -Agouri
 	//..() //That's very useful, Erro
 
 	// This could stand to be put further in, made better, etc. but fuck you. Fuck whoever
@@ -36,7 +37,7 @@
 		if(istype(O, /obj/item/multitool))
 			to_chat(user, span_warning("Resetting circuitry..."))
 			playsound(src, 'sound/machines/lockreset.ogg', 50, 1)
-			if(do_after(user, 20 * O.toolspeed))
+			if(do_after(user, 2 SECONDS * O.toolspeed, target = src))
 				locked = 0
 				to_chat(user, span_warning("You disable the locking modules."))
 				update_icon()
@@ -87,7 +88,7 @@
 			else
 				to_chat(user, span_warning("Resetting circuitry..."))
 				playsound(src, 'sound/machines/lockenable.ogg', 50, 1)
-				if(do_after(user,20 * O.toolspeed))
+				if(do_after(user, 2 SECONDS * O.toolspeed, target = src))
 					locked = 1
 					to_chat(user, span_warning("You re-enable the locking modules."))
 				return

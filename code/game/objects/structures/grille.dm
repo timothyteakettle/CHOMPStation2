@@ -34,7 +34,7 @@
 	var/attack_message = "kicks"
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
-		if(H.species.can_shred(H))
+		if(H.species.can_shred(H, FALSE, 10))
 			attack_message = "mangles"
 			damage_dealt = 5
 
@@ -55,7 +55,7 @@
 		return prob(30)
 	return !density
 
-/obj/structure/grille/bullet_act(var/obj/item/projectile/Proj)
+/obj/structure/grille/bullet_act(obj/item/projectile/Proj)
 	if(!Proj)	return
 
 	//Flimsy grilles aren't so great at stopping projectiles. However they can absorb some of the impact
@@ -136,7 +136,7 @@
 				to_chat(user, span_notice("There is already a window facing this way there."))
 				return
 		to_chat(user, span_notice("You start placing the window."))
-		if(do_after(user,20))
+		if(do_after(user, 2 SECONDS, target = src))
 			for(var/obj/structure/window/WINDOW in loc)
 				if(WINDOW.dir == dir_to_set)//checking this for a 2nd time to check if a window was made while we were waiting.
 					to_chat(user, span_notice("There is already a window facing this way there."))
@@ -155,9 +155,9 @@
 		user.do_attack_animation(src)
 		playsound(src, 'sound/effects/grillehit.ogg', 80, 1)
 		switch(W.damtype)
-			if("fire")
+			if(BURN)
 				health -= W.force
-			if("brute")
+			if(BRUTE)
 				health -= W.force * 0.1
 	healthcheck()
 	..()
@@ -212,7 +212,7 @@
 			healthcheck()
 	..()
 
-/obj/structure/grille/attack_generic(var/mob/user, var/damage, var/attack_verb)
+/obj/structure/grille/attack_generic(mob/user, damage, attack_verb)
 	visible_message(span_danger("[user] [attack_verb] the [src]!"))
 	user.do_attack_animation(src)
 	health -= damage
@@ -288,7 +288,7 @@
 	qdel(src)
 	return TRUE
 
-/obj/structure/grille/take_damage(var/damage)
+/obj/structure/grille/take_damage(damage)
 	health -= damage
 	spawn(1) healthcheck()
 	return 1

@@ -21,12 +21,24 @@ GLOBAL_PROTECT(href_token)
 	var/datum/feed_channel/admincaster_feed_channel = new /datum/feed_channel
 	var/admincaster_signature	//What you'll sign the newsfeeds as
 
+	/// Code security critcal token used for authorizing href topic calls
 	var/href_token
 
 	/// Link from the database pointing to the admin's feedback forum
 	var/cached_feedback_link
 
 	var/deadmined
+
+	var/datum/filter_editor/filteriffic
+	var/datum/particle_editor/particle_test
+	var/datum/whitelist_editor/whitelist_editor
+	var/datum/spawn_menu/spawn_menu
+	var/datum/spawnpanel/spawn_panel
+
+	var/datum/access_viewer/access_view_menu
+
+	/// A lazylist of tagged datums, for quick reference with the View Tags verb
+	var/list/tagged_datums
 
 	var/given_profiling = FALSE
 
@@ -57,6 +69,8 @@ GLOBAL_PROTECT(href_token)
 	if(IsAdminAdvancedProcCall())
 		alert_to_permissions_elevation_attempt(usr)
 		return QDEL_HINT_LETMELIVE
+	if(faxreply)
+		qdel(faxreply)
 	. = ..()
 
 /datum/admins/proc/activate()
@@ -238,7 +252,7 @@ you will have to do something like if(client.rights & R_ADMIN) yourself.
 //probably a bit iffy - will hopefully figure out a better solution
 /proc/check_if_greater_rights_than(client/other)
 	if(usr?.client)
-		if(usr.client.holder)
+		if(check_rights_for(usr.client, R_HOLDER))
 			if(!other || !other.holder)
 				return TRUE
 			return usr.client.holder.check_if_greater_rights_than_holder(other.holder)
@@ -249,19 +263,6 @@ you will have to do something like if(client.rights & R_ADMIN) yourself.
 	if(subject?.holder)
 		return subject.holder.check_for_rights(rights_required)
 	return FALSE
-
-/client/proc/mark_datum(datum/D)
-	if(!holder)
-		return
-	if(holder.marked_datum)
-		vv_update_display(holder.marked_datum, "marked", "")
-	holder.marked_datum = D
-	vv_update_display(D, "marked", VV_MSG_MARKED)
-
-/client/proc/mark_datum_mapview(datum/D as mob|obj|turf|area in view(view))
-	set category = "Debug.Game"
-	set name = "Mark Object"
-	mark_datum(D)
 
 /proc/GenerateToken()
 	. = ""
@@ -274,7 +275,7 @@ you will have to do something like if(client.rights & R_ADMIN) yourself.
 		var/client/C = usr.client
 		if(!C)
 			// CRASH("No client for HrefToken()!") //Chomp EDIT - this seems be to encountered and we don't want this to crash
-			log_debug("Attempted to retrieve a HrefToken of an entity with no client.") //Chomp EDIT
+			log_runtime("Attempted to retrieve a HrefToken of an entity with no client.") //Chomp EDIT
 			return 0 //Chomp EDIT
 		var/datum/admins/holder = C.holder
 		if(holder)

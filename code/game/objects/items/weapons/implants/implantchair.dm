@@ -8,6 +8,7 @@
 	density = TRUE
 	opacity = 0
 	anchored = TRUE
+	flags = REMOTEVIEW_ON_ENTER
 
 	var/ready = 1
 	var/malfunction = 0
@@ -41,10 +42,10 @@
 	dat += span_bold("Implants:") + " [src.implant_list.len ? "[implant_list.len]" : "<A href='byond://?src=\ref[src];replenish=1'>Replenish</A>"]<BR>"
 	if(src.occupant)
 		dat += "[src.ready ? "<A href='byond://?src=\ref[src];implant=1'>Implant</A>" : "Recharging"]<BR>"
-	user.set_machine(src)
-	user << browse("<html>[dat]</html>", "window=implant")
-	onclose(user, "implant")
 
+	var/datum/browser/popup = new(user, "implant", "Implant")
+	popup.set_content(dat)
+	popup.open()
 
 /obj/machinery/implantchair/Topic(href, href_list)
 	if((get_dist(src, usr) <= 1) || isAI(usr))
@@ -67,7 +68,7 @@
 		return
 
 
-/obj/machinery/implantchair/attackby(var/obj/item/G, var/mob/user)
+/obj/machinery/implantchair/attackby(obj/item/G, mob/user)
 	if(istype(G, /obj/item/grab))
 		var/obj/item/grab/grab = G
 		if(!ismob(grab.affecting))
@@ -82,15 +83,12 @@
 	return
 
 
-/obj/machinery/implantchair/proc/go_out(var/mob/M)
+/obj/machinery/implantchair/proc/go_out(mob/M)
 	if(!( src.occupant ))
 		return
 	if(M == occupant) // so that the guy inside can't eject himself -Agouri
 		return
-	if (src.occupant.client)
-		src.occupant.client.eye = src.occupant.client.mob
-		src.occupant.client.perspective = MOB_PERSPECTIVE
-	src.occupant.loc = src.loc
+	src.occupant.forceMove(get_turf(src))
 	if(injecting)
 		implant(src.occupant)
 		injecting = 0
@@ -106,18 +104,15 @@
 	if(src.occupant)
 		to_chat(usr, span_warning("\The [src] is already occupied!"))
 		return
-	if(M.client)
-		M.client.perspective = EYE_PERSPECTIVE
-		M.client.eye = src
 	M.stop_pulling()
-	M.loc = src
+	M.forceMove(src)
 	src.occupant = M
 	src.add_fingerprint(usr)
 	icon_state = "implantchair_on"
 	return 1
 
 
-/obj/machinery/implantchair/proc/implant(var/mob/M)
+/obj/machinery/implantchair/proc/implant(mob/M)
 	if (!istype(M, /mob/living/carbon))
 		return
 	if(!implant_list.len)	return

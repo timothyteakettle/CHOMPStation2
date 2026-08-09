@@ -6,13 +6,12 @@
 	icon = 'icons/mecha/mecha_equipment.dmi'
 	icon_state = "mecha_equip"
 	force = 5
-	origin_tech = list(TECH_MATERIAL = 2)
 	description_info = "Some equipment may gain new abilities or advantages if equipped to certain types of Exosuits."
 	var/equip_cooldown = 0
 	var/equip_ready = TRUE
 	var/energy_drain = 0
 	var/obj/mecha/chassis = null
-	var/range = MELEE //bitflags
+	var/range = MECH_MELEE //bitflags
 	/// Bitflag. Used by exosuit fabricator to assign sub-categories based on which exosuits can equip this.
 	var/mech_flags = NONE
 	var/salvageable = TRUE
@@ -69,14 +68,12 @@
 				chassis.special_equipment -= src
 				listclearnulls(chassis.special_equipment)
 			//VOREStation Addition begin: MICROMECHS
-			//CHOMPedit commented micromech stuff, because fuck this trash
-			/*
 			if(equip_type == EQUIP_MICRO_UTILITY)
 				chassis.micro_utility_equipment -= src
 				listclearnulls(chassis.micro_utility_equipment)
 			if(equip_type == EQUIP_MICRO_WEAPON)
 				chassis.micro_weapon_equipment -= src
-				listclearnulls(chassis.micro_weapon_equipment) */
+				listclearnulls(chassis.micro_weapon_equipment)
 			//VOREStation Addition end: MICROMECHS
 		chassis.universal_equipment -= src
 		chassis.equipment -= src
@@ -108,7 +105,7 @@
 
 /obj/item/mecha_parts/mecha_equipment/proc/critfail()
 	if(chassis)
-		log_message("Critical failure",1)
+		src.mecha_log_message("Critical failure",1)
 	return
 
 /obj/item/mecha_parts/mecha_equipment/proc/get_equip_info()
@@ -119,7 +116,7 @@
 	return range&RANGED
 
 /obj/item/mecha_parts/mecha_equipment/proc/is_melee()
-	return range&MELEE
+	return range&MECH_MELEE
 
 /obj/item/mecha_parts/mecha_equipment/proc/enable_special_checks(atom/target)
 	if(ispath(required_type))
@@ -161,12 +158,10 @@
 	if(equip_type == EQUIP_SPECIAL && M.special_equipment.len < M.max_special_equip)
 		return 1
 	//VOREStation Addition begin: MICROMECHS
-	//CHOMPedit commented micromech stuff, because fuck this trash
-	/*
 	if(equip_type == EQUIP_MICRO_UTILITY && M.micro_utility_equipment.len < M.max_micro_utility_equip)
 		return 1
 	if(equip_type == EQUIP_MICRO_WEAPON && M.micro_weapon_equipment.len < M.max_micro_weapon_equip)
-		return 1 */
+		return 1
 	//VOREStation Addition end: MICROMECHS
 	if(equip_type != EQUIP_SPECIAL && M.universal_equipment.len < M.max_universal_equip) //The exosuit needs to be military grade to actually have a universal slot capable of accepting a true weapon.
 		if(equip_type == EQUIP_WEAPON && !istype(M, /obj/mecha/combat))
@@ -197,14 +192,12 @@
 		M.special_equipment += src
 		has_equipped = 1
 	//VOREStation Addition begin: MICROMECHS
-	//CHOMPedit commented micromech stuff, because fuck this trash
-	/*
 	if(equip_type == EQUIP_MICRO_UTILITY && M.micro_utility_equipment.len < M.max_micro_utility_equip && !has_equipped)
 		M.micro_utility_equipment += src
 		has_equipped = 1
 	if(equip_type == EQUIP_MICRO_WEAPON && M.micro_weapon_equipment.len < M.max_micro_weapon_equip && !has_equipped)
 		M.micro_weapon_equipment += src
-		has_equipped = 1 */
+		has_equipped = 1
 	//VOREStation Addition end: MICROMECHS
 	if(equip_type != EQUIP_SPECIAL && M.universal_equipment.len < M.max_universal_equip && !has_equipped)
 		M.universal_equipment += src
@@ -215,7 +208,7 @@
 	if(enable_special_checks(M))
 		enable_special = TRUE
 
-	M.log_message("[src] initialized.")
+	M.mecha_log_message("[src] initialized.")
 	if(!M.selected)
 		M.selected = src
 	src.update_chassis_page()
@@ -243,17 +236,15 @@
 			if(EQUIP_SPECIAL)
 				chassis.special_equipment -= src
 			//VOREStation Addition begin: MICROMECHS
-			//CHOMPedit commented micromech stuff, because fuck this trash
-			/*
 			if(EQUIP_MICRO_UTILITY)//CHOMPstation edit - This was improperly named bugging detaching on my equipment fix.
 				chassis.micro_utility_equipment -= src
 			if(EQUIP_MICRO_WEAPON)
-				chassis.micro_weapon_equipment -= src */
+				chassis.micro_weapon_equipment -= src
 			//VOREStation Addition end: MICROMECHS
 	if(chassis.selected == src)
 		chassis.selected = null
 	update_chassis_page()
-	chassis.log_message("[src] removed from equipment.")
+	chassis.mecha_log_message("[src] removed from equipment.")
 	chassis = null
 	set_ready_state(TRUE)
 	enable_special = FALSE
@@ -275,9 +266,9 @@
 		chassis.occupant_message("[icon2html(src, chassis.occupant.client)] [message]")
 	return
 
-/obj/item/mecha_parts/mecha_equipment/proc/log_message(message)
+/obj/item/mecha_parts/mecha_equipment/proc/mecha_log_message(message)
 	if(chassis)
-		chassis.log_message("<i>[src]:</i> [message]")
+		chassis.mecha_log_message("<i>[src]:</i> [message]")
 	return
 
 /obj/item/mecha_parts/mecha_equipment/proc/MoveAction() //Allows mech equipment to do an action upon the mech moving

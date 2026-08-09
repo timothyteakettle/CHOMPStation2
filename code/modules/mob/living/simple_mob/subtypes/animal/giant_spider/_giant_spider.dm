@@ -69,8 +69,8 @@
 	icon_dead = "guard_dead"
 	has_eye_glow = TRUE
 	density = FALSE
-	minbodytemp = 175 //yw edit, Makes mobs survive cryogaia temps
-	faction = FACTION_AWAYMISSION //yw edit, Makes away mobs be on the same fuckin' side.
+	minbodytemp = 175
+	faction = FACTION_SPIDERS
 	maxHealth = 200
 	health = 200
 	pass_flags = PASSTABLE
@@ -84,7 +84,7 @@
 	response_disarm = "gently pushes aside"
 	response_harm   = "punches"
 
-	organ_names = /decl/mob_organ_names/spider
+	organ_names = /datum/decl/mob_organ_names/spider
 
 
 	melee_damage_lower = 18
@@ -129,6 +129,8 @@
 
 	no_pull_when_living = TRUE
 
+	export_research_value = TECHWEB_TIER_1_POINTS
+	export_research_diminished_max = 3
 
 /mob/living/simple_mob/animal/giant_spider/Initialize(mapload)
 	. = ..()
@@ -139,7 +141,7 @@
 		return FALSE
 	return ..()
 
-/mob/living/simple_mob/animal/giant_spider/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/animal/giant_spider/apply_melee_effects(atom/A)
 	if(isliving(A))
 		var/mob/living/L = A
 		if(L.reagents)
@@ -205,7 +207,7 @@
 		victim = L
 		break
 
-	if(victim)
+	if(victim?.reagents)
 		victim.reagents.add_reagent(REAGENT_ID_WARNINGTOXIN, poison_per_bite)
 		victim.AdjustWeakened(2)
 		victim.visible_message(span_danger("\The [src] has bitten \the [victim]!"))
@@ -216,5 +218,5 @@
 
 	set_AI_busy(FALSE)
 
-/decl/mob_organ_names/spider
+/datum/decl/mob_organ_names/spider
 	hit_zones = list("cephalothorax", "abdomen", "left forelegs", "right forelegs", "left hind legs", "right hind legs", "pedipalp", "mouthparts")

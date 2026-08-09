@@ -15,6 +15,9 @@
 
 /obj/structure/ladder/Initialize(mapload)
 	. = ..()
+	attempt_connection()
+
+/obj/structure/ladder/proc/attempt_connection()
 	// the upper will connect to the lower
 	if(allowed_directions & DOWN) //we only want to do the top one, as it will initialize the ones before it.
 		for(var/obj/structure/ladder/L in GetBelow(src))
@@ -41,10 +44,38 @@
 		return ..()
 
 /obj/structure/ladder/attackby(obj/item/C as obj, mob/user as mob)
+	if(C.has_tool_quality(TOOL_WELDER))
+		var/obj/item/weldingtool/WT = C.get_welder()
+		if(WT.remove_fuel(0, user))
+			playsound(src, 'sound/items/Welder2.ogg', 50, 1)
+			user.visible_message("\The [user] starts to deconstruct \the [src].", \
+				"You start to deconstruct \the [src].", \
+				"You hear welding")
+			if(do_after(user, 2 SECONDS, target = src))
+				if(QDELETED(src) || !WT.isOn()) return
+				var/obj/structure/ladder_assembly/A
+				to_chat(user, "You deconstruct \the [src].")
+				if(target_up)
+					target_up.visible_message("\The [target_up] deconstructs from below")
+					A = new /obj/structure/ladder_assembly(target_up.loc)
+					A.state = LADDER_CONSTRUCTION_WELDED
+					A.anchored = TRUE
+					qdel(target_up)
+				if(target_down)
+					target_down.visible_message("\The [target_down] deconstructs from above")
+					A = new /obj/structure/ladder_assembly(target_down.loc)
+					A.state = LADDER_CONSTRUCTION_WELDED
+					A.anchored = TRUE
+					qdel(target_down)
+				A = new /obj/structure/ladder_assembly(loc)
+				A.state = LADDER_CONSTRUCTION_WRENCHED
+				A.anchored = TRUE
+				qdel(src)
+			return
 	attack_hand(user)
 	return
 
-/obj/structure/ladder/attack_hand(var/mob/M)
+/obj/structure/ladder/attack_hand(mob/M)
 	if(!M.may_climb_ladders(src))
 		return
 
@@ -57,16 +88,16 @@
 
 	climbLadder(M, target_ladder)
 
-/obj/structure/ladder/attack_ghost(var/mob/M)
+/obj/structure/ladder/attack_ghost(mob/M)
 	var/target_ladder = getTargetLadder(M)
 	if(target_ladder)
 		M.forceMove(get_turf(target_ladder))
 
-/obj/structure/ladder/attack_robot(var/mob/M)
+/obj/structure/ladder/attack_robot(mob/M)
 	attack_hand(M)
 	return
 
-/obj/structure/ladder/proc/getTargetLadder(var/mob/M)
+/obj/structure/ladder/proc/getTargetLadder(mob/M)
 	if((!target_up && !target_down) || (target_up && !istype(target_up.loc, /turf) || (target_down && !istype(target_down.loc,/turf))))
 		to_chat(M, span_notice("\The [src] is incomplete and can't be climbed."))
 		return
@@ -87,7 +118,7 @@
 	else
 		return target_down || target_up
 
-/mob/proc/may_climb_ladders(var/ladder)
+/mob/proc/may_climb_ladders(ladder)
 	if(!Adjacent(ladder))
 		to_chat(src, span_warning("You need to be next to \the [ladder] to start climbing."))
 		return FALSE
@@ -96,10 +127,10 @@
 		return FALSE
 	return TRUE
 
-/mob/observer/dead/may_climb_ladders(var/ladder)
+/mob/observer/dead/may_climb_ladders(ladder)
 	return TRUE
 
-/obj/structure/ladder/proc/climbLadder(var/mob/M, var/obj/target_ladder)
+/obj/structure/ladder/proc/climbLadder(mob/M, obj/target_ladder)
 	var/direction = (target_ladder == target_up ? "up" : "down")
 	M.visible_message(span_infoplain(span_bold("\The [M]") + " begins climbing [direction] \the [src]!"),
 		span_info("You begin climbing [direction] \the [src]!"),
@@ -112,7 +143,7 @@
 		var/mob/living/carbon/human/MS = M
 		climb_modifier = MS.species.climb_mult
 
-	if(do_after(M, (climb_time * climb_modifier), src))
+	if(do_after(M, (climb_time * climb_modifier), target = src))
 		var/turf/T = get_turf(target_ladder)
 		for(var/atom/A in T)
 			if(!A.CanPass(M, M.loc, 1.5, 0))

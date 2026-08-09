@@ -17,7 +17,7 @@
 	unbreakable = 1 //It's already broken.
 	drops_debris = 0
 
-/obj/item/material/shard/set_material(var/new_material)
+/obj/item/material/shard/set_material(new_material)
 	..(new_material)
 	if(!istype(material))
 		return
@@ -55,7 +55,7 @@
 			return
 	return ..()
 
-/obj/item/material/shard/afterattack(var/atom/target, mob/living/carbon/human/user as mob, proximity)
+/obj/item/material/shard/afterattack(atom/target, mob/living/carbon/human/user as mob, proximity)
 	if(!proximity)
 		return
 	var/active_hand //hand the shard is in
@@ -89,7 +89,7 @@
 
 	if(user.gloves && !protected_hands)
 		to_chat(user, span_warning("\The [src] partially cuts into your hand through your gloves as you hit \the [target]!"))
-		user.apply_damage(light_glove_d + will_break ? break_damage : 0, BRUTE, active_hand, 0, 0, src.sharp, src.edge, src) // Ternary to include break damage
+		user.apply_damage(light_glove_d + will_break ? break_damage : 0, BRUTE, active_hand, 0, src.sharp, src.edge, src) // Ternary to include break damage
 
 	else if(!user.gloves)
 		to_chat(user, span_warning("\The [src] cuts into your hand as you hit \the [target]!"))

@@ -223,7 +223,7 @@
  * I have no idea why you would ever perform these surgeries, given that Bicaradine and Kelotane exist.
  * So I'm not even going to bother trying to represent them here. Fuck it.
  */
-/obj/machinery/computer/operating/proc/find_stage(var/obj/item/organ/external/E)
+/obj/machinery/computer/operating/proc/find_stage(obj/item/organ/external/E)
 	. = "None."
 	switch(E.open)
 		if(1)
@@ -263,7 +263,7 @@
  * This converts a typepath into a pretty name.
  * As best as it can, anyways.
  */
-/proc/pretty_type(var/datum/A)
+/proc/pretty_type(datum/A)
 	var/typeStr = "[A.type]"
 	. = copytext(typeStr, findlasttext(typeStr, "/") + 1, length(typeStr) + 1)
 	. = capitalize(replacetext(., "_", " "))
@@ -283,7 +283,7 @@
 			/datum/surgery_step/brainstem,
 			/datum/surgery_step/generic/ripper,
 		)
-	good_surgeries = surgery_steps
+	good_surgeries = GLOB.surgery_steps
 	for(var/datum/surgery_step/S in good_surgeries)
 		if(S.type in banned_surgery_steps)
 			good_surgeries -= S

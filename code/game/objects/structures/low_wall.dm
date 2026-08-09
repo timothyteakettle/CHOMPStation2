@@ -11,7 +11,6 @@
 	//atom_flags = ATOM_FLAG_NO_TEMP_CHANGE | ATOM_FLAG_CLIMBABLE | ATOM_FLAG_CAN_BE_PAINTED | ATOM_FLAG_ADJACENT_EXCEPTION
 	anchored = TRUE
 	density = TRUE
-	climbable = TRUE
 	throwpass = 1
 	layer = TABLE_LAYER
 
@@ -28,12 +27,12 @@
 	var/datum/material/material
 	var/grille_type
 
-/obj/structure/low_wall/Initialize(mapload, var/materialtype)
+/obj/structure/low_wall/Initialize(mapload, materialtype)
 	. = ..()
 	icon_state = "blank"
 	var/turf/T = loc
 	if(!isturf(T) || T.density || T.opacity)
-		warning("[src] on invalid turf [T] at [x],[y],[z]")
+		WARNING("[src] on invalid turf [T] at [x],[y],[z]")
 		return INITIALIZE_HINT_QDEL
 
 	if(!materialtype)
@@ -42,6 +41,8 @@
 	material = get_material_by_name(materialtype)
 
 	health = material.integrity
+
+	AddElement(/datum/element/climbable)
 
 	return INITIALIZE_HINT_LATELOAD
 
@@ -71,7 +72,7 @@
 		else
 			to_chat(user, span_danger("It's nearly falling to pieces."))
 
-/obj/structure/low_wall/attackby(var/obj/item/W, var/mob/user, var/hit_modifier, var/click_parameters)
+/obj/structure/low_wall/attackby(obj/item/W, mob/user, hit_modifier, click_parameters)
 	src.add_fingerprint(user)
 
 	// Making grilles (only works on Bay ones currently)
@@ -95,7 +96,7 @@
 				return
 		playsound(src.loc, 'sound/items/Ratchet.ogg', 100, 1)
 		to_chat(user, span_notice("Now disassembling the low wall..."))
-		if(do_after(user, 40, src))
+		if(do_after(user, 4 SECONDS, target = src))
 			to_chat(user, span_notice("You dissasembled the low wall!"))
 			dismantle()
 			return
@@ -123,9 +124,8 @@
 
 /obj/structure/low_wall/MouseDrop_T(atom/movable/AM, mob/user, src_location, over_location, src_control, over_control, params)
 	if(AM == user)
-		var/mob/living/H = user
-		if(istype(H) && can_climb(H))
-			do_climb(AM)
+		SEND_SIGNAL(src, COMSIG_CLIMBABLE_START_CLIMB, user)
+		return
 	var/obj/O = AM
 	if(!istype(O))
 		return
@@ -172,7 +172,7 @@
 		to_chat(user, span_warning("You need at least two rods to do this."))
 		return
 	to_chat(user, span_notice("Assembling grille..."))
-	if(!do_after(user, 1 SECONDS, R, exclusive = TASK_ALL_EXCLUSIVE))
+	if(!do_after(user, 1 SECONDS, target = R))
 		return
 	if(!R.use(2))
 		return
@@ -192,7 +192,7 @@
 		to_chat(user, span_warning("You need at least four sheets of glass to do this."))
 		return
 	to_chat(user, span_notice("Assembling window..."))
-	if(!do_after(user, 4 SECONDS, G, exclusive = TASK_ALL_EXCLUSIVE))
+	if(!do_after(user, 4 SECONDS, target = G))
 		return
 	if(!G.use(4))
 		return
@@ -251,20 +251,21 @@
 			I.color = main_color
 			add_overlay(I)
 
-/obj/structure/low_wall/bullet_act(var/obj/item/projectile/Proj)
+/obj/structure/low_wall/bullet_act(obj/item/projectile/Proj)
 	var/proj_damage = Proj.get_structure_damage()
 	var/damage = min(proj_damage, 100)
 	take_damage(damage)
 	return
 
-/obj/structure/low_wall/hitby(AM as mob|obj, var/speed)
+/obj/structure/low_wall/hitby(atom/movable/source, datum/thrownthing/throwingdatum)
 	..()
 	var/tforce = 0
-	if(ismob(AM)) // All mobs have a multiplier and a size according to mob_defines.dm
-		var/mob/I = AM
+	var/speed = throwingdatum?.speed || THROWFORCE_SPEED_DIVISOR
+	if(ismob(source)) // All mobs have a multiplier and a size according to mob_defines.dm
+		var/mob/I = source
 		tforce = I.mob_size * (speed/THROWFORCE_SPEED_DIVISOR)
-	else
-		var/obj/O = AM
+	else if(isitem(source))
+		var/obj/item/O = source
 		tforce = O.throwforce * (speed/THROWFORCE_SPEED_DIVISOR)
 	if (tforce < 15)
 		return
@@ -275,7 +276,7 @@
 	if(health <= 0)
 		dismantle()
 
-/obj/structure/low_wall/attack_generic(var/mob/user, var/damage, var/attack_verb)
+/obj/structure/low_wall/attack_generic(mob/user, damage, attack_verb)
 	visible_message(span_danger("[user] [attack_verb] the [src]!"))
 	user.do_attack_animation(src)
 	take_damage(damage)
@@ -397,7 +398,7 @@
 	icon_state = "preview_glass"
 	basestate = "window"
 	alpha = 180
-	flags = 0
+	flags = NONE
 	fulltile = TRUE
 	maxhealth = 24
 	glasstype = /obj/item/stack/material/glass
@@ -575,7 +576,7 @@
 /obj/effect/low_wall_spawner/Initialize(mapload)
 	. = ..()
 	if(locate(/obj/effect/low_wall_spawner) in oview(0, src))
-		warning("Duplicate low wall spawners in [x],[y],[z]!")
+		WARNING("Duplicate low wall spawners in [x],[y],[z]!")
 		return INITIALIZE_HINT_QDEL
 
 	if(low_wall_type)

@@ -34,7 +34,7 @@ export const MessageMonitorMain = (props) => {
               selected={linkedServer.active}
               onClick={() => act('active')}
             >
-              {'Server ' + (linkedServer.active ? 'Enabled' : 'Disabled')}
+              {`Server ${linkedServer.active ? 'Enabled' : 'Disabled'}`}
             </Button>
           </Stack.Item>
         </Stack>
@@ -101,7 +101,7 @@ export const MessageMonitorLogs = (props: {
         {logs.map((log, i) => (
           <Stack.Item m="2px" key={log.ref} basis="49%" grow={i % 2}>
             <Section
-              title={log.sender + ' -> ' + log.recipient}
+              title={`${log.sender} -> ${log.recipient}`}
               buttons={
                 <Button.Confirm
                   confirmContent="Delete Log?"
@@ -152,7 +152,9 @@ export const MessageMonitorAdmin = (props) => {
     custommessage,
   } = data;
 
-  const recipientOptions = Object.keys(possibleRecipients);
+  const recipientOptions = Object.keys(possibleRecipients).sort((a, b) =>
+    a.localeCompare(b),
+  );
 
   return (
     <Section title="Admin Messaging">
@@ -173,8 +175,11 @@ export const MessageMonitorAdmin = (props) => {
         </LabeledList.Item>
         <LabeledList.Item label="Recipient">
           <Dropdown
+            searchInput
+            styledInput
             autoScroll={false}
             selected={customrecepient}
+            displayText={customrecepient}
             options={recipientOptions}
             width="100%"
             mb={-0.7}

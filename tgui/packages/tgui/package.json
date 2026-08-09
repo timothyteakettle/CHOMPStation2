@@ -1,24 +1,22 @@
 {
-  "private": true,
-  "name": "tgui",
-  "version": "6.0.0",
-  "dependencies": {
-    "@floating-ui/react": "^0.27.5",
-    "common": "workspace:*",
-    "dateformat": "^5.0.3",
-    "dompurify": "^3.2.4",
-    "highlight.js": "^11.11.1",
-    "js-yaml": "^4.1.0",
-    "marked": "^4.3.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "tgui-core": "^4.0.3",
-    "tgui-dev-server": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/marked": "4.3.2",
-    "@types/react": "^19.1.0",
-    "@types/react-dom": "^19.1.2",
-    "vitest": "^3.1.1"
-  }
+	"name": "tgui",
+	"version": "6.0.0",
+	"dependencies": {
+		"common": "workspace:*",
+		"dateformat": "^5.0.3",
+		"dompurify": "^3.4.12",
+		"es-toolkit": "^1.50.0",
+		"highlight.js": "^11.11.1",
+		"jotai": "^2.20.2",
+		"js-yaml": "^5.2.3",
+		"marked": "^18.0.7",
+		"marked-base-url": "^1.1.10",
+		"marked-smartypants": "^1.1.12",
+		"react": "^19.2.8",
+		"react-dom": "^19.2.8",
+		"react-json-tree": "^0.20.0",
+		"tgui-core": "^6.1.1",
+		"tgui-dev-server": "workspace:*"
+	},
+	"private": true
 }

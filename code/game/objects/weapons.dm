@@ -1,9 +1,3 @@
-/obj/item
-	name = "weapon"
-	icon = 'icons/obj/weapons.dmi'
-	hitsound = "swing_hit"
-	var/cleaving = FALSE // Used to avoid infinite cleaving.
-
 /obj/item/Bump(mob/M as mob)
 	spawn(0)
 		..()
@@ -54,6 +48,6 @@
 	..()
 
 // This is purely the visual effect of cleaving.
-/obj/item/proc/cleave_visual(var/mob/living/user, var/mob/living/target)
+/obj/item/proc/cleave_visual(mob/living/user, mob/living/target)
 	var/obj/effect/temporary_effect/cleave_attack/E = new(get_turf(src))
 	E.dir = get_dir(user, target)

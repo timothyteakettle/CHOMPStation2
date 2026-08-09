@@ -33,13 +33,16 @@ Bonus
 		"Resistance 5" = "The host might end up speaking a completely made up language."
 	)
 
+	prefixes = list("Babel's ", "Tongue-Twisting ")
+	bodies = list("Tongue", "Language")
+
 /datum/symptom/language/Start(datum/disease/advance/A)
 	if(!..())
 		return
 	if(A.resistance)
 		gibberish = TRUE
 
-/datum/symptom/language/Activate(var/datum/disease/advance/A)
+/datum/symptom/language/Activate(datum/disease/advance/A)
 	if(!..())
 		return
 	var/mob/living/L = A.affected_mob

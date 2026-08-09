@@ -36,7 +36,7 @@
 	attack_sound = 'sound/weapons/bite.ogg'
 	attacktext = list("lanced","bitten","impaled","gored")
 
-	organ_names = /decl/mob_organ_names/fish
+	organ_names = /datum/decl/mob_organ_names/fish
 
 	meat_amount = 10
 	meat_type = /obj/item/reagent_containers/food/snacks/carpmeat/shark
@@ -45,11 +45,11 @@
 
 	var/knockdown_chance = 10	//slightly reduced their knockdown prob compared to carp given their greater power
 
-/mob/living/simple_mob/animal/space/shark/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/animal/space/shark/apply_melee_effects(atom/A)
 	if(isliving(A))
 		var/mob/living/L = A
 		if(prob(knockdown_chance))
-			L.add_modifier(/datum/modifier/entangled, 4 SECONDS) //CHOMPedit, replacing weaken/slowdown with slow down
+			L.add_modifier(/datum/modifier/entangled, 4 SECONDS) // replacing weaken/slowdown with slow down
 			L.visible_message(span_danger("\The [src] knocks down \the [L]!"))
 
 /mob/living/simple_mob/animal/space/shark/event

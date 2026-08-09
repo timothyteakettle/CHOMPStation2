@@ -76,7 +76,6 @@
 /area/groundbase/science/rnd)
 "ai" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Bathroom"
 	},
 /turf/simulated/floor/tiled/steel_ridged,
@@ -702,7 +701,6 @@
 /area/groundbase/level2/nw)
 "bn" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Unisex Restroom"
 	},
 /obj/structure/cable/yellow{
@@ -1036,6 +1034,20 @@
 	},
 /turf/simulated/floor/wood,
 /area/groundbase/civilian/kitchen/backroom)
+"cb" = (
+/obj/structure/table/bench/padded,
+/obj/machinery/atmospherics/pipe/simple/hidden/supply{
+	dir = 4
+	},
+/obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
+	dir = 8
+	},
+/obj/item/radio/intercom/culture{
+	dir = 1;
+	pixel_y = 24
+	},
+/turf/simulated/floor/tiled/dark,
+/area/groundbase/civilian/bar)
 "cc" = (
 /obj/machinery/door/firedoor/glass,
 /obj/machinery/door/airlock/glass_research{
@@ -1833,8 +1845,7 @@
 	},
 /obj/machinery/door/window/southleft{
 	dir = 1;
-	name = "shower door";
-	req_access = null
+	name = "shower door"
 	},
 /turf/simulated/floor/tiled/white,
 /area/groundbase/dorms/room1)
@@ -2450,7 +2461,7 @@
 /turf/simulated/floor/tiled,
 /area/groundbase/cargo/office)
 "gd" = (
-/obj/machinery/r_n_d/protolathe{
+/obj/machinery/rnd/production/protolathe{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/dark,
@@ -2874,7 +2885,7 @@
 /turf/simulated/floor/tiled/eris/cafe,
 /area/groundbase/civilian/kitchen)
 "hv" = (
-/obj/structure/toilet,
+/obj/structure/toilet/teleplumbed,
 /obj/machinery/button/remote/airlock{
 	id = "toilet1";
 	pixel_x = -26;
@@ -3078,7 +3089,6 @@
 	name = "Privacy Shutter Control";
 	pixel_y = 30
 	},
-/obj/machinery/computer/rdconsole/robotics,
 /turf/simulated/floor/tiled,
 /area/groundbase/science/robotics)
 "hV" = (
@@ -3250,7 +3260,6 @@
 	master_tag = "xenobio_airlock_control";
 	name = "Xenobiology Access Button";
 	pixel_x = -32;
-	req_access = null;
 	req_one_access = list(47,55)
 	},
 /obj/structure/cable/yellow{
@@ -4239,12 +4248,10 @@
 /area/medical/virology)
 "lj" = (
 /obj/structure/table/glass,
-/obj/item/radio{
+/obj/item/radio/phone{
 	anchored = 1;
 	canhear_range = 7;
 	frequency = 1487;
-	icon = 'icons/obj/items.dmi';
-	icon_state = "red_phone";
 	name = "Virology Emergency Phone";
 	pixel_y = 9
 	},
@@ -4598,8 +4605,7 @@
 	},
 /obj/machinery/door/window/southleft{
 	dir = 1;
-	name = "shower door";
-	req_access = null
+	name = "shower door"
 	},
 /turf/simulated/floor/tiled/white,
 /area/groundbase/dorms/room5)
@@ -4804,7 +4810,7 @@
 /turf/simulated/floor/tiled,
 /area/groundbase/science/robotics)
 "mI" = (
-/obj/structure/toilet{
+/obj/structure/toilet/teleplumbed{
 	dir = 8
 	},
 /obj/machinery/light,
@@ -5238,7 +5244,7 @@
 /turf/simulated/floor/wood,
 /area/groundbase/medical/psych)
 "oj" = (
-/obj/structure/toilet{
+/obj/structure/toilet/teleplumbed{
 	dir = 8
 	},
 /obj/machinery/light,
@@ -5364,7 +5370,6 @@
 /area/groundbase/medical/lobby)
 "oE" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Bathroom"
 	},
 /turf/simulated/floor/tiled/steel_ridged,
@@ -5540,7 +5545,7 @@
 /area/groundbase/medical/Chemistry)
 "ph" = (
 /obj/item/reagent_containers/glass/beaker/sulphuric,
-/obj/machinery/r_n_d/circuit_imprinter{
+/obj/machinery/rnd/production/circuit_imprinter{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/dark,
@@ -6426,6 +6431,7 @@
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
 	dir = 1
 	},
+/obj/item/gold_star_printer,
 /turf/simulated/floor/carpet,
 /area/groundbase/command/hop)
 "rv" = (
@@ -6514,6 +6520,7 @@
 /obj/machinery/requests_console/preset/research{
 	pixel_y = 30
 	},
+/obj/machinery/anomaly_harvester,
 /turf/simulated/floor/tiled,
 /area/groundbase/science/rnd)
 "rI" = (
@@ -7001,7 +7008,7 @@
 	pixel_x = -32;
 	pixel_y = 32
 	},
-/obj/machinery/mecha_part_fabricator,
+/obj/machinery/mecha_part_fabricator_tg,
 /obj/machinery/requests_console{
 	department = "Robotics";
 	departmentType = 2;
@@ -7174,7 +7181,7 @@
 /turf/simulated/floor/tiled/white,
 /area/groundbase/medical/triage)
 "tI" = (
-/obj/machinery/r_n_d/destructive_analyzer,
+/obj/machinery/rnd/destructive_analyzer,
 /turf/simulated/floor/tiled/dark,
 /area/groundbase/science/rnd)
 "tJ" = (
@@ -7223,7 +7230,6 @@
 /area/groundbase/level2/nw)
 "tP" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Bathroom"
 	},
 /turf/simulated/floor/tiled/steel_ridged,
@@ -7697,7 +7703,7 @@
 /area/groundbase/science/xenohall)
 "vi" = (
 /obj/machinery/light,
-/obj/structure/toilet{
+/obj/structure/toilet/teleplumbed{
 	dir = 4
 	},
 /turf/simulated/floor/tiled/white,
@@ -8076,7 +8082,7 @@
 /area/groundbase/medical/lobby)
 "wk" = (
 /obj/machinery/light,
-/obj/structure/toilet{
+/obj/structure/toilet/teleplumbed{
 	dir = 4
 	},
 /turf/simulated/floor/tiled/white,
@@ -8866,7 +8872,7 @@
 /turf/simulated/floor/wood,
 /area/groundbase/dorms/room1)
 "yC" = (
-/obj/structure/toilet{
+/obj/structure/toilet/teleplumbed{
 	dir = 8
 	},
 /obj/machinery/light,
@@ -9425,7 +9431,7 @@
 /turf/simulated/floor/tiled,
 /area/groundbase/science/robotics)
 "Ao" = (
-/obj/machinery/mecha_part_fabricator/pros,
+/obj/machinery/mecha_part_fabricator_tg/prosthetics,
 /turf/simulated/floor/tiled,
 /area/groundbase/science/robotics)
 "Ap" = (
@@ -10464,12 +10470,18 @@
 /area/groundbase/dorms/room1)
 "Dm" = (
 /obj/structure/table/standard,
-/obj/item/retail_scanner/science,
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
 	dir = 8
 	},
 /obj/structure/noticeboard{
 	pixel_x = 32
+	},
+/obj/item/storage/box/anomaly{
+	pixel_y = 12;
+	pixel_x = 10
+	},
+/obj/item/storage/box/anomaly{
+	pixel_y = 5
 	},
 /turf/simulated/floor/tiled,
 /area/groundbase/science/rnd)
@@ -10590,8 +10602,7 @@
 /obj/machinery/door/window/brigdoor/westright{
 	dir = 4;
 	name = "Robotics Desk";
-	req_access = list(29,47);
-	req_one_access = null
+	req_access = list(29,47)
 	},
 /obj/machinery/door/firedoor/glass,
 /obj/structure/table/reinforced,
@@ -10989,8 +11000,7 @@
 	},
 /obj/machinery/door/window/southleft{
 	dir = 1;
-	name = "shower door";
-	req_access = null
+	name = "shower door"
 	},
 /turf/simulated/floor/tiled/white,
 /area/groundbase/dorms/room3)
@@ -11035,6 +11045,7 @@
 	dir = 8
 	},
 /obj/machinery/light,
+/obj/machinery/power/emitter,
 /turf/simulated/floor/tiled,
 /area/groundbase/science/rnd)
 "EN" = (
@@ -11069,7 +11080,7 @@
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/groundbase/level2/nw)
 "EU" = (
-/obj/structure/toilet,
+/obj/structure/toilet/teleplumbed,
 /obj/machinery/button/remote/airlock{
 	id = "toilet2";
 	pixel_x = -26;
@@ -11222,7 +11233,7 @@
 /area/groundbase/command/hop)
 "Fr" = (
 /obj/machinery/light,
-/obj/structure/toilet{
+/obj/structure/toilet/teleplumbed{
 	dir = 4
 	},
 /turf/simulated/floor/tiled/white,
@@ -11607,7 +11618,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/groundbase/science/server)
 "Gu" = (
-/obj/machinery/r_n_d/server/robotics,
+/obj/machinery/rnd/server/master,
 /obj/machinery/atmospherics/unary/vent_pump{
 	dir = 8;
 	external_pressure_bound = 0;
@@ -11709,7 +11720,7 @@
 /turf/simulated/floor/tiled,
 /area/groundbase/science/circuits)
 "GK" = (
-/obj/machinery/r_n_d/circuit_imprinter,
+/obj/machinery/rnd/production/circuit_imprinter,
 /obj/item/reagent_containers/glass/beaker/sulphuric,
 /obj/machinery/light{
 	dir = 1
@@ -12155,8 +12166,7 @@
 	},
 /obj/machinery/door/window/southleft{
 	dir = 1;
-	name = "shower door";
-	req_access = null
+	name = "shower door"
 	},
 /obj/machinery/alarm{
 	dir = 4
@@ -13833,7 +13843,6 @@
 /area/groundbase/dorms)
 "Mr" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Bathroom"
 	},
 /turf/simulated/floor/tiled/steel_ridged,
@@ -13884,14 +13893,11 @@
 /obj/machinery/computer/med_data/laptop{
 	dir = 8
 	},
-/obj/item/radio{
+/obj/item/radio/phone{
 	anchored = 1;
 	canhear_range = 7;
 	frequency = 1487;
-	icon = 'icons/obj/items.dmi';
-	icon_state = "red_phone";
 	name = "Virology Emergency Phone";
-	pixel_x = 7;
 	pixel_y = 9
 	},
 /turf/simulated/floor/tiled/white,
@@ -13946,7 +13952,7 @@
 /turf/simulated/wall,
 /area/groundbase/civilian/chapel/office)
 "MF" = (
-/obj/machinery/computer/rdconsole/core{
+/obj/machinery/computer/rdconsole_tg{
 	dir = 4
 	},
 /turf/simulated/floor/tiled/dark,
@@ -14368,9 +14374,8 @@
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
 	},
-/obj/machinery/power/smes/buildable{
-	RCon_tag = "Substation - Command";
-	output_attempt = 0
+/obj/machinery/power/smes/buildable/disable_output{
+	RCon_tag = "Substation - Command"
 	},
 /turf/simulated/floor,
 /area/maintenance/groundbase/substation/command)
@@ -14630,7 +14635,7 @@
 /area/groundbase/civilian/hydroponics)
 "OB" = (
 /obj/machinery/light,
-/obj/structure/toilet{
+/obj/structure/toilet/teleplumbed{
 	dir = 4
 	},
 /turf/simulated/floor/tiled/white,
@@ -15156,7 +15161,7 @@
 /turf/simulated/floor/tiled,
 /area/groundbase/science/hall)
 "Qa" = (
-/obj/machinery/r_n_d/server/robotics,
+/obj/machinery/rnd/server,
 /obj/machinery/atmospherics/unary/vent_pump{
 	dir = 4;
 	icon_state = "map_vent_out";
@@ -15646,7 +15651,6 @@
 	master_tag = "xenobio_airlock_control";
 	name = "Xenobiology Access Button";
 	pixel_y = -32;
-	req_access = null;
 	req_one_access = list(47,55)
 	},
 /obj/structure/cable/yellow{
@@ -16283,6 +16287,9 @@
 	dir = 8;
 	pixel_x = 30
 	},
+/obj/item/radio/intercom/atc{
+	pixel_y = -24
+	},
 /turf/simulated/floor/tiled/dark,
 /area/groundbase/command/bridge)
 "Tf" = (
@@ -16405,7 +16412,6 @@
 /area/groundbase/science/circuits)
 "Tz" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Bathroom"
 	},
 /turf/simulated/floor/tiled/steel_ridged,
@@ -16967,7 +16973,6 @@
 /area/groundbase/civilian/library)
 "Vq" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Bathroom"
 	},
 /turf/simulated/floor/tiled/steel_ridged,
@@ -17055,8 +17060,7 @@
 /obj/machinery/door/window/brigdoor/westleft{
 	dir = 4;
 	name = "Robotics Desk";
-	req_access = list(29,47);
-	req_one_access = null
+	req_access = list(29,47)
 	},
 /obj/machinery/door/firedoor/glass,
 /obj/structure/table/reinforced,
@@ -17177,7 +17181,7 @@
 /turf/simulated/floor/carpet,
 /area/groundbase/civilian/chapel)
 "VT" = (
-/obj/structure/toilet{
+/obj/structure/toilet/teleplumbed{
 	dir = 8
 	},
 /obj/machinery/light,
@@ -17408,7 +17412,7 @@
 /turf/simulated/floor/tiled/white,
 /area/groundbase/medical/triage)
 "Wy" = (
-/obj/structure/closet/secure_closet/RD,
+/obj/structure/closet/secure_closet/research_director,
 /obj/item/aicard,
 /obj/item/clothing/glasses/omnihud/rnd,
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -17669,7 +17673,6 @@
 /area/groundbase/science/rd)
 "Xp" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Bathroom"
 	},
 /turf/simulated/floor/tiled/steel_ridged,
@@ -17903,6 +17906,7 @@
 	dir = 1;
 	pixel_y = -30
 	},
+/obj/item/retail_scanner/science,
 /turf/simulated/floor/tiled,
 /area/groundbase/science/rnd)
 "Yc" = (
@@ -18071,7 +18075,6 @@
 /area/groundbase/civilian/kitchen)
 "YF" = (
 /obj/machinery/door/airlock{
-	id_tag = null;
 	name = "Bathroom"
 	},
 /turf/simulated/floor/tiled/steel_ridged,
@@ -18435,7 +18438,7 @@
 /obj/effect/floor_decal/industrial/outline,
 /obj/machinery/embedded_controller/radio/simple_docking_controller{
 	dir = 4;
-	frequency = 1380;
+	frequency = 1381;
 	id_tag = "cargo_bay";
 	pixel_x = -23
 	},
@@ -23710,7 +23713,7 @@ xE
 xE
 xE
 FF
-PS
+cb
 LS
 Ny
 YO

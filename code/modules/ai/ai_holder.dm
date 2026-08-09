@@ -38,7 +38,7 @@
 	if(ai_holder_type)
 		ai_holder = new ai_holder_type(src)
 		if(!ai_holder)
-			log_debug("[src] could not initialize ai_holder of type [ai_holder_type]")
+			log_runtime("[src] could not initialize ai_holder of type [ai_holder_type]")
 			return
 		if(ishuman(src))
 			var/mob/living/carbon/human/H = src
@@ -91,7 +91,7 @@
 			return
 		if(snapshot)
 			to_chat(usr, span_warning("Someone (or you) may have started a mass edit on this AI datum already. Refresh the VV window to get the option to end the mass edit instead."))
-			href_list["datumrefresh"] = "\ref[src]"
+			href_list[VV_HK_DATUM_REFRESH] = "\ref[src]"
 			return
 		snapshot = vars.Copy() //'vars' appears to be special in that vars.Copy produces a flat list of keys with no values. It seems that 'vars[key]' is handled somewhere in the byond engine differently than normal lists.
 
@@ -133,7 +133,7 @@
 
 		VARSET_IN(src, snapshot, null, 2 MINUTES) // Safety
 		to_chat(usr, span_notice("Variable snapshot saved. Begin editing the datum, and end the mass edit from the dropdown menu within 2 minutes. Note that editing the contents of lists is not supported."))
-		href_list["datumrefresh"] = "\ref[src]"
+		href_list[VV_HK_DATUM_REFRESH] = "\ref[src]"
 
 	IF_VV_OPTION("mass_edit_finish")
 		if(!check_rights(R_ADMIN))
@@ -157,7 +157,7 @@
 
 		if(!diff.len)
 			to_chat(usr, span_warning("You don't appear to have changed anything on the AI datum you were editing."))
-			href_list["datumrefresh"] = "\ref[src]"
+			href_list[VV_HK_DATUM_REFRESH] = "\ref[src]"
 		else
 			var/message = "These differences were detected in your varedit. If you notice any that you didn't change, please redo your edit:<br>"
 			for(var/key in diff)
@@ -177,7 +177,7 @@
 			types += text2path(typestring)
 			typestring += "/"
 
-		var/list/searching = living_mob_list // Started/seeded with this
+		var/list/searching = GLOB.living_mob_list // Started/seeded with this
 		var/list/choices = list()
 		for(var/typechoice in types)
 			var/list/found = list()
@@ -192,7 +192,7 @@
 
 		var/choice = tgui_input_list(usr,"Based on your AI holder's mob location, we'll edit mobs on Z [levels_working.Join(",")]. What types do you want to alter?", "Types", choices)
 		if(!choice)
-			href_list["datumrefresh"] = "\ref[src]"
+			href_list[VV_HK_DATUM_REFRESH] = "\ref[src]"
 			return
 		var/list/selected = choices[choice]
 		for(var/mob/living/L as anything in selected)
@@ -209,9 +209,9 @@
 					to_chat(usr,span_warning("Skipping unavailable var '[newvar]' on: [L] [ADMIN_COORDJMP(L)]"))
 
 		to_chat(usr,span_notice("Mass AI edit done."))
-		href_list["datumrefresh"] = "\ref[src]"
+		href_list[VV_HK_DATUM_REFRESH] = "\ref[src]"
 
-/datum/ai_holder/New(var/new_holder)
+/datum/ai_holder/New(new_holder)
 	ASSERT(new_holder)
 	holder = new_holder
 	home_turf = get_turf(holder)
@@ -225,7 +225,7 @@
 	home_turf = null
 	return ..()
 
-/datum/ai_holder/proc/manage_processing(var/desired)
+/datum/ai_holder/proc/manage_processing(desired)
 	if(desired & AI_PROCESSING)
 		START_AIPROCESSING(src)
 	else
@@ -236,7 +236,7 @@
 	else
 		STOP_AIFASTPROCESSING(src)
 
-/datum/ai_holder/proc/holder_stat_change(var/mob, old_stat, new_stat)
+/datum/ai_holder/proc/holder_stat_change(mob, old_stat, new_stat)
 	SIGNAL_HANDLER
 	if(old_stat >= DEAD && new_stat <= DEAD) //Revived
 		manage_processing(AI_PROCESSING)
@@ -259,7 +259,7 @@
 	holder.apply_hud(STATUS_HUD, sleepingimage)
 
 // Now for the actual AI stuff.
-/datum/ai_holder/proc/set_busy(var/value = 0)
+/datum/ai_holder/proc/set_busy(value = 0)
 	busy = value
 	update_paused_hud()
 
@@ -322,7 +322,7 @@
 /datum/ai_holder/proc/handle_special_strategical()
 
 // For setting the stance WITHOUT processing it
-/datum/ai_holder/proc/set_stance(var/new_stance)
+/datum/ai_holder/proc/set_stance(new_stance)
 	if(holder?.key && !autopilot)
 		return
 	if(stance == new_stance)

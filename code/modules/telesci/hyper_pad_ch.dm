@@ -115,7 +115,7 @@
 		addtimer(CALLBACK(src, PROC_REF(animate_discharge), P), speed)
 		speed += teleport_speed/8
 
-/obj/machinery/hyperpad/centre/proc/animate_discharge(var/obj/machinery/hyperpad/Pad)
+/obj/machinery/hyperpad/centre/proc/animate_discharge(obj/machinery/hyperpad/Pad)
 	Pad.cut_overlays()
 
 /obj/machinery/hyperpad/centre/proc/doteleport(mob/user)
@@ -155,7 +155,7 @@
 			var/datum/effect/effect/system/teleport_greyscale/tele2 = new /datum/effect/effect/system/teleport_greyscale()
 			tele2.set_up(linked_pad.newcolor, locate((linked_pad.x - xadjust), (linked_pad.y - yadjust), linked_pad.z))
 			limit += 1
-			do_teleport(ROI, locate((linked_pad.x - xadjust), (linked_pad.y - yadjust), linked_pad.z), local = FALSE, bohsafe = TRUE, asoundin = 'sound/weapons/emitter2.ogg', asoundout = 'sound/weapons/emitter2.ogg', aeffectin = tele1, aeffectout = tele2)
+			do_teleport(ROI, locate((linked_pad.x - xadjust), (linked_pad.y - yadjust), linked_pad.z), effectin = tele1, effectout = tele2, asoundin = 'sound/weapons/emitter2.ogg', asoundout = 'sound/weapons/emitter2.ogg', channel = TELEPORT_CHANNEL_QUANTUM)
 
 	cut_overlays()
 	for(var/obj/machinery/hyperpad/P in linked)
@@ -174,5 +174,5 @@
 		addtimer(CALLBACK(src, PROC_REF(animate_charge), P, color_overlay), timer)
 		timer += teleport_cooldown/8
 
-/obj/machinery/hyperpad/centre/proc/animate_charge(var/obj/machinery/hyperpad/Pad, var/mutable_appearance/color)
+/obj/machinery/hyperpad/centre/proc/animate_charge(obj/machinery/hyperpad/Pad, mutable_appearance/color)
 	Pad.add_overlay(color)

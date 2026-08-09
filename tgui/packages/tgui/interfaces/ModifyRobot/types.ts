@@ -15,7 +15,7 @@ export type Data = {
   armour_options: Record<string, Comp>;
   current_gear: Record<string, string>;
   id_icon: string;
-  access_options: Access[] | undefined;
+  access_options?: Access[];
   ion_law_nr: string;
   ion_law: string;
   zeroth_law: string;
@@ -38,6 +38,7 @@ export type Data = {
   law_sets: law_pack[];
   active_ais: DropdownEntry[];
   selected_ai: string | null;
+  theme: string;
 };
 
 export type DropdownEntry = {
@@ -52,10 +53,10 @@ export type Target = {
   emagged: BooleanLike;
   active: BooleanLike;
   crisis_override: BooleanLike;
-  active_restrictions: string[];
+  active_restrictions?: string[];
   possible_restrictions: string[];
-  sprite: string | undefined;
-  sprite_size: string | undefined;
+  sprite?: string;
+  sprite_size?: string | null;
   modules: Module[];
   whitelisted_upgrades: Upgrade[];
   blacklisted_upgrades: Upgrade[];
@@ -65,7 +66,8 @@ export type Target = {
   restricted_upgrades: Upgrade[];
   radio_channels: string[];
   availalbe_channels: string[];
-  pka: PKA | undefined;
+  pka?: PKA;
+  multibelt?: Multibelt[];
   components: Component[];
   active_access: Access[];
 };
@@ -73,13 +75,13 @@ export type Target = {
 export type Upgrade = {
   name: string;
   path: string;
-  installed: number | undefined;
+  installed?: number;
 };
 
 export type Source = {
   model: string;
-  sprite: string | undefined;
-  sprite_size: string | undefined;
+  sprite?: string;
+  sprite_size?: string | null;
   modules: Module[];
 } | null;
 
@@ -111,6 +113,16 @@ export type PKA = {
   max_capacity: number;
 };
 
+export type Multibelt = {
+  name: string;
+  tools: {
+    name: string;
+    path: string;
+  }[];
+  ref: string;
+  integrated_tools: { name: string; ref: string }[];
+};
+
 export type InstalledCell = {
   name: string | null;
   charge: number | null;
@@ -137,8 +149,8 @@ export type Access = { id: number; name: string };
 
 export type Lookup = {
   path: string;
-  selected: string | undefined;
-  active: string | undefined;
+  selected?: string;
+  active?: string;
 };
 
 type law_pack = {

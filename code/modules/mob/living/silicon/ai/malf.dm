@@ -43,7 +43,7 @@
 	if(!research)
 		if(!errored)
 			errored = 1
-			error("malf_process() called on AI without research datum. Report this.")
+			log_world("## ERROR malf_process() called on AI without research datum. Report this.")
 			message_admins("ERROR: malf_process() called on AI without research datum. If admin modified one of the AI's vars revert the change and don't modify variables directly, instead use ProcCall or admin panels.")
 			spawn(1200)
 				errored = 0
@@ -76,7 +76,7 @@
 		research.cpu_increase_per_tick = research.cpu_increase_per_tick * 2
 
 // Starts AI's APU generator
-/mob/living/silicon/ai/proc/start_apu(var/shutup = 0)
+/mob/living/silicon/ai/proc/start_apu(shutup = 0)
 	if(!hardware || !istype(hardware, /datum/malf_hardware/apu_gen))
 		if(!shutup)
 			to_chat(src, "You do not have an APU generator and you shouldn't have this verb. Report this.")
@@ -90,7 +90,7 @@
 	APU_power = 1
 
 // Stops AI's APU generator
-/mob/living/silicon/ai/proc/stop_apu(var/shutup = 0)
+/mob/living/silicon/ai/proc/stop_apu(shutup = 0)
 	if(!hardware || !istype(hardware, /datum/malf_hardware/apu_gen))
 		return
 

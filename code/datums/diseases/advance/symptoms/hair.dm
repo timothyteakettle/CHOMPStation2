@@ -28,6 +28,8 @@ BONUS
 	symptom_delay_min = 45
 	symptom_delay_max = 90
 
+	bodies = list("Bald", "Scalp")
+
 /datum/symptom/shedding/Activate(datum/disease/advance/A)
 	if(!..())
 		return
@@ -50,7 +52,7 @@ BONUS
 				addtimer(CALLBACK(src, PROC_REF(change_hair), H, "Shaved", "Bald"), 5 SECONDS)
 	return
 
-/datum/symptom/shedding/proc/change_hair(var/mob/living/carbon/human/H, f_style, h_style)
+/datum/symptom/shedding/proc/change_hair(mob/living/carbon/human/H, f_style, h_style)
 	if(!H)
 		return
 	if(f_style)

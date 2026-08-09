@@ -12,7 +12,7 @@
 	start_x = loc.x
 	start_y = loc.y
 	// But pick an empty z level to use
-	map_z += global.using_map.get_empty_zlevel()
+	map_z += using_map.get_empty_zlevel()
 	. = ..()
 	if(!map_z[1])
 		log_and_message_admins("Could not create empty sector at [x], [y]. No available z levels to allocate.")
@@ -26,14 +26,14 @@
 	return ..()
 
 /obj/effect/overmap/visitable/sector/temporary/find_z_levels()
-	LAZYADD(map_z, global.using_map.get_empty_zlevel())
+	LAZYADD(map_z, using_map.get_empty_zlevel())
 
-/obj/effect/overmap/visitable/sector/temporary/proc/is_empty(var/mob/observer)
+/obj/effect/overmap/visitable/sector/temporary/proc/is_empty(mob/observer)
 	if(!LAZYLEN(map_z))
 		log_and_message_admins("CANARY: [src] tried to check is_empty, but map_z is `[map_z || "null"]`")
 		return TRUE
 	testing("Checking if sector at [map_z[1]] has no players.")
-	for(var/mob/M in global.player_list)
+	for(var/mob/M in GLOB.player_list)
 		if(M != observer && (M.z in map_z))
 			testing("There are people on it.")
 			return FALSE
@@ -44,7 +44,7 @@
 		qdel(src)
 
 /proc/get_deepspace(x,y)
-	var/turf/unsimulated/map/overmap_turf = locate(x,y,global.using_map.overmap_z)
+	var/turf/unsimulated/map/overmap_turf = locate(x,y,using_map.overmap_z)
 	if(!istype(overmap_turf))
 		CRASH("Attempt to get deepspace at ([x],[y]) which is not on overmap: [overmap_turf]")
 	var/obj/effect/overmap/visitable/sector/temporary/res = locate() in overmap_turf
@@ -89,7 +89,7 @@
 	return FALSE
 	// return isnull(client) && !key && stat == DEAD // Allows bodies that players have ghosted from to be deleted - Ater
 
-/proc/overmap_spacetravel(var/turf/space/T, var/atom/movable/A)
+/proc/overmap_spacetravel(turf/space/T, atom/movable/A)
 	if (!T || !A)
 		return
 
@@ -133,7 +133,7 @@
 
 	testing("[A] spacemoving from [M] ([M.x], [M.y]).")
 
-	var/turf/map = locate(M.x,M.y,global.using_map.overmap_z)
+	var/turf/map = locate(M.x,M.y,using_map.overmap_z)
 	var/obj/effect/overmap/visitable/TM
 	for(var/obj/effect/overmap/visitable/O in map)
 		if(O != M && O.in_space && prob(50))
@@ -155,6 +155,6 @@
 			if(D.pulling)
 				D.pulling.forceMove(dest)
 	else
-		log_debug("CANARY: Could not move [A] to [nx], [ny], [nz]: [dest ? "[dest]" : "null"]") //CHOMPEdit - changed to log_debug
+		to_chat(world, "CANARY: Could not move [A] to [nx], [ny], [nz]: [dest ? "[dest]" : "null"]")
 
 	M.cleanup()

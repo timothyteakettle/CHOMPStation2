@@ -1,4 +1,4 @@
-var/list/table_icon_cache = list()
+GLOBAL_LIST_EMPTY(table_icon_cache)
 
 /obj/structure/table
 	name = "table frame"
@@ -7,10 +7,9 @@ var/list/table_icon_cache = list()
 	desc = "It's a table, for putting things on. Or standing on, if you really want to."
 	density = TRUE
 	anchored = TRUE
-	climbable = TRUE
 	layer = TABLE_LAYER
 	throwpass = 1
-	surgery_odds = 50 //VOREStation Edit
+	surgery_cleanliness = 50
 	var/flipped = 0
 	var/maxhealth = 10
 	var/health = 10
@@ -73,10 +72,12 @@ var/list/table_icon_cache = list()
 	// reset color/alpha, since they're set for nice map previews
 	color = "#ffffff"
 	alpha = 255
-	update_connections(ticker && ticker.current_state == GAME_STATE_PLAYING)
+	update_connections(SSticker && SSticker.current_state == GAME_STATE_PLAYING)
 	update_icon()
 	update_desc()
 	update_material()
+
+	AddElement(/datum/element/climbable/table)
 
 /obj/structure/table/Destroy()
 	material = null
@@ -147,7 +148,7 @@ var/list/table_icon_cache = list()
 		if(F.welding)
 			to_chat(user, span_notice("You begin reparing damage to \the [src]."))
 			playsound(src, F.usesound, 50, 1)
-			if(!do_after(user, 20 * F.toolspeed) || !F.remove_fuel(1, user))
+			if(!do_after(user, 2 SECONDS * F.toolspeed, target = src) || !F.remove_fuel(1, user))
 				return
 			user.visible_message(span_infoplain(span_bold("\The [user]") + " repairs some damage to \the [src]."),
 									span_notice("You repair some damage to \the [src]."))
@@ -177,7 +178,7 @@ var/list/table_icon_cache = list()
 	visible_message(span_danger("\The [user] tears apart \the [src]!"))
 	src.break_to_parts()
 
-/obj/structure/table/attack_generic(mob/user as mob, var/damage)
+/obj/structure/table/attack_generic(mob/user as mob, damage)
 	if(damage >= 10)
 		if(reinforced && prob(70))
 			visible_message(span_danger("\The [user] smashes against \the [src]!"))
@@ -191,12 +192,6 @@ var/list/table_icon_cache = list()
 			return 1
 	visible_message(span_infoplain(span_bold("\The [user]") + " scratches at \the [src]!"))
 	return ..()
-
-/obj/structure/table/MouseDrop_T(obj/item/stack/material/what, mob/user)
-	if(can_reinforce && isliving(user) && (!user.stat) && istype(what) && user.get_active_hand() == what && Adjacent(user))
-		reinforce_table(what, user)
-	else
-		return ..()
 
 /obj/structure/table/proc/reinforce_table(obj/item/stack/material/S, mob/user)
 	if(reinforced)
@@ -243,7 +238,7 @@ var/list/table_icon_cache = list()
 	if(manipulating) return M
 	manipulating = 1
 	to_chat(user, span_notice("You begin [verb]ing \the [src] with [M.display_name]."))
-	if(!do_after(user, 20) || !S.use(1))
+	if(!do_after(user, 2 SECONDS, target = src) || !S.use(1))
 		manipulating = 0
 		return null
 	user.visible_message(span_notice("\The [user] [verb]es \the [src] with [M.display_name]."), span_notice("You finish [verb]ing \the [src]."))
@@ -262,7 +257,7 @@ var/list/table_icon_cache = list()
 								span_notice("You begin removing the [type_holding] holding \the [src]'s [M.display_name] [what] in place."))
 	if(sound)
 		playsound(src, sound, 50, 1)
-	if(!do_after(user, delay))
+	if(!do_after(user, delay, target = src))
 		manipulating = 0
 		return M
 	user.visible_message(span_infoplain(span_bold("\The [user]") + " removes the [M.display_name] [what] from \the [src]."),
@@ -283,7 +278,7 @@ var/list/table_icon_cache = list()
 	user.visible_message(span_infoplain(span_bold("\The [user]") + " begins dismantling \the [src]."),
 							span_notice("You begin dismantling \the [src]."))
 	playsound(src, W.usesound, 50, 1)
-	if(!do_after(user, 20 * W.toolspeed))
+	if(!do_after(user, 2 SECONDS * W.toolspeed, target = src))
 		manipulating = 0
 		return
 	user.visible_message(span_infoplain(span_bold("\The [user]") + " dismantles \the [src]."),
@@ -326,7 +321,7 @@ var/list/table_icon_cache = list()
 	qdel(src)
 	return shards
 
-/obj/structure/table/can_visually_connect_to(var/obj/structure/S)
+/obj/structure/table/can_visually_connect_to(obj/structure/S)
 	if(istype(S,/obj/structure/table/bench) && !istype(src,/obj/structure/table/bench))
 		return FALSE
 	if(istype(src,/obj/structure/table/bench) && !istype(S,/obj/structure/table/bench))
@@ -339,16 +334,16 @@ var/list/table_icon_cache = list()
 		return TRUE
 	..()
 
-/proc/get_table_image(var/icon/ticon,var/ticonstate,var/tdir,var/tcolor,var/talpha)
+/proc/get_table_image(icon/ticon,ticonstate,tdir,tcolor,talpha)
 	var/icon_cache_key = "\ref[ticon]-[ticonstate]-[tdir]-[tcolor]-[talpha]"
-	var/image/I = table_icon_cache[icon_cache_key]
+	var/image/I = GLOB.table_icon_cache[icon_cache_key]
 	if(!I)
 		I = image(icon = ticon, icon_state = ticonstate, dir = tdir)
 		if(tcolor)
 			I.color = tcolor
 		if(talpha)
 			I.alpha = talpha
-		table_icon_cache[icon_cache_key] = I
+		GLOB.table_icon_cache[icon_cache_key] = I
 
 	return I
 
@@ -417,7 +412,7 @@ var/list/table_icon_cache = list()
 		if(carpeted)
 			add_overlay("carpet_flip[type]")
 
-/obj/structure/table/proc/get_all_connected_tables(var/list/connections)
+/obj/structure/table/proc/get_all_connected_tables(list/connections)
 	if(!connections)
 		connections = list(src)
 	else

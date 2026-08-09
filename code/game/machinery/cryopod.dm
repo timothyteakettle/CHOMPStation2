@@ -11,7 +11,7 @@
 /obj/machinery/computer/cryopod
 	name = "cryogenic oversight console"
 	desc = "An interface between crew and the cryogenic storage oversight systems."
-	icon = 'icons/obj/Cryogenic2_vr.dmi' //VOREStation Edit - New Icon
+	icon = 'icons/obj/Cryogenic2.dmi'
 	icon_state = "cellconsole"
 	circuit = /obj/item/circuitboard/cryopodcontrol
 	density = FALSE
@@ -27,7 +27,7 @@
 	var/storage_name = "Cryogenic Oversight Control"
 	var/allow_items = 1
 
-	req_one_access = list(access_heads) //VOREStation Add
+	req_one_access = list(ACCESS_HEADS) //VOREStation Add
 
 /obj/machinery/computer/cryopod/update_icon()
 	..()
@@ -50,7 +50,7 @@
 /obj/machinery/computer/cryopod/dorms
 	name = "residential oversight console"
 	desc = "An interface between visitors and the residential oversight systems tasked with keeping track of all visitors in the deeper section of the colony."
-	circuit = "/obj/item/circuitboard/robotstoragecontrol"
+	circuit = /obj/item/circuitboard/dormscontrol
 
 	storage_type = "visitors"
 	storage_name = "Residential Oversight Control"
@@ -59,7 +59,7 @@
 /obj/machinery/computer/cryopod/travel
 	name = "docking oversight console"
 	desc = "An interface between visitors and the docking oversight systems tasked with keeping track of all visitors who enter or exit from the docks."
-	circuit = "/obj/item/circuitboard/robotstoragecontrol"
+	circuit = /obj/item/circuitboard/travelcontrol
 
 	storage_type = "visitors"
 	storage_name = "Travel Oversight Control"
@@ -68,7 +68,7 @@
 /obj/machinery/computer/cryopod/gateway
 	name = "gateway oversight console"
 	desc = "An interface between visitors and the gateway oversight systems tasked with keeping track of all visitors who enter or exit from the gateway."
-	circuit = "/obj/item/circuitboard/robotstoragecontrol"
+	circuit = /obj/item/circuitboard/gatewaycontrol
 
 	storage_type = "visitors"
 	storage_name = "Travel Oversight Control"
@@ -152,36 +152,36 @@
 	*/
 
 /obj/item/circuitboard/cryopodcontrol
-	name = "Circuit board (Cryogenic Oversight Console)"
-	build_path = "/obj/machinery/computer/cryopod"
-	origin_tech = list(TECH_DATA = 3)
+	name = T_BOARD("Cryogenic Oversight Console")
+	build_path = /obj/machinery/computer/cryopod
+	hidden = TRUE // todo - Make properly constructable in round
 
 /obj/item/circuitboard/robotstoragecontrol
-	name = "Circuit board (Robotic Storage Console)"
-	build_path = "/obj/machinery/computer/cryopod/robot"
-	origin_tech = list(TECH_DATA = 3)
+	name = T_BOARD("Robotic Storage Console")
+	build_path = /obj/machinery/computer/cryopod/robot
+	hidden = TRUE // todo - Make properly constructable in round
 
 /obj/item/circuitboard/dormscontrol
-	name = "Circuit board (Residential Oversight Console)"
-	build_path = "/obj/machinery/computer/cryopod/door/dorms"
-	origin_tech = list(TECH_DATA = 3)
+	name = T_BOARD("Residential Oversight Console")
+	build_path = /obj/machinery/computer/cryopod/dorms
+	hidden = TRUE // todo - Make properly constructable in round
 
 /obj/item/circuitboard/travelcontrol
-	name = "Circuit board (Travel Oversight Console - Docks)"
-	build_path = "/obj/machinery/computer/cryopod/door/travel"
-	origin_tech = list(TECH_DATA = 3)
+	name = T_BOARD("Travel Oversight Console - Docks")
+	build_path = /obj/machinery/computer/cryopod/travel
+	hidden = TRUE // todo - Make properly constructable in round
 
 /obj/item/circuitboard/gatewaycontrol
-	name = "Circuit board (Travel Oversight Console - Gateway)"
-	build_path = "/obj/machinery/computer/cryopod/door/gateway"
-	origin_tech = list(TECH_DATA = 3)
+	name = T_BOARD("Travel Oversight Console - Gateway")
+	build_path = /obj/machinery/computer/cryopod/gateway
+	hidden = TRUE // todo - Make properly constructable in round
 
 //Decorative structures to go alongside cryopods.
 /obj/structure/cryofeed
 
 	name = "cryogenic feed"
 	desc = "A bewildering tangle of machinery and pipes."
-	icon = 'icons/obj/Cryogenic2_vr.dmi' //VOREStation Edit - New Icon
+	icon = 'icons/obj/Cryogenic2.dmi'
 	icon_state = "cryo_rear"
 	anchored = TRUE
 	dir = WEST
@@ -191,12 +191,13 @@
 /obj/machinery/cryopod
 	name = "cryogenic freezer"
 	desc = "A man-sized pod for entering suspended animation."
-	icon = 'icons/obj/Cryogenic2_vr.dmi' //VOREStation Edit - New Icon
-	icon_state = "cryopod_0" //VOREStation Edit - New Icon
+	icon = 'icons/obj/Cryogenic2.dmi'
+	icon_state = "cryopod_0"
 	density = TRUE
 	anchored = TRUE
 	unacidable = TRUE
 	dir = WEST
+	flags = REMOTEVIEW_ON_ENTER
 
 	var/base_icon_state = "cryopod_0" //VOREStation Edit - New Icon
 	var/occupied_icon_state = "cryopod_1" //VOREStation Edit - New Icon
@@ -252,7 +253,7 @@
 /obj/machinery/cryopod/robot/door/dorms
 	name = "Residential District Elevator"
 	desc = "A small elevator that goes down to the deeper section of the colony."
-	icon = 'icons/obj/Cryogenic2_vr.dmi'
+	icon = 'icons/obj/Cryogenic2.dmi'
 	icon_state = "lift_closed"
 	base_icon_state = "lift_open"
 	occupied_icon_state = "lift_closed"
@@ -265,7 +266,7 @@
 /obj/machinery/cryopod/robot/door/travel
 	name = "Passenger Elevator"
 	desc = "A small elevator that goes down to the passenger section of the vessel."
-	icon = 'icons/obj/Cryogenic2_vr.dmi'
+	icon = 'icons/obj/Cryogenic2.dmi'
 	icon_state = "lift_closed"
 	base_icon_state = "lift_open"
 	occupied_icon_state = "lift_closed"
@@ -356,7 +357,7 @@
 
 // This function can not be undone; do not call this unless you are sure
 // Also make sure there is a valid control computer
-/obj/machinery/cryopod/robot/despawn_occupant(var/mob/to_despawn)
+/obj/machinery/cryopod/robot/despawn_occupant(mob/to_despawn)
 	var/mob/living/silicon/robot/R = to_despawn
 	if(!istype(R)) return ..()
 
@@ -378,13 +379,13 @@
 
 // This function can not be undone; do not call this unless you are sure
 // Also make sure there is a valid control computer
-/obj/machinery/cryopod/proc/despawn_occupant(var/mob/to_despawn)
+/obj/machinery/cryopod/proc/despawn_occupant(mob/to_despawn)
 	//Recursively despawn mobs
 	for(var/mob/M in to_despawn)
 		despawn_occupant(M)
 
 	// VOREStation
-	hook_vr("despawn", list(to_despawn, src))
+	persist_despawned_mob(to_despawn, src)
 	if(isliving(to_despawn))
 		var/mob/living/L = to_despawn
 		for(var/obj/belly/B as anything in L.vore_organs)
@@ -488,7 +489,7 @@
 
 		//Handle job slot/tater cleanup.
 		var/job = to_despawn.mind.assigned_role
-		job_master.FreeRole(job)
+		SSjob.free_role(job)
 		to_despawn.mind.assigned_role = null
 
 		if(to_despawn.mind.objectives.len)
@@ -496,8 +497,8 @@
 			to_despawn.mind.special_role = null
 
 		//else
-			//if(ticker.mode.name == "AutoTraitor")
-				//var/datum/game_mode/traitor/autotraitor/current_mode = ticker.mode
+			//if(SSticker.mode.name == "AutoTraitor")
+				//var/datum/game_mode/traitor/autotraitor/current_mode = SSticker.mode
 				//current_mode.possible_traitors.Remove(to_despawn)
 
 		// Delete them from datacore.
@@ -567,7 +568,7 @@
 	qdel(to_despawn)
 	set_occupant(null)
 
-/obj/machinery/cryopod/attackby(var/obj/item/G as obj, var/mob/user as mob)
+/obj/machinery/cryopod/attackby(obj/item/G as obj, mob/user as mob)
 
 	if(istype(G, /obj/item/grab))
 
@@ -629,7 +630,7 @@
 
 	visible_message("[usr] [on_enter_visible_message] [src].", 3)
 
-	if(do_after(usr, 20))
+	if(do_after(usr, 2 SECONDS, target = src))
 
 		if(!usr || !usr.client)
 			return
@@ -639,8 +640,6 @@
 			return
 
 		usr.stop_pulling()
-		usr.client.perspective = EYE_PERSPECTIVE
-		usr.client.eye = src
 		usr.forceMove(src)
 		set_occupant(usr)
 		if(ishuman(usr) && applies_stasis)
@@ -666,19 +665,16 @@
 	for(var/obj/machinery/gateway/G in range(1,src))
 		G.icon_state = "on"
 
-/obj/machinery/cryopod/robot/door/gateway/go_out(var/skip_move = FALSE)
+/obj/machinery/cryopod/robot/door/gateway/go_out(skip_move = FALSE)
 	..(skip_move)
 	for(var/obj/machinery/gateway/G in range(1,src))
 		G.icon_state = "off"
 
-/obj/machinery/cryopod/proc/go_out(var/skip_move = FALSE)
+/obj/machinery/cryopod/proc/go_out(skip_move = FALSE)
 
 	if(!occupant)
 		return
 
-	if(occupant.client)
-		occupant.client.eye = occupant.client.mob
-		occupant.client.perspective = MOB_PERSPECTIVE
 	if(!skip_move)
 		occupant.forceMove(get_turf(src))
 	if(ishuman(occupant) && applies_stasis)
@@ -690,18 +686,18 @@
 
 	return
 
-/obj/machinery/cryopod/proc/set_occupant(var/new_occupant)
+/obj/machinery/cryopod/proc/set_occupant(new_occupant)
 	occupant = new_occupant
 	name = initial(name)
 	if(occupant)
 		name = "[name] ([occupant])"
 
-/obj/machinery/cryopod/MouseDrop_T(var/mob/target, var/mob/user)
+/obj/machinery/cryopod/MouseDrop_T(mob/target, mob/user)
 	if(user.stat || user.lying || !Adjacent(user) || !target.Adjacent(user))
 		return
 	go_in(target, user)
 
-/obj/machinery/cryopod/proc/go_in(var/mob/M, var/mob/user)
+/obj/machinery/cryopod/proc/go_in(mob/M, mob/user)
 	if(!check_occupant_allowed(M))
 		return
 	if(!M)
@@ -714,7 +710,8 @@
 
 	if(M.client)
 		if(tgui_alert(M,"Would you like to enter long-term storage?","Cryopod",list("Yes","No")) == "Yes")
-			if(!M) return
+			if(!M || !M.Adjacent(src))
+				return
 			willing = 1
 	else
 		willing = 1
@@ -725,15 +722,11 @@
 		else
 			visible_message("\The [user] starts putting [M] into \the [src].", 3)
 
-		if(do_after(user, 20))
+		if(do_after(user, 2 SECONDS, target = src))
 			if(occupant)
 				to_chat(user, span_warning("\The [src] is already occupied."))
 				return
 			M.forceMove(src)
-
-			if(M.client)
-				M.client.perspective = EYE_PERSPECTIVE
-				M.client.eye = src
 		else return
 
 		icon_state = occupied_icon_state

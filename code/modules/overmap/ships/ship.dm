@@ -79,7 +79,7 @@
 
 	var/life = 0
 
-	for(var/mob/living/L in living_mob_list)
+	for(var/mob/living/L in GLOB.living_mob_list)
 		if(L.z in map_z) //Things inside things we'll consider shielded, otherwise we'd want to use get_z(L)
 			life++
 
@@ -91,7 +91,7 @@
 
 //Does actual burn and returns the resulting acceleration
 /obj/effect/overmap/visitable/ship/proc/get_burn_acceleration()
-	return round(burn() / get_vessel_mass(), SHIP_MOVE_RESOLUTION)
+	return round(thrust_burn() / get_vessel_mass(), SHIP_MOVE_RESOLUTION)
 
 /obj/effect/overmap/visitable/ship/proc/get_vessel_mass()
 	. = vessel_mass
@@ -138,7 +138,7 @@
 			return
 		//VOREStation Add Start
 		last_sound = world.time
-		for(var/mob/potential_mob as anything in player_list)
+		for(var/mob/potential_mob as anything in GLOB.player_list)
 			if(potential_mob.z in map_z)
 				SEND_SOUND(potential_mob, 'sound/ambience/shutdown.ogg')
 		//VOREStation Add End
@@ -153,7 +153,7 @@
 			return
 		//VOREStation Add Start
 		last_sound = world.time
-		for(var/mob/potential_mob as anything in player_list)
+		for(var/mob/potential_mob as anything in GLOB.player_list)
 			if(potential_mob.z in map_z)
 				SEND_SOUND(potential_mob, 'sound/ambience/startup.ogg')
 		//VOREStation Add End
@@ -245,7 +245,7 @@
 /obj/effect/overmap/visitable/ship/set_dir(new_dir)
 	return ..(NORTH) // NO! We always face north.
 
-/obj/effect/overmap/visitable/ship/proc/burn()
+/obj/effect/overmap/visitable/ship/proc/thrust_burn()
 	for(var/datum/ship_engine/E in engines)
 		. += E.burn()
 
@@ -286,7 +286,7 @@
 	..()
 	for(var/obj/machinery/computer/ship/S in GLOB.machines)
 		S.attempt_hook_up(src)
-	for(var/datum/ship_engine/E in ship_engines)
+	for(var/datum/ship_engine/E in GLOB.ship_engines)
 		if(check_ownership(E.holder))
 			engines |= E
 

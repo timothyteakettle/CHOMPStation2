@@ -56,7 +56,7 @@
 	ion_trail.set_up(src)
 	ion_trail.stop()
 
-/obj/mecha/combat/fighter/moved_inside(var/mob/living/carbon/human/H)
+/obj/mecha/combat/fighter/moved_inside(mob/living/carbon/human/H)
 	. = ..()
 	consider_gravity()
 
@@ -140,7 +140,7 @@
 	..()
 	if (href_list["toggle_landing_gear"])
 		landing_gear_raised = !landing_gear_raised
-		send_byjax(src.occupant,"exosuit.browser","landing_gear_command","[landing_gear_raised?"Raise":"Lower"] landing gear")
+		send_byjax(src.occupant,"exosuit.browser","landing_gear_command","[landing_gear_raised?"Lower":"Raise"] landing gear")
 		src.occupant_message(span_notice("Landing gear [landing_gear_raised? "raised" : "lowered"]."))
 		return
 
@@ -148,7 +148,7 @@
 	var/output = {"<div class='wr'>
 						<div class='header'>Special</div>
 						<div class='links'>
-						<a href='byond://?src=\ref[src];toggle_landing_gear=1'><span id="landing_gear_command">[landing_gear_raised?"Raise":"Lower"] landing gear</span></a><br>
+						<a href='byond://?src=\ref[src];toggle_landing_gear=1'><span id="landing_gear_command">[landing_gear_raised?"Lower":"Raise"] landing gear</span></a><br>
 						</div>
 						</div>
 						"}
@@ -173,7 +173,7 @@
 	else
 		return TRUE
 
-/obj/mecha/combat/fighter/proc/consider_gravity(var/moved = FALSE)
+/obj/mecha/combat/fighter/proc/consider_gravity(moved = FALSE)
 	var/gravity = get_gravity()
 	if (gravity && !landing_gear_raised)
 		playsound(src, 'sound/effects/roll.ogg', 50, 1)
@@ -183,7 +183,7 @@
 		stop_hover()
 	else if(moved && gravity && !ground_capable)
 		occupant_message("Collision alert! Vehicle not rated for use in gravity!")
-		take_damage(NOGRAV_FIGHTER_DAMAGE, "brute")
+		take_damage(NOGRAV_FIGHTER_DAMAGE, BRUTE)
 		playsound(src, 'sound/effects/grillehit.ogg', 50, 1)
 
 /obj/mecha/combat/fighter/get_step_delay()
@@ -227,7 +227,7 @@
 		return 0
 
 
-/obj/mecha/combat/fighter/play_entered_noise(var/mob/who)
+/obj/mecha/combat/fighter/play_entered_noise(mob/who)
 	if(hasInternalDamage())
 		who << sound('sound/mecha/fighter/fighter_entered_bad.ogg',volume=60)
 	else
@@ -239,7 +239,7 @@
 	. = ..()
 	if(istype(obstacle, /obj) || istype(obstacle, /turf))
 		occupant_message(span_bolddanger(span_large("COLLISION ALERT!")))
-		take_damage(20, "brute")
+		take_damage(20, BRUTE)
 		playsound(src, 'sound/mecha/fighter/fighter_collision.ogg', 50)
 
 ////////////// Gunpod //////////////

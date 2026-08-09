@@ -2,12 +2,12 @@
 	name = "mousetrap"
 	desc = "A handy little spring-loaded trap for catching pesty rodents."
 	icon_state = "mousetrap"
-	origin_tech = list(TECH_COMBAT = 1)
-	matter = list(MAT_STEEL = 100)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.05))
 	var/armed = 0
+	special_handling = TRUE
 
 
-/obj/item/assembly/mousetrap/examine(var/mob/user)
+/obj/item/assembly/mousetrap/examine(mob/user)
 	. = ..(user)
 	if(armed)
 		. += "It looks like it's armed."
@@ -20,7 +20,7 @@
 	if(holder)
 		holder.update_icon()
 
-/obj/item/assembly/mousetrap/proc/triggered(var/mob/target, var/type = "feet")
+/obj/item/assembly/mousetrap/proc/triggered(mob/target, type = "feet")
 	if(!armed)
 		return
 	var/obj/item/organ/external/affecting = null
@@ -49,16 +49,19 @@
 	update_icon()
 	pulse(0)
 
-/obj/item/assembly/mousetrap/attack_self(var/mob/living/user)
+/obj/item/assembly/mousetrap/attack_self(mob/living/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(!armed)
 		to_chat(user, span_notice("You arm [src]."))
 	else
-		if((CLUMSY in user.mutations) && prob(50))
+		if(CLUMSY_FAIL_CHANCE(user))
 			var/which_hand = BP_L_HAND
 			if(!user.hand)
 				which_hand = BP_R_HAND
 			triggered(user, which_hand)
-			user.visible_message(span_warning("[user] accidentally sets off [src], breaking their fingers."), \
+			user.visible_message(span_warning("[user] accidentally sets off [src], breaking [p_their()] fingers."), \
 									span_warning("You accidentally trigger [src]!"))
 			return
 
@@ -67,19 +70,19 @@
 	update_icon()
 	playsound(user, 'sound/weapons/handcuffs.ogg', 30, 1, -3)
 
-/obj/item/assembly/mousetrap/attack_hand(var/mob/living/user)
+/obj/item/assembly/mousetrap/attack_hand(mob/living/user)
 	if(armed)
-		if((CLUMSY in user.mutations) && prob(50))
+		if(CLUMSY_FAIL_CHANCE(user))
 			var/which_hand = BP_L_HAND
 			if(!user.hand)
 				which_hand = BP_R_HAND
 			triggered(user, which_hand)
-			user.visible_message(span_warning("[user] accidentally sets off [src], breaking their fingers."), \
+			user.visible_message(span_warning("[user] accidentally sets off [src], breaking [p_their()] fingers."), \
 									span_warning("You accidentally trigger [src]!"))
 			return
 	..()
 
-/obj/item/assembly/mousetrap/Crossed(var/atom/movable/AM)
+/obj/item/assembly/mousetrap/Crossed(atom/movable/AM)
 	if(AM.is_incorporeal())
 		return
 	if(armed)
@@ -93,18 +96,18 @@
 			triggered(AM)
 	..()
 
-/obj/item/assembly/mousetrap/on_found(var/mob/living/finder)
+/obj/item/assembly/mousetrap/on_found(mob/living/finder)
 	if(armed)
-		finder.visible_message(span_warning("[finder] accidentally sets off [src], breaking their fingers."), \
+		finder.visible_message(span_warning("[finder] accidentally sets off [src], breaking [p_their()] fingers."), \
 							   span_warning("You accidentally trigger [src]!"))
 		triggered(finder, finder.hand ? BP_L_HAND : BP_R_HAND)
 		return 1	//end the search!
 	return 0
 
-/obj/item/assembly/mousetrap/hitby(var/atom/movable/A)
+/obj/item/assembly/mousetrap/hitby(atom/movable/source, datum/thrownthing/throwingdatum)
 	if(!armed)
 		return ..()
-	visible_message(span_warning("[src] is triggered by [A]."))
+	visible_message(span_warning("[src] is triggered by [source]."))
 	triggered(null)
 
 /obj/item/assembly/mousetrap/armed

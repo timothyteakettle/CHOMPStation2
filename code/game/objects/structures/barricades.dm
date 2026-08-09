@@ -10,7 +10,7 @@
 	var/maxhealth = 100
 	var/datum/material/material
 
-/obj/structure/barricade/Initialize(mapload, var/material_name)
+/obj/structure/barricade/Initialize(mapload, material_name)
 	. = ..()
 	if(!material_name)
 		material_name = MAT_WOOD
@@ -26,6 +26,19 @@
 /obj/structure/barricade/get_material()
 	return material
 
+/obj/structure/barricade/bullet_act(obj/item/projectile/P, def_zone)
+	. = ..()
+	var/barricade_damage = P.get_structure_damage()
+	if(!barricade_damage)
+		return
+	if(barricade_damage > 30)
+		var/base_multiplier = P.damage_type == BURN ? 0.5 : 0.25
+		health -= barricade_damage * base_multiplier
+	else
+		var/base_multiplier = P.damage_type == BURN ? 0.25 : 0.1
+		health -= barricade_damage * base_multiplier
+	CheckHealth()
+
 /obj/structure/barricade/attackby(obj/item/W as obj, mob/user as mob)
 	user.setClickCooldown(user.get_attack_speed(W))
 	if(istype(W, /obj/item/stack))
@@ -37,24 +50,24 @@
 				to_chat(user, span_warning("You need one sheet of [material.display_name] to repair \the [src]."))
 				return
 			visible_message(span_notice("[user] begins to repair \the [src]."))
-			if(do_after(user,20) && health < maxhealth)
+			if(do_after(user, 2 SECONDS, target = src) && health < maxhealth)
 				if(D.use(1))
 					health = maxhealth
 					visible_message(span_notice("[user] repairs \the [src]."))
 				return
 		return
+
+	switch(W.damtype)
+		if(BURN)
+			health -= W.force * 1
+		if(BRUTE)
+			health -= W.force * 0.75
+	if(material == (get_material_by_name(MAT_WOOD) || get_material_by_name(MAT_SIFWOOD)))
+		playsound(src, 'sound/effects/woodcutting.ogg', 100, 1)
 	else
-		switch(W.damtype)
-			if("fire")
-				health -= W.force * 1
-			if("brute")
-				health -= W.force * 0.75
-		if(material == (get_material_by_name(MAT_WOOD) || get_material_by_name(MAT_SIFWOOD)))
-			playsound(src, 'sound/effects/woodcutting.ogg', 100, 1)
-		else
-			playsound(src, 'sound/weapons/smash.ogg', 50, 1)
-		CheckHealth()
-		..()
+		playsound(src, 'sound/weapons/smash.ogg', 50, 1)
+	CheckHealth()
+	..()
 
 /obj/structure/barricade/proc/CheckHealth()
 	if(health <= 0)
@@ -64,12 +77,12 @@
 
 	return
 
-/obj/structure/barricade/take_damage(var/damage)
+/obj/structure/barricade/take_damage(damage)
 	health -= damage
 	CheckHealth()
 	return
 
-/obj/structure/barricade/attack_generic(var/mob/user, var/damage, var/attack_verb)
+/obj/structure/barricade/attack_generic(mob/user, damage, attack_verb)
 	visible_message(span_danger("[user] [attack_verb] the [src]!"))
 	if(material == get_material_by_name(MAT_RESIN))
 		playsound(src, 'sound/effects/attackblob.ogg', 100, 1)
@@ -115,7 +128,7 @@
 	icon = 'icons/obj/sandbags.dmi'
 	icon_state = "blank"
 
-/obj/structure/barricade/sandbag/Initialize(mapload, var/material_name)
+/obj/structure/barricade/sandbag/Initialize(mapload, material_name)
 	if(!material_name)
 		material_name = MAT_CLOTH
 	. = ..(mapload, material_name)
@@ -151,7 +164,7 @@
 
 	return
 
-/obj/structure/barricade/sandbag/update_connections(propagate = 0, var/obj/structure/barricade/sandbag/ignore = null)
+/obj/structure/barricade/sandbag/update_connections(propagate = 0, obj/structure/barricade/sandbag/ignore = null)
 	if(!material)
 		return
 	var/list/dirs = list()
@@ -169,7 +182,7 @@
 
 	update_icon()
 
-/obj/structure/barricade/sandbag/proc/can_join_with(var/obj/structure/barricade/sandbag/S)
+/obj/structure/barricade/sandbag/proc/can_join_with(obj/structure/barricade/sandbag/S)
 	if(material == S.material)
 		return 1
 	return 0

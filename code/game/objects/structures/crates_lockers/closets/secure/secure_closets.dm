@@ -12,16 +12,17 @@
 	health = 200
 	anchored = 1 //CHOMPADD - Making them properly IMMOBILE. Like the Desc says? Yeah...
 
-	closet_appearance = /decl/closet_appearance/secure_closet
+	closet_appearance = /datum/decl/closet_appearance/secure_closet
 
 /obj/structure/closet/secure_closet/can_open()
 	if(locked)
 		return 0
 	return ..()
 
-/obj/structure/closet/secure_closet/emp_act(severity)
-	for(var/obj/O in src)
-		O.emp_act(severity)
+/obj/structure/closet/secure_closet/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	if(!broken)
 		if(prob(50/severity))
 			locked = !locked
@@ -31,8 +32,7 @@
 				open()
 			else
 				req_access = list()
-				req_access += pick(get_all_station_access())
-	..()
+				req_access += pick(SSaccess.get_all_station_access())
 
 /obj/structure/closet/secure_closet/proc/togglelock(mob/user as mob)
 	if(opened)
@@ -61,7 +61,7 @@
 				user.visible_message("\The [user] begins unsecuring \the [src] from the floor.", "You start unsecuring \the [src] from the floor.")
 			else
 				user.visible_message("\The [user] begins securing \the [src] to the floor.", "You start securing \the [src] to the floor.")
-			if(do_after(user, 20 * W.toolspeed))
+			if(do_after(user, 2 SECONDS * W.toolspeed, target = src))
 				if(!src) return
 				to_chat(user, span_notice("You [anchored? "un" : ""]secured \the [src]!"))
 				anchored = !anchored
@@ -96,7 +96,7 @@
 	else
 		togglelock(user)
 
-/obj/structure/closet/secure_closet/emag_act(var/remaining_charges, var/mob/user, var/emag_source, var/visual_feedback = "", var/audible_feedback = "")
+/obj/structure/closet/secure_closet/emag_act(remaining_charges, mob/user, emag_source, visual_feedback = "", audible_feedback = "")
 	if(!broken)
 		broken = 1
 		locked = 0
@@ -118,7 +118,7 @@
 	else
 		toggle(user)
 
-/obj/structure/closet/secure_closet/AltClick()
+/obj/structure/closet/secure_closet/click_alt()
 	..()
 	verb_togglelock()
 
@@ -164,7 +164,7 @@
 	var/self_del = 1
 	anchored = 0
 
-/obj/structure/closet/secure_closet/mind/Initialize(mapload, var/datum/mind/mind_target, var/del_self = 1)
+/obj/structure/closet/secure_closet/mind/Initialize(mapload, datum/mind/mind_target, del_self = 1)
 	. = ..()
 	self_del = del_self
 	if(mind_target)

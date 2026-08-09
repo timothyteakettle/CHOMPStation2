@@ -10,7 +10,9 @@
 	else
 		to_chat(src, span_notice("You will no longer examine things you click on."))
 
-/mob/observer/dead/DblClickOn(var/atom/A, var/params)
+/mob/observer/dead/DblClickOn(atom/A, params)
+	if(check_click_intercept(params,A))
+		return
 	if(client.buildmode)
 		build_click(src, client.buildmode, params, A)
 		return
@@ -18,7 +20,8 @@
 		if(A == mind.current || (mind.current in A)) // double click your corpse or whatever holds it
 			reenter_corpse()						// (cloning scanner, body bag, closet, mech, etc)
 			return
-
+	if(isghosttrap(src.loc))
+		return
 	// Things you might plausibly want to follow
 	if(istype(A,/atom/movable))
 		ManualFollow(A)
@@ -28,21 +31,50 @@
 			stop_following()
 		forceMove(get_turf(A))
 
-/mob/observer/dead/ClickOn(var/atom/A, var/params)
-	if(client.buildmode)
+/mob/observer/dead/ClickOn(atom/A, params)
+	if(!checkClickCooldown()) return
+	setClickCooldown(1)
+
+	if(check_click_intercept(params,A))
+		return
+
+	if(client && client.buildmode)
 		build_click(src, client.buildmode, params, A)
 		return
-	if(!checkClickCooldown()) return
-	setClickCooldown(4)
+
 	var/list/modifiers = params2list(params)
-	if(modifiers["shift"])
-		examinate(A)
+
+	if(LAZYACCESS(modifiers, BUTTON4) || LAZYACCESS(modifiers, BUTTON5))
 		return
-	if(modifiers["alt"]) // alt and alt-gr (rightalt)
-		var/turf/T = get_turf(A)
-		if(T && TurfAdjacent(T))
-			set_listed_turf(T)
+
+	if(LAZYACCESS(modifiers, SHIFT_CLICK))
+		if(LAZYACCESS(modifiers, MIDDLE_CLICK))
+			ShiftMiddleClickOn(A)
 			return
+		if(LAZYACCESS(modifiers, CTRL_CLICK))
+			CtrlShiftClickOn(A)
+			return
+		if (LAZYACCESS(modifiers, ALT_CLICK))
+			alt_shift_click_on(A)
+			return
+		ShiftClickOn(A) //Should in most cases call examinate() unless we block things from examining us.
+		return
+	if(LAZYACCESS(modifiers, MIDDLE_CLICK))
+		if(LAZYACCESS(modifiers, CTRL_CLICK))
+			CtrlMiddleClickOn(A)
+		else
+			MiddleClickOn(A, params)
+		return
+	if(LAZYACCESS(modifiers, ALT_CLICK)) // alt and alt-gr (rightalt)
+		if(LAZYACCESS(modifiers, RIGHT_CLICK))
+			AltClickSecondaryOn(A)
+		else
+			AltClickOn(A)
+		return
+	if(LAZYACCESS(modifiers, CTRL_CLICK))
+		CtrlClickOn(A)
+		return
+
 	// You are responsible for checking config.ghost_interaction when you override this function
 	// Not all of them require checking, see below
 	A.attack_ghost(src)
@@ -71,7 +103,7 @@
 
 /obj/machinery/gateway/centerstation/attack_ghost(mob/user as mob)
 	if(awaygate)
-		if(user.client.holder)
+		if(check_rights_for(user.client, R_HOLDER))
 			user.loc = awaygate.loc
 		else if(active)
 			user.loc = awaygate.loc
@@ -95,7 +127,7 @@
 // commented out, of course.
 /*
 /atom/proc/attack_admin(mob/user as mob)
-	if(!user || !user.client || !user.client.holder)
+	if(!user || !user.client || !check_rights_for(user.client, R_HOLDER))
 		return
 	attack_hand(user)
 

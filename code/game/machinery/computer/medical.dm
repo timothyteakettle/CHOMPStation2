@@ -13,7 +13,7 @@
 	icon_keyboard = "med_key"
 	icon_screen = "medcomp"
 	light_color = "#315ab4"
-	req_one_access = list(access_medical, access_forensics_lockers, access_robotics)
+	req_one_access = list(ACCESS_MEDICAL, ACCESS_FORENSICS_LOCKERS, ACCESS_ROBOTICS)
 	circuit = /obj/item/circuitboard/med_data
 	var/obj/item/card/id/scan = null
 	var/authenticated = null
@@ -85,7 +85,7 @@
 		to_chat(usr, "There is nothing to remove from the console.")
 	return
 
-/obj/machinery/computer/med_data/attackby(var/obj/item/O, var/mob/user)
+/obj/machinery/computer/med_data/attackby(obj/item/O, mob/user)
 	if(istype(O, /obj/item/card/id) && !scan && user.unEquip(O))
 		O.loc = src
 		scan = O
@@ -172,14 +172,11 @@
 					medical["empty"] = 1
 			if(MED_DATA_V_DATA)
 				data["virus"] = list()
-				for(var/datum/disease/D in GLOB.active_diseases)
-					if(!global_flag_check(D.virus_modifiers, DISCOVERED))
-						continue
-					var/datum/data/record/v = GLOB.active_diseases[D]
+				for(var/datum/data/record/v in GLOB.virusDB)
 					data["virus"] += list(list("name" = v.fields["name"], "D" = "\ref[v]"))
 			if(MED_DATA_MEDBOT)
 				data["medbots"] = list()
-				for(var/mob/living/bot/medbot/M in mob_list)
+				for(var/mob/living/bot/medbot/M in GLOB.mob_list)
 					if(M.z != z)
 						continue
 					var/turf/T = get_turf(M)
@@ -481,16 +478,16 @@
 	if(update_now)
 		SStgui.update_uis(src)
 
-/obj/machinery/computer/med_data/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
-		..(severity)
+/obj/machinery/computer/med_data/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || stat & (BROKEN|NOPOWER))
 		return
 
 	for(var/datum/data/record/R in GLOB.data_core.medical)
 		if(prob(10/severity))
 			switch(rand(1,6))
 				if(1)
-					R.fields["name"] = "[pick(pick(first_names_male), pick(first_names_female))] [pick(last_names)]"
+					R.fields["name"] = "[pick(pick(GLOB.first_names_male), pick(GLOB.first_names_female))] [pick(GLOB.last_names)]"
 				if(2)
 					R.fields["sex"]	= pick("Male", "Female")
 				if(3)
@@ -508,9 +505,6 @@
 		else if(prob(1))
 			qdel(R)
 			continue
-
-	..(severity)
-
 
 /obj/machinery/computer/med_data/laptop //[TO DO] Change name to PCU and update mapdata to include replacement computers
 	name = "\improper Medical Laptop"

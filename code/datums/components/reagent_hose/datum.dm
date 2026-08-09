@@ -13,7 +13,7 @@
 	VAR_PRIVATE/initial_distance = HOSE_MAX_DISTANCE
 	VAR_PRIVATE/datum/beam/current_beam = null
 
-/datum/hose/proc/get_pairing(var/datum/component/hose_connector/target)
+/datum/hose/proc/get_pairing(datum/component/hose_connector/target)
 	RETURN_TYPE(/datum/component/hose_connector)
 	if(target)
 		if(target == node1)
@@ -29,7 +29,7 @@
 /datum/hose/proc/has_pairing()
 	return (node1 && node2)
 
-/datum/hose/proc/disconnect(var/mob/user = null)
+/datum/hose/proc/disconnect(mob/user = null)
 	// Stop processing, we're disconnecting anyway
 	STOP_PROCESSING(SSfastprocess, src)
 	var/list/drop_locs = list()
@@ -57,7 +57,7 @@
 		initial_distance = 0
 	update_beam()
 
-/datum/hose/proc/set_hose(var/datum/component/hose_connector/target1, var/datum/component/hose_connector/target2, var/distancetonode)
+/datum/hose/proc/set_hose(datum/component/hose_connector/target1, datum/component/hose_connector/target2, distancetonode)
 	if(target1 && target2)
 		node1 = target1
 		node2 = target2
@@ -85,7 +85,7 @@
 /datum/hose/proc/update_beam()
 	if(!node1 && !node2) // We've already disconnected, clear beam
 		if(current_beam)
-			qdel_null(current_beam)
+			QDEL_NULL(current_beam)
 		return FALSE
 	if(get_dist(get_turf(node1.get_carrier()), get_turf(node2.get_carrier())) > initial_distance)	// The hose didn't form. Something's fucky.
 		qdel(src)
@@ -104,7 +104,7 @@
 			new_col = reagent_node2.get_color()
 
 		// We are in the beam!
-		qdel_swap(current_beam, A.Beam(B, icon_state = "hose", beam_color = new_col, maxdistance = (HOSE_MAX_DISTANCE + 1), beam_type = /obj/effect/ebeam/hose))
+		QDEL_SWAP(current_beam, A.Beam(B, icon_state = "hose", beam_color = new_col, maxdistance = (HOSE_MAX_DISTANCE + 1), beam_type = /obj/effect/ebeam/hose))
 
 	return TRUE
 

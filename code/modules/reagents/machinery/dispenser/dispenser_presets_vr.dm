@@ -1,9 +1,11 @@
 /obj/machinery/chemical_dispenser/xenoflora
 	name = "xenoflora chem dispenser"
+	icon_state = "minidispenser"
 	ui_title = "Xenoflora Chemical Dispenser"
 	dispense_reagents = list(
 		REAGENT_ID_WATER, REAGENT_ID_SUGAR, REAGENT_ID_ETHANOL, REAGENT_ID_RADIUM, REAGENT_ID_AMMONIA, REAGENT_ID_DIETHYLAMINE, REAGENT_ID_PLANTBGONE, REAGENT_ID_MUTAGEN, REAGENT_ID_CALCIUM
 		)
+	import_job = JOB_XENOBOTANIST
 
 /obj/machinery/chemical_dispenser/xenoflora/full
 	spawn_cartridges = list(
@@ -20,10 +22,12 @@
 
 /obj/machinery/chemical_dispenser/biochemistry
 	name = "bioproduct dispenser"
+	icon_state = "minidispenser"
 	ui_title = "Bioproduct Dispenser"
 	dispense_reagents = list(
 		REAGENT_ID_NUTRIMENT, REAGENT_ID_PROTEIN, REAGENT_ID_MILK
 		)
+	import_job = null
 
 /obj/machinery/chemical_dispenser/biochemistry/full
 	spawn_cartridges = list(
@@ -31,6 +35,9 @@
 			/obj/item/reagent_containers/chem_disp_cartridge/protein,
 			/obj/item/reagent_containers/chem_disp_cartridge/milk
 		)
+
+/obj/machinery/chemical_dispenser/ert/specialops
+	import_job = null
 
 /obj/machinery/chemical_dispenser/ert/specialops
 	spawn_cartridges = list(
@@ -68,6 +75,6 @@
 
 /obj/machinery/chemical_dispenser/ert/specialops/abductor
 	name = "chemical dispenser"
-	icon = 'icons/obj/abductor_vr.dmi'
 	icon_state = "dispenser_2way"
 	desc = "A mysterious machine which can fabricate many chemicals."
+	import_job = null

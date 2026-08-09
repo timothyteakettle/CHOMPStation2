@@ -11,6 +11,8 @@
 	var/carbon_dioxide = 0
 	var/nitrogen = 0
 	var/phoron = 0
+	var/nitrous_oxide = 0
+	var/methane = 0
 
 	//CHOMPEdit Begin
 	//* Movement / Pathfinding
@@ -36,6 +38,7 @@
 	var/icon_old = null
 	var/pathweight = 1          // How much does it cost to pathfind over this turf?
 	var/blessed = 0             // Has the turf been blessed?
+	var/dig_exhaustion_chance = 60 // Chance that the digging loot will be exhausted, if set to TURF_DIG_LOOT_EXHAUSTED then the turf is exhausted of loot. if set to TURF_DIG_LOOT_ENDLESS it will never run out.
 
 	var/list/decals
 
@@ -120,11 +123,14 @@
 	if(Be)
 		Be.multiz_turf_new(src, UP)
 
+	if(uses_integrity)
+		atom_integrity = max_integrity
+
 /turf/Destroy()
 	if (!changing_turf)
 		stack_trace("Improper turf qdel. Do not qdel turfs directly.")
 	changing_turf = FALSE
-	cleanbot_reserved_turfs -= src
+	GLOB.cleanbot_reserved_turfs -= src
 	if(connections)
 		connections.erase_all()
 	..()
@@ -171,12 +177,21 @@
 		step(user.pulling, get_dir(user.pulling.loc, src))
 	return 1
 
-/turf/attackby(obj/item/W as obj, mob/user as mob)
+/turf/attackby(obj/item/W, mob/user)
+	// Check if this turf can be dug up, check initial because we remove the flag when we've exhausted all loot, but still want to keep dig functionality
+	if((flags & TURF_CAN_DIG_SHOVEL) && !density && istype(W, /obj/item/shovel))
+		handle_turf_dig(user, W)
+		return TRUE
+	// Collect objects on turf if the bag supports scooping stuff up
 	if(istype(W, /obj/item/storage))
 		var/obj/item/storage/S = W
 		if(S.use_to_pickup && S.collection_mode)
 			S.gather_all(src, user)
 	return ..()
+
+/turf/attack_robot(mob/user)
+	if(!isAI(user))
+		attack_hand(user)
 
 // Hits a mob on the tile.
 /turf/proc/attack_tile(obj/item/W, mob/living/user)
@@ -211,9 +226,9 @@
 	var/area/A = T.loc
 	if((istype(A) && !(A.get_gravity())) || (istype(T,/turf/space)))
 		return
-	if(istype(O, /obj/screen))
+	if(istype(O, /atom/movable/screen))
 		return
-	if(user.restrained() || user.stat || user.stunned || user.paralysis || (!user.lying && !isrobot(user)) || LAZYLEN(user.grabbed_by))
+	if(user.restrained() || user.stat || user.stunned || user.paralysis || (!user.lying && !isrobot(user)) || LAZYLEN(user.grabbed_by) || user.is_paralyzed())
 		return
 	if((!(istype(O, /atom/movable)) || O.anchored || !Adjacent(user) || !Adjacent(O) || !user.Adjacent(O)))
 		return
@@ -221,7 +236,7 @@
 		return
 	if(isanimal(user) && O != user)
 		return
-	if (do_after(user, 25 + (5 * user.weakened)) && !(user.stat))
+	if (do_after(user, 25 + (5 * user.weakened), target = O) && !(user.stat))
 		step_towards(O, src)
 		if(ismob(O))
 			animate(O, transform = turn(O.transform, 20), time = 2)
@@ -301,7 +316,7 @@
 	for(var/obj/O in src)
 		O.hide(O.hides_under_flooring() && !is_plating())
 
-/turf/proc/AdjacentTurfs(var/check_blockage = TRUE)
+/turf/proc/AdjacentTurfs(check_blockage = TRUE)
 	. = list()
 	for(var/turf/T as anything in (trange(1,src) - src))
 		if(check_blockage)
@@ -311,7 +326,7 @@
 		else
 			. += T
 
-/turf/proc/CardinalTurfs(var/check_blockage = TRUE)
+/turf/proc/CardinalTurfs(check_blockage = TRUE)
 	. = list()
 	for(var/turf/T as anything in AdjacentTurfs(check_blockage))
 		if(T.x == src.x || T.y == src.y)
@@ -345,14 +360,16 @@
 	return
 
 // Called when turf is hit by a thrown object
-/turf/hitby(atom/movable/AM as mob|obj, var/speed)
-	if(density)
-		if(!get_gravity(AM)) //Checked a different codebase for reference. Turns out it's only supposed to happen in no-gravity
-			spawn(2)
-				step(AM, turn(AM.last_move, 180)) //This makes it float away after hitting a wall in 0G
-		if(isliving(AM))
-			var/mob/living/M = AM
-			M.turf_collision(src, speed)
+/turf/hitby(atom/movable/source, datum/thrownthing/throwingdatum)
+	if(!density)
+		return
+
+	if(!get_gravity(source)) //Checked a different codebase for reference. Turns out it's only supposed to happen in no-gravity
+		spawn(2)
+			step(source, turn(source.last_move, 180)) //This makes it float away after hitting a wall in 0G
+	if(isliving(source))
+		var/mob/living/M = source
+		M.turf_collision(src, throwingdatum?.speed)
 
 /turf/AllowDrop()
 	return TRUE
@@ -360,7 +377,7 @@
 /turf/proc/can_engrave()
 	return FALSE
 
-/turf/proc/try_graffiti(var/mob/vandal, var/obj/item/tool, click_parameters)
+/turf/proc/try_graffiti(mob/vandal, obj/item/tool, click_parameters)
 
 	if(!tool || !tool.sharp || !can_engrave()) //CHOMP Edit
 		return FALSE
@@ -376,7 +393,7 @@
 		to_chat(vandal, span_warning("There's too much graffiti here to add more."))
 		return FALSE
 
-	var/message = sanitize(tgui_input_text(vandal, "Enter a message to engrave.", "Graffiti"), trim = TRUE)
+	var/message = tgui_input_text(vandal, "Enter a message to engrave.", "Graffiti", "", MAX_MESSAGE_LEN)
 	if(!message)
 		return FALSE
 
@@ -385,7 +402,7 @@
 
 	vandal.visible_message(span_warning("\The [vandal] begins carving something into \the [src]."))
 
-	if(!do_after(vandal, max(20, length(message)), src))
+	if(!do_after(vandal, max(2 SECONDS, length(message)), target = src))
 		return FALSE
 
 	vandal.visible_message(span_danger("\The [vandal] carves some graffiti into \the [src]."))
@@ -467,16 +484,16 @@
 	return TRUE
 
 // We're about to be the A-side in a turf translation
-/turf/proc/pre_translate_A(var/turf/B)
+/turf/proc/pre_translate_A(turf/B)
 	return
 // We're about to be the B-side in a turf translation
-/turf/proc/pre_translate_B(var/turf/A)
+/turf/proc/pre_translate_B(turf/A)
 	return
 // We were the the A-side in a turf translation
-/turf/proc/post_translate_A(var/turf/B)
+/turf/proc/post_translate_A(turf/B)
 	return
 // We were the the B-side in a turf translation
-/turf/proc/post_translate_B(var/turf/A)
+/turf/proc/post_translate_B(turf/A)
 	return
 
 /turf/proc/add_vomit_floor(mob/living/M, toxvomit = NONE, purge = TRUE)
@@ -516,6 +533,8 @@
 
 	if(istype(src, /turf/simulated))
 		var/turf/simulated/T = src
+		if(T.dirt > 0)
+			SEND_GLOBAL_SIGNAL(COMSIG_GLOB_WASHED_FLOOR)
 		T.dirt = 0
 
 	for(var/am in src)
@@ -525,3 +544,14 @@
 		if(!ismopable(movable_content))
 			continue
 		movable_content.wash(clean_types)
+
+/// Used during turf_cascade subsystem to determine additional effects when spreading, and directions it may spread
+/turf/proc/conversion_cascade_act(list/already_marked_turfs)
+	var/list/expanding_turfs = list()
+
+	for(var/expand_dir in GLOB.cardinalz)
+		var/turf/next_turf = get_step(src, expand_dir)
+		if(next_turf && next_turf.type != type && !(next_turf in already_marked_turfs)) // Yes in already_marked_turfs is expensive, but less expensive than 6 dupes per turf potentially in the loop
+			expanding_turfs += next_turf
+
+	return expanding_turfs

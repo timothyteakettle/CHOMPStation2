@@ -6,7 +6,7 @@
 	var/target_state = null
 	var/robotic_brain = FALSE
 
-/obj/item/implant/neural/post_implant(var/mob/source)
+/obj/item/implant/neural/post_implant(mob/source)
 	if(ishuman(source))
 		var/mob/living/carbon/human/H = source
 		if(H.species.has_organ[O_BRAIN])
@@ -50,10 +50,9 @@ circuitry. Resulting faults can cause damage to the host's brain.<HR>
 Implant Specifics:<BR>"}
 	return dat
 
-/obj/item/implant/neural/emp_act(severity)
-	if(!my_brain)
-		return
-	if(malfunction)	//Don't malfunction while malfunctioning.
+/obj/item/implant/neural/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || !my_brain || malfunction)
 		return
 	malfunction = MALFUNCTION_TEMPORARY
 

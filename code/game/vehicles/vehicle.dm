@@ -42,7 +42,7 @@
 	var/internal_damage = 0 //contains bitflags
 
 	var/list/operation_req_access = list()//required access level for mecha operation
-	var/list/internals_req_access = list(access_engine,access_robotics)//required access level to open cell compartment
+	var/list/internals_req_access = list(ACCESS_ENGINE,ACCESS_ROBOTICS)//required access level to open cell compartment
 
 	var/wreckage
 
@@ -63,7 +63,7 @@
 	spark_system.attach(src)
 	add_cell()
 	removeVerb(/atom/movable/verb/pull)
-	log_message("[src.name]'s functions initialised. Work protocols active - Entering IDLE mode.")
+	src.mecha_log_message("[src.name]'s functions initialised. Work protocols active - Entering IDLE mode.")
 
 
 //################ Helpers ###########################################################
@@ -75,7 +75,7 @@
 /obj/vehicle/proc/addVerb(verb_path)
 	src.verbs += verb_path
 
-/obj/vehicle/proc/add_cell(var/obj/item/cell/C=null)
+/obj/vehicle/proc/add_cell(obj/item/cell/C=null)
 	if(C)
 		C.forceMove(src)
 		cell = C
@@ -98,7 +98,7 @@
 //################ Logs and messages ############################################
 
 
-/obj/vehicle/proc/log_message(message as text,red=null)
+/obj/vehicle/proc/mecha_log_message(message as text,red=null)
 	log.len++
 	log[log.len] = list("time"=world.timeofday,"message"="[red?span_red("[message]"):[message]]")
 	return log.len

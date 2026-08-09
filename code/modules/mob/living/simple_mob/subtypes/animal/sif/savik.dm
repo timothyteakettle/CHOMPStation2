@@ -30,7 +30,7 @@
 
 	maxHealth = 125
 	health = 125
-	minbodytemp = 175 //yw edit, Makes mobs survive cryogaia temps
+	minbodytemp = 175
 	movement_cooldown = -1
 	heat_resist = -0.50
 	cold_resist = 0.75
@@ -42,7 +42,7 @@
 	melee_attack_delay = 1 SECOND
 	attacktext = list("mauled")
 
-	organ_names = /decl/mob_organ_names/savik
+	organ_names = /datum/decl/mob_organ_names/savik
 
 	player_msg = "You have the ability to <b>berserk at will</b>, which will grant strong physical bonuses for \
 	a short period of time, however it will tire you and you will be much weaker for awhile after it expires."
@@ -56,7 +56,6 @@
 	say_list_type = /datum/say_list/savik
 	ai_holder_type = /datum/ai_holder/simple_mob/savik
 
-
 /datum/say_list/savik
 	speak = list("Hruuugh!","Hrunnph")
 	emote_see = list("paws the ground","shakes its mane","stomps")
@@ -67,7 +66,7 @@
 		if(health <= (maxHealth * 0.5)) // At half health, and fighting someone currently.
 			berserk()
 
-/mob/living/simple_mob/animal/sif/savik/fail_tame(var/obj/O, var/mob/user)
+/mob/living/simple_mob/animal/sif/savik/fail_tame(obj/O, mob/user)
 	..()
 
 	if(prob(30))	// They don't like people messing with them and their food.
@@ -84,5 +83,5 @@
 
 	add_modifier(/datum/modifier/berserk, 30 SECONDS)
 
-/decl/mob_organ_names/savik
+/datum/decl/mob_organ_names/savik
 	hit_zones = list("head", "torso", "left foreleg", "right foreleg", "left hind leg", "right hind leg", "right bone plate", "left bone plate", "tail", "left claw", "right claw")

@@ -29,13 +29,13 @@
 			return
 		for(var/i = 1 to 3)
 			var/turf/T = get_step_away(src, M)
-			if(T && is_type_in_list(T, suitable_turf_types))
+			if(T && is_type_in_list(T, GLOB.suitable_fish_turf_types))
 				Move(T)
 			else
 				break
 			sleep(3)
 /*
-/mob/living/simple_mob/animal/passive/fish/koi/poisonous/react_to_attack(var/atom/A)
+/mob/living/simple_mob/animal/passive/fish/koi/poisonous/react_to_attack(atom/A)
 	if(isliving(A) && Adjacent(A))
 		var/mob/living/M = A
 		visible_message(span_warning("\The [src][is_dead()?"'s corpse":""] flails at [M]!"))
@@ -47,13 +47,13 @@
 			return
 		for(var/i = 1 to 3)
 			var/turf/T = get_step_away(src, M)
-			if(T && is_type_in_list(T, suitable_turf_types))
+			if(T && is_type_in_list(T, GLOB.suitable_fish_turf_types))
 				Move(T)
 			else
 				break
 			sleep(3)
 */
-/mob/living/simple_mob/animal/passive/fish/koi/poisonous/proc/sting(var/mob/living/M)
+/mob/living/simple_mob/animal/passive/fish/koi/poisonous/proc/sting(mob/living/M)
 	if(!M.reagents)
 		return 0
 	M.reagents.add_reagent(REAGENT_ID_TOXIN, 2)

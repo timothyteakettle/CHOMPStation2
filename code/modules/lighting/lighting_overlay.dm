@@ -11,7 +11,7 @@
 	var/turf/affected_turf
 
 /datum/lighting_object/New(turf/source)
-	if(!SSlighting.subsystem_initialized)
+	if(!SSlighting.initialized)
 		stack_trace("lighting_object created before SSlighting up!")
 		return
 	if(!isturf(source))
@@ -30,7 +30,7 @@
 	affected_turf.lighting_object = src
 	affected_turf.set_luminosity(0)
 
-	if(CONFIG_GET(flag/starlight))
+	if(CONFIG_GET(number/starlight))
 		for(var/turf/space/space_tile in RANGE_TURFS(1, affected_turf))
 			space_tile.update_starlight()
 
@@ -116,7 +116,7 @@
 	//Used to have more code here, but it became redundant.
 	affected_turf.set_luminosity(1)
 
-/datum/lighting_object/proc/set_sunonly(var/onlysun,var/datum/planet_sunlight_handler/pshandler)
+/datum/lighting_object/proc/set_sunonly(onlysun,datum/planet_sunlight_handler/pshandler)
 	if(QDELETED(affected_turf)) //this should never happen but god demanded I be sad
 		return
 	switch(sunlight_only)

@@ -55,11 +55,7 @@
 /mob/living/simple_mob/vore/sheep/MouseDrop_T(mob/living/M, mob/living/user)
 	return
 
-/mob/living/simple_mob/vore/sheep/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/sheep/load_default_bellies()
 	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
@@ -90,7 +86,7 @@
 //If you just update icon_living it should still work with vore states and dying, you'll just need to make and label the sprites appropriately.
 //Make sure you un-comment the variables above too.
 
-/mob/living/simple_mob/vore/sheep/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/mob/living/simple_mob/vore/sheep/attackby(obj/item/O as obj, mob/user as mob)
 	if(istype(O, /obj/item/material/knife) || istype(O, /obj/item/tool/wirecutters))
 		if(user.a_intent != I_HELP)
 			return ..()

@@ -17,12 +17,12 @@
 	if(!battery)
 		battery = new battery_type(src)
 
-/obj/item/clothing/gloves/ring/buzzer/Touch(var/atom/A, var/proximity)
+/obj/item/clothing/gloves/ring/buzzer/Touch(atom/A, proximity)
 	if(proximity && istype(usr, /mob/living/carbon/human))
 		return zap(usr, A, proximity)
 	return 0
 
-/obj/item/clothing/gloves/ring/buzzer/proc/zap(var/mob/living/carbon/human/user, var/atom/movable/target, var/proximity)
+/obj/item/clothing/gloves/ring/buzzer/proc/zap(mob/living/carbon/human/user, atom/movable/target, proximity)
 	. = FALSE
 	if(user.a_intent == I_HURT && battery.percent() >= 50)
 		if(isliving(target))
@@ -45,14 +45,14 @@
 
 	return 0
 
-/obj/item/clothing/gloves/ring/buzzer/proc/do_defib(var/mob/living/carbon/human/H = null)
+/obj/item/clothing/gloves/ring/buzzer/proc/do_defib(mob/living/carbon/human/H = null)
 	if(!istype(H))
 		return 0
 
-	dead_mob_list.Remove(H)
-	if((H in living_mob_list) || (H in dead_mob_list))
+	GLOB.dead_mob_list.Remove(H)
+	if((H in GLOB.living_mob_list) || (H in GLOB.dead_mob_list))
 		WARNING("Mob [H] was ring-defibbed but already in the living or dead list still!")
-	living_mob_list += H
+	GLOB.living_mob_list += H
 
 	H.timeofdeath = 0
 	H.set_stat(UNCONSCIOUS)

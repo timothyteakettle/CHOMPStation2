@@ -95,8 +95,6 @@
 	var/emp_protection = 0
 	item_flags = PHORONGUARD //VOREStation add
 
-	// Wiring! How exciting.
-	var/datum/wires/rig/wires
 	var/datum/effect/effect/system/spark_spread/spark_system
 	var/datum/mini_hud/rig/minihud
 
@@ -107,13 +105,14 @@
 	var/protean = 0
 	var/obj/item/storage/backpack/rig_storage
 	permeability_coefficient = 0  //Protect the squishies, after all this shit should be waterproof.
+	resistance_flags = FIRE_PROOF | ACID_PROOF
 
 /obj/item/rig/Initialize(mapload)
 	. = ..()
 
 	suit_state = icon_state
 	item_state = icon_state
-	wires = new(src)
+	set_wires(new /datum/wires/rig(src))
 
 	if(!LAZYLEN(req_access) && !LAZYLEN(req_one_access))
 		locked = 0
@@ -162,7 +161,6 @@
 		piece.permeability_coefficient = permeability_coefficient
 		piece.unacidable = unacidable
 		if(islist(armor)) piece.armor = armor.Copy()
-		if(islist(armorsoak)) piece.armorsoak = armorsoak.Copy()
 
 	update_icon(1)
 
@@ -226,8 +224,10 @@
 				M.unEquip(piece)
 			piece.forceMove(src)
 
-/obj/item/rig/get_worn_icon_file(var/body_type,var/slot_name,var/default_icon,var/inhands)
+/obj/item/rig/get_worn_icon_file(body_type,slot_name,default_icon,inhands)
 	if(!inhands && (slot_name == slot_back_str || slot_name == slot_belt_str))
+		if(body_type == SPECIES_TESHARI || body_type == SPECIES_WEREBEAST) //Until teshari get proper sprites for rigs, they can default to not having the sprite.
+			return null //All other species are 'humanoid enough' to wear the default rig sprite.
 		if(icon_override)
 			return icon_override
 		else if(mob_icon)
@@ -251,7 +251,7 @@
 // Updates pressure protection
 // Seal = 1 sets protection
 // Seal = 0 unsets protection
-/obj/item/rig/proc/update_airtight(var/obj/item/piece, var/seal = 0)
+/obj/item/rig/proc/update_airtight(obj/item/piece, seal = 0)
 	if(seal == 1)
 		piece.min_pressure_protection = rigsuit_min_pressure
 		piece.max_pressure_protection = rigsuit_max_pressure
@@ -297,8 +297,8 @@
 	var/seal_target = !canremove
 	var/failed_to_seal
 
-	var/obj/screen/rig_booting/booting_L = new
-	var/obj/screen/rig_booting/booting_R = new
+	var/atom/movable/screen/rig_booting/booting_L = new
+	var/atom/movable/screen/rig_booting/booting_R = new
 
 	if(!seal_target)
 		booting_L.icon_state = "boot_left"
@@ -320,7 +320,7 @@
 
 		if(!instant)
 			M.visible_message(span_notice("[M]'s suit emits a quiet hum as it begins to adjust its seals."),span_notice("With a quiet hum, the suit begins running checks and adjusting components."))
-			if(seal_delay && !do_after(M,seal_delay))
+			if(seal_delay && !do_after(M, seal_delay, target = src))
 				if(M)
 					to_chat(M, span_warning("You must remain still while the suit is adjusting the components."))
 					playsound(src, 'sound/machines/rig/rigerror.ogg', 20, FALSE)
@@ -346,7 +346,7 @@
 
 				if(!failed_to_seal && (M.back == src || M.belt == src) && piece == compare_piece)
 
-					if(seal_delay && !instant && !do_after(M,seal_delay,needhand=0))
+					if(seal_delay && !instant && !do_after(M, seal_delay, target = src))
 						failed_to_seal = 1
 
 					piece.icon_state = "[suit_state][!seal_target ? "_sealed" : ""]"
@@ -425,13 +425,13 @@
 		else
 			update_airtight(piece, 1) // Seal
 
-/obj/item/rig/proc/toggle_cooling(var/mob/user)
+/obj/item/rig/proc/toggle_cooling(mob/user)
 	if(cooling_on)
 		turn_cooling_off(user)
 	else
 		turn_cooling_on(user)
 
-/obj/item/rig/proc/turn_cooling_on(var/mob/user)
+/obj/item/rig/proc/turn_cooling_on(mob/user)
 	if(!cell)
 		return
 	if(cell.charge <= 0)
@@ -445,7 +445,7 @@
 	to_chat(user, span_notice("You switch \the [src]'s cooling system on."))
 
 
-/obj/item/rig/proc/turn_cooling_off(var/mob/user, var/failed)
+/obj/item/rig/proc/turn_cooling_off(mob/user, failed)
 	if(failed)
 		visible_message("\The [src]'s cooling system clicks and whines as it powers down.")
 	else
@@ -496,9 +496,12 @@
 	if (!suit_is_deployed())		//inbuilt systems only work on the suit they're designed to work on
 		return
 
+	var/turf/T = get_turf(src)
+	if(!T)
+		return
+
 	var/mob/living/carbon/human/H = loc
 
-	var/turf/T = get_turf(src)
 	var/datum/gas_mixture/environment = T.return_air()
 	var/efficiency = 1 - H.get_pressure_weakness(environment.return_pressure())	// You need to have a good seal for effective cooling
 	var/env_temp = get_environment_temperature()						//wont save you from a fire
@@ -578,7 +581,7 @@
 	for(var/obj/item/rig_module/module in installed_modules)
 		cell.use(module.process()*10)
 
-/obj/item/rig/proc/check_power_cost(var/mob/living/user, var/cost, var/use_unconcious, var/obj/item/rig_module/mod, var/user_is_ai)
+/obj/item/rig/proc/check_power_cost(mob/living/user, cost, use_unconcious, obj/item/rig_module/mod, user_is_ai)
 
 	if(!istype(user))
 		return 0
@@ -614,7 +617,7 @@
 	cell.use(cost*10)
 	return 1
 
-/obj/item/rig/update_icon(var/update_mob_icon)
+/obj/item/rig/update_icon(update_mob_icon)
 
 	cut_overlays()
 	if(!mob_icon || update_mob_icon)
@@ -639,7 +642,7 @@
 		wearer.update_inv_back()
 	return
 
-/obj/item/rig/proc/check_suit_access(var/mob/living/carbon/human/user, var/do_message = TRUE)
+/obj/item/rig/proc/check_suit_access(mob/living/carbon/human/user, do_message = TRUE)
 
 	if(!security_check_enabled)
 		return 1
@@ -663,7 +666,7 @@
 
 	return 1
 
-/obj/item/rig/proc/notify_ai(var/message)
+/obj/item/rig/proc/notify_ai(message)
 	for(var/obj/item/rig_module/ai_container/module in installed_modules)
 		if(module.integrated_ai && module.integrated_ai.client && !module.integrated_ai.stat)
 			to_chat(module.integrated_ai, "[message]")
@@ -682,7 +685,7 @@
 
 	if(seal_delay > 0 && istype(M) && (M.back == src || M.belt == src))
 		M.visible_message(span_notice("[M] starts putting on \the [src]..."), span_notice("You start putting on \the [src]..."))
-		if(!do_after(M,seal_delay))
+		if(!do_after(M, seal_delay, target = src))
 			if(M && (M.back == src || M.belt == src))
 				if(!M.unEquip(src))
 					return
@@ -695,7 +698,7 @@
 		wearer.wearing_rig = src
 		update_icon()
 
-/obj/item/rig/proc/toggle_piece(var/piece, var/mob/living/carbon/human/H, var/deploy_mode, var/forced = FALSE)
+/obj/item/rig/proc/toggle_piece(piece, mob/living/carbon/human/H, deploy_mode, forced = FALSE)
 
 	if((sealing || !cell || !cell.charge) && !forced)
 		return
@@ -740,7 +743,7 @@
 				holder = use_obj.loc
 				if(istype(holder))
 					if(use_obj && check_slot == use_obj)
-						to_chat(H, span_boldnotice("Your [use_obj.name] [use_obj.gender == PLURAL ? "retract" : "retracts"] swiftly."))
+						balloon_alert(H, "your [use_obj.name] [use_obj.gender == PLURAL ? "retract" : "retracts"] swiftly.")
 						playsound(src, 'sound/machines/rig/rigservo.ogg', 10, FALSE)
 						use_obj.canremove = TRUE
 						holder.drop_from_inventory(use_obj)
@@ -759,7 +762,7 @@
 					to_chat(H, span_danger("You are unable to deploy \the [piece] as \the [check_slot] [check_slot.gender == PLURAL ? "are" : "is"] in the way."))
 					return
 			else
-				to_chat(H, span_notice("Your [use_obj.name] [use_obj.gender == PLURAL ? "deploy" : "deploys"] swiftly."))
+				balloon_alert(H, "your [use_obj.name] [use_obj.gender == PLURAL ? "deploy" : "deploys"] swiftly.")
 				playsound(src, 'sound/machines/rig/rigservo.ogg', 10, FALSE)
 
 	if(piece == "helmet" && helmet?.light_system == STATIC_LIGHT)
@@ -802,7 +805,7 @@
 	for(var/piece in list("helmet","gauntlets","chest","boots"))
 		toggle_piece(piece, H, ONLY_DEPLOY)
 
-/obj/item/rig/dropped(mob/user)
+/obj/item/rig/dropped(mob/user, equipping, slot)
 	. = ..(user)
 	// So the next user will see the boot animation
 	tgui_shared_states?.Cut()
@@ -816,21 +819,26 @@
 /obj/item/rig/proc/malfunction()
 	return 0
 
-/obj/item/rig/emp_act(severity_class)
+/obj/item/rig/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	//set malfunctioning
 	if(emp_protection < 30) //for ninjas, really.
 		malfunctioning += 10
 		if(malfunction_delay <= 0)
-			malfunction_delay = max(malfunction_delay, round(30/severity_class))
+			malfunction_delay = max(malfunction_delay, round(30/severity))
 
 	//drain some charge
-	if(cell) cell.emp_act(severity_class + 15)
+	if(cell) cell.emp_act(severity + 15)
 
 	//possibly damage some modules
-	take_hit((100/severity_class), "electrical pulse", 1)
+	take_hit((100/severity), "electrical pulse", 1)
 
 /obj/item/rig/proc/shock(mob/user)
-	if (electrocute_mob(user, cell, src)) //electrocute_mob() handles removing charge from the cell, no need to do that here.
+	if(!ismob(user))
+		return 0
+	if(electrocute_mob(user, cell, src)) //electrocute_mob() handles removing charge from the cell, no need to do that here.
 		spark_system.start()
 		if(user.stunned)
 			return 1
@@ -882,7 +890,7 @@
 			to_chat(wearer, span_warning("The [source] has damaged your [dam_module.interface_name]!"))
 	dam_module.deactivate()
 
-/obj/item/rig/proc/malfunction_check(var/mob/living/carbon/human/user)
+/obj/item/rig/proc/malfunction_check(mob/living/carbon/human/user)
 	if(malfunction_delay)
 		if(offline)
 			to_chat(user, span_danger("The suit is completely unresponsive."))
@@ -891,7 +899,7 @@
 		return 1
 	return 0
 
-/obj/item/rig/proc/ai_can_move_suit(var/mob/user, var/check_user_module = 0, var/check_for_ai = 0)
+/obj/item/rig/proc/ai_can_move_suit(mob/user, check_user_module = 0, check_for_ai = 0)
 
 	if(check_for_ai)
 		if(!(locate(/obj/item/rig_module/ai_container) in contents))
@@ -928,13 +936,13 @@
 		return 0
 	return 1
 
-/obj/item/rig/proc/force_rest(var/mob/user)
+/obj/item/rig/proc/force_rest(mob/user)
 	if(!ai_can_move_suit(user, check_user_module = 1))
 		return
 	wearer.lay_down()
 	to_chat(user, span_notice("\The [wearer] is now [wearer.resting ? "resting" : "getting up"]."))
 
-/obj/item/rig/proc/forced_move(var/direction, var/mob/user, var/ai_moving = TRUE)
+/obj/item/rig/proc/forced_move(direction, mob/user, ai_moving = TRUE)
 
 	// Why is all this shit in client/Move()? Who knows?
 	if(world.time < wearer_move_delay)
@@ -988,8 +996,8 @@
 		wearer_move_delay = world.time
 		return wearer.buckled.relaymove(wearer, direction)
 
-	if(istype(wearer.machine, /obj/machinery))
-		if(wearer.machine.relaymove(wearer, direction))
+	if(istype(wearer.get_current_machine(), /obj/machinery))
+		if(wearer.get_current_machine().relaymove(wearer, direction))
 			return
 
 	if(wearer.pulledby || wearer.buckled) // Wheelchair driving!
@@ -1006,7 +1014,7 @@
 			wearer_move_delay += 2
 			return wearer.buckled.relaymove(wearer,direction)
 
-	var/power_cost = 200
+	var/power_cost = 50
 	if(!ai_moving)
 		power_cost = 20
 	cell.use(power_cost) //Arbitrary, TODO
@@ -1039,7 +1047,7 @@
 		return null
 
 //Boot animation screen objects
-/obj/screen/rig_booting
+/atom/movable/screen/rig_booting
 	screen_loc = "1,1"
 	icon = 'icons/obj/rig_boot.dmi'
 	icon_state = ""

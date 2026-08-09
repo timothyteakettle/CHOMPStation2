@@ -2,8 +2,7 @@
 	name = "proximity sensor"
 	desc = "Used for scanning and alerting when someone enters a certain proximity."
 	icon_state = "prox"
-	origin_tech = list(TECH_MAGNET = 1)
-	matter = list(MAT_STEEL = 800, MAT_GLASS = 200)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.4), MAT_GLASS = MATERIAL_COST(0.1))
 	wires = WIRE_PULSE
 
 	secured = 0
@@ -37,7 +36,7 @@
 		return
 	var/atom/movable/AM = WF.resolve()
 	if(isnull(AM))
-		log_debug("DEBUG: HasProximity called without reference on [src].")
+		log_runtime("DEBUG: HasProximity called without reference on [src].")
 		return
 	if (istype(AM, /obj/effect/beam))
 		return
@@ -45,7 +44,7 @@
 		sense()
 
 /obj/item/assembly/prox_sensor/proc/sense()
-	if((!holder && !secured) || !scanning || !process_cooldown())
+	if((!holder && !secured) || !scanning || !COOLDOWN_FINISHED(src, next_activate))
 		return FALSE
 	var/turf/mainloc = get_turf(src)
 	pulse(0)
@@ -66,7 +65,7 @@
 		toggle_scan()
 		time = initial(time)
 
-/obj/item/assembly/prox_sensor/dropped(mob/user)
+/obj/item/assembly/prox_sensor/dropped(mob/user, equipping, slot)
 	..()
 	sense()
 

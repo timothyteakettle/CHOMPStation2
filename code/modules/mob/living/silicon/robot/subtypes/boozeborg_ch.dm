@@ -116,7 +116,7 @@ What Borgs are available is sadly handled in the above file in the proc
 	add_verb(R,/mob/living/silicon/robot/proc/ex_reserve_refill) //CHOMPEdit TGPanel
 	. = ..()
 
-/obj/item/robot_module/robot/booze/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
+/obj/item/robot_module/robot/booze/respawn_consumable(mob/living/silicon/robot/R, amount)
 	var/obj/item/reagent_containers/food/condiment/enzyme/E = locate() in src.modules
 	E.reagents.add_reagent("enzyme", 2 * amount)
 	if(src.emag)
@@ -156,7 +156,7 @@ What Borgs are available is sadly handled in the above file in the proc
 		icontype = options[choice]
 		var/active_sound = 'sound/effects/bubbles.ogg'
 		playsound(src.loc, "[active_sound]", 100, 0, 4)
-		M << "Your Tank now displays [choice]. Drink up and enjoy!"
+		to_chat(M, span_notice("Your Tank now displays [choice]. Drink up and enjoy!"))
 		updateicon()
 		return 1
 

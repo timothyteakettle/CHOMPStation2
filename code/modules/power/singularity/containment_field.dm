@@ -47,17 +47,26 @@
 /obj/machinery/containment_field/ex_act(severity)
 	return 0
 
-/obj/machinery/containment_field/Crossed(mob/living/L)
-	if(!istype(L) || L.is_incorporeal())
+/obj/machinery/containment_field/Crossed(atom/A)
+	if(!istype(A) || A.is_incorporeal())
 		return
-	shock(L)
+	if(isliving(A))
+		var/mob/living/L = A
+		shock(L)
+		return
+	if(A.density)
+		if(istype(A,/obj/machinery/containment_field) || istype(A,/obj/effect) || istype(A,/obj/singularity))
+			return
+		else
+			qdel(A)
+			//Destroy()
 
 /obj/machinery/containment_field/HasProximity(turf/T, datum/weakref/WF, old_loc)
 	if(isnull(WF))
 		return
 	var/atom/movable/AM = WF.resolve()
 	if(isnull(AM))
-		log_debug("DEBUG: HasProximity called without reference on [src].")
+		log_runtime("DEBUG: HasProximity called without reference on [src].")
 		return
 	if(!isliving(AM) || AM.is_incorporeal())
 		return 0
@@ -68,7 +77,7 @@
 		return 1
 	return 0
 
-/obj/machinery/containment_field/shock(mob/living/user as mob)
+/obj/machinery/containment_field/shock(mob/living/user)
 	if(hasShocked)
 		return 0
 	if(!FG1 || !FG2)
@@ -84,7 +93,7 @@
 
 		VARSET_IN(src, hasShocked, FALSE, 2 SECONDS)
 
-/obj/machinery/containment_field/proc/set_master(var/master1,var/master2)
+/obj/machinery/containment_field/proc/set_master(master1,master2)
 	if(!master1 || !master2)
 		return 0
 	FG1 = master1

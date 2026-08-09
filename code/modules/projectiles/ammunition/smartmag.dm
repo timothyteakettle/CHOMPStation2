@@ -64,7 +64,7 @@
 		icon_state = "smartmag-empty"
 
 // Emagging lets you remove bullets from your bullet-making magazine
-/obj/item/ammo_magazine/smart/emag_act(var/remaining_charges, var/mob/user)
+/obj/item/ammo_magazine/smart/emag_act(remaining_charges, mob/user)
 	if(!emagged)
 		to_chat(user, span_notice("You overload \the [src]'s security measures causing widespread destabilisation. It is likely you could empty \the [src] now."))
 		emagged = TRUE
@@ -72,14 +72,14 @@
 		return TRUE
 	return FALSE
 
-/obj/item/ammo_magazine/smart/attackby(var/obj/item/I as obj, mob/user)
+/obj/item/ammo_magazine/smart/attackby(obj/item/I as obj, mob/user)
 	if(istype(I, /obj/item/cell/device))
 		if(attached_cell)
 			to_chat(user, span_notice("\The [src] already has a [attached_cell.name] attached."))
 			return
 		else
 			to_chat(user, "You begin inserting \the [I] into \the [src].")
-			if(do_after(user, 25))
+			if(do_after(user, 25, target = src))
 				user.drop_item()
 				I.forceMove(src)
 				attached_cell = I
@@ -90,7 +90,7 @@
 	else if(I.has_tool_quality(TOOL_SCREWDRIVER))
 		if(attached_cell)
 			to_chat(user, "You begin removing \the [attached_cell] from \the [src].")
-			if(do_after(user, 10))	// Faster than doing it by hand
+			if(do_after(user, 1 SECOND, target = src))	// Faster than doing it by hand
 				attached_cell.update_icon()
 				attached_cell.forceMove(get_turf(src.loc))
 				attached_cell = null
@@ -113,7 +113,7 @@
 	if(user.get_inactive_hand() == src)
 		if(attached_cell)
 			to_chat(user, "You struggle to remove \the [attached_cell] from \the [src].")
-			if(do_after(user, 40))
+			if(do_after(user, 4 SECONDS, target = src))
 				attached_cell.update_icon()
 				user.put_in_hands(attached_cell)
 				attached_cell = null
@@ -121,12 +121,6 @@
 				update_icon()
 				return
 	..()
-
-// Classic emp_act, just drains the battery
-/obj/item/ammo_magazine/smart/emp_act(severity)
-	..()
-	if(attached_cell)
-		attached_cell.emp_act(severity)
 
 // Finds the cell for the magazine, used by rechargers
 /obj/item/ammo_magazine/smart/get_cell()
@@ -137,8 +131,8 @@
 	return attached_cell && attached_cell.checked_use(production_cost)
 
 // Sets how much energy is drained to make each bullet
-/obj/item/ammo_magazine/smart/proc/set_production_cost(var/obj/item/ammo_casing/A)
-	var/list/matters = ammo_repository.get_materials_from_object(A)
+/obj/item/ammo_magazine/smart/proc/set_production_cost(obj/item/ammo_casing/A)
+	var/list/matters = GLOB.ammo_repository.get_materials_from_object(A)
 	var/tempcost
 	for(var/key in matters)
 		var/value = matters[key]

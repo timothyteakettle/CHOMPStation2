@@ -55,7 +55,7 @@
 	invisibility = INVISIBILITY_NONE
 	var/deathmessage = "You drift off into space, floating alone in the void until your life support runs out."
 
-/obj/effect/step_trigger/lost_in_space/Trigger(var/atom/movable/A) //replacement for shuttle dump zones because there's no empty space levels to dump to
+/obj/effect/step_trigger/lost_in_space/Trigger(atom/movable/A) //replacement for shuttle dump zones because there's no empty space levels to dump to
 	if(ismob(A))
 		to_chat(A, span_danger("[deathmessage]"))
 	qdel(A)
@@ -70,7 +70,7 @@
 		playsound(src, 'sound/effects/supermatter.ogg', 75, 1)
 	if(ismob(A) && prob(5))//lucky day
 		var/destturf = locate(rand(5,world.maxx-5),rand(5,world.maxy-5),pick(using_map.station_levels))
-		new /datum/teleport/instant(A, destturf, 0, 1, null, null, null, 'sound/effects/phasein.ogg')
+		do_teleport(A, destturf, 0, 1, asoundin = 'sound/effects/phasein.ogg')
 	else
 		return ..()
 
@@ -91,21 +91,29 @@
 
 	var/area/shock_area = /area/tether/surfacebase/tram
 
+//For the tram.
+/turf/simulated/floor/maglev/moving
+	icon = 'icons/turf/transit_vr.dmi'
+
 /turf/simulated/floor/maglev/Initialize(mapload)
 	. = ..()
 	shock_area = locate(shock_area)
 
 // Walking on maglev tracks will shock you! Horray!
-/turf/simulated/floor/maglev/Entered(var/atom/movable/AM, var/atom/old_loc)
-	if(isliving(AM) && !(AM.is_incorporeal()) && prob(50))
-		track_zap(AM)
+/turf/simulated/floor/maglev/Entered(atom/movable/AM, atom/old_loc)
+	if(!isliving(AM) || prob(50))
+		return
+	if(locate(/obj/structure/catwalk) in src) // safe to walk over as a bridge!
+		return
+	track_zap(AM)
 
-/turf/simulated/floor/maglev/attack_hand(var/mob/user)
+/turf/simulated/floor/maglev/attack_hand(mob/user)
 	if(prob(75))
 		track_zap(user)
 
-/turf/simulated/floor/maglev/proc/track_zap(var/mob/living/user)
-	if (!istype(user)) return
+/turf/simulated/floor/maglev/proc/track_zap(mob/living/user)
+	if(!istype(user) || user.is_incorporeal())
+		return
 	if (electrocute_mob(user, shock_area, src))
 		var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 		s.set_up(5, 1, src)
@@ -138,7 +146,7 @@
 	spawnpoint_type = /datum/spawnpoint/tram
 
 /obj/machinery/cryopod/robot/door/tram/process()
-	if(emergency_shuttle.online() || emergency_shuttle.returned())
+	if(SSemergency_shuttle.online() || SSemergency_shuttle.returned())
 		// Transform into a door!  But first despawn anyone inside
 		time_till_despawn = 0
 		..()
@@ -150,7 +158,7 @@
 	// Otherwise just operate normally
 	return ..()
 
-/obj/machinery/cryopod/robot/door/tram/Bumped(var/atom/movable/AM)
+/obj/machinery/cryopod/robot/door/tram/Bumped(atom/movable/AM)
 	if(!isliving(AM))
 		return
 

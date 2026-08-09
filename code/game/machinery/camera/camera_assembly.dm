@@ -6,7 +6,7 @@
 	w_class = ITEMSIZE_SMALL
 	anchored = FALSE
 
-	matter = list(MAT_STEEL = 700,MAT_GLASS = 300)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.35),MAT_GLASS = MATERIAL_COST(0.15))
 
 	//	Motion, EMP-Proof, X-Ray
 	var/list/obj/item/possible_upgrades = list(/obj/item/assembly/prox_sensor, /obj/item/stack/material/osmium, /obj/item/stock_parts/scanning_module)
@@ -80,7 +80,7 @@
 			if(W.has_tool_quality(TOOL_SCREWDRIVER))
 				playsound(src, W.usesound, 50, 1)
 
-				var/input = sanitize(tgui_input_text(user, "Which networks would you like to connect this camera to? Separate networks with a comma. No Spaces!\nFor example: "+using_map.station_short+",Security,Secret ", "Set Network", camera_network ? camera_network : NETWORK_DEFAULT))
+				var/input = tgui_input_text(user, "Which networks would you like to connect this camera to? Separate networks with a comma. No Spaces!\nFor example: "+using_map.station_short+",Security,Secret ", "Set Network", camera_network ? camera_network : NETWORK_DEFAULT, MAX_MESSAGE_LEN)
 				if(!input)
 					to_chat(user, "No input found please hang up and try your call again.")
 					return
@@ -92,7 +92,7 @@
 
 				var/area/camera_area = get_area(src)
 				var/temptag = "[sanitize(camera_area.name)] ([rand(1, 999)])"
-				input = sanitizeSafe(tgui_input_text(user, "How would you like to name the camera?", "Set Camera Name", camera_name ? camera_name : temptag), MAX_NAME_LEN)
+				input = sanitizeSafe(tgui_input_text(user, "How would you like to name the camera?", "Set Camera Name", camera_name ? camera_name : temptag, MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 
 				state = 4
 				var/obj/machinery/camera/C = new(src.loc)
@@ -153,7 +153,7 @@
 	if(!anchored)
 		..()
 
-/obj/item/camera_assembly/proc/weld(var/obj/item/weldingtool/WT, var/mob/user)
+/obj/item/camera_assembly/proc/weld(obj/item/weldingtool/WT, mob/user)
 	WT = WT.get_welder()
 
 	if(busy)
@@ -165,7 +165,7 @@
 	playsound(src, WT.usesound, 50, 1)
 	WT.eyecheck(user)
 	busy = 1
-	if(do_after(user, 20 * WT.toolspeed))
+	if(do_after(user, 2 SECONDS * WT.toolspeed, target = src))
 		busy = 0
 		if(!WT.isOn())
 			return 0

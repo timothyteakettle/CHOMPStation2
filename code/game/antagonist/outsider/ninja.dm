@@ -1,4 +1,4 @@
-var/datum/antagonist/ninja/ninjas
+GLOBAL_DATUM(ninjas, /datum/antagonist/ninja)
 
 /datum/antagonist/ninja
 	id = MODE_NINJA
@@ -20,17 +20,17 @@ var/datum/antagonist/ninja/ninjas
 
 /datum/antagonist/ninja/New()
 	..()
-	ninjas = src
+	GLOB.ninjas = src
 
 /datum/antagonist/ninja/attempt_random_spawn()
 	if(CONFIG_GET(flag/ninjas_allowed)) ..()
 
-/datum/antagonist/ninja/create_objectives(var/datum/mind/ninja)
+/datum/antagonist/ninja/create_objectives(datum/mind/ninja)
 
 	if(!..())
 		return
 
-	var/objective_list = list(1,2,3,4,5)
+	var/objective_list = list(1,2,3,4)
 	for(var/i=rand(2,4),i>0,i--)
 		switch(pick(objective_list))
 			if(1)//Kill
@@ -56,13 +56,7 @@ var/datum/antagonist/ninja/ninjas
 				else
 					i++
 					objective_list -= 3
-			if(4)//Download
-				var/datum/objective/download/ninja_objective = new
-				ninja_objective.owner = ninja
-				ninja_objective.gen_amount_goal()
-				ninja.objectives += ninja_objective
-				objective_list -= 4
-			if(5)//Harm
+			if(4)//Harm
 				var/datum/objective/harm/ninja_objective = new
 				ninja_objective.owner = ninja
 				ninja_objective.target = ninja_objective.find_target()
@@ -70,7 +64,7 @@ var/datum/antagonist/ninja/ninjas
 					ninja.objectives += ninja_objective
 				else
 					i++
-					objective_list -= 5
+					objective_list -= 4
 
 	var/datum/objective/ninja_highlander/ninja_obj = new
 	ninja_obj.owner = ninja
@@ -80,7 +74,7 @@ var/datum/antagonist/ninja/ninjas
 	ninja_objective.owner = ninja
 	ninja.objectives += ninja_objective
 
-/datum/antagonist/ninja/greet(var/datum/mind/player)
+/datum/antagonist/ninja/greet(datum/mind/player)
 
 	if(!..())
 		return 0
@@ -88,17 +82,17 @@ var/datum/antagonist/ninja/ninjas
 	player.store_memory(span_bold("Directive:") + " " + span_danger("[directive]") + "<br>")
 	to_chat(player, span_bold("Remember your directive:") + " [directive].")
 
-/datum/antagonist/ninja/update_antag_mob(var/datum/mind/player)
+/datum/antagonist/ninja/update_antag_mob(datum/mind/player)
 	..()
-	var/ninja_title = pick(ninja_titles)
-	var/ninja_name = pick(ninja_names)
+	var/ninja_title = pick(GLOB.ninja_titles)
+	var/ninja_name = pick(GLOB.ninja_names)
 	var/mob/living/carbon/human/H = player.current
 	if(istype(H))
 		H.real_name = "[ninja_title] [ninja_name]"
 		H.name = H.real_name
 	player.name = H.name
 
-/datum/antagonist/ninja/equip(var/mob/living/carbon/human/player)
+/datum/antagonist/ninja/equip(mob/living/carbon/human/player)
 
 	if(!..())
 		return 0

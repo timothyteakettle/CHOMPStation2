@@ -61,19 +61,14 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	var/global/click_sound = 'sound/items/nif_click.ogg'
 	var/global/bad_sound = 'sound/items/nif_tone_bad.ogg'
 	var/global/good_sound = 'sound/items/nif_tone_good.ogg'
-	var/global/list/look_messages = list(
-			"flicks their eyes around",
-			"looks at something unseen",
-			"reads some invisible text",
-			"seems to be daydreaming",
-			"focuses elsewhere for a moment")
+
 
 	var/list/save_data
 
 	var/list/planes_visible = list()
 
 //Constructor comes with a free AR HUD
-/obj/item/nif/Initialize(mapload,var/wear,var/list/load_data)
+/obj/item/nif/Initialize(mapload,wear,list/load_data)
 	. = ..()
 
 	//First one to spawn in the game, make a big icon
@@ -109,18 +104,20 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 
 /obj/item/nif/proc/unregister_human()
 	UnregisterSignal(human, COMSIG_MOB_DEATH)
+	human.nif = null
 
 //Destructor cleans up references
 /obj/item/nif/Destroy()
-	unregister_human()
-	human = null
+	if(human)
+		unregister_human()
+		human = null
 	QDEL_LIST_NULL(nifsofts)
 	QDEL_NULL(comm)
 	nifsofts_life.Cut()
 	return ..()
 
 //Being implanted in some mob
-/obj/item/nif/proc/implant(var/mob/living/carbon/human/H)
+/obj/item/nif/proc/implant(mob/living/carbon/human/H)
 	var/obj/item/organ/brain = H.internal_organs_by_name[O_BRAIN]
 	if(istype(brain))
 		should_be_in = brain.parent_organ
@@ -144,7 +141,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	return FALSE
 
 //For debug or antag purposes
-/obj/item/nif/proc/quick_implant(var/mob/living/carbon/human/H)
+/obj/item/nif/proc/quick_implant(mob/living/carbon/human/H)
 	if(istype(H))
 		var/obj/item/organ/external/parent
 		//Try to find their brain and put it near that
@@ -163,7 +160,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 
 	return FALSE
 
-/obj/item/nif/proc/quick_install(var/mob/living/carbon/human/H)
+/obj/item/nif/proc/quick_install(mob/living/carbon/human/H)
 	if(QDELETED(H)) //Or letting them get deleted
 		return
 	if(H.mind)
@@ -172,7 +169,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	implant(H)
 
 //Being removed from some mob
-/obj/item/nif/proc/unimplant(var/mob/living/carbon/human/H)
+/obj/item/nif/proc/unimplant(mob/living/carbon/human/H)
 	var/datum/nifsoft/soulcatcher/SC = imp_check(NIF_SOULCATCHER)
 	if(SC) //Clean up stored people, this is dirty but the easiest way.
 		QDEL_LIST_NULL(SC.brainmobs)
@@ -182,7 +179,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	if(H)
 		remove_verb(H, /mob/living/carbon/human/proc/set_nif_examine)
 		H.nif = null
-	qdel_null(menu)
+	QDEL_NULL(menu)
 	unregister_human()
 	human = null
 	install_done = null
@@ -191,7 +188,10 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 /* CHOMPedit Remove: Disabling EMP effect on all Nifs. *
 
 //EMP adds wear and disables all nifsoft
-/obj/item/nif/emp_act(var/severity)
+/obj/item/nif/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	notify("Danger! Significant electromagnetic interference!",TRUE)
 	for(var/nifsoft in nifsofts)
 		if(nifsoft)
@@ -211,7 +211,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 * CHOMPedit Remove end. */
 
 //Wear update/check proc
-/obj/item/nif/proc/wear(var/wear = 0)
+/obj/item/nif/proc/wear(wear = 0)
 	wear *= (rand(85,115) / 100) //Apparently rand() only takes integers.
 	durability -= wear
 
@@ -228,7 +228,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 			to_chat(human,span_danger("Your NIF vision overlays disappear and your head suddenly seems very quiet..."))
 
 //Repair update/check proc
-/obj/item/nif/proc/repair(var/repair = 0)
+/obj/item/nif/proc/repair(repair = 0)
 	durability = min(durability + repair, initial(durability))
 
 	if(human)
@@ -237,7 +237,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 //Attackby proc, for maintenance
 /obj/item/nif/attackby(obj/item/W, mob/user as mob)
 	if(open == 0 && W.has_tool_quality(TOOL_SCREWDRIVER))
-		if(do_after(user, 4 SECONDS, src) && open == 0)
+		if(do_after(user, 4 SECONDS, target = src) && open == 0)
 			user.visible_message("[user] unscrews and pries open \the [src].",span_notice("You unscrew and pry open \the [src]."))
 			playsound(src, 'sound/items/Screwdriver.ogg', 50, 1)
 			open = 1
@@ -252,18 +252,18 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 			open = 3
 			update_icon()
 			return
-		if(do_after(user, 6 SECONDS, src) && open == 1 && C.use(3))
+		if(do_after(user, 6 SECONDS, target = src) && open == 1 && C.use(3))
 			user.visible_message("[user] replaces some wiring in \the [src].",span_notice("You replace any burned out wiring in \the [src]."))
 			playsound(src, 'sound/items/Deconstruct.ogg', 50, 1)
 			open = 2
 			update_icon()
 	else if(open == 2 && istype(W,/obj/item/multitool))
-		if(do_after(user, 8 SECONDS, src) && open == 2)
+		if(do_after(user, 8 SECONDS, target = src) && open == 2)
 			user.visible_message("[user] resets several circuits in \the [src].",span_notice("You find and repair any faulty circuits in \the [src]."))
 			open = 3
 			update_icon()
 	else if(open == 3 && W.has_tool_quality(TOOL_SCREWDRIVER))
-		if(do_after(user, 3 SECONDS, src) && open == 3)
+		if(do_after(user, 3 SECONDS, target = src) && open == 3)
 			user.visible_message("[user] closes up \the [src].",span_notice("You re-seal \the [src] for use once more."))
 			playsound(src, 'sound/items/Screwdriver.ogg', 50, 1)
 			open = FALSE
@@ -396,20 +396,20 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 			return FALSE
 
 //Prints 'AR' messages to the user
-/obj/item/nif/proc/notify(var/message,var/alert = 0)
+/obj/item/nif/proc/notify(message,alert = 0)
 	if(!human || stat == NIF_TEMPFAIL) return
 
 	last_notification = message // TGUI Hook
 
 	to_chat(human,span_filter_nif(span_bold("\[[icon2html(src.big_icon, human.client)]NIF\]") + " displays, " + (alert ? span_danger(message) : span_notice(message))))
-	if(prob(1)) human.visible_message(span_notice("\The [human] [pick(look_messages)]."))
+	if(prob(1)) human.visible_message(span_notice("\The [human] [pick(GLOB.nif_look_messages)]."))
 	if(alert)
 		human << bad_sound
 	else
 		human << good_sound
 
 //Called to spend nutrition, returns 1 if it was able to
-/obj/item/nif/proc/use_charge(var/use_charge)
+/obj/item/nif/proc/use_charge(use_charge)
 	if(stat != NIF_WORKING) return FALSE
 
 	//You don't want us to take any? Well okay.
@@ -427,7 +427,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 // This operates on a nifsoft *path*, not an instantiation.
 // It tells the nifsoft shop if it's installation will succeed, to prevent it
 // from charging the user for incompatible software.
-/obj/item/nif/proc/can_install(var/datum/nifsoft/path)
+/obj/item/nif/proc/can_install(datum/nifsoft/path)
 	if(stat == NIF_TEMPFAIL)
 		return FALSE
 
@@ -448,7 +448,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	return TRUE
 
 //Install a piece of software
-/obj/item/nif/proc/install(var/datum/nifsoft/new_soft)
+/obj/item/nif/proc/install(datum/nifsoft/new_soft)
 	if(stat == NIF_TEMPFAIL) return FALSE
 
 	if(nifsofts[new_soft.list_pos])
@@ -474,7 +474,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	return TRUE
 
 //Uninstall a piece of software
-/obj/item/nif/proc/uninstall(var/datum/nifsoft/old_soft)
+/obj/item/nif/proc/uninstall(datum/nifsoft/old_soft)
 	var/datum/nifsoft/NS
 	if(nifsofts)
 		NS = nifsofts[old_soft.list_pos]
@@ -498,11 +498,11 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	return TRUE
 
 //Activate a nifsoft
-/obj/item/nif/proc/activate(var/datum/nifsoft/soft)
+/obj/item/nif/proc/activate(datum/nifsoft/soft)
 	if(stat != NIF_WORKING) return FALSE
 
 	if(human)
-		if(prob(5)) human.visible_message(span_notice("\The [human] [pick(look_messages)]."))
+		if(prob(5)) human.visible_message(span_notice("\The [human] [pick(GLOB.nif_look_messages)]."))
 		var/applies_to = soft.applies_to
 		var/synth = human.isSynthetic()
 		if(synth && !(applies_to & NIF_SYNTHETIC))
@@ -527,9 +527,9 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	return TRUE
 
 //Deactivate a nifsoft
-/obj/item/nif/proc/deactivate(var/datum/nifsoft/soft)
+/obj/item/nif/proc/deactivate(datum/nifsoft/soft)
 	if(human)
-		if(prob(5)) human.visible_message(span_notice("\The [human] [pick(look_messages)]."))
+		if(prob(5)) human.visible_message(span_notice("\The [human] [pick(GLOB.nif_look_messages)]."))
 		human << click_sound
 
 	if(soft.tick_flags == NIF_ACTIVETICK)
@@ -540,14 +540,14 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	return TRUE
 
 //Deactivate several nifsofts
-/obj/item/nif/proc/deactivate_these(var/list/turn_off)
+/obj/item/nif/proc/deactivate_these(list/turn_off)
 	for(var/N in turn_off)
 		var/datum/nifsoft/NS = nifsofts[N]
 		if(NS)
 			NS.deactivate()
 
 //Add a flag to one of the holders
-/obj/item/nif/proc/set_flag(var/flag,var/hint)
+/obj/item/nif/proc/set_flag(flag,hint)
 	ASSERT(flag != null && hint)
 
 	switch(hint)
@@ -563,7 +563,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 			CRASH("Not a valid NIF set_flag hint: [hint]")
 
 //Clear a flag from one of the holders
-/obj/item/nif/proc/clear_flag(var/flag,var/hint)
+/obj/item/nif/proc/clear_flag(flag,hint)
 	ASSERT(flag != null && hint)
 
 	switch(hint)
@@ -579,7 +579,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 			CRASH("Not a valid NIF clear_flag hint: [hint]")
 
 //Check for an installed implant
-/obj/item/nif/proc/imp_check(var/soft)
+/obj/item/nif/proc/imp_check(soft)
 	if(stat != NIF_WORKING) return FALSE
 	ASSERT(soft)
 
@@ -591,7 +591,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 		return entry
 
 //Check for a set flag
-/obj/item/nif/proc/flag_check(var/flag,var/hint)
+/obj/item/nif/proc/flag_check(flag,hint)
 	if(stat != NIF_WORKING) return FALSE
 
 	ASSERT(flag && hint)
@@ -617,12 +617,12 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 
 	return planes_visible
 
-/obj/item/nif/proc/add_plane(var/planeid = null)
+/obj/item/nif/proc/add_plane(planeid = null)
 	if(!planeid)
 		return
 	planes_visible |= planeid
 
-/obj/item/nif/proc/del_plane(var/planeid = null)
+/obj/item/nif/proc/del_plane(planeid = null)
 	if(!planeid)
 		return
 	planes_visible -= planeid
@@ -676,9 +676,16 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 		/datum/nifsoft/malware
 	)
 
+
+/obj/item/nif/glitch/bad
+	name = "odd NIF"
+	desc = "A NIF of a very dubious origin."
+	durability = 100
+	bioadap = FALSE
+
 ////////////////////////////////
 // Special Promethean """surgery"""
-/obj/item/nif/attack(mob/living/M, mob/living/user, var/target_zone)
+/obj/item/nif/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
 	if(!ishuman(M) || !ishuman(user) || (M == user))
 		return ..()
 
@@ -688,20 +695,21 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 	if(istype(T.species,/datum/species/shapeshifter/promethean) && target_zone == BP_TORSO)
 		if(T.w_uniform || T.wear_suit)
 			to_chat(user,span_warning("Remove any clothing they have on, as it might interfere!"))
-			return
+			return ITEM_INTERACT_FAILURE
 		var/obj/item/organ/external/eo = T.get_organ(BP_TORSO)
 		if(!T)
 			to_chat(user,span_warning("They should probably regrow their torso first."))
-			return
+			return ITEM_INTERACT_FAILURE
 		U.visible_message(span_notice("[U] begins installing [src] into [T]'s chest by just stuffing it in."),
 		span_notice("You begin installing [src] into [T]'s chest by just stuffing it in."),
 		"There's a wet SQUISH noise.")
-		if(do_mob(user = user, target = T, time = 200, target_zone = BP_TORSO))
+		if(do_after(user, 20 SECONDS, T, target_zone = BP_TORSO))
 			user.unEquip(src)
 			forceMove(eo)
 			eo.implants |= src
 			implant(T)
 			playsound(T,'sound/effects/slime_squish.ogg',50,1)
+			return ITEM_INTERACT_SUCCESS
 	else
 		return ..()
 
@@ -715,7 +723,7 @@ You can also set the stat of a NIF to NIF_TEMPFAIL without any issues to disable
 		to_chat(src,span_warning("You don't have a NIF, not sure why this was here."))
 		return
 
-	var/new_flavor = sanitize(tgui_input_text(src,"Describe how your NIF alters your appearance, like glowy eyes or metal plate on your head, etc. Be sensible. Clear this for no examine text. 128ch max.","Describe NIF", nif.examine_msg, 128), max_length = 128)
+	var/new_flavor = tgui_input_text(src,"Describe how your NIF alters your appearance, like glowy eyes or metal plate on your head, etc. Be sensible. Clear this for no examine text. 128ch max.","Describe NIF", nif.examine_msg, 128)
 	//They clicked cancel or meanwhile lost their NIF
 	if(!nif || isnull(new_flavor))
 		return //No changes

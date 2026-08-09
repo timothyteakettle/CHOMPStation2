@@ -19,7 +19,7 @@
 	var/disposals = FALSE
 
 // TODO - Its about time to make this NanoUI don't we think?
-/obj/machinery/pipedispenser/attack_hand(var/mob/user as mob)
+/obj/machinery/pipedispenser/attack_hand(mob/user as mob)
 	if((. = ..()))
 		return
 	tgui_interact(user)
@@ -109,7 +109,7 @@
 				VARSET_IN(src, wait, FALSE, 15)
 
 
-/obj/machinery/pipedispenser/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/machinery/pipedispenser/attackby(obj/item/W as obj, mob/user as mob)
 	src.add_fingerprint(user)
 	if (istype(W, /obj/item/pipe) || istype(W, /obj/item/pipe_meter))
 		to_chat(user, span_notice("You put [W] back in [src]."))
@@ -120,7 +120,7 @@
 		if (unwrenched==0)
 			playsound(src, W.usesound, 50, 1)
 			to_chat(user, span_notice("You begin to unfasten \the [src] from the floor..."))
-			if (do_after(user, 40 * W.toolspeed))
+			if (do_after(user, 4 SECONDS * W.toolspeed, target = src))
 				user.visible_message( \
 					span_notice("[user] unfastens \the [src]."), \
 					span_notice("You have unfastened \the [src]. Now it can be pulled somewhere else."), \
@@ -128,12 +128,12 @@
 				src.anchored = FALSE
 				src.stat |= MAINT
 				src.unwrenched = 1
-				if (user.machine==src)
+				if (user.check_current_machine(src))
 					user << browse(null, "window=pipedispenser")
 		else /*if (unwrenched==1)*/
 			playsound(src, W.usesound, 50, 1)
 			to_chat(user, span_notice("You begin to fasten \the [src] to the floor..."))
-			if (do_after(user, 20 * W.toolspeed))
+			if (do_after(user, 2 SECONDS * W.toolspeed, target = src))
 				user.visible_message( \
 					span_notice("[user] fastens \the [src]."), \
 					span_notice("You have fastened \the [src]. Now it can dispense pipes."), \
@@ -155,7 +155,7 @@
 	disposals = TRUE
 
 //Allow you to drag-drop disposal pipes into it
-/obj/machinery/pipedispenser/disposal/MouseDrop_T(var/obj/structure/disposalconstruct/pipe as obj, mob/user as mob)
+/obj/machinery/pipedispenser/disposal/MouseDrop_T(obj/structure/disposalconstruct/pipe as obj, mob/user as mob)
 	if(!user.canmove || user.stat || user.restrained())
 		return
 

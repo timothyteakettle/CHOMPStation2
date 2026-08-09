@@ -13,7 +13,7 @@
 	icon_state = "pcu"
 	icon_keyboard = "pcu_key"
 	light_color = "#5284e7"
-	req_one_access = list(access_heads)
+	req_one_access = list(ACCESS_HEADS)
 	circuit = /obj/item/circuitboard/skills/pcu
 	density = FALSE
 	var/obj/item/card/id/scan = null
@@ -57,7 +57,7 @@
 	active1 = null
 	return ..()
 
-/obj/machinery/computer/skills/attackby(obj/item/O as obj, var/mob/user)
+/obj/machinery/computer/skills/attackby(obj/item/O as obj, mob/user)
 	if(istype(O, /obj/item/card/id) && !scan && user.unEquip(O))
 		O.loc = src
 		scan = O
@@ -366,16 +366,16 @@
 	if(update_now)
 		SStgui.update_uis(src)
 
-/obj/machinery/computer/skills/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
-		..(severity)
+/obj/machinery/computer/skills/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || stat & (BROKEN|NOPOWER))
 		return
 
 	for(var/datum/data/record/R in GLOB.data_core.security)
 		if(prob(10/severity))
 			switch(rand(1,6))
 				if(1)
-					R.fields["name"] = "[pick(pick(first_names_male), pick(first_names_female))] [pick(last_names)]"
+					R.fields["name"] = "[pick(pick(GLOB.first_names_male), pick(GLOB.first_names_female))] [pick(GLOB.last_names)]"
 				if(2)
 					R.fields["sex"]	= pick("Male", "Female")
 				if(3)
@@ -393,8 +393,6 @@
 		else if(prob(1))
 			qdel(R)
 			continue
-
-	..(severity)
 
 #undef GENERAL_RECORD_LIST
 #undef GENERAL_RECORD_MAINT

@@ -1,13 +1,13 @@
 /obj/item/xenobio
 	name = "xenobio gun"
 	desc = "You shouldn't see this!"
-	icon = 'icons/obj/gun_vr.dmi'
+	icon = 'icons/obj/gun.dmi'
 	icon_state = "harpoon-2"
 	var/loadable_item = null
 	var/loaded_item = null
 	var/loadable_name = null
 	var/firable = TRUE
-/obj/item/xenobio/examine(var/mob/user)
+/obj/item/xenobio/examine(mob/user)
 	. = ..()
 	if(loaded_item)
 		.+= "A [loaded_item] is slotted into the side."
@@ -36,7 +36,10 @@
 		return 1
 	..()
 
-/obj/item/xenobio/attack_self(mob/living/user as mob)
+/obj/item/xenobio/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(loaded_item)
 		user.put_in_hands(loaded_item)
 		user.visible_message(span_notice("[user] removes [loaded_item] from [src]."), span_notice("You remove [loaded_item] from [src]."))
@@ -68,7 +71,6 @@
 	desc = "Based on the technology of the 'Bluespace Harpoon' this device can teleport a loaded cube to a given target and rehydrate it."
 	loadable_item = /obj/item/reagent_containers/food/snacks/monkeycube
 	loadable_name = "Monkey Cube"
-	origin_tech = list(TECH_BLUESPACE = 5, TECH_BIO = 6)
 	//projectile_type = /obj/item/projectile/beam/xenobio/monkey
 
 /obj/item/xenobio/monkey_gun/afterattack(atom/A, mob/user as mob)
@@ -105,21 +107,22 @@
 	var/monkeys_recycled = 0
 	description_info = "Click a monkey or slime to begin processing."
 
-/obj/item/slime_grinder/proc/extract(var/atom/movable/AM, var/mob/living/user)
+/obj/item/slime_grinder/proc/extract(atom/movable/AM, mob/living/user)
 	processing = TRUE
 	if(istype(AM, /mob/living/simple_mob/slime))
 		var/mob/living/simple_mob/slime/S = AM
 		while(S.cores)
 			playsound(src, 'sound/machines/juicer.ogg', 25, 1)
-			if(do_after(user, 15))
-				new S.coretype(get_turf(AM))
+			if(do_after(user, 15, target = src))
+				var/atom/new_core = new S.coretype(get_turf(AM))
+				SEND_GLOBAL_SIGNAL(COMSIG_GLOB_HARVEST_SLIME_CORE, new_core)
 				playsound(src, 'sound/effects/splat.ogg', 50, 1)
 				S.cores--
 		qdel(S)
 
 	if(istype(AM, /mob/living/carbon/human/monkey))
 		playsound(src, 'sound/machines/juicer.ogg', 25, 1)
-		if(do_after(user, 15))
+		if(do_after(user, 15, target = src))
 			var/mob/living/carbon/human/M = AM
 			playsound(src, 'sound/effects/splat.ogg', 50, 1)
 			qdel(M)
@@ -132,7 +135,7 @@
 			sleep(1 SECOND)
 	processing = FALSE
 
-/obj/item/slime_grinder/proc/can_insert(var/atom/movable/AM)
+/obj/item/slime_grinder/proc/can_insert(atom/movable/AM)
 	if(istype(AM, /mob/living/simple_mob/slime))
 		var/mob/living/simple_mob/slime/S = AM
 		if(S.stat != DEAD)
@@ -147,13 +150,13 @@
 		return TRUE
 	return FALSE
 
-/obj/item/slime_grinder/attack(mob/M as mob, mob/living/user as mob)
+/obj/item/slime_grinder/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
 	if(processing)
-		return
+		return ITEM_INTERACT_FAILURE
 	if(!can_insert(M))
 		to_chat(user, span_warning("\The [src] cannot process \the [M] at this time."))
 		playsound(src, 'sound/machines/buzz-sigh.ogg', 50, 1)
-		return
+		return ITEM_INTERACT_FAILURE
 
 	extract(M, user)
 	return ..()

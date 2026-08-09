@@ -4,12 +4,13 @@
 	var/radio_desc = ""
 	icon_state = "headset"
 	item_state = null //To remove the radio's state
-	matter = list(MAT_STEEL = 75)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.0375))
 	subspace_transmission = TRUE
 	canhear_range = 0 // can't hear headsets from very far away
 	slot_flags = SLOT_EARS
 	sprite_sheets = list(SPECIES_TESHARI = 'icons/inventory/ears/mob_teshari.dmi',
-						SPECIES_WEREBEAST = 'icons/inventory/ears/mob_vr_werebeast.dmi')
+						SPECIES_VOX = 'icons/inventory/hands/mob_vox.dmi',
+						SPECIES_WEREBEAST = 'icons/inventory/ears/mob_werebeast.dmi')
 
 	var/translate_binary = FALSE
 	var/translate_hive = FALSE
@@ -37,7 +38,7 @@
 	keyslot2 = null
 	return ..()
 
-/obj/item/radio/headset/list_channels(var/mob/user)
+/obj/item/radio/headset/list_channels(mob/user)
 	return list_secure_channels()
 
 /obj/item/radio/headset/examine(mob/user)
@@ -74,7 +75,7 @@
 			return ..(freq, level)
 	return -1
 
-/obj/item/radio/headset/get_worn_icon_state(var/slot_name)
+/obj/item/radio/headset/get_worn_icon_state(slot_name)
 	var/append = ""
 	if(icon_override)
 		switch(slot_name)
@@ -90,7 +91,6 @@
 
 /obj/item/radio/headset/attackby(obj/item/W as obj, mob/user as mob)
 //	..()
-	user.set_machine(src)
 	if(!(W.has_tool_quality(TOOL_SCREWDRIVER) || istype(W, /obj/item/encryptionkey)))
 		return
 
@@ -99,7 +99,7 @@
 
 
 			for(var/ch_name in channels)
-				radio_controller.remove_object(src, radiochannels[ch_name])
+				SSradio.remove_object(src, GLOB.radiochannels[ch_name])
 				secure_radio_connections[ch_name] = null
 
 
@@ -144,7 +144,7 @@
 
 	return
 
-/obj/item/radio/headset/recalculateChannels(var/setDescription = FALSE)
+/obj/item/radio/headset/recalculateChannels(setDescription = FALSE)
 	src.channels = list()
 	src.translate_binary = FALSE
 	src.translate_hive = FALSE
@@ -184,18 +184,18 @@
 
 	handle_finalize_recalculatechannels(setDescription, TRUE)
 
-/obj/item/radio/headset/proc/handle_finalize_recalculatechannels(var/setDescription = FALSE, var/initial_run = FALSE)
+/obj/item/radio/headset/proc/handle_finalize_recalculatechannels(setDescription = FALSE, initial_run = FALSE)
 	PRIVATE_PROC(TRUE)
 	SHOULD_NOT_OVERRIDE(TRUE)
-	if(!radio_controller && initial_run)
+	if(!SSradio && initial_run)
 		addtimer(CALLBACK(src,PROC_REF(handle_finalize_recalculatechannels),setDescription, FALSE),3 SECONDS)
 		return
-	if(!radio_controller && !initial_run)
+	if(!SSradio && !initial_run)
 		name = "broken radio headset"
 		return
 
 	for (var/ch_name in channels)
-		secure_radio_connections[ch_name] = radio_controller.add_object(src, radiochannels[ch_name],  RADIO_CHAT)
+		secure_radio_connections[ch_name] = SSradio.add_object(src, GLOB.radiochannels[ch_name],  RADIO_CHAT)
 
 	if(setDescription)
 		setupRadioDescription()
@@ -216,7 +216,7 @@
 		return ..(freq, level, 1)
 	return -1
 
-/obj/item/radio/headset/mob_headset/afterattack(var/atom/movable/target, mob/living/user, proximity)
+/obj/item/radio/headset/mob_headset/afterattack(atom/movable/target, mob/living/user, proximity)
 	if(!proximity)
 		return
 	if(isanimal(target))
@@ -632,7 +632,7 @@
 	name = "talon bowman headset"
 	desc = "A bowman headset for communication between the crew of the ITV Talon." // CHOMPAdd
 	adhoc_fallback = TRUE
-	icon_state = "pilot_headset"
+	icon_state = "pilot_headset_alt"
 	ks2type = /obj/item/encryptionkey/talon
 
 /obj/item/radio/headset/earbud/talon
@@ -651,25 +651,21 @@
 // Special Antag/Admin/Event/Other headsets
 
 /obj/item/radio/headset/syndicate
-	origin_tech = list(TECH_ILLEGAL = 3)
 	icon_state = "syndie_headset"
 	syndie = 1
 	ks1type = /obj/item/encryptionkey/syndicate
 
 /obj/item/radio/headset/alt/syndicate
-	origin_tech = list(TECH_ILLEGAL = 3)
 	icon_state = "syndie_headset_alt"
 	syndie = 1
 	ks1type = /obj/item/encryptionkey/syndicate
 
 /obj/item/radio/headset/earbud/syndicate
-	origin_tech = list(TECH_ILLEGAL = 3)
 	icon_state = "syndie_earbud"
 	syndie = 1
 	ks1type = /obj/item/encryptionkey/syndicate
 
 /obj/item/radio/headset/raider
-	origin_tech = list(TECH_ILLEGAL = 2)
 	icon_state = "syndie_headset"
 	syndie = 1
 	ks1type = /obj/item/encryptionkey/raider
@@ -679,7 +675,6 @@
 	set_frequency(RAID_FREQ)
 
 /obj/item/radio/headset/binary
-	origin_tech = list(TECH_ILLEGAL = 3)
 	ks1type = /obj/item/encryptionkey/binary
 
 /obj/item/radio/headset/omni		//Only for the admin intercoms

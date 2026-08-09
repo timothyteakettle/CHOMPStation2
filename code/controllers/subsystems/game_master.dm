@@ -21,7 +21,7 @@ SUBSYSTEM_DEF(game_master)
 
 	var/next_event = 0								// Minimum amount of time of nothingness until the GM can pick something again.
 
-	var/debug_messages = FALSE // If true, debug information is written to `log_debug()`.
+	var/debug_messages = FALSE // If true, debug information is written to `log_world()`.
 
 /datum/controller/subsystem/game_master/Initialize()
 	var/list/subtypes = subtypesof(/datum/event2/meta)
@@ -98,7 +98,7 @@ SUBSYSTEM_DEF(game_master)
 // These are ran before committing to an event.
 // Returns TRUE if the system is allowed to procede, otherwise returns FALSE.
 /datum/controller/subsystem/game_master/proc/pre_event_checks(quiet = FALSE)
-	if(!ticker || ticker.current_state != GAME_STATE_PLAYING)
+	if(!SSticker || SSticker.current_state != GAME_STATE_PLAYING)
 		if(!quiet)
 			log_game_master("Unable to start event: Ticker is nonexistent, or the game is not ongoing.")
 		return FALSE
@@ -116,7 +116,7 @@ SUBSYSTEM_DEF(game_master)
 
 //	if(hours < 1 && mins <= 20) // Don't do anything for the first twenty minutes of the round.
 //		if(!quiet)
-//			log_debug("Game Master unable to start event: It is too early.")
+//			log_game_master("Game Master unable to start event: It is too early.")
 //		return FALSE
 	if(hours >= 2 && mins >= 40) // Don't do anything in the last twenty minutes of the round, as well.
 		if(!quiet)
@@ -133,7 +133,7 @@ SUBSYSTEM_DEF(game_master)
 
 /datum/controller/subsystem/game_master/proc/log_game_master(message)
 	if(debug_messages)
-		log_debug("GAME MASTER: [message]")
+		log_world("GAME MASTER: [message]")
 
 
 // This object makes the actual decisions.
@@ -150,17 +150,10 @@ SUBSYSTEM_DEF(game_master)
 	var/ignore_time_restrictions = FALSE 	// Useful for debugging without needing to wait 20 minutes each time.
 	var/ignore_round_chaos = FALSE			// If true, the system will happily choose back to back intense events like meteors and blobs, Dwarf Fortress style.
 
-/client/proc/show_gm_status()
-	set category = "Debug"
-	set name = "Show GM Status"
-	set desc = "Shows you what the GM is thinking.  If only that existed in real life..."
+ADMIN_VERB(show_gm_status, R_ADMIN|R_EVENT|R_DEBUG, "Show GM Status", "Shows you what the GM is thinking. If only that existed in real life...", ADMIN_CATEGORY_DEBUG_GAME)
+	SSgame_master.interact(user)
 
-	if(check_rights(R_ADMIN|R_EVENT|R_DEBUG))
-		SSgame_master.interact(usr)
-	else
-		to_chat(usr, span_warning("You do not have sufficient rights to view the GM panel, sorry."))
-
-/datum/controller/subsystem/game_master/proc/interact(var/client/user)
+/datum/controller/subsystem/game_master/proc/interact(client/user)
 	if(!user)
 		return
 
@@ -236,7 +229,7 @@ SUBSYSTEM_DEF(game_master)
 	dat += "<th colspan='2'>Players</td>"
 	dat += "</tr>"
 
-	for(var/mob/M as anything in player_list)
+	for(var/mob/M as anything in GLOB.player_list)
 		dat += "<tr>"
 		dat += "<td>[M] ([M.ckey])</td>"
 		dat += "<td>[GLOB.metric.assess_player_activity(M)]%</td>"

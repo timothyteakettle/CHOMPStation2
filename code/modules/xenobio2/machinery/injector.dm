@@ -41,7 +41,7 @@
 		return
 	move_into_injector(user,target)
 
-/obj/machinery/xenobio2/manualinjector/proc/move_into_injector(var/mob/user,var/mob/living/victim)
+/obj/machinery/xenobio2/manualinjector/proc/move_into_injector(mob/user,mob/living/victim)
 	if(src.occupant)
 		to_chat(user, span_danger("The injector is full, empty it first!"))
 		return
@@ -52,11 +52,8 @@
 
 	user.visible_message(span_danger("[user] starts to put [victim] into the injector!"))
 	src.add_fingerprint(user)
-	if(do_after(user, 30) && victim.Adjacent(src) && user.Adjacent(src) && victim.Adjacent(user) && !occupant)
+	if(do_after(user, 3 SECONDS, target = src) && victim.Adjacent(src) && user.Adjacent(src) && victim.Adjacent(user) && !occupant)
 		user.visible_message(span_danger("[user] stuffs [victim] into the injector!"))
-		if(victim.client)
-			victim.client.perspective = EYE_PERSPECTIVE
-			victim.client.eye = src
 		victim.forceMove(src)
 		src.occupant = victim
 
@@ -85,7 +82,7 @@
 	else
 		beaker.reagents.trans_to_mob(occupant, computer.transfer_amount)
 
-/obj/machinery/xenobio2/manualinjector/attackby(var/obj/item/W, var/mob/user)
+/obj/machinery/xenobio2/manualinjector/attackby(obj/item/W, mob/user)
 
 	//Let's try to deconstruct first.
 	if(W.has_tool_quality(TOOL_SCREWDRIVER))
@@ -135,6 +132,5 @@
 /obj/item/circuitboard/xenobioinjectormachine
 	name = T_BOARD("biological injector")
 	build_path = /obj/machinery/xenobio2/manualinjector
-	board_type = /datum/frame/frame_types/machine
-	origin_tech = list()	//To be filled,
+	board_type = /datum/frame/frame_types/machine	//To be filled,
 	req_components = list()	//To be filled,

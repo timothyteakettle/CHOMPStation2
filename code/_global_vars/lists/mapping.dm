@@ -1,8 +1,10 @@
+#define ALL_POSSIBLE_DIRS list(NORTH, SOUTH, EAST, WEST, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST) // Use this define as Subsystem PreInit comes after GLOB
+
 GLOBAL_LIST_INIT(cardinal, list(NORTH, SOUTH, EAST, WEST))
 GLOBAL_LIST_INIT(cardinalz, list(NORTH, SOUTH, EAST, WEST, UP, DOWN))
 GLOBAL_LIST_INIT(cornerdirs, list(NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST))
 GLOBAL_LIST_INIT(cornerdirsz, list(NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST, NORTH|UP, EAST|UP, WEST|UP, SOUTH|UP, NORTH|DOWN, EAST|DOWN, WEST|DOWN, SOUTH|DOWN))
-GLOBAL_LIST_INIT(alldirs, list(NORTH, SOUTH, EAST, WEST, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST))
+GLOBAL_LIST_INIT(alldirs, ALL_POSSIBLE_DIRS)
 GLOBAL_LIST_INIT(reverse_dir, list( // reverse_dir[dir] = reverse of dir
 		2,  1,  3,  8, 10,  9, 11,  4,  6,  5,  7, 12, 14, 13, 15,
 	32, 34, 33, 35, 40, 42,	41, 43, 36, 38, 37, 39, 44, 46, 45, 47,
@@ -36,6 +38,8 @@ GLOBAL_LIST_EMPTY(wizardstart)
 GLOBAL_LIST_EMPTY(newplayer_start)
 
 GLOBAL_LIST_EMPTY(latejoin)
+GLOBAL_LIST_EMPTY(latejoin_talon)
+GLOBAL_LIST_EMPTY(latejoin_tram)
 GLOBAL_LIST_EMPTY(latejoin_gateway)
 GLOBAL_LIST_EMPTY(latejoin_elevator)
 GLOBAL_LIST_EMPTY(latejoin_cryo)
@@ -61,3 +65,5 @@ GLOBAL_LIST_EMPTY(verminstart)
 GLOBAL_LIST_EMPTY(awayabductors) // List of scatter landmarks for Abductors in Gateways
 GLOBAL_LIST_EMPTY(eventdestinations) // List of scatter landmarks for VOREStation event portals
 GLOBAL_LIST_EMPTY(eventabductors) // List of scatter landmarks for VOREStation abductor portals
+
+GLOBAL_LIST_EMPTY(bslockers) // List of (roundstart) bluespace lockers

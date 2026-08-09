@@ -33,6 +33,9 @@ Bonus
 		"Stealth 4" = "The symptom remains hidden until active."
 	)
 
+	prefixes = list("Aural ")
+	bodies = list("Ear")
+
 /datum/symptom/deafness/severityset(datum/disease/advance/A)
 	. = ..()
 	if(A.resistance >= 9)
@@ -46,7 +49,7 @@ Bonus
 	if(A.resistance >= 9)
 		power = 2
 
-/datum/symptom/deafness/Activate(var/datum/disease/advance/A)
+/datum/symptom/deafness/Activate(datum/disease/advance/A)
 	if(!..())
 		return
 	var/mob/living/carbon/M = A.affected_mob

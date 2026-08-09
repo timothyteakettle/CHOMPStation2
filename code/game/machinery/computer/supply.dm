@@ -15,6 +15,7 @@
 	var/active_category = null
 	var/menu_tab = 0
 	var/list/expanded_packs = list()
+	var/price_mode = FALSE // Show in supply points(TRUE) or thalers(FALSE)
 
 // Supply control console
 /obj/machinery/computer/supplycomp/control
@@ -23,24 +24,22 @@
 	icon_keyboard = "tech_key"
 	icon_screen = "supply"
 	light_color = "#b88b2e"
-	//req_access = list(access_cargo) //CHOMPedit, removing hard access locks.
 	circuit = /obj/item/circuitboard/supplycomp/control
 	authorization = SUP_SEND_SHUTTLE | SUP_ACCEPT_ORDERS
 
-/obj/machinery/computer/supplycomp/attack_ai(var/mob/user as mob)
+/obj/machinery/computer/supplycomp/attack_ai(mob/user as mob)
 	return attack_hand(user)
 
-/obj/machinery/computer/supplycomp/attack_hand(var/mob/user as mob)
+/obj/machinery/computer/supplycomp/attack_hand(mob/user as mob)
 	if(..())
 		return
 	if(!allowed(user))
 		to_chat(user, span_warning("You don't have the required access to use this console."))
 		return
-	user.set_machine(src)
 	tgui_interact(user)
 	return
 
-/obj/machinery/computer/supplycomp/emag_act(var/remaining_charges, var/mob/user)
+/obj/machinery/computer/supplycomp/emag_act(remaining_charges, mob/user)
 	if(!can_order_contraband)
 		to_chat(user, span_notice("Special supplies unlocked."))
 		authorization |= SUP_CONTRABAND
@@ -156,6 +155,8 @@
 	data["receipts"] = receipts
 	data["contraband"] = can_order_contraband || (authorization & SUP_CONTRABAND)
 	data["modal"] = tgui_modal_data(src)
+	data["price_mod"] = price_mode
+	data["cash_points"] = SSsupply.money_per_points
 	return data
 
 /obj/machinery/computer/supplycomp/tgui_static_data(mob/user)
@@ -228,7 +229,7 @@
 				return FALSE
 
 			var/timeout = world.time + 600
-			var/reason = sanitize(tgui_input_text(ui.user, "Reason:","Why do you require this item?",""))
+			var/reason = tgui_input_text(ui.user, "Reason:","Why do you require this item?","", MAX_MESSAGE_LEN)
 			if(world.time > timeout)
 				to_chat(ui.user, span_warning("Error. Request timed out."))
 				return FALSE
@@ -256,7 +257,7 @@
 			reqform.info += "RANK: [idrank]<br>"
 			reqform.info += "REASON: [reason]<br>"
 			reqform.info += "SUPPLY CRATE TYPE: [S.name]<br>"
-			reqform.info += "ACCESS RESTRICTION: [get_access_desc(S.access)]<br>"
+			reqform.info += "ACCESS RESTRICTION: [SSaccess.get_access_desc(S.access)]<br>"
 			reqform.info += "AMOUNT: [amount]<br>"
 			reqform.info += "CONTENTS:<br>"
 			reqform.info +=  S.get_html_manifest()
@@ -282,7 +283,7 @@
 				return FALSE
 
 			var/timeout = world.time + 600
-			var/reason = sanitize(tgui_input_text(ui.user, "Reason:","Why do you require this item?",""))
+			var/reason = tgui_input_text(ui.user, "Reason:","Why do you require this item?","", MAX_MESSAGE_LEN)
 			if(world.time > timeout)
 				to_chat(ui.user, span_warning("Error. Request timed out."))
 				return FALSE
@@ -309,7 +310,7 @@
 			reqform.info += "RANK: [idrank]<br>"
 			reqform.info += "REASON: [reason]<br>"
 			reqform.info += "SUPPLY CRATE TYPE: [S.name]<br>"
-			reqform.info += "ACCESS RESTRICTION: [get_access_desc(S.access)]<br>"
+			reqform.info += "ACCESS RESTRICTION: [SSaccess.get_access_desc(S.access)]<br>"
 			reqform.info += "CONTENTS:<br>"
 			reqform.info +=  S.get_html_manifest()
 			reqform.info += "<hr>"
@@ -325,7 +326,7 @@
 				return FALSE
 			if(!(authorization & SUP_ACCEPT_ORDERS))
 				return FALSE
-			var/new_val = sanitize(tgui_input_text(ui.user, params["edit"], "Enter the new value for this field:", params["default"]))
+			var/new_val = tgui_input_text(ui.user, params["edit"], "Enter the new value for this field:", params["default"], MAX_MESSAGE_LEN)
 			if(!new_val)
 				return FALSE
 
@@ -400,7 +401,7 @@
 			if(!field)
 				return FALSE
 
-			var/new_val = sanitize(tgui_input_text(ui.user, field, "Enter the new value for this field:", L[lowertext(field)]))
+			var/new_val = tgui_input_text(ui.user, field, "Enter the new value for this field:", L[lowertext(field)], MAX_MESSAGE_LEN)
 			if(!new_val)
 				return
 
@@ -443,7 +444,7 @@
 				return FALSE
 			if(!(authorization & SUP_ACCEPT_ORDERS))
 				return FALSE
-			var/new_val = sanitize(tgui_input_text(ui.user, params["edit"], "Enter the new value for this field:", params["default"]))
+			var/new_val = tgui_input_text(ui.user, params["edit"], "Enter the new value for this field:", params["default"], MAX_MESSAGE_LEN)
 			if(!new_val)
 				return
 
@@ -484,11 +485,13 @@
 				if("force_shuttle")
 					shuttle.force_launch(src)
 			. = TRUE
-
+		if("change_cash_mode")
+			price_mode = !price_mode
+			. = TRUE
 	add_fingerprint(ui.user)
 
-/obj/machinery/computer/supplycomp/proc/post_signal(var/command)
-	var/datum/radio_frequency/frequency = radio_controller.return_frequency(1435)
+/obj/machinery/computer/supplycomp/proc/post_signal(command)
+	var/datum/radio_frequency/frequency = SSradio.return_frequency(1435)
 
 	if(!frequency) return
 

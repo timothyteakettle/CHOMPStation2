@@ -80,7 +80,7 @@
 
 			var/obj/item/rig_module/mod = W
 			to_chat(user, "You begin installing \the [mod] into \the [src].")
-			if(!do_after(user,40))
+			if(!do_after(user, 4 SECONDS, target = src))
 				return
 			if(!user || !W)
 				return
@@ -181,14 +181,14 @@
 	..()
 
 
-/obj/item/rig/attack_hand(var/mob/user)
+/obj/item/rig/attack_hand(mob/user)
 
 	if(electrified != 0)
 		if(shock(user)) //Handles removing charge from the cell, as well. No need to do that here.
 			return
 	..()
 
-/obj/item/rig/emag_act(var/remaining_charges, var/mob/user)
+/obj/item/rig/emag_act(remaining_charges, mob/user)
 	if(!subverted)
 		LAZYCLEARLIST(req_access)
 		LAZYCLEARLIST(req_one_access)

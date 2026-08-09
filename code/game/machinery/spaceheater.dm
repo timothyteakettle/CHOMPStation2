@@ -39,8 +39,9 @@
 		cell = new cell_type(src)
 	default_apply_parts()
 	update_icon()
+	AddElement(/datum/element/climbable)
 
-/obj/machinery/space_heater/RefreshParts(var/limited = 0)
+/obj/machinery/space_heater/RefreshParts(limited = 0)
 	min_temperature = DEFAULT_MIN_TEMP
 	max_temperature = DEFAULT_MAX_TEMP
 	heating_power = DEFAULT_HEATING_POWER
@@ -94,14 +95,6 @@
 		return 1
 	return 0
 
-/obj/machinery/space_heater/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
-		..(severity)
-		return
-	if(cell)
-		cell.emp_act(severity)
-	..(severity)
-
 /obj/machinery/space_heater/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/cell))
 		if(panel_open)
@@ -114,7 +107,7 @@
 				if(istype(C))
 					user.drop_item()
 					cell = C
-					C.loc = src
+					C.forceMove(src)
 					C.add_fingerprint(user)
 
 					user.visible_message(span_notice("[user] inserts a power cell into [src]."), span_notice("You insert the power cell into [src]."))
@@ -129,7 +122,7 @@
 		playsound(src, I.usesound, 50, 1)
 		user.visible_message(span_notice("[user] [panel_open ? "opens" : "closes"] the hatch on the [src]."), span_notice("You [panel_open ? "open" : "close"] the hatch on the [src]."))
 		update_icon()
-		if(!panel_open && user.machine == src)
+		if(!panel_open && user.check_current_machine(src))
 			user << browse(null, "window=spaceheater")
 			user.unset_machine()
 	else

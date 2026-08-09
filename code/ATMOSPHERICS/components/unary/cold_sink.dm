@@ -1,10 +1,13 @@
 //TODO: Put this under a common parent type with heaters to cut down on the copypasta
 #define FREEZER_PERF_MULT 2.5
+#define REAGENT_COOLING_CONSUMED 0.1
+#define REAGENT_COOLING_MINMOD 0.15
+#define REAGENT_COOLING_MAXMOD 5
 
 /obj/machinery/atmospherics/unary/freezer
 	name = "gas cooling system"
-	desc = "Cools gas when connected to pipe network"
-	icon = 'icons/obj/Cryogenic2_vr.dmi'
+	desc = "Cools gas when connected to pipe network. Can be filled by hose with coolant to increase efficiency."
+	icon = 'icons/obj/Cryogenic2.dmi'
 	icon_state = "freezer_0"
 	density = TRUE
 	anchored = TRUE
@@ -20,10 +23,14 @@
 
 	var/set_temperature = T20C		// Thermostat
 	var/cooling = 0
+	var/reagent_cooling = 0
 
 /obj/machinery/atmospherics/unary/freezer/Initialize(mapload)
 	. = ..()
 	default_apply_parts()
+	create_reagents(120)
+	AddComponent(/datum/component/hose_connector/input)
+	AddComponent(/datum/component/hose_connector/output)
 
 /obj/machinery/atmospherics/unary/freezer/atmos_init()
 	if(node)
@@ -31,7 +38,7 @@
 
 	var/node_connect = dir
 
-	for(var/obj/machinery/atmospherics/target in get_step(src, node_connect))
+	for(var/obj/machinery/atmospherics/target in get_prioritized_nodes(get_step(src, node_connect)))
 		if(can_be_node(target, 1))
 			node = target
 			break
@@ -75,6 +82,10 @@
 	data["targetGasTemperature"] = round(set_temperature)
 	data["powerSetting"] = power_setting
 
+	data["reagentVolume"] = reagents.total_volume
+	data["reagentMaximum"] = reagents.maximum_volume
+	data["reagentPower"] = reagent_cooling
+
 	var/temp_class = "good"
 	if(air_contents.temperature > (T0C - 20))
 		temp_class = "bad"
@@ -108,6 +119,7 @@
 /obj/machinery/atmospherics/unary/freezer/process()
 	..()
 
+	reagent_cooling = 1 + (reagents.machine_cooling_power(reagents) / reagents.maximum_volume)
 	if(stat & (NOPOWER|BROKEN) || !use_power)
 		cooling = 0
 		update_icon()
@@ -122,6 +134,10 @@
 		//not /really/ proper thermodynamics but whatever
 		var/cop = FREEZER_PERF_MULT * air_contents.temperature/heatsink_temperature	//heatpump coefficient of performance from thermodynamics -> power used = heat_transfer/cop
 		heat_transfer = min(heat_transfer, cop * power_rating)	//limit heat transfer by available power
+
+		// Process coolant
+		heat_transfer *= CLAMP(reagent_cooling,REAGENT_COOLING_MINMOD,REAGENT_COOLING_MAXMOD)
+		reagents.remove_any(REAGENT_COOLING_CONSUMED)
 
 		var/removed = -air_contents.add_thermal_energy(-heat_transfer)		//remove the heat
 		if(debug)
@@ -155,11 +171,11 @@
 	air_contents.volume = max(initial(internal_volume) - 200, 0) + 200 * bin_rating
 	set_power_level(power_setting)
 
-/obj/machinery/atmospherics/unary/freezer/proc/set_power_level(var/new_power_setting)
+/obj/machinery/atmospherics/unary/freezer/proc/set_power_level(new_power_setting)
 	power_setting = new_power_setting
 	power_rating = max_power_rating * (power_setting/100)
 
-/obj/machinery/atmospherics/unary/freezer/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/obj/machinery/atmospherics/unary/freezer/attackby(obj/item/O as obj, mob/user as mob)
 	if(default_deconstruction_screwdriver(user, O))
 		return
 	if(default_deconstruction_crowbar(user, O))
@@ -174,4 +190,7 @@
 	if(panel_open)
 		. += "The maintenance hatch is open."
 
+#undef REAGENT_COOLING_MINMOD
+#undef REAGENT_COOLING_MAXMOD
+#undef REAGENT_COOLING_CONSUMED
 #undef FREEZER_PERF_MULT

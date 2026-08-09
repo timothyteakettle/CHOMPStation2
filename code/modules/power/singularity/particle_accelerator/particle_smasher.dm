@@ -46,7 +46,7 @@
 		for(var/obj/item/I in contents)
 			. += span_notice("\the [I]")
 
-/obj/machinery/particle_smasher/atmosanalyze(var/mob/user)
+/obj/machinery/particle_smasher/atmosanalyze(mob/user)
 	return list(span_notice("\The [src] reads an energy level of [energy]."))
 
 /obj/machinery/particle_smasher/attackby(obj/item/W as obj, mob/user as mob)
@@ -139,7 +139,7 @@
 	else
 		set_light(0, 0, "#FFFFFF")
 
-/obj/machinery/particle_smasher/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/particle_smasher/bullet_act(obj/item/projectile/Proj)
 	if(istype(Proj, /obj/item/projectile/beam))
 		if(Proj.damage >= 50)
 			TryCraft()
@@ -148,13 +148,27 @@
 /obj/machinery/particle_smasher/process()
 	if(!src.anchored)	// Rapidly loses focus.
 		if(energy)
-			SSradiation.radiate(src, round(((src.energy-150)/50)*5,1))
+			radiation_pulse(
+				src,
+				max_range = 7,
+				threshold = RAD_HEAVY_INSULATION,
+				chance = round(((src.energy-150)/50)*5,1),
+				minimum_exposure_time = URANIUM_RADIATION_MINIMUM_EXPOSURE_TIME,
+				strength = energy * 0.1 //60 rads at max energy.
+			)
 			energy = max(0, energy - 30)
 			update_icon()
 		return
 
 	if(energy)
-		SSradiation.radiate(src, round(((src.energy-150)/50)*5,1))
+		radiation_pulse(
+			src,
+			max_range = 7,
+			threshold = RAD_HEAVY_INSULATION,
+			chance = round(((src.energy-150)/50)*5,1),
+			minimum_exposure_time = URANIUM_RADIATION_MINIMUM_EXPOSURE_TIME,
+			strength = energy * 0.1 //60 rads at max energy.
+		)
 		energy = CLAMP(energy - 5, 0, max_energy)
 
 	return
@@ -184,7 +198,14 @@
 	if(successful_craft)
 		visible_message(span_warning("\The [src] fizzles."))
 		if(prob(33))	// Why are you blasting it after it's already done!
-			SSradiation.radiate(src, 10 + round(src.energy / 60, 1))
+			radiation_pulse(
+				src,
+				max_range = 7,
+				threshold = RAD_HEAVY_INSULATION,
+				chance = URANIUM_IRRADIATION_CHANCE + round(src.energy / 60, 1),
+				minimum_exposure_time = URANIUM_RADIATION_MINIMUM_EXPOSURE_TIME,
+				strength = energy * 0.1
+			)
 			energy = max(0, energy - 30)
 		update_icon()
 		return
@@ -218,7 +239,7 @@
 				break
 	update_icon()
 
-/obj/machinery/particle_smasher/proc/DoCraft(var/datum/particle_smasher_recipe/recipe)
+/obj/machinery/particle_smasher/proc/DoCraft(datum/particle_smasher_recipe/recipe)
 	if(!successful_craft || !recipe)
 		return
 
@@ -285,7 +306,7 @@
 	var/item_consume_chance = 100		// The probability for the items (not materials) used in the recipe to be consume.
 	var/wiki_flag = NONE
 
-/datum/particle_smasher_recipe/proc/check_items(var/obj/container as obj)
+/datum/particle_smasher_recipe/proc/check_items(obj/container as obj)
 	. = 1
 	if (items && items.len)
 		var/list/checklist = list()
@@ -308,7 +329,7 @@
 			. = -1
 	return .
 
-/datum/particle_smasher_recipe/proc/check_reagents(var/datum/reagents/avail_reagents)
+/datum/particle_smasher_recipe/proc/check_reagents(datum/reagents/avail_reagents)
 	. = 1
 	for (var/r_r in reagents)
 		var/aval_r_amnt = avail_reagents.get_reagent_amount(r_r)
@@ -443,6 +464,174 @@
 	required_atmos_temp_max = 50
 	probability = 100
 	item_consume_chance = 10 //Allows only a few unstable glamour to be given out to get lots of stable ones.
+
+/datum/particle_smasher_recipe/platinum_lead
+	display_name = MAT_LEAD + " from " + MAT_PLATINUM
+	reagents = list(REAGENT_ID_TUNGSTEN = 10)
+
+	result = /obj/item/stack/material/lead
+	required_material = /obj/item/stack/material/platinum
+
+	required_energy_min = 100
+	required_energy_max = 300
+
+	required_atmos_temp_min = 2000
+	required_atmos_temp_max = 6000
+	probability = 50
+
+/datum/particle_smasher_recipe/uranium_lead
+	display_name = MAT_LEAD + " from " + MAT_URANIUM
+	reagents = list(REAGENT_ID_TUNGSTEN = 10)
+
+	result = /obj/item/stack/material/lead
+	required_material = /obj/item/stack/material/uranium
+
+	required_energy_min = 50
+	required_energy_max = 600
+
+	required_atmos_temp_min = 1000
+	required_atmos_temp_max = 10000
+	probability = 70
+
+/datum/particle_smasher_recipe/uranium_platinum
+	display_name = MAT_PLATINUM + " from " + MAT_URANIUM
+	reagents = list(REAGENT_ID_TUNGSTEN = 10)
+
+	result = /obj/item/stack/material/platinum
+	required_material = /obj/item/stack/material/uranium
+
+	required_energy_min = 600
+	required_energy_max = 650
+
+	required_atmos_temp_min = 6000
+	required_atmos_temp_max = 10000
+	probability = 30
+
+/datum/particle_smasher_recipe/platinum_uranium
+	display_name = MAT_URANIUM + " from " + MAT_PLATINUM
+	reagents = list(REAGENT_ID_SILICON = 10)
+
+	result = /obj/item/stack/material/uranium
+	required_material = /obj/item/stack/material/platinum
+
+	required_energy_min = 600
+	required_energy_max = 700
+
+	required_atmos_temp_min = 8000
+	required_atmos_temp_max = 12000
+	probability = 40
+
+/datum/particle_smasher_recipe/iron_copper
+	display_name = MAT_COPPER + " from " + MAT_IRON
+	reagents = list(REAGENT_ID_LITHIUM = 10)
+
+	result = /obj/item/stack/material/copper
+	required_material = /obj/item/stack/material/iron
+
+	required_energy_min = 100
+	required_energy_max = 300
+
+	required_atmos_temp_min = 2000
+	required_atmos_temp_max = 6000
+	probability = 40
+
+/datum/particle_smasher_recipe/copper_gold
+	display_name = MAT_GOLD + " from " + MAT_COPPER
+	reagents = list(REAGENT_ID_TIN = 10)
+
+	result = /obj/item/stack/material/gold
+	required_material = /obj/item/stack/material/copper
+
+	required_energy_min = 200
+	required_energy_max = 400
+
+	required_atmos_temp_min = 5000
+	required_atmos_temp_max = 8000
+	probability = 40
+
+/datum/particle_smasher_recipe/hydrogen_deuterium
+	display_name = MAT_DEUTERIUM + " from " + MAT_GRAPHITE
+	reagents = list(REAGENT_ID_HYDROGEN = 10)
+
+	result = /obj/item/stack/material/deuterium
+	required_material = /obj/item/stack/material/graphite
+
+	required_energy_min = 0
+	required_energy_max = 100
+
+	required_atmos_temp_min = 1000
+	required_atmos_temp_max = 3000
+	probability = 20
+
+/datum/particle_smasher_recipe/carbon_titanium
+	display_name = MAT_TITANIUM + " from " + MAT_GRAPHITE
+	reagents = list(REAGENT_ID_SULFUR = 10)
+
+	result = /obj/item/stack/material/titanium
+	required_material = /obj/item/stack/material/graphite
+
+	required_energy_min = 300
+	required_energy_max = 600
+
+	required_atmos_temp_min = 3000
+	required_atmos_temp_max = 8000
+	probability = 40
+
+/datum/particle_smasher_recipe/tritium_mhydrogen
+	display_name = MAT_METALHYDROGEN + " from " + MAT_TRITIUM
+	reagents = list(REAGENT_ID_RADIUM = 300)
+
+	result = /obj/item/stack/material/mhydrogen
+	required_material = /obj/item/stack/material/tritium
+
+	required_energy_min = 500
+	required_energy_max = 550
+
+	required_atmos_temp_min = 7000
+	required_atmos_temp_max = 12000
+	probability = 20
+
+/datum/particle_smasher_recipe/osmium_platinum
+	display_name = MAT_PLATINUM + " from " + MAT_OSMIUM
+	reagents = list(REAGENT_ID_TUNGSTEN = 10)
+
+	result = /obj/item/stack/material/platinum
+	required_material = /obj/item/stack/material/osmium
+
+	required_energy_min = 400
+	required_energy_max = 500
+
+	required_atmos_temp_min = 8000
+	required_atmos_temp_max = 10000
+	probability = 20
+
+/datum/particle_smasher_recipe/aluminium_iron
+	display_name = MAT_IRON + " from " + MAT_ALUMINIUM
+	reagents = list(REAGENT_ID_ALUMINIUM = 50)
+
+	result = /obj/item/stack/material/iron
+	required_material = /obj/item/stack/material/aluminium
+
+	required_energy_min = 200
+	required_energy_max = 300
+
+	required_atmos_temp_min = 1000
+	required_atmos_temp_max = 5000
+	probability = 30
+
+/datum/particle_smasher_recipe/lead_silver
+	display_name = MAT_SILVER + " from " + MAT_LEAD
+	reagents = list(REAGENT_ID_RADIUM = 50)
+
+	result = /obj/item/stack/material/silver
+	required_material = /obj/item/stack/material/lead
+
+	required_energy_min = 600
+	required_energy_max = 700
+
+	required_atmos_temp_min = 8000
+	required_atmos_temp_max = 10000
+	probability = 30
 
 #undef PS_RESULT_STACK
 #undef PS_RESULT_ITEM

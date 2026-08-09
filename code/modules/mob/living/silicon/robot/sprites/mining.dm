@@ -78,6 +78,7 @@
 /datum/robot_sprite/mining/handy
 	name = "Handy"
 	sprite_icon_state = "handy"
+	hat_offset = BORG_HAT_OFFSET_NONE
 
 /datum/robot_sprite/mining/mechoid
 	name = "Acheron"
@@ -92,6 +93,7 @@
 	name = "ZOOM-BA"
 	sprite_icon_state = "zoomba"
 	has_dead_sprite = TRUE
+	hat_offset = ZOOMBA_HAT_OFFSET
 
 /datum/robot_sprite/mining/worm
 	name = "W02M"
@@ -101,6 +103,7 @@
 	has_custom_open_sprites = FALSE
 	has_vore_belly_sprites = TRUE
 	has_dead_sprite = TRUE
+	hat_offset = WORM_HAT_OFFSET
 
 /datum/robot_sprite/mining/uptall
 	name = "Feminine Humanoid"
@@ -116,6 +119,7 @@
 	name = "KMine"
 	sprite_icon_state = "vale"
 	has_eye_light_sprites = TRUE
+	hat_offset = VALE_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/mining/hound
 	name = "Cargohound"
@@ -130,6 +134,8 @@
 /datum/robot_sprite/dogborg/mining/drake
 	name = "Drake"
 	sprite_icon_state = "drake"
+	has_vore_belly_resting_sprites = TRUE
+	hat_offset = DRAKE_HAT_OFFSET
 
 // Tall sprites
 //CHOMPNote -- many of the lines in this is overriden in modular
@@ -142,6 +148,7 @@
 	sprite_icon_state = "raptor"
 	has_custom_equipment_sprites = TRUE
 	rest_sprite_options = list("Default", "Bellyup")
+	hat_offset = RAPTOR_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/meka
 	name = "MEKA"
@@ -179,6 +186,7 @@
 	has_custom_open_sprites = TRUE
 	has_vore_belly_sprites = FALSE
 	rest_sprite_options = list("Default", "Bellyup")
+	hat_offset = K4T_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/k4t_alt1
 	name = "K4T Alt"
@@ -187,6 +195,7 @@
 	has_custom_open_sprites = TRUE
 	has_vore_belly_sprites = FALSE
 	rest_sprite_options = list("Default", "Bellyup")
+	hat_offset = K4T_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/dullahan
 	name = "Dullahan Mining unit"
@@ -202,6 +211,7 @@
 	rest_sprite_options = list("Default", "sit")
 	icon_x = 32
 	pixel_x = 0
+	hat_offset = DULLAHAN_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/dullahanv3
 	name = "Dullahan mining v3"
@@ -210,10 +220,13 @@
 	has_eye_light_sprites = TRUE
 	has_rest_sprites = TRUE
 	has_vore_belly_sprites = TRUE
+	has_vore_belly_resting_sprites = TRUE
+	belly_capacity_list = list("sleeper" = 3)
 	rest_sprite_options = list("Default", "Sit")
 	sprite_decals = list("decals")
 	icon_x = 64
 	pixel_x = -16
+	hat_offset = DULLAHAN_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/dullahancargo
 	name = "Dullahan Cargo unit"
@@ -229,6 +242,7 @@
 	sprite_decals = list("breastplate","eyecover")
 	icon_x = 32
 	pixel_x = 0
+	hat_offset = DULLAHAN_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/dullataurcargo
 	name = "Dullataur cargo"
@@ -242,8 +256,9 @@
 	has_rest_lights_sprites = TRUE
 	has_rest_eyes_sprites = TRUE
 	sprite_decals = list("breastplate")
-	icon_x = 32
-	pixel_x = 0
+	icon_x = 64
+	pixel_x = -16
+	hat_offset = DULLAHAN_TAUR_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/dullataurmining
 	name = "Dullataur mining"
@@ -257,8 +272,9 @@
 	has_rest_lights_sprites = TRUE
 	has_rest_eyes_sprites = TRUE
 	sprite_decals = list("breastplate")
-	icon_x = 32
-	pixel_x = 0
+	icon_x = 64
+	pixel_x = -16
+	hat_offset = DULLAHAN_TAUR_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/mining/cat
 	name = "Cat - Mining"
@@ -288,6 +304,7 @@
 	rest_sprite_options = list("Default", "Sit")
 	icon_x = 32
 	pixel_x = 0
+	hat_offset = MEKA_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/tall/mmekacargo
 	name = "NIKO - Cargo"
@@ -297,6 +314,7 @@
 	rest_sprite_options = list("Default", "Sit")
 	icon_x = 32
 	pixel_x = 0
+	hat_offset = MEKA_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/tall/fmekacargo
 	name = "NIKA - Cargo"
@@ -306,6 +324,7 @@
 	rest_sprite_options = list("Default", "Sit")
 	icon_x = 32
 	pixel_x = 0
+	hat_offset = MEKA_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/tall/k4tcargo
 	name = "K4T - Cargo"
@@ -315,6 +334,7 @@
 	rest_sprite_options = list("Default", "Bellyup")
 	icon_x = 32
 	pixel_x = 0
+	hat_offset = K4T_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/mining/tall/k4t_alt1cargo
 	name = "K4Talt - Cargo"
@@ -324,6 +344,7 @@
 	rest_sprite_options = list("Default", "Bellyup")
 	icon_x = 32
 	pixel_x = 0
+	hat_offset = K4T_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/mining/smolraptor
 	sprite_icon = 'icons/mob/robot/smallraptors/smolraptor_min.dmi'
@@ -333,6 +354,7 @@
 	has_vore_belly_sprites = TRUE
 	has_dead_sprite_overlay = FALSE
 	rest_sprite_options = list("Default", "Sit", "Bellyup")
+	hat_offset = SMOL_RAPTOR_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/mining/smolraptor/alt
 	sprite_icon = 'icons/mob/robot/smallraptors/smolraptor_car.dmi'

@@ -74,10 +74,11 @@
 				anchored = !anchored
 				playsound(src, 'sound/items/Deconstruct.ogg', 50, 1)
 				if(anchored)
+					connect_to_network()
 					to_chat(user, span_blue("You secure the generator to the floor."))
 				else
+					disconnect_from_network()
 					to_chat(user, span_blue("You unsecure the generator from the floor."))
-				SSmachines.makepowernets()
 			else if(O.has_tool_quality(TOOL_SCREWDRIVER))
 				open = !open
 				playsound(src, O.usesound, 50, 1)
@@ -156,7 +157,7 @@
 				usr << browse(null, "window=port_gen")
 				usr.machine = null
 
-/obj/machinery/power/port_gen/pacman2/emag_act(var/remaining_uses, var/mob/user)
+/obj/machinery/power/port_gen/pacman2/emag_act(remaining_uses, mob/user)
 	emagged = 1
-	emp_act(1)
+	emp_act(EMP_HEAVY)
 	return 1

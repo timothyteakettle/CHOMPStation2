@@ -26,7 +26,7 @@
 	. = ..()
 
 /datum/eventkit/mob_spawner/tgui_state(mob/user)
-	return GLOB.tgui_admin_state
+	return ADMIN_STATE(R_ADMIN|R_EVENT|R_DEBUG)
 
 /datum/eventkit/mob_spawner/tgui_static_data(mob/user)
 	var/list/data = list()
@@ -99,7 +99,7 @@
 			use_custom_ai = !use_custom_ai
 			return TRUE
 		if("set_faction")
-			faction = sanitize(tgui_input_text(ui.user, "Please input your mobs' faction", "Faction", (faction ? faction : "neutral")))
+			faction = tgui_input_text(ui.user, "Please input your mobs' faction", "Faction", (faction ? faction : "neutral"), MAX_MESSAGE_LEN)
 			return TRUE
 		if("set_intent")
 			intent = tgui_input_list(ui.user, "Please select preferred intent", "Select Intent", list(I_HELP, I_HURT), (intent ? intent : I_HELP))
@@ -190,15 +190,9 @@
 
 /datum/eventkit/mob_spawner/tgui_close(mob/user)
 	. = ..()
-	qdel(src)
+	if(!QDELETED(src))
+		qdel(src)
 
-/client/proc/eventkit_open_mob_spawner()
-	set category = "Fun.Event Kit"
-	set name = "Open Mob Spawner"
-	set desc = "Opens an advanced version of the mob spawner."
-
-	if(!check_rights(R_SPAWN))
-		return
-
+ADMIN_VERB(eventkit_open_mob_spawner, R_SPAWN, "Open Mob Spawner", "Opens an advanced version of the mob spawner.", ADMIN_CATEGORY_FUN_EVENT_KIT)
 	var/datum/eventkit/mob_spawner/spawner = new()
-	spawner.tgui_interact(usr)
+	spawner.tgui_interact(user.mob)

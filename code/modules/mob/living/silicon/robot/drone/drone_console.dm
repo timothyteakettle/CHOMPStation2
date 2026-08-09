@@ -3,7 +3,7 @@
 	desc = "Used to monitor the station's drone population and the assembler that services them."
 	icon_keyboard = "power_key"
 	icon_screen = "generic" //VOREStation Edit
-	req_access = list(access_engine_equip)
+	req_access = list(ACCESS_ENGINE_EQUIP)
 	circuit = /obj/item/circuitboard/drone_control
 
 	//Used when pinging drones.
@@ -11,7 +11,7 @@
 	//Used to enable or disable drone fabrication.
 	var/obj/machinery/drone_fabricator/dronefab
 
-/obj/machinery/computer/drone_control/attack_ai(var/mob/user as mob)
+/obj/machinery/computer/drone_control/attack_ai(mob/user as mob)
 	return src.attack_hand(user)
 
 /obj/machinery/computer/drone_control/tgui_status(mob/user)
@@ -19,7 +19,7 @@
 		return STATUS_CLOSE
 	return ..()
 
-/obj/machinery/computer/drone_control/attack_hand(var/mob/user as mob)
+/obj/machinery/computer/drone_control/attack_hand(mob/user as mob)
 	if(..())
 		return
 
@@ -35,7 +35,7 @@
 	var/list/data = list()
 
 	var/list/drones = list()
-	for(var/mob/living/silicon/robot/drone/D in mob_list)
+	for(var/mob/living/silicon/robot/drone/D in GLOB.mob_list)
 		//VOREStation Edit - multiz lol
 		if(!(D.z in using_map.get_map_levels(z, TRUE, 0)))
 			continue
@@ -79,7 +79,7 @@
 
 		if("ping")
 			to_chat(ui.user, span_notice("You issue a maintenance request for all active drones, highlighting [drone_call_area]."))
-			for(var/mob/living/silicon/robot/drone/D in player_list)
+			for(var/mob/living/silicon/robot/drone/D in GLOB.player_list)
 				if(D.stat == 0)
 					to_chat(D, "-- Maintenance drone presence requested in: [drone_call_area].")
 

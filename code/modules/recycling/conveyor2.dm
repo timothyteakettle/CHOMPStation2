@@ -40,7 +40,7 @@
 
 	default_apply_parts()
 
-/obj/machinery/conveyor/proc/toggle_speed(var/forced)
+/obj/machinery/conveyor/proc/toggle_speed(forced)
 	if(forced)
 		speed_process = forced
 	else
@@ -51,7 +51,7 @@
 		update_active_power_usage(initial(idle_power_usage))
 	update()
 
-/obj/machinery/conveyor/proc/set_operating(var/new_operating)
+/obj/machinery/conveyor/proc/set_operating(new_operating)
 	if(new_operating == operating)
 		return // No change
 	operating = new_operating
@@ -123,7 +123,7 @@
 				break
 
 // attack with item, place item on conveyor
-/obj/machinery/conveyor/attackby(var/obj/item/I, mob/user)
+/obj/machinery/conveyor/attackby(obj/item/I, mob/user)
 	if(isrobot(user))	return //Carn: fix for borgs dropping their modules on conveyor belts
 	if(I.loc != user)	return // This should stop mounted modules ending up outside the module.
 
@@ -134,7 +134,7 @@
 
 	if(istype(I, /obj/item/multitool))
 		if(panel_open)
-			var/input = sanitize(tgui_input_text(user, "What id would you like to give this conveyor?", "Multitool-Conveyor interface", id))
+			var/input = tgui_input_text(user, "What id would you like to give this conveyor?", "Multitool-Conveyor interface", id, MAX_MESSAGE_LEN)
 			if(!input)
 				to_chat(user, "No input found. Please hang up and try your call again.")
 				return
@@ -236,7 +236,7 @@
 		if(C.id == id)
 			conveyors += C
 
-/obj/machinery/conveyor_switch/proc/toggle_speed(var/forced)
+/obj/machinery/conveyor_switch/proc/toggle_speed(forced)
 	speed_active = !speed_active // switching gears
 	if(speed_active) // high gear
 		for(var/obj/machinery/conveyor/C in conveyors)
@@ -293,7 +293,7 @@
 			S.position = position
 			S.update()
 
-/obj/machinery/conveyor_switch/attackby(var/obj/item/I, mob/user)
+/obj/machinery/conveyor_switch/attackby(obj/item/I, mob/user)
 	if(default_deconstruction_screwdriver(user, I))
 		return
 
@@ -306,7 +306,7 @@
 			to_chat(user, "The welding tool must be on to complete this task.")
 			return
 		playsound(src, WT.usesound, 50, 1)
-		if(do_after(user, 20 * WT.toolspeed))
+		if(do_after(user, 2 SECONDS * WT.toolspeed, target = src))
 			if(!src || !WT.isOn()) return
 			to_chat(user, span_notice("You deconstruct the frame."))
 			new /obj/item/stack/material/steel( src.loc, 2 )
@@ -314,7 +314,7 @@
 			return
 
 	if(I.has_tool_quality(TOOL_MULTITOOL))
-		var/input = sanitize(tgui_input_text(user, "What id would you like to give this conveyor switch?", "Multitool-Conveyor interface", id))
+		var/input = tgui_input_text(user, "What id would you like to give this conveyor switch?", "Multitool-Conveyor interface", id, MAX_MESSAGE_LEN)
 		if(!input)
 			to_chat(user, "No input found. Please hang up and try your call again.")
 			return
@@ -337,11 +337,13 @@
 			playsound(src, I.usesound, 50, 1)
 			return
 
-	//Ports making conveyors fast from CHOMPstation
 	if(I.has_tool_quality(TOOL_WIRECUTTER))
 		toggle_speed()
 		to_chat(user, "You adjust the speed of the conveyor switch")
 		return
+
+/obj/machinery/conveyor_switch/allow_pai_interaction(mob/living/silicon/pai/user, proximity_flag)
+	return proximity_flag
 
 /obj/machinery/conveyor_switch/oneway
 	oneway = 1

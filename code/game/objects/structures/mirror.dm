@@ -7,11 +7,12 @@
 	layer = ABOVE_WINDOW_LAYER
 	density = FALSE
 	anchored = TRUE
+	flags = WALL_ITEM
 	var/shattered = 0
 	var/glass = 1
 	var/datum/tgui_module/appearance_changer/mirror/M
 
-/obj/structure/mirror/Initialize(mapload, var/dir, var/building = 0)
+/obj/structure/mirror/Initialize(mapload, dir, building = 0)
 	. = ..()
 	M = new(src, null)
 	if(building)
@@ -46,7 +47,7 @@
 	desc = "Oh no, seven years of bad luck!"
 
 
-/obj/structure/mirror/bullet_act(var/obj/item/projectile/Proj)
+/obj/structure/mirror/bullet_act(obj/item/projectile/Proj)
 
 	if(prob(Proj.get_structure_damage() * 2))
 		if(!shattered)
@@ -59,7 +60,7 @@
 	if(I.has_tool_quality(TOOL_WRENCH))
 		if(!glass)
 			playsound(src, I.usesound, 50, 1)
-			if(do_after(user, 20 * I.toolspeed))
+			if(do_after(user, 2 SECONDS * I.toolspeed, target = src))
 				to_chat(user, span_notice("You unfasten the frame."))
 				new /obj/item/frame/mirror( src.loc )
 				qdel(src)
@@ -86,7 +87,7 @@
 				to_chat(user, span_warning("You need two sheets of glass to add them to the frame."))
 				return
 			to_chat(user, span_notice("You start to add the glass to the frame."))
-			if(do_after(user, 20))
+			if(do_after(user, 2 SECONDS, target = src))
 				if (G.use(2))
 					shattered = 0
 					glass = 1
@@ -106,7 +107,7 @@
 		visible_message(span_warning("[user] hits [src] with [I]!"))
 		playsound(src, 'sound/effects/Glasshit.ogg', 70, 1)
 
-/obj/structure/mirror/attack_generic(var/mob/user, var/damage)
+/obj/structure/mirror/attack_generic(mob/user, damage)
 
 	user.do_attack_animation(src)
 	if(shattered && glass)
@@ -128,23 +129,23 @@
 	icon_state = "mirror_broke"
 	shattered = 1
 
-/obj/structure/mirror/raider/attack_hand(var/mob/living/carbon/human/user)
+/obj/structure/mirror/raider/attack_hand(mob/living/carbon/human/user)
 	if(istype(get_area(src),/area/syndicate_mothership))
 		if(istype(user) && user.mind && user.mind.special_role == "Raider" && user.species.name != SPECIES_VOX && is_alien_whitelisted(user.client, SPECIES_VOX))
 			var/choice = tgui_alert(user, "Do you wish to become a true Vox of the Shoal? This is not reversible.", "Become Vox?", list("No","Yes"))
 			if(choice && choice == "Yes")
 				var/mob/living/carbon/human/vox/vox = new(get_turf(src),SPECIES_VOX)
 				vox.gender = user.gender
-				raiders.equip(vox)
+				GLOB.raiders.equip(vox)
 				if(user.mind)
 					user.mind.transfer_to(vox)
 				spawn(1)
-					var/newname = sanitizeSafe(tgui_input_text(vox,"Enter a name, or leave blank for the default name.", "Name change","", MAX_NAME_LEN), MAX_NAME_LEN)
+					var/newname = sanitizeSafe(tgui_input_text(vox,"Enter a name, or leave blank for the default name.", "Name change","", MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 					if(!newname || newname == "")
 						var/datum/language/L = GLOB.all_languages[vox.species.default_language]
 						newname = L.get_random_name()
 					vox.real_name = newname
 					vox.name = vox.real_name
-					raiders.update_access(vox)
+					GLOB.raiders.update_access(vox)
 				qdel(user)
 	..()

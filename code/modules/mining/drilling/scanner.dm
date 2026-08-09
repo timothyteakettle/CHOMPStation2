@@ -4,22 +4,33 @@
 	icon = 'icons/obj/device.dmi'
 	icon_state = "deep_scan_device"
 	item_state = "electronic"
-	origin_tech = list(TECH_MAGNET = 1, TECH_ENGINEERING = 1)
-	matter = list(MAT_STEEL = 150)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.075))
 	var/scan_time = 2 SECONDS
 	var/range = 2
 	var/exact = FALSE
+	var/sediment_scan = TRUE
 
-/obj/item/mining_scanner/attack_self(mob/user as mob)
+/obj/item/mining_scanner/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	to_chat(user, span_notice("You begin sweeping \the [src] about, scanning for metal deposits."))
 	playsound(src, 'sound/items/goggles_charge.ogg', 50, 1, -6)
 
-	if(!do_after(user, scan_time))
+	if(!do_after(user, scan_time, target = src))
 		return
 
 	ScanTurf(get_turf(user), user)
 
-/obj/item/mining_scanner/proc/ScanTurf(var/atom/target, var/mob/user)
+/obj/item/mining_scanner/verb/toggle_sediment_scan()
+	set name = "Toggle Sediment Scan"
+	set category = "Object"
+	set src in view(1)
+
+	to_chat(usr, span_notice("\The [src] will [sediment_scan ? "no longer" : "now"] scan for reagents."))
+	sediment_scan = !sediment_scan
+
+/obj/item/mining_scanner/proc/ScanTurf(atom/target, mob/user)
 	var/list/metals = list(
 		"surface minerals" = 0,
 		"industrial metals" = 0,
@@ -30,6 +41,7 @@
 		"anomalous matter" = 0
 		)
 
+	var/list/reagents_found = list()
 	var/turf/Turf = get_turf(target)
 
 	for(var/turf/simulated/T in range(range, Turf))
@@ -41,17 +53,21 @@
 			var/ore_type
 
 			switch(metal)
-				if(ORE_SAND, ORE_CARBON, ORE_MARBLE, /*ORE_QUARTZ*/)	ore_type = "surface minerals"
-				if(ORE_HEMATITE, /*ORE_TIN, ORE_COPPER, ORE_BAUXITE,*/ ORE_LEAD)	ore_type = "industrial metals"
-				if(ORE_GOLD, ORE_SILVER, ORE_RUTILE)					ore_type = "precious metals"
-				if(ORE_DIAMOND, /*ORE_PAINITE*/)	ore_type = "precious gems"
-				if(ORE_URANIUM)									ore_type = "nuclear fuel"
-				if(ORE_PHORON, ORE_PLATINUM, ORE_MHYDROGEN)				ore_type = "exotic matter"
-				if(ORE_VERDANTIUM, /*ORE_VOPAL*/)				ore_type = "anomalous matter"
+				if(ORE_SAND, ORE_CARBON, ORE_MARBLE, ORE_QUARTZ)				ore_type = "surface minerals"
+				if(ORE_HEMATITE, ORE_TIN, ORE_COPPER, ORE_BAUXITE, ORE_LEAD)	ore_type = "industrial metals"
+				if(ORE_GOLD, ORE_SILVER, ORE_RUTILE)							ore_type = "precious metals"
+				if(ORE_DIAMOND, ORE_PAINITE)									ore_type = "precious gems"
+				if(ORE_URANIUM)													ore_type = "nuclear fuel"
+				if(ORE_PHORON, ORE_PLATINUM, ORE_MHYDROGEN)						ore_type = "exotic matter"
+				if(ORE_VERDANTIUM, ORE_VOPAL)									ore_type = "anomalous matter"
 
-			if(ore_type) metals[ore_type] += T.resources[metal]
+			if(ore_type)
+				metals[ore_type] += T.resources[metal]
+			if(islist(GLOB.deepore_fracking_reagents[metal]))
+				for(var/reg_id in GLOB.deepore_fracking_reagents[metal])
+					reagents_found[reg_id] += 1
 
-	var/message = "[icon2html(src, user.client)] " + span_notice("The scanner beeps and displays a readout.")
+	var/message = "[icon2html(src, user.client)] " + span_infoplain("The scanner beeps and displays a readout:")
 
 	for(var/ore_type in metals)
 		var/result = "no sign"
@@ -67,18 +83,35 @@
 
 		message += "<br>" + span_notice("- [result] of [ore_type].")
 
+	if(sediment_scan && reagents_found.len)
+		message += "<br>" + span_infoplain("Sediment sample contains: ")
+		for(var/reg_id in reagents_found)
+			var/amnt = reagents_found[reg_id]
+			var/minimum = 25
+			if(amnt > minimum || exact)
+				var/datum/reagent/R = SSchemistry.chemical_reagents[reg_id]
+				var/ds = ""
+				if(amnt <= minimum && exact)
+					ds = "miniscule "
+				else if(amnt <= 40)
+					ds = "low "
+				else if(amnt >= 120 && exact)
+					ds = "massive "
+				else if(amnt >= 80)
+					ds = "high "
+				message += "<br>" + span_notice("- [ds][R.name]")
+
 	to_chat(user, message)
 
 /obj/item/mining_scanner/advanced
 	name = "advanced ore detector"
 	desc = "An advanced device used to locate ore deep underground."
 	description_info = "This scanner has variable range, you can use the Set Scanner Range verb, or alt+click the device. Drills dig in 5x5."
-	origin_tech = list(TECH_MAGNET = 4, TECH_ENGINEERING = 4)
-	matter = list(MAT_STEEL = 150)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.075))
 	scan_time = 0.5 SECONDS
 	exact = TRUE
 
-/obj/item/mining_scanner/advanced/AltClick(mob/user)
+/obj/item/mining_scanner/advanced/click_alt(mob/user)
 	change_size()
 
 /obj/item/mining_scanner/advanced/verb/change_size()

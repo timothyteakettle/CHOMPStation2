@@ -11,7 +11,7 @@
 	var/target_pressure = ONE_ATMOSPHERE
 
 	var/pressuremin = 0
-	var/pressuremax = 10 * ONE_ATMOSPHERE
+	var/pressuremax = 39.45 * ONE_ATMOSPHERE //The safest level you can get WITHOUT the tank exploding.
 
 	volume = 1000
 
@@ -30,6 +30,8 @@
 	var/list/air_mix = StandardAirMix()
 	src.air_contents.adjust_multi(GAS_O2, air_mix[GAS_O2], GAS_N2, air_mix[GAS_N2])
 
+	AddElement(/datum/element/climbable)
+
 /obj/machinery/portable_atmospherics/powered/pump/update_icon()
 	cut_overlays()
 
@@ -46,9 +48,9 @@
 
 	return
 
-/obj/machinery/portable_atmospherics/powered/pump/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
-		..(severity)
+/obj/machinery/portable_atmospherics/powered/pump/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || stat & (BROKEN|NOPOWER))
 		return
 
 	if(prob(50/severity))
@@ -59,8 +61,6 @@
 
 	target_pressure = rand(0,1300)
 	update_icon()
-
-	..(severity)
 
 /obj/machinery/portable_atmospherics/powered/pump/process()
 	..()
@@ -108,19 +108,17 @@
 			power_change()
 			update_icon()
 
-	src.updateDialog()
-
 /obj/machinery/portable_atmospherics/powered/pump/return_air()
 	return air_contents
 
-/obj/machinery/portable_atmospherics/powered/pump/attack_ai(var/mob/user)
+/obj/machinery/portable_atmospherics/powered/pump/attack_ai(mob/user)
 	src.add_hiddenprint(user)
 	return src.attack_hand(user)
 
-/obj/machinery/portable_atmospherics/powered/pump/attack_ghost(var/mob/user)
+/obj/machinery/portable_atmospherics/powered/pump/attack_ghost(mob/user)
 	return src.attack_hand(user)
 
-/obj/machinery/portable_atmospherics/powered/pump/attack_hand(var/mob/user)
+/obj/machinery/portable_atmospherics/powered/pump/attack_hand(mob/user)
 	tgui_interact(user)
 
 /obj/machinery/portable_atmospherics/powered/pump/tgui_interact(mob/user, datum/tgui/ui)

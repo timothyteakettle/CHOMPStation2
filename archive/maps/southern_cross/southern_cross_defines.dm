@@ -98,7 +98,7 @@
 // Commented out due to causing a lot of bugs. The base proc plus overmap achieves this functionality anyways.
 /*
 // Short range computers see only the six main levels, others can see the surrounding surface levels.
-/datum/map/southern_cross/get_map_levels(var/srcz, var/long_range = TRUE)
+/datum/map/southern_cross/get_map_levels(srcz, long_range = TRUE)
 	if (long_range && (srcz in map_levels))
 		return map_levels
 	else if (srcz == Z_LEVEL_TRANSIT && !long_range)
@@ -318,13 +318,13 @@
 /obj/machinery/suit_cycler/exploration
 	name = "Explorer suit cycler"
 	model_text = "Exploration"
-	req_one_access = list(access_pilot,access_explorer)
+	req_one_access = list(ACCESS_PILOT,ACCESS_EXPLORER)
 
 /obj/machinery/suit_cycler/pilot
 	name = "Pilot suit cycler"
 	model_text = "Pilot"
 	req_access = null
-	req_one_access = list(access_pilot,access_explorer)
+	req_one_access = list(ACCESS_PILOT,ACCESS_EXPLORER)
 
 /datum/map/southern_cross/get_map_info()
 	. = list()

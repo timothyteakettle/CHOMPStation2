@@ -2,7 +2,7 @@
 // Parameters: 4 (origin atom - the source of the message's holder, origin_address - where the message came from, message - the message received,
 //				  text - message text to send if message is of type "text")
 // Description: Handles voice requests and invite messages originating from both real communicators and ghosts.  Also includes a ping response and IM function.
-/obj/item/communicator/receive_exonet_message(var/atom/origin_atom, origin_address, message, text)
+/obj/item/communicator/receive_exonet_message(atom/origin_atom, origin_address, message, text)
 	if(message == "voice")
 		if(isobserver(origin_atom) || istype(origin_atom, /obj/item/communicator))
 			if(origin_atom in voice_invites)
@@ -53,7 +53,7 @@
 // Parameters: 3 (candidate - the communicator wanting to message the device, origin_address - the address of the sender, text - the message)
 // Description: Response to a communicator trying to message the device.
 //				Adds them to the list of people that have messaged this device and adds the message to the message list.
-/obj/item/communicator/proc/request_im(var/atom/candidate, var/origin_address, var/text)
+/obj/item/communicator/proc/request_im(atom/candidate, origin_address, text)
 	var/who = null
 	if(isobserver(candidate))
 		var/mob/observer/dead/ghost = candidate
@@ -77,8 +77,8 @@
 
 	if(ringer)
 		var/S
-		if(ttone in ttone_sound)
-			S = ttone_sound[ttone]
+		if(ttone in GLOB.device_ringtones)
+			S = GLOB.device_ringtones[ttone]
 		else
 			S = 'sound/machines/twobeep.ogg'
 
@@ -107,7 +107,7 @@
 			if(message)
 				exonet.send_message(comm.exonet.address, "text", message)
 				im_list += list(list("address" = exonet.address, "to_address" = comm.exonet.address, "im" = message))
-				log_pda("(COMM: [src]) sent \"[message]\" to [exonet.get_atom_from_address(comm.exonet.address)]", usr)
+				usr.client.mob.log_talk("(COMM: [src]) sent \"[message]\" to [exonet.get_atom_from_address(comm.exonet.address)]", LOG_PDA)
 				to_chat(usr, span_notice("[icon2html(src,usr.client)] Sent message to [istype(comm, /obj/item/communicator) ? comm.owner : comm.name], <b>\"[message]\"</b> (<a href='byond://?src=\ref[src];action=Reply;target=\ref[exonet.get_atom_from_address(comm.exonet.address)]'>Reply</a>)"))
 
 // Verb: text_communicator()
@@ -118,7 +118,7 @@
 	set name = "Text Communicator"
 	set desc = "If there is a communicator available, send a text message to it."
 
-	if(ticker.current_state < GAME_STATE_PLAYING)
+	if(SSticker.current_state < GAME_STATE_PLAYING)
 		to_chat(src, span_danger("The game hasn't started yet!"))
 		return
 
@@ -128,8 +128,8 @@
 	if (usr != src)
 		return //something is terribly wrong
 
-	for(var/mob/living/L in mob_list) //Simple check so you don't have dead people calling.
-		if(src.client.prefs.real_name == L.real_name)
+	for(var/mob/living/L in GLOB.mob_list) //Simple check so you don't have dead people calling.
+		if(src.client.prefs.read_preference(/datum/preference/name/real_name) == L.real_name)
 			to_chat(src, span_danger("Your identity is already present in the game world.  Please load in a different character first."))
 			return
 
@@ -140,7 +140,7 @@
 		return
 
 	var/list/choices = list()
-	for(var/obj/item/communicator/comm in all_communicators)
+	for(var/obj/item/communicator/comm in GLOB.all_communicators)
 		if(!comm.network_visibility || !comm.exonet || !comm.exonet.address)
 			continue
 		choices.Add(comm)
@@ -153,14 +153,14 @@
 	if(choice)
 		var/obj/item/communicator/chosen_communicator = choice
 		var/mob/observer/dead/O = src
-		var/text_message = sanitize(tgui_input_text(src, "What do you want the message to say?", multiline = TRUE))
+		var/text_message = sanitize(tgui_input_text(src, "What do you want the message to say?", encode = FALSE, multiline = TRUE), MAX_MESSAGE_LEN, FALSE, FALSE, TRUE)
 		if(text_message && O.exonet)
 			O.exonet.send_message(chosen_communicator.exonet.address, "text", text_message)
 
 			to_chat(src, span_notice("You have sent '[text_message]' to [chosen_communicator]."))
 			exonet_messages.Add(span_bold("To [chosen_communicator]:") + "<br>[text_message]")
-			log_pda("(DCOMM: [src]) sent \"[text_message]\" to [chosen_communicator]", src)
-			for(var/mob/M in player_list)
+			log_talk("(DCOMM: [src]) sent \"[text_message]\" to [chosen_communicator]", LOG_PDA)
+			for(var/mob/M in GLOB.player_list)
 				if(M.stat == DEAD && M.client?.prefs?.read_preference(/datum/preference/toggle/ghost_ears))
 					if(isnewplayer(M) || M.forbid_seeing_deadchat)
 						continue

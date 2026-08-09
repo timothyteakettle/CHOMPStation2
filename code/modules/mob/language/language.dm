@@ -15,7 +15,7 @@
 	var/signlang_verb_understood = list("signs")  // snowflake bs, used only for echo
 	var/colour = "body"               // CSS style to use for strings in this language.
 	var/key = "x"                     // Character used to speak in language eg. :o for Unathi.
-	var/flags = 0                     // Various language flags.
+	var/flags = NONE                     // Various language flags.
 	var/native                        // If set, non-native speakers will have trouble speaking.
 	var/list/syllables                // Used when scrambling text for a non-speaker.
 	var/list/space_chance = 55        // Likelihood of getting a space in the random scramble string
@@ -23,12 +23,12 @@
 	var/list/partial_understanding	  // List of languages that can /somehwat/ understand it, format is: name = chance of understanding a word
 	var/ignore_adverb = FALSE 		  // For inaudible languages that we dont want adverb for
 
-/datum/language/proc/get_random_name(var/gender, name_count=2, syllable_count=4, syllable_divisor=2)
+/datum/language/proc/get_random_name(gender, name_count=2, syllable_count=4, syllable_divisor=2)
 	if(!syllables || !syllables.len)
 		if(gender==FEMALE)
-			return capitalize(pick(first_names_female)) + " " + capitalize(pick(last_names))
+			return capitalize(pick(GLOB.first_names_female)) + " " + capitalize(pick(GLOB.last_names))
 		else
-			return capitalize(pick(first_names_male)) + " " + capitalize(pick(last_names))
+			return capitalize(pick(GLOB.first_names_male)) + " " + capitalize(pick(GLOB.last_names))
 
 	var/full_name = ""
 	var/new_name = ""
@@ -45,7 +45,7 @@
 	var/list/scramble_cache = list()
 
 /* CHOMPEdit: moved to modular_chomp because it was edited so much.
-/datum/language/proc/scramble(var/input, var/list/known_languages)
+/datum/language/proc/scramble(input, list/known_languages)
 	var/understand_chance = 0
 	for(var/datum/language/L in known_languages)
 		if(partial_understanding && partial_understanding[L.name])
@@ -80,7 +80,7 @@
 
 	return scrambled_text
 
-/datum/language/proc/scramble_word(var/input)
+/datum/language/proc/scramble_word(input)
 	if(!syllables || !syllables.len)
 		return stars(input)
 
@@ -129,8 +129,8 @@
 	// if you yell, you'll be heard from two tiles over instead of one
 	return (copytext(message, length(message)) == "!") ? 2 : 1
 
-/datum/language/proc/broadcast(var/mob/living/speaker,var/message,var/speaker_mask)
-	log_say("(HIVE) [message]", speaker)
+/datum/language/proc/broadcast(mob/living/speaker,message,speaker_mask)
+	speaker.log_talk("(HIVE) [message]", LOG_SAY)
 
 	add_verb(speaker, /mob/proc/adjust_hive_range)
 
@@ -139,39 +139,39 @@
 	//VOREStation Edit Start
 	if(speaker.hive_lang_range == -1)
 		var/turf/t = get_turf(speaker)
-		for(var/mob/player in player_list)
+		for(var/mob/player in GLOB.player_list)
 			var/turf/b = get_turf(player)
 			if (t.z == b.z)
 				player.hear_broadcast(src, speaker, speaker_mask, message)
 	else if(speaker.hive_lang_range)
 		var/turf/t = get_turf(speaker)
-		for(var/mob/player in player_list)
+		for(var/mob/player in GLOB.player_list)
 			var/turf/b = get_turf(player)
 			if(get_dist(t,b) <= speaker.hive_lang_range)
 				player.hear_broadcast(src, speaker, speaker_mask, message)
 	else
-		for(var/mob/player in player_list)
+		for(var/mob/player in GLOB.player_list)
 			player.hear_broadcast(src, speaker, speaker_mask, message)
 	//VOREStation Edit End
 
-/mob/proc/hear_broadcast(var/datum/language/language, var/mob/speaker, var/speaker_name, var/message)
+/mob/proc/hear_broadcast(datum/language/language, mob/speaker, speaker_name, message)
 	if((language in languages) && language.check_special_condition(src))
 		var/msg = span_hivemind("[language.name], " + span_name("[speaker_name]") + " [message]")
 		to_chat(src,msg)
 
-/mob/new_player/hear_broadcast(var/datum/language/language, var/mob/speaker, var/speaker_name, var/message)
+/mob/new_player/hear_broadcast(datum/language/language, mob/speaker, speaker_name, message)
 	return
 
-/mob/observer/dead/hear_broadcast(var/datum/language/language, var/mob/speaker, var/speaker_name, var/message)
+/mob/observer/dead/hear_broadcast(datum/language/language, mob/speaker, speaker_name, message)
 	if(speaker.name == speaker_name || antagHUD)
 		to_chat(src, span_hivemind("[language.name], " + span_name("[speaker_name]") + " ([ghost_follow_link(speaker, src)]) [message]"))
 	else
 		to_chat(src, span_hivemind("[language.name], " + span_name("[speaker_name]") + " [message]"))
 
-/datum/language/proc/check_special_condition(var/mob/other)
+/datum/language/proc/check_special_condition(mob/other)
 	return 1
 
-/datum/language/proc/get_spoken_verb(var/msg_end)
+/datum/language/proc/get_spoken_verb(msg_end)
 	switch(msg_end)
 		if("!")
 			return exclaim_verb
@@ -179,7 +179,7 @@
 			return ask_verb
 	return speech_verb
 
-/datum/language/proc/can_speak_special(var/mob/speaker)
+/datum/language/proc/can_speak_special(mob/speaker)
 	. = TRUE
 	if(name != "Noise")	// Audible Emotes
 		if(ishuman(speaker))
@@ -197,7 +197,7 @@
 						. = TRUE
 
 // Language handling.
-/mob/proc/add_language(var/language)
+/mob/proc/add_language(language)
 
 	var/datum/language/new_language = GLOB.all_languages[language]
 
@@ -210,7 +210,7 @@
 
 	return 1
 
-/mob/proc/remove_language(var/rem_language)
+/mob/proc/remove_language(rem_language)
 	var/datum/language/L = GLOB.all_languages[rem_language]
 	. = (L in languages)
 	var/prefix = get_custom_prefix_by_lang(src, L)
@@ -228,7 +228,7 @@
 /mob/proc/can_speak(datum/language/speaking)
 //Prevents someone from speaking a null language.
 	if(!speaking)
-		log_debug("[src] attempted to speak a null language.")
+		log_runtime("[src] attempted to speak a null language.")
 		return 0
 
 	if(speaking == GLOB.all_languages["Noise"])
@@ -252,7 +252,7 @@
 
 	return CONFIG_GET(str_list/language_prefixes)[1]
 
-/mob/proc/is_language_prefix(var/prefix)
+/mob/proc/is_language_prefix(prefix)
 	if(client && client.prefs.language_prefixes && client.prefs.language_prefixes.len)
 		return prefix in client.prefs.language_prefixes
 
@@ -324,7 +324,7 @@
 	else
 		return ..()
 
-/proc/transfer_languages(var/mob/source, var/mob/target, var/except_flags)
+/proc/transfer_languages(mob/source, mob/target, except_flags)
 	for(var/datum/language/L in source.languages)
 		if(L.flags & except_flags)
 			continue
@@ -334,7 +334,7 @@
 				if(!(key in target.language_keys))
 					target.language_keys[key] = L
 
-/proc/get_custom_prefix_by_lang(var/mob/our_mob, var/language)
+/proc/get_custom_prefix_by_lang(mob/our_mob, language)
 	if(!our_mob || !our_mob.language_keys.len || !language)
 		return
 

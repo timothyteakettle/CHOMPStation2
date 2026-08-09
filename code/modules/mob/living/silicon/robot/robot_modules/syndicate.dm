@@ -18,39 +18,38 @@
 					LANGUAGE_TERMINUS = 1,
 					LANGUAGE_ZADDAT = 0
 					)
-	var/id
+	ui_theme = "syndicate"
+	idcard_type = /obj/item/card/id/syndicate
 
 // All syndie modules get these, and the base borg items (flash, crowbar, etc).
-/obj/item/robot_module/robot/syndicate/create_equipment(var/mob/living/silicon/robot/robot)
+/obj/item/robot_module/robot/syndicate/create_equipment(mob/living/silicon/robot/robot)
 	..()
 	src.modules += new /obj/item/pinpointer/shuttle/merc(src)
 	src.modules += new /obj/item/melee/robotic/blade/syndicate(src)
+	src.modules += new /obj/item/multitool/ai_detector/cyborg(src)
 
 	var/datum/matter_synth/cloth = new /datum/matter_synth/cloth(40000)
 	synths += cloth
-
-	var/obj/item/stack/sandbags/cyborg/SB = new /obj/item/stack/sandbags/cyborg(src)
-	SB.synths += list(cloth)
 
 	var/jetpack = new/obj/item/tank/jetpack/carbondioxide(src)
 	src.modules += jetpack
 	robot.internals = jetpack
 
-	var/obj/id = robot.idcard
-	id.forceMove(src)
-	src.modules += id
+	var/obj/item/card/id/robot_id = robot.idcard
+	robot_id.forceMove(src)
+	src.modules += robot_id
 
-/obj/item/robot_module/robot/syndicate/Destroy()
-	src.modules -= id
-	id = null
-	return ..()
+/obj/item/robot_module/robot/syndicate/adjust_gps(obj/item/gps/robot/robot_gps)
+	robot_gps.long_range = TRUE
+	robot_gps.hide_signal = TRUE
+	robot_gps.can_hide_signal = TRUE
 
 // Gets a big shield and a gun that shoots really fast to scare the opposing force.
 /obj/item/robot_module/robot/syndicate/protector
 	name = "protector robot module"
 	supported_upgrades = list(/obj/item/borg/upgrade/restricted/bellycapupgrade)
 
-/obj/item/robot_module/robot/syndicate/protector/create_equipment(var/mob/living/silicon/robot/robot)
+/obj/item/robot_module/robot/syndicate/protector/create_equipment(mob/living/silicon/robot/robot)
 	..()
 	src.modules += new /obj/item/shield_projector/rectangle/weak(src)
 	src.modules += new /obj/item/gun/energy/robotic/laser/dakkalaser(src)
@@ -59,12 +58,13 @@
 
 	src.modules += new /obj/item/dogborg/sleeper/K9/syndie(src)
 	src.modules += new /obj/item/dogborg/pounce(src)
+	src.modules += new /obj/item/robotic_multibelt/materials(src)
 
 // 95% engi-borg and 15% roboticist.
 /obj/item/robot_module/robot/syndicate/mechanist
 	name = "mechanist robot module"
 
-/obj/item/robot_module/robot/syndicate/mechanist/create_equipment(var/mob/living/silicon/robot/robot)
+/obj/item/robot_module/robot/syndicate/mechanist/create_equipment(mob/living/silicon/robot/robot)
 	..()
 	// General engineering/hacking.
 	src.modules += new /obj/item/borg/sight/meson(src)
@@ -102,32 +102,14 @@
 	N.synths = list(nanite)
 	src.modules += N
 
-	var/obj/item/stack/material/cyborg/steel/M = new (src)
-	M.synths = list(metal)
-	src.modules += M
-
-	var/obj/item/stack/material/cyborg/glass/G = new (src)
-	G.synths = list(glass)
-	src.modules += G
-
-	var/obj/item/stack/rods/cyborg/rods = new /obj/item/stack/rods/cyborg(src)
-	rods.synths = list(metal)
-	src.modules += rods
-
-	var/obj/item/stack/cable_coil/cyborg/C = new /obj/item/stack/cable_coil/cyborg(src)
-	C.synths = list(wire)
-	src.modules += C
-
-	var/obj/item/stack/material/cyborg/glass/reinforced/RG = new (src)
-	RG.synths = list(metal, glass)
-	src.modules += RG
-
 	var/obj/item/dogborg/sleeper/compactor/syndie/MD = new /obj/item/dogborg/sleeper/compactor/syndie(src)
 	MD.metal = metal
 	MD.glass = glass
 	src.modules += MD
 
 	src.modules += new /obj/item/dogborg/pounce(src)
+
+	src.modules += new /obj/item/robotic_multibelt/materials(src)
 
 
 
@@ -136,26 +118,19 @@
 	name = "combat medic robot module"
 	supported_upgrades = list(/obj/item/borg/upgrade/restricted/bellycapupgrade)
 
-/obj/item/robot_module/robot/syndicate/combat_medic/create_equipment(var/mob/living/silicon/robot/robot)
+/obj/item/robot_module/robot/syndicate/combat_medic/create_equipment(mob/living/silicon/robot/robot)
 	..()
 	src.modules += new /obj/item/healthanalyzer/phasic(src)
 	src.modules += new /obj/item/reagent_containers/borghypo/merc(src)
 
 	// Surgery things.
 	src.modules += new /obj/item/autopsy_scanner(src)
-	src.modules += new /obj/item/surgical/scalpel/cyborg(src)
-	src.modules += new /obj/item/surgical/hemostat/cyborg(src)
-	src.modules += new /obj/item/surgical/retractor/cyborg(src)
-	src.modules += new /obj/item/surgical/cautery/cyborg(src)
-	src.modules += new /obj/item/surgical/bonegel/cyborg(src)
-	src.modules += new /obj/item/surgical/FixOVein/cyborg(src)
-	src.modules += new /obj/item/surgical/bonesetter/cyborg(src)
-	src.modules += new /obj/item/surgical/circular_saw/cyborg(src)
-	src.modules += new /obj/item/surgical/surgicaldrill/cyborg(src)
-	src.modules += new /obj/item/gripper/no_use/organ(src)
+	src.modules += new /obj/item/robotic_multibelt/medical(src)
+	src.modules += new /obj/item/robotic_multibelt/medical(src)
+	src.modules += new /obj/item/gripper/medical(src)
+	src.modules += new /obj/item/robotic_multibelt/materials(src)
 
 	// General healing.
-	src.modules += new /obj/item/gripper/medical(src)
 	src.modules += new /obj/item/shockpaddles/robot/combat(src)
 	src.modules += new /obj/item/reagent_containers/dropper(src) // Allows borg to fix necrosis apparently
 	src.modules += new /obj/item/reagent_containers/syringe(src)
@@ -184,7 +159,7 @@
 	src.modules += new /obj/item/dogborg/sleeper/syndie(src)
 	src.modules += new /obj/item/dogborg/pounce(src)
 
-/obj/item/robot_module/robot/syndicate/combat_medic/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
+/obj/item/robot_module/robot/syndicate/combat_medic/respawn_consumable(mob/living/silicon/robot/R, amount)
 
 	var/obj/item/reagent_containers/syringe/S = locate() in src.modules
 	if(S.mode == 2)
@@ -193,3 +168,22 @@
 		S.desc = initial(S.desc)
 		S.update_icon()
 	..()
+
+/obj/item/robot_module/robot/syndicate/ninja
+	name = "ninja robot module"
+	supported_upgrades = list(/obj/item/borg/upgrade/restricted/bellycapupgrade)
+
+/obj/item/robot_module/robot/syndicate/ninja/create_equipment(mob/living/silicon/robot/robot)
+	..()
+	src.modules += new /obj/item/dogborg/sleeper/K9/syndie(src)
+	src.modules += new /obj/item/dogborg/pounce(src)
+	src.modules += new /obj/item/gripper/syndicate(src)
+	src.modules += new /obj/item/robotic_multibelt/syndicate(src)
+	src.modules += new /obj/item/robotic_multibelt/syndicate(src)
+	src.modules += new /obj/item/melee/robotic/blade/ninja(src)
+	src.modules += new /obj/item/borg/cloak(src)
+	//Removes the default sblade
+	var/obj/item/melee/robotic/blade/syndicate/sblade = locate() in src.modules
+	if(sblade)
+		src.modules -= sblade
+		qdel(sblade)

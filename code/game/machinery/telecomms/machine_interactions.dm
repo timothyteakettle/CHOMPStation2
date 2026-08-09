@@ -36,7 +36,7 @@
 	if(default_deconstruction_crowbar(user, P))
 		return
 
-/obj/machinery/telecomms/attack_ai(var/mob/user as mob)
+/obj/machinery/telecomms/attack_ai(mob/user as mob)
 	attack_hand(user)
 
 /obj/machinery/telecomms/tgui_data(mob/user)
@@ -98,7 +98,7 @@
 			return STATUS_CLOSE
 	. = ..()
 
-/obj/machinery/telecomms/attack_hand(var/mob/user as mob)
+/obj/machinery/telecomms/attack_hand(mob/user as mob)
 	tgui_interact(user)
 
 /obj/machinery/telecomms/tgui_interact(mob/user, datum/tgui/ui)
@@ -226,7 +226,7 @@
 						change_frequency = newfreq
 						set_temp("-% New frequency to change to assigned: \"[newfreq] GHz\" %-", "average")
 				else
-					change_frequency = 0
+					change_frequency = ZERO_FREQ
 					set_temp("-% Frequency changing deactivated %-", "average")
 
 
@@ -295,8 +295,7 @@
 				. = TRUE
 
 		if("network")
-			var/newnet = tgui_input_text(ui.user, "Specify the new network for this machine. This will break all current links.", src, network)
-			newnet = sanitize(newnet,15)
+			var/newnet = tgui_input_text(ui.user, "Specify the new network for this machine. This will break all current links.", src, network, 15)
 			if(newnet && canAccess(ui.user))
 
 				if(length(newnet) > 15)
@@ -374,12 +373,12 @@
 
 	add_fingerprint(ui.user)
 
-/obj/machinery/telecomms/proc/canAccess(var/mob/user)
+/obj/machinery/telecomms/proc/canAccess(mob/user)
 	if(issilicon(user) || in_range(user, src))
 		return 1
 	return 0
 
-/obj/machinery/telecomms/proc/set_temp(var/text, var/color = "average")
+/obj/machinery/telecomms/proc/set_temp(text, color = "average")
 	temp = list("color" = color, "text" = text)
 
 #undef TELECOMM_Z

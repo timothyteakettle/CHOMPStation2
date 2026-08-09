@@ -54,7 +54,7 @@
 /mob/living/bot/secbot/ed209/handleRangedTarget()
 	RangedAttack(target)
 
-/mob/living/bot/secbot/ed209/RangedAttack(var/atom/A)
+/mob/living/bot/secbot/ed209/RangedAttack(atom/A)
 	if(last_shot + shot_delay > world.time)
 		to_chat(src, "You are not ready to fire yet!")
 		return
@@ -83,11 +83,11 @@
 	created_name = "ED-209 Security Robot"
 	var/lasercolor = ""
 
-/obj/item/secbot_assembly/ed209_assembly/attackby(var/obj/item/W, var/mob/user)
+/obj/item/secbot_assembly/ed209_assembly/attackby(obj/item/W, mob/user)
 	..()
 
 	if(istype(W, /obj/item/pen))
-		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN), MAX_NAME_LEN)
+		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 		if(!t)
 			return
 		if(!in_range(src, user) && src.loc != user)
@@ -152,7 +152,7 @@
 					to_chat(user, span_warning("You need one coil of wire to wire [src]."))
 					return
 				to_chat(user, span_notice("You start to wire [src]."))
-				if(do_after(user, 40) && build_step == 6)
+				if(do_after(user, 4 SECONDS, target = src) && build_step == 6)
 					if(C.use(1))
 						build_step++
 						to_chat(user, span_notice("You wire the ED-209 assembly."))

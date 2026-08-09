@@ -10,7 +10,7 @@
 	var/holster_out = 'sound/items/holsterout.ogg'
 	w_class = ITEMSIZE_NORMAL
 
-/obj/item/clothing/accessory/holster/proc/holster(var/obj/item/I, var/mob/living/user)
+/obj/item/clothing/accessory/holster/proc/holster(obj/item/I, mob/living/user)
 	if(holstered && istype(user))
 		to_chat(user, span_warning("There is already \a [holstered] holstered here!"))
 		return
@@ -93,11 +93,6 @@
 
 /obj/item/clothing/accessory/holster/attackby(obj/item/W as obj, mob/user as mob)
 	holster(W, user)
-
-/obj/item/clothing/accessory/holster/emp_act(severity)
-	if (holstered)
-		holstered.emp_act(severity)
-	..()
 
 /obj/item/clothing/accessory/holster/examine(mob/user)
 	. = ..(user)

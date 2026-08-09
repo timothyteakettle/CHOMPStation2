@@ -47,10 +47,10 @@
 	else
 		icon_state = "borg_pod_opened"
 
-/obj/machinery/transportpod/Bumped(var/mob/living/O)
+/obj/machinery/transportpod/Bumped(mob/living/O)
 	go_in(O)
 
-/obj/machinery/transportpod/proc/go_in(var/mob/living/carbon/human/O)
+/obj/machinery/transportpod/proc/go_in(mob/living/carbon/human/O)
 	if(occupant)
 		return
 
@@ -58,7 +58,6 @@
 		return
 
 	add_fingerprint(O)
-	O.reset_view(src)
 	O.forceMove(src)
 	occupant = O
 	update_icon()
@@ -72,9 +71,7 @@
 /obj/machinery/transportpod/proc/go_out()
 	if(!occupant)
 		return
-
 	occupant.forceMove(src.loc)
-	occupant.reset_view()
 	occupant = null
 	update_icon()
 

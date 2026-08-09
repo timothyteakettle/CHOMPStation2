@@ -45,10 +45,11 @@
 		)
 
 
-/datum/species/shapeshifter/promethean/avatar/handle_death(var/mob/living/carbon/human/H)
+/datum/species/shapeshifter/promethean/avatar/handle_death(mob/living/carbon/human/H)
 	return
 
-/datum/species/shapeshifter/promethean/avatar/handle_environment_special(var/mob/living/carbon/human/H)
+/datum/species/shapeshifter/promethean/avatar/handle_environment_special(mob/living/carbon/human/H)
+	//Traits like anxiety won't apply here, but that's the issue with them being a subtype of Promethean.
 	return
 
 /mob/living/carbon/human/proc/shapeshifter_change_opacity()
@@ -70,7 +71,7 @@
 
 
 // enter_vr is called on the original mob, and puts the mind into the supplied vr mob
-/mob/living/carbon/human/proc/enter_vr(var/mob/living/carbon/human/avatar) // Avatar is currently a human, because we have preexisting setup code for appearance manipulation, etc.
+/mob/living/carbon/human/proc/enter_vr(mob/living/carbon/human/avatar) // Avatar is currently a human, because we have preexisting setup code for appearance manipulation, etc.
 	if(!istype(avatar))
 		return
 
@@ -116,7 +117,7 @@
 	// Getting hurt in VR doesn't damage the physical body, but you still got hurt.
 	if(ishuman(vr_holder) && total_damage)
 		var/mob/living/carbon/human/V = vr_holder
-		V.stun_effect_act(0, total_damage*2/3, null)												// 200 damage leaves the user in paincrit for several seconds, agony reaches 0 after around 2m.
+		V.stun_effect_act(0, total_damage*2/3, null, electric = FALSE)												// 200 damage leaves the user in paincrit for several seconds, agony reaches 0 after around 2m.
 		to_chat(vr_holder, span_warning("Pain from your time in VR lingers."))		// 250 damage leaves the user unconscious for several seconds in addition to paincrit
 
 	// Maintain a link with the mob, but don't use teleop

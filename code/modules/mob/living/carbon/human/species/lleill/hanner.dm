@@ -111,10 +111,10 @@
 		var/datum/power/lleill/LP = new power(src)
 		lleill_ability_datums.Add(LP)
 
-/datum/species/shapeshifter/hanner/proc/add_lleill_abilities(var/mob/living/carbon/human/H)
-	if(!H.ability_master || !istype(H.ability_master, /obj/screen/movable/ability_master/lleill))
+/datum/species/shapeshifter/hanner/proc/add_lleill_abilities(mob/living/carbon/human/H)
+	if(!H.ability_master || !istype(H.ability_master, /atom/movable/screen/movable/ability_master/lleill))
 		H.ability_master = null
-		H.ability_master = new /obj/screen/movable/ability_master/lleill(H)
+		H.ability_master = new /atom/movable/screen/movable/ability_master/lleill(H)
 	for(var/datum/power/lleill/P in lleill_ability_datums)
 		if(!(P.verbpath in H.verbs))
 			add_verb(H, P.verbpath)
@@ -130,6 +130,6 @@
 			H.lleill_display.invisibility = INVISIBILITY_NONE
 			H.lleill_display.icon_state = "lleill-4"
 
-/datum/species/shapeshifter/hanner/add_inherent_verbs(var/mob/living/carbon/human/H)
+/datum/species/shapeshifter/hanner/add_inherent_verbs(mob/living/carbon/human/H)
 	..()
 	add_lleill_abilities(H)

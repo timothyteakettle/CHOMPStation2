@@ -2,14 +2,11 @@
 /obj/item/gun/energy/imperial
 	name = "imperial energy pistol"
 	desc = "An elegant weapon developed by the Imperium Auream. Their weaponsmiths have cleverly found a way to make a gun that is only about the size of an average energy pistol, yet with the fire power of a laser carbine."
-	icon = 'icons/obj/gun_vr.dmi'
-	icon_override = 'icons/obj/gun_vr.dmi'
 	icon_state = "ge_pistol"
 	item_state = "ge_pistol"
 	slot_flags = SLOT_BELT
 	w_class = ITEMSIZE_NORMAL
 	force = 10
-	origin_tech = list(TECH_COMBAT = 4, TECH_MAGNET = 2)
 	matter = list(MAT_STEEL = 2000)
 	fire_sound = 'sound/weapons/mandalorian.ogg'
 	projectile_type = /obj/item/projectile/beam/imperial
@@ -31,16 +28,15 @@
 	pixel_x = -16
 
 	projectile_type = /obj/item/projectile/beam/stun/weak
-	origin_tech = list(TECH_COMBAT = 4, TECH_MAGNET = 2, TECH_ILLEGAL = 3)
 	modifystate = "g44estun"
 
 	one_handed_penalty = 60
 
 	firemodes = list(
 		list(mode_name="stun", burst=1, projectile_type=/obj/item/projectile/beam/stun/weak, modifystate="g44estun", fire_sound='sound/weapons/Taser.ogg', charge_cost = 100),
-		list(mode_name="stun burst", burst=3, fire_delay=null, move_delay=4, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/stun/weak, modifystate="g44estun", fire_sound='sound/weapons/Taser.ogg'),
+		list(mode_name="stun burst", burst=3, fire_delay=null, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/stun/weak, modifystate="g44estun", fire_sound='sound/weapons/Taser.ogg'),
 		list(mode_name="lethal", burst=1, projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="g44ekill", fire_sound='sound/weapons/Laser.ogg', charge_cost = 200),
-		list(mode_name="lethal burst", burst=3, fire_delay=null, move_delay=4, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="g44ekill", fire_sound='sound/weapons/Laser.ogg'),
+		list(mode_name="lethal burst", burst=3, fire_delay=null, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="g44ekill", fire_sound='sound/weapons/Laser.ogg'),
 		)
 */
 
@@ -54,8 +50,7 @@
 /obj/item/gun/energy/gun/martin
 	name = "holdout energy gun"
 	desc = "The FS PDW E \"Martin\" is small holdout e-gun. Don't miss!"
-	icon = 'icons/obj/gun_vr.dmi'
-	icon_state = "PDW"
+	icon_state = "pdw"
 	item_state = "gun"
 	w_class = ITEMSIZE_SMALL
 	projectile_type = /obj/item/projectile/beam/stun
@@ -64,7 +59,6 @@
 	modifystate = null
 	battery_lock = 1
 	fire_sound = 'sound/weapons/Taser.ogg'
-	origin_tech = list(TECH_COMBAT = 3, TECH_MAGNET = 2)
 	firemodes = list(
 		list(mode_name="stun", projectile_type=/obj/item/projectile/beam/stun, fire_sound='sound/weapons/Taser.ogg', charge_cost = 600),
 		list(mode_name="lethal", projectile_type=/obj/item/projectile/beam, fire_sound='sound/weapons/Laser.ogg', charge_cost = 1200),
@@ -82,7 +76,7 @@
 
 //Gun Locking Mechanism
 /obj/item/gun/energy/locked
-	req_access = list(access_armory) //for toggling safety
+	req_access = list(ACCESS_ARMORY) //for toggling safety
 	var/locked = 1
 	var/lockable = 1
 
@@ -98,7 +92,7 @@
 	else
 		return ..()
 
-/obj/item/gun/energy/locked/emag_act(var/remaining_charges,var/mob/user)
+/obj/item/gun/energy/locked/emag_act(remaining_charges,mob/user)
 	..()
 	if(lockable)
 		locked = !locked
@@ -118,12 +112,10 @@
 	name = "frontier phaser"
 	desc = "An extraordinarily rugged laser weapon, built to last and requiring effectively no maintenance. Includes a built-in crank charger for recharging away from civilization. This one has a safety interlock that prevents firing while in proximity to the facility."
 	description_fluff = "The NT Brand Model E2 Secured Phaser System, a specialty phaser that has an intergrated chip that prevents the user from opperating the weapon within the vicinity of any NanoTrasen opperated outposts/stations/bases. However, this chip can be disabled so the weapon CAN BE used in the vicinity of any NanoTrasen opperated outposts/stations/bases. The weapon doesn't use traditional weapon power cells and instead works via a pump action that recharges the internal cells. It is a staple amongst exploration personell who usually don't have the license to opperate a lethal weapon through NT and provides them with a weapon that can be recharged away from civilization."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "phaserkill"
 	item_state = "phaser"
-	item_icons = list(slot_l_hand_str = 'icons/mob/items/lefthand_guns_vr.dmi', slot_r_hand_str = 'icons/mob/items/righthand_guns_vr.dmi', "slot_belt" = 'icons/inventory/belt/mob_vr.dmi')
+	item_icons = list(slot_l_hand_str = 'icons/mob/items/lefthand_guns_vr.dmi', slot_r_hand_str = 'icons/mob/items/righthand_guns_vr.dmi', "slot_belt" = 'icons/inventory/belt/mob.dmi')
 	fire_sound = 'sound/weapons/laser2.ogg'
-	origin_tech = list(TECH_COMBAT = 4, TECH_MAGNET = 2, TECH_POWER = 4)
 	charge_cost = 100 //Chompedit Reduced cost
 
 	battery_lock = 1
@@ -140,7 +132,7 @@
 	)  //CHOMPedit Adjusts cost and fire delay to match adjusted beams.
 	recoil_mode = 0
 
-/obj/item/gun/energy/locked/frontier/unload_ammo(var/mob/user)
+/obj/item/gun/energy/locked/frontier/unload_ammo(mob/user)
 	if(recharging)
 		return
 	recharging = 1
@@ -184,7 +176,6 @@
 	name = "frontier carbine"
 	desc = "A larger and more efficient version of the venerable frontier phaser, the carbine is a fairly new weapon, and has only been produced in limited numbers so far.  Includes a built-in crank charger for recharging away from civilization. This one has a safety interlock that prevents firing while in proximity to the facility."
 	description_fluff = "The NT Brand Model AT2 Secured Phaser System, a specialty phaser that has an intergrated chip that prevents the user from opperating the weapon within the vicinity of any NanoTrasen opperated outposts/stations/bases. However, this chip can be disabled so the weapon CAN BE used in the vicinity of any NanoTrasen opperated outposts/stations/bases. The weapon doesn't use traditional weapon power cells and instead works via a pump action that recharges the internal cells. It is a staple amongst exploration personell who usually don't have the license to opperate a lethal weapon through NT and provides them with a weapon that can be recharged away from civilization."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "carbinekill"
 	item_state = "energykill"
 	item_icons = list(slot_l_hand_str = 'icons/mob/items/lefthand_guns.dmi', slot_r_hand_str = 'icons/mob/items/righthand_guns.dmi')
@@ -197,7 +188,7 @@
 	firemodes = list(
 		list(mode_name="lethal", fire_delay=10, projectile_type=/obj/item/projectile/beam/phaser, modifystate="carbinekill", charge_cost = 60), //Chompedit Reduced cost
 		list(mode_name="low-power", fire_delay=5, projectile_type=/obj/item/projectile/beam/phaser/light, modifystate="carbinestun", charge_cost = 30), //Chompedit Reduced cost
-		list(mode_name="burst", burst=3, fire_delay=10, move_delay=4, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/phaser/light, charge_cost = 90), //Chompedit Added this
+		list(mode_name="burst", burst=3, fire_delay=10, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/phaser/light, charge_cost = 90), //Chompedit Added this
 	)
 
 /obj/item/gun/energy/locked/frontier/carbine/update_icon()
@@ -218,7 +209,6 @@
 /obj/item/gun/energy/locked/frontier/holdout
 	name = "holdout frontier phaser"
 	desc = "An minaturized weapon designed for the purpose of expeditionary support to defend themselves on the field. Includes a built-in crank charger for recharging away from civilization. This one has a safety interlock that prevents firing while in proximity to the facility."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "holdoutkill"
 	item_state = null
 	phase_power = 15
@@ -244,7 +234,6 @@
 /obj/item/gun/energy/locked/frontier/rifle
 	name = "frontier marksman rifle"
 	desc = "A much larger, heavier weapon than the typical frontier-type weapons, this DMR can be fired both from the hip, and in scope. Includes a built-in crank charger for recharging away from civilization. This one has a safety interlock that prevents firing while in proximity to the facility."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "riflekill"
 	item_state = "sniper"
 	item_state_slots = list(slot_r_hand_str = "lsniper", slot_l_hand_str = "lsniper")
@@ -261,7 +250,7 @@
 	//CHOMP Edit: Changed beam type to new phaser beam type.
 	firemodes = list(
 		list(mode_name="lethal", fire_delay=12, projectile_type=/obj/item/projectile/beam/phaser, modifystate="riflestun", charge_cost = 60), //Chompedit Reduced cost
-		list(mode_name="sniper", fire_delay=35, move_delay=4, projectile_type=/obj/item/projectile/beam/phaser/heavy, modifystate="riflekill", charge_cost = 100), //Chompedit Reduced cost
+		list(mode_name="sniper", fire_delay=35, projectile_type=/obj/item/projectile/beam/phaser/heavy, modifystate="riflekill", charge_cost = 100), //Chompedit Reduced cost
 	)
 
 /obj/item/gun/energy/locked/frontier/rifle/ui_action_click()
@@ -272,7 +261,7 @@
 	set name = "Use Scope"
 	set popup_menu = 1
 
-	toggle_scope(2.0)
+	toggle_scope(usr, 2.0)
 
 /obj/item/gun/energy/locked/frontier/rifle/update_icon()
 	if(recharging)
@@ -292,7 +281,6 @@
 /obj/item/gun/energy/locked/frontier/handbow
 	name = "phaser handbow"
 	desc = "An minaturized weapon that fires a bolt of energy. Includes a built-in crank charger for recharging away from civilization. This one has a safety interlock that prevents firing while in proximity to the facility."
-	icon = 'icons/obj/gun_vr.dmi'
 	icon_state = "handbowkill"
 	item_state = null
 	phase_power = 20

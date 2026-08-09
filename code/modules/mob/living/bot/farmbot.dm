@@ -10,7 +10,7 @@
 	icon_state = "farmbot0"
 	health = 50
 	maxHealth = 50
-	req_one_access = list(access_robotics, access_hydroponics, access_xenobiology)
+	req_one_access = list(ACCESS_ROBOTICS, ACCESS_HYDROPONICS, ACCESS_XENOBIOLOGY)
 
 	var/action = "" // Used to update icon
 	var/waters_trays = 1
@@ -23,7 +23,7 @@
 	var/obj/structure/reagent_dispensers/watertank/tank
 
 
-/mob/living/bot/farmbot/Initialize(mapload, var/newTank)
+/mob/living/bot/farmbot/Initialize(mapload, newTank)
 	. = ..()
 	if(!newTank)
 		newTank = new /obj/structure/reagent_dispensers/watertank(src)
@@ -70,7 +70,7 @@
 		return
 	tgui_interact(user)
 
-/mob/living/bot/farmbot/emag_act(var/remaining_charges, var/mob/user)
+/mob/living/bot/farmbot/emag_act(remaining_charges, mob/user)
 	. = ..()
 	if(!emagged)
 		if(user)
@@ -171,7 +171,7 @@
 	makeStep(target_path)
 	return
 
-/mob/living/bot/farmbot/UnarmedAttack(var/atom/A, var/proximity)
+/mob/living/bot/farmbot/UnarmedAttack(atom/A, proximity)
 	if(!..())
 		return
 
@@ -191,7 +191,7 @@
 				visible_message(span_notice("[src] starts [T.dead? "removing the plant from" : "harvesting"] \the [A]."))
 
 				busy = 1
-				if(do_after(src, 30, A))
+				if(do_after(src, 3 SECONDS, target = A))
 					visible_message(span_notice("[src] [T.dead? "removes the plant from" : "harvests"] \the [A]."))
 					T.attack_hand(src)
 			if(FARMBOT_WATER)
@@ -200,7 +200,7 @@
 				visible_message(span_notice("[src] starts watering \the [A]."))
 
 				busy = 1
-				if(do_after(src, 30, A))
+				if(do_after(src, 3 SECONDS, target = A))
 					playsound(src, 'sound/effects/slosh.ogg', 25, 1)
 					visible_message(span_notice("[src] waters \the [A]."))
 					tank.reagents.trans_to(T, 100 - T.waterlevel)
@@ -210,7 +210,7 @@
 				visible_message(span_notice("[src] starts uprooting the weeds in \the [A]."))
 
 				busy = 1
-				if(do_after(src, 30))
+				if(do_after(src, 3 SECONDS, target = A))
 					visible_message(span_notice("[src] uproots the weeds in \the [A]."))
 					T.weedlevel = 0
 			if(FARMBOT_NUTRIMENT)
@@ -219,7 +219,7 @@
 				visible_message(span_notice("[src] starts fertilizing \the [A]."))
 
 				busy = 1
-				if(do_after(src, 30, A))
+				if(do_after(src, 3 SECONDS, target = A))
 
 					visible_message(span_notice("[src] fertilizes \the [A]."))
 					T.reagents.add_reagent(REAGENT_ID_AMMONIA, 10)
@@ -236,7 +236,7 @@
 		visible_message(span_notice("[src] starts refilling its tank from \the [A]."))
 
 		busy = 1
-		while(do_after(src, 10) && tank.reagents.total_volume < tank.reagents.maximum_volume)
+		while(do_after(src, 1 SECOND, target = A) && tank.reagents.total_volume < tank.reagents.maximum_volume)
 			tank.reagents.add_reagent("water", 100) //VOREStation Edit
 			if(prob(5))
 				playsound(src, 'sound/effects/slosh.ogg', 25, 1)
@@ -289,7 +289,7 @@
 	return ..()
 
 
-/mob/living/bot/farmbot/confirmTarget(var/atom/targ)
+/mob/living/bot/farmbot/confirmTarget(atom/targ)
 	if(!..())
 		return 0
 
@@ -337,7 +337,7 @@
 	w_class = ITEMSIZE_NORMAL
 
 
-/obj/item/farmbot_arm_assembly/Initialize(mapload, var/theTank)
+/obj/item/farmbot_arm_assembly/Initialize(mapload, theTank)
 	. = ..()
 	if(!theTank) // If an admin spawned it, it won't have a watertank it, so lets make one for em!
 		tank = new /obj/structure/reagent_dispensers/watertank(src)
@@ -345,7 +345,7 @@
 		tank = theTank
 		tank.forceMove(src)
 
-/obj/structure/reagent_dispensers/watertank/attackby(var/obj/item/robot_parts/S, mob/user as mob)
+/obj/structure/reagent_dispensers/watertank/attackby(obj/item/robot_parts/S, mob/user as mob)
 	if ((!istype(S, /obj/item/robot_parts/l_arm)) && (!istype(S, /obj/item/robot_parts/r_arm)))
 		..()
 		return
@@ -358,7 +358,7 @@
 
 	new /obj/item/farmbot_arm_assembly(loc, src)
 
-/obj/structure/reagent_dispensers/watertank/attackby(var/obj/item/organ/external/S, mob/user as mob)
+/obj/structure/reagent_dispensers/watertank/attackby(obj/item/organ/external/S, mob/user as mob)
 	if ((!istype(S, /obj/item/organ/external/arm)) || S.robotic != ORGAN_ROBOT)
 		..()
 		return
@@ -409,7 +409,6 @@
 
 	else if(istype(W, /obj/item/pen))
 		var/t = tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN)
-		t = sanitize(t, MAX_NAME_LEN)
 		if(!t)
 			return
 		if(!in_range(src, user) && loc != user)

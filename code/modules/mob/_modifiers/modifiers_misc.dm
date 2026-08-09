@@ -107,12 +107,13 @@ the artifact triggers the rage.
 		if(prob(last_shock_stage))
 			to_chat(holder, span_warning("You pass out from the pain you were suppressing."))
 			holder.Paralyse(5)
+			holder.Sleeping(5)
 
 		if(ishuman(holder))
 			var/mob/living/carbon/human/H = holder
 			H.shock_stage = last_shock_stage
 
-/datum/modifier/berserk/can_apply(var/mob/living/L, var/suppress_failure = FALSE)
+/datum/modifier/berserk/can_apply(mob/living/L, suppress_failure = FALSE)
 	if(L.stat)
 		if(!suppress_failure)
 			to_chat(L, span_warning("You can't be unconscious or dead to berserk."))
@@ -441,6 +442,26 @@ the artifact triggers the rage.
 /datum/modifier/trait/thickdigits
 	name = "Thick Digits"
 	desc = "Your hands cannot properly wield weapons."
+
+/datum/modifier/trait/empresist
+	name = "Emp Resist"
+	desc = "You are resistant to EMPs."
+	emp_modifier = 1
+
+/datum/modifier/trait/empresistb
+	name = "Major Emp Resist"
+	desc = "You are resistant to EMPs."
+	emp_modifier = 2
+
+/datum/modifier/trait/empweakness
+	name = "Emp Weakness"
+	desc = "You are weak to EMPs."
+	emp_modifier = -1
+
+/datum/modifier/trait/majorempweakness
+	name = "Major Emp Weakness"
+	desc = "You are weak to EMPs."
+	emp_modifier = -2
 
 /datum/modifier/rednet //Not used here currently, but used downstream. Todo: Port it.
 	mob_overlay_state = "red_electricity_constant"

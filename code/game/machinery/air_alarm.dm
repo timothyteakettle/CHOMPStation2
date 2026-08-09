@@ -29,7 +29,7 @@
 	var/list/air_scrub_info = list()
 	var/list/air_alarms = list()
 
-/area/proc/elect_main_air_alarm(var/exclude_self = FALSE)
+/area/proc/elect_main_air_alarm(exclude_self = FALSE)
 	// loop through all sensors to update the area's sensor list as well
 	main_air_alarm = null
 	var/list/checks = list()
@@ -63,16 +63,17 @@
 	idle_power_usage = 80
 	active_power_usage = 1000 //For heating/cooling rooms. 1000 joules equates to about 1 degree every 2 seconds for a single tile of air.
 	power_channel = ENVIRON
-	req_one_access = list(access_atmospherics, access_engine_equip)
+	req_one_access = list(ACCESS_ATMOSPHERICS, ACCESS_ENGINE_EQUIP)
 	clicksound = "button"
 	clickvol = 30
 	blocks_emissive = NONE
 	light_power = 0.25
+	flags = WALL_ITEM
 	var/alarm_id = null
 	var/breach_detection = 1 // Whether to use automatic breach detection or not
-	var/frequency = 1439
+	var/frequency = PUMPS_FREQ
 	//var/skipprocess = 0 //Experimenting
-	var/alarm_frequency = 1437
+	var/alarm_frequency = ALERT_FREQ
 	var/remote_control = 0
 	var/rcon_setting = 2
 	var/rcon_time = 0
@@ -81,8 +82,6 @@
 	var/aidisabled = 0
 	var/shorted = 0
 	circuit = /obj/item/circuitboard/airalarm
-
-	var/datum/wires/alarm/wires
 
 	var/mode = AALARM_MODE_SCRUBBING
 	var/screen = AALARM_SCREEN_MAIN
@@ -136,8 +135,7 @@
 	set_frequency(frequency)
 	if(!pixel_x && !pixel_y)
 		offset_airalarm()
-	if(!wires)
-		wires = new(src)
+	set_wires(new /datum/wires/alarm(src))
 	alarm_area.air_alarms += src
 	if(!alarm_area.main_air_alarm_is_operating()) // select main alarm
 		alarm_area.elect_main_air_alarm()
@@ -164,6 +162,7 @@
 	TLV[GAS_N2] =		list(0, 0, 135, 140) // Partial pressure, kpa
 	TLV[GAS_CO2] = list(-1.0, -1.0, 5, 10) // Partial pressure, kpa
 	TLV[GAS_PHORON] =			list(-1.0, -1.0, 0, 0.5) // Partial pressure, kpa
+	TLV[GAS_CH4] = 		list(-1.0, -1.0, 0, 0.5) // Partial pressure, kpa
 	TLV["other"] =			list(-1.0, -1.0, 0.5, 1.0) // Partial pressure, kpa
 	TLV["pressure"] =		list(ONE_ATMOSPHERE * 0.80, ONE_ATMOSPHERE * 0.90, ONE_ATMOSPHERE * 1.10, ONE_ATMOSPHERE * 1.20) /* kpa */
 	TLV["temperature"] =	list(T0C - 26, T0C, T0C + 40, T0C + 66) // K
@@ -239,7 +238,7 @@
 		return
 	scan_atmo()
 
-/obj/machinery/alarm/proc/handle_heating_cooling(var/datum/gas_mixture/environment)
+/obj/machinery/alarm/proc/handle_heating_cooling(datum/gas_mixture/environment)
 	DECLARE_TLV_VALUES
 	LOAD_TLV_VALUES(TLV["temperature"], target_temperature)
 	if(!regulating_temperature)
@@ -291,7 +290,7 @@
 
 			environment.merge(gas)
 
-/obj/machinery/alarm/proc/overall_danger_level(var/datum/gas_mixture/environment)
+/obj/machinery/alarm/proc/overall_danger_level(datum/gas_mixture/environment)
 	var/partial_pressure = R_IDEAL_GAS_EQUATION * environment.temperature/environment.volume
 	var/environment_pressure = environment.return_pressure()
 
@@ -308,6 +307,8 @@
 	var/co2_dangerlevel = TEST_TLV_VALUES
 	LOAD_TLV_VALUES(TLV[GAS_PHORON], environment.gas[GAS_PHORON]*partial_pressure)
 	var/phoron_dangerlevel = TEST_TLV_VALUES
+	LOAD_TLV_VALUES(TLV[GAS_CH4], environment.gas[GAS_CH4]*partial_pressure)
+	var/methane_dangerlevel = TEST_TLV_VALUES
 	LOAD_TLV_VALUES(TLV["temperature"], environment.temperature)
 	var/temperature_dangerlevel = TEST_TLV_VALUES
 	LOAD_TLV_VALUES(TLV["other"], other_moles*partial_pressure)
@@ -318,6 +319,7 @@
 		oxygen_dangerlevel,
 		co2_dangerlevel,
 		phoron_dangerlevel,
+		methane_dangerlevel,
 		other_dangerlevel,
 		temperature_dangerlevel
 		)
@@ -428,7 +430,7 @@
 	else if(dev_type == "AVP")
 		alarm_area.air_vent_info[id_tag] = signal.data
 
-/obj/machinery/alarm/proc/register_env_machine(var/m_id, var/device_type)
+/obj/machinery/alarm/proc/register_env_machine(m_id, device_type)
 	var/new_name
 	if(device_type == "AVP")
 		new_name = "[alarm_area.name] Vent Pump #[alarm_area.air_vent_names.len+1]"
@@ -453,11 +455,11 @@
 		send_signal(id_tag, list("status"))
 
 /obj/machinery/alarm/proc/set_frequency(new_frequency)
-	radio_controller.remove_object(src, frequency)
+	SSradio.remove_object(src, frequency)
 	frequency = new_frequency
-	radio_connection = radio_controller.add_object(src, frequency, RADIO_TO_AIRALARM)
+	radio_connection = SSradio.add_object(src, frequency, RADIO_TO_AIRALARM)
 
-/obj/machinery/alarm/proc/send_signal(var/target, var/list/command)//sends signal 'command' to 'target'. Returns 0 if no radio connection, 1 otherwise
+/obj/machinery/alarm/proc/send_signal(target, list/command)//sends signal 'command' to 'target'. Returns 0 if no radio connection, 1 otherwise
 	if(!radio_connection)
 		return 0
 
@@ -509,14 +511,14 @@
 			for(var/device_id in alarm_area.air_vent_names)
 				send_signal(device_id, list("power"= 0))
 
-/obj/machinery/alarm/proc/apply_danger_level(var/new_danger_level)
+/obj/machinery/alarm/proc/apply_danger_level(new_danger_level)
 	if(report_danger_level && alarm_area.atmosalert(new_danger_level, src))
 		post_alert(new_danger_level)
 	for(var/obj/machinery/alarm/AA in alarm_area.air_alarms)
 		update_icon()
 
 /obj/machinery/alarm/proc/post_alert(alert_level)
-	var/datum/radio_frequency/frequency = radio_controller.return_frequency(alarm_frequency)
+	var/datum/radio_frequency/frequency = SSradio.return_frequency(alarm_frequency)
 	if(!frequency)
 		return
 
@@ -653,12 +655,13 @@
 				"scrubbing"	= info["scrubbing"],
 				"panic"		= info["panic"],
 				"filters"   = list(
-					list("name" = "Oxygen",			"command" = "o2_scrub",	"val" = info["filter_o2"]),
-					list("name" = "Nitrogen",		"command" = "n2_scrub",	"val" = info["filter_n2"]),
-					list("name" = "Carbon Dioxide", "command" = "co2_scrub","val" = info["filter_co2"]),
-					list("name" = "Phoron"	, 		"command" = "tox_scrub","val" = info["filter_phoron"]),
-					list("name" = "Nitrous Oxide",	"command" = "n2o_scrub","val" = info["filter_n2o"]),
-					list("name" = "Volatile Fuel",	"command" = "fuel_scrub","val" = info["filter_fuel"])
+					list("name" = GASNAME_O2,			"command" = "o2_scrub",	"val" = info["filter_o2"]),
+					list("name" = GASNAME_N2,			"command" = "n2_scrub",	"val" = info["filter_n2"]),
+					list("name" = GASNAME_CO2, 			"command" = "co2_scrub", "val" = info["filter_co2"]),
+					list("name" = GASNAME_PHORON, 		"command" = "tox_scrub", "val" = info["filter_phoron"]),
+					list("name" = GASNAME_CH4, 			"command" = "ch4_scrub", "val" = info["filter_ch4"]),
+					list("name" = GASNAME_N2O,			"command" = "n2o_scrub", "val" = info["filter_n2o"]),
+					list("name" = GASNAME_VOLATILE_FUEL,"command" = "fuel_scrub", "val" = info["filter_fuel"])
 				)
 			))
 		data["scrubbers"] = scrubbers
@@ -677,7 +680,7 @@
 		var/list/selected
 		var/list/thresholds = list()
 
-		var/list/gas_names = list(GAS_O2, GAS_CO2, GAS_PHORON, "other")	//Gas ids made to match code\defines\gases.dm
+		var/list/gas_names = list(GAS_O2, GAS_CO2, GAS_PHORON, GAS_CH4, "other")	//Gas ids made to match code\defines\gases.dm
 		for(var/g in gas_names)
 			thresholds[++thresholds.len] = list("name" = g, "settings" = list())
 			selected = TLV[g]
@@ -749,6 +752,7 @@
 			"tox_scrub",
 			"n2o_scrub",
 			"fuel_scrub",
+			"ch4_scrub",
 			"panic_siphon",
 			"scrubbing",
 			"direction")
@@ -867,7 +871,7 @@
 			to_chat(user, span_warning("Access denied."))
 		return
 
-/obj/machinery/alarm/AltClick(mob/user)
+/obj/machinery/alarm/click_alt(mob/user)
 	..()
 	togglelock(user)
 
@@ -892,10 +896,11 @@
 
 /obj/machinery/alarm/server/Initialize(mapload)
 	. = ..()
-	req_access = list(access_rd, access_atmospherics, access_engine_equip)
+	req_access = list(ACCESS_RD, ACCESS_ATMOSPHERICS, ACCESS_ENGINE_EQUIP)
 	TLV[GAS_O2] =			list(-1.0, -1.0,-1.0,-1.0) // Partial pressure, kpa
-	TLV[GAS_CO2] = list(-1.0, -1.0,   5,  10) // Partial pressure, kpa
-	TLV[GAS_PHORON] =			list(-1.0, -1.0, 0, 0.5) // Partial pressure, kpa
+	TLV[GAS_CO2] =			list(-1.0, -1.0,   5,  10) // Partial pressure, kpa
+	TLV[GAS_PHORON] =		list(-1.0, -1.0, 0, 0.5) // Partial pressure, kpa
+	TLV[GAS_CH4] = 			list(-1.0, -1.0, 0, 0.5) // Partial pressure, kpa
 	TLV["other"] =			list(-1.0, -1.0, 0.5, 1.0) // Partial pressure, kpa
 	TLV["pressure"] =		list(0,ONE_ATMOSPHERE*0.10,ONE_ATMOSPHERE*1.40,ONE_ATMOSPHERE*1.60) /* kpa */
 	TLV["temperature"] =	list(20, 40, 140, 160) // K

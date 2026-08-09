@@ -11,7 +11,7 @@
 	amount_per_transfer_from_this = 5
 	unacidable = TRUE
 	volume = 30
-	possible_transfer_amounts = null
+	max_transfer_amount = null
 	flags = OPENCONTAINER
 	slot_flags = SLOT_BELT
 	drop_sound = 'sound/items/drop/gun.ogg'
@@ -29,46 +29,42 @@
 				reagents.add_reagent(r, filled_reagents[r])
 	update_icon()
 
-/obj/item/reagent_containers/hypospray/attack(mob/living/M as mob, mob/user as mob)
+/obj/item/reagent_containers/hypospray/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
 	if(!reagents.total_volume)
 		balloon_alert(user, "\the [src] is empty.")
-		return
-	if (!istype(M))
-		return
+		return ITEM_INTERACT_FAILURE
 	if(!M.consume_liquid_belly)
 		if(liquid_belly_check())
 			to_chat(user, span_infoplain("[user == M ? "You can't" : "\The [M] can't"] take that, it contains something produced from a belly!"))
-			return FALSE
+			return ITEM_INTERACT_FAILURE
 
 	var/mob/living/carbon/human/H = M
 	if(istype(H))
 		var/obj/item/organ/external/affected = H.get_organ(user.zone_sel.selecting)
 		if(!affected)
 			balloon_alert(user, "\the [H] is missing that limb!")
-			return
+			return ITEM_INTERACT_FAILURE
 		/* since synths have oil/coolant streams now, it only makes sense that you should be able to inject stuff. preserved for posterity.
 		else if(affected.robotic >= ORGAN_ROBOT)
 			to_chat(user, span_danger("You cannot inject a robotic limb."))
 			return
 		*/
 
-		//VOREStation Add Start - Adds Prototype Hypo functionality
 		if(H != user && prototype)
 			balloon_alert(user, "injecting [H] with \the [src]")
 			balloon_alert(H, "[user] is trying to inject you with \the [src]")
-			if(!do_after(user, 30, H))
-				return
-		//VOREstation Add End
+			if(!do_after(user, 3 SECONDS, target = H))
+				return ITEM_INTERACT_FAILURE
 		else if(!H.stat && !prototype)
 			if(H != user)
 				if(H.a_intent != I_HELP)
 					balloon_alert(user, "[H] resists your attempt to inject them with \the [src].")
 					balloon_alert(H, "[user] is trying to inject you with \the [src]")
-					if(!do_after(user, 30, H))
-						return
+					if(!do_after(user, 3 SECONDS, target = H))
+						return ITEM_INTERACT_FAILURE
 
 	do_injection(H, user)
-	return
+	return ITEM_INTERACT_SUCCESS
 
 // This does the actual injection and transfer.
 /obj/item/reagent_containers/hypospray/proc/do_injection(mob/living/carbon/human/H, mob/living/user)
@@ -132,7 +128,7 @@
 	if(istype(W, /obj/item/reagent_containers/glass/beaker/vial))
 		if(!loaded_vial)
 			balloon_alert_visible("[user] begins loading [W] into \the [src].", "loading [W] into \the [src].")
-			if(!do_after(user,30) || loaded_vial || !(W in user))
+			if(!do_after(user, 3 SECONDS, target = src) || loaded_vial || !(W in user))
 				return 0
 			if(W.is_open_container())
 				W.flags ^= OPENCONTAINER
@@ -226,7 +222,6 @@
 	icon_state = "autoinjector"
 	amount_per_transfer_from_this = 15
 	volume = 15
-	origin_tech = list(TECH_BIO = 4)
 	filled_reagents = list(REAGENT_ID_INAPROVALINE = 15)
 
 /obj/item/reagent_containers/hypospray/autoinjector/biginjector/empty //for the autolathe

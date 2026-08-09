@@ -54,14 +54,14 @@ I think I covered everything.
 	catalogue_data = list(/datum/category_item/catalogue/fauna/bigdragon)
 	tt_desc = "S Draco Ignis"
 	icon = 'icons/mob/vore128x64.dmi'
-	icon_state = "dragon_bodyScaled"	//CHOMPEdit - So mappers can see it. Gets removed in Initialize()
+	icon_state = "dragon_bodyScaled"
 	icon_rest = "dragon_maneNone"
 	icon_living = "dragon_maneNone"
 	player_msg = "You can perform a charge attack by disarm intent clicking somewhere. Grab intent clicking will perform a tail sweep and fling any nearby mobs. You can fire breath with harm intent. Your attacks have cooldowns associated with them. You can heal slowly by resting. Check your abilities tab for other functions!"
 	meat_amount = 40
 	meat_type = /obj/item/reagent_containers/food/snacks/meat
-	pixel_x = -48 //CHOMPEdit
-	default_pixel_x = -48 //CHOMPEdit
+	pixel_x = -48
+	default_pixel_x = -48
 	old_x = -48
 	old_y = 0
 	vis_height = 92
@@ -103,12 +103,17 @@ I think I covered everything.
 	say_list_type = /datum/say_list/bigdragon
 	devourable = 0	//No
 	universal_understand = 1 //So they can hear synth speach
+	max_tox = 0 // for virgo3b survivability
+	max_co2 = 0 // Also needed for 3b Survivability otherwise it chokes to death
 
 	special_attack_min_range = 1
 	special_attack_max_range = 10
 	special_attack_cooldown = 80
 
-	plane = MOB_PLANE //CHOMPEdit
+	export_research_value = TECHWEB_TIER_4_POINTS
+	export_research_diminished_max = 2
+
+	plane = MOB_PLANE
 
 	//Dragon vars
 	var/notame
@@ -182,6 +187,8 @@ I think I covered everything.
 	)
 	var/eyes
 
+	can_be_drop_prey = FALSE
+
 ///
 ///		Subtypes
 ///
@@ -204,6 +211,7 @@ I think I covered everything.
 	maxHealth = 200
 	melee_damage_lower = 20
 	melee_damage_upper = 15
+	allow_mind_transfer = TRUE
 
 ///
 ///		Misc define stuff
@@ -247,8 +255,8 @@ I think I covered everything.
 	add_verb(src, /mob/living/simple_mob/vore/bigdragon/proc/sprite_toggle)
 	add_verb(src, /mob/living/simple_mob/vore/bigdragon/proc/flame_toggle)
 	add_verb(src, /mob/living/simple_mob/vore/bigdragon/proc/special_toggle)
-	//add_verb(src, /mob/living/simple_mob/vore/bigdragon/proc/set_name) //Implemented upstream
-	//add_verb(src, /mob/living/simple_mob/vore/bigdragon/proc/set_desc) //Implemented upstream
+	add_verb(src,/mob/living/simple_mob/vore/bigdragon/proc/export_style)
+	add_verb(src,/mob/living/simple_mob/vore/bigdragon/proc/import_style)
 	faction = FACTION_NEUTRAL
 
 /mob/living/simple_mob/vore/bigdragon/Initialize(mapload)
@@ -258,7 +266,7 @@ I think I covered everything.
 	add_language(LANGUAGE_DRUDAKAR)
 	add_language(LANGUAGE_UNATHI)
 	mob_radio = new /obj/item/radio/headset/mob_headset(src)	//We always give radios to spawned mobs anyway
-	icon_state = "dragon_maneNone" //CHOMPEdit
+	icon_state = "dragon_maneNone"
 
 /mob/living/simple_mob/vore/bigdragon/MouseDrop_T(mob/living/M, mob/living/user)
 	return
@@ -330,7 +338,7 @@ I think I covered everything.
 	update_fullness()
 	build_icons()
 
-/mob/living/simple_mob/vore/bigdragon/proc/build_icons(var/random)
+/mob/living/simple_mob/vore/bigdragon/proc/build_icons(random)
 	cut_overlays()
 	if(stat == DEAD)
 		plane = MOB_LAYER
@@ -353,55 +361,55 @@ I think I covered everything.
 		eyes = pick(eye_styles)
 		overlay_colors["Eyes"] = get_random_colour(1)
 
-	var/image/I = image(icon, "dragon_under[under][resting? "-rest" : (vore_fullness? "-[vore_fullness]" : null)]") //CHOMPEdit
+	var/image/I = image(icon, "dragon_under[under][resting? "-rest" : (vore_fullness? "-[vore_fullness]" : null)]")
 	I.color = overlay_colors["Underbelly"]
 	I.appearance_flags |= (RESET_COLOR|PIXEL_SCALE)
 	I.plane = MOB_PLANE
 	I.layer = MOB_LAYER
 	add_overlay(I)
 
-	I = image(icon, "dragon_body[body][resting? "-rest" : null]") //CHOMPEdit
+	I = image(icon, "dragon_body[body][resting? "-rest" : null]")
 	I.color = overlay_colors["Body"]
 	I.appearance_flags |= (RESET_COLOR|PIXEL_SCALE)
 	I.plane = MOB_PLANE
 	I.layer = MOB_LAYER
 	add_overlay(I)
 
-	I = image(icon, "dragon_ears[ears][resting? "-rest" : null]") //CHOMPEdit
+	I = image(icon, "dragon_ears[ears][resting? "-rest" : null]")
 	I.color = overlay_colors["Ears"]
 	I.appearance_flags |= (RESET_COLOR|PIXEL_SCALE)
 	I.plane = MOB_PLANE
 	I.layer = MOB_LAYER
 	add_overlay(I)
 
-	I = image(icon, "dragon_mane[mane][resting? "-rest" : null]") //CHOMPEdit
+	I = image(icon, "dragon_mane[mane][resting? "-rest" : null]")
 	I.color = overlay_colors["Mane"]
 	I.appearance_flags |= (RESET_COLOR|PIXEL_SCALE)
 	I.plane = MOB_PLANE
 	I.layer = MOB_LAYER
 	add_overlay(I)
 
-	I = image(icon, "dragon_horns[horns][resting? "-rest" : null]") //CHOMPEdit
+	I = image(icon, "dragon_horns[horns][resting? "-rest" : null]")
 	I.color = overlay_colors["Horns"]
 	I.appearance_flags |= (RESET_COLOR|PIXEL_SCALE)
 	I.plane = MOB_PLANE
 	I.layer = MOB_LAYER
 	add_overlay(I)
 
-	I = image(icon, "dragon_eyes[eyes][resting? "-rest" : null]") //CHOMPEdit
+	I = image(icon, "dragon_eyes[eyes][resting? "-rest" : null]")
 	I.color = overlay_colors["Eyes"]
 	I.appearance_flags |= (RESET_COLOR|PIXEL_SCALE)
 	I.plane = PLANE_LIGHTING_ABOVE
 	add_overlay(I)
 
 	if(enraged)
-		I = image(icon, "dragon_rage") //CHOMPEdit
+		I = image(icon, "dragon_rage")
 		I.appearance_flags |= PIXEL_SCALE
 		I.plane = MOB_PLANE
 		I.layer = MOB_LAYER
 		add_overlay(I)
 	if(flames)
-		I = image(icon, "dragon_flame[resting? "-rest" : null]") //CHOMPEdit
+		I = image(icon, "dragon_flame[resting? "-rest" : null]")
 		I.appearance_flags |= PIXEL_SCALE
 		I.plane = PLANE_LIGHTING_ABOVE
 		add_overlay(I)
@@ -505,11 +513,7 @@ I think I covered everything.
 ///
 ///	My thanks to Raeschen for these descriptions
 
-/mob/living/simple_mob/vore/bigdragon/init_vore()
-	if(!voremob_loaded)
-		return
-	if(LAZYLEN(vore_organs))
-		return
+/mob/living/simple_mob/vore/bigdragon/load_default_bellies()
 	var/obj/belly/B = new /obj/belly/dragon/maw(src)
 	B.affects_vore_sprites = FALSE
 	B.emote_lists[DM_HOLD] = list(
@@ -563,21 +567,20 @@ I think I covered everything.
 		"A soft swaying, like the waves of an ocean, squish you to one side, and then to the other. The dragon's gentle movements seem to sway you side to side, as if in a tight possessive hammock on it's underside.",
 		"Nearby, a louder cacophany of gushing glrrrbles, deep dull squelches, and even deeper glrrns call out. This safe pocket of flesh seems to be up close and intimate with the dragon's normal, larger stomach, thus you rest safely spectating the sounds it makes.",
 		"The rushing breathing of the beast continues at a slow pace, indicating the calm it has. Holding you like this seems quite enjoyable to them, the chamber's folds just as calm and lazy in their motions of squelching the slimy contents all over your form.")
-	.=..()
 
 //Making unique belly subtypes for cleanliness and my sanity
 /obj/belly/dragon
 	autotransferchance = 50
 	autotransferwait = 150
-	autotransfer_enabled = TRUE // CHOMPAdd
-	escapable = TRUE
+	autotransfer_enabled = TRUE
+	escapable = B_ESCAPABLE_DEFAULT
 	escapechance = 100
 	escapetime = 15
 	fancy_vore = TRUE
 	contamination_color = "grey"
 	contamination_flavor = "Wet"
 	vore_verb = "slurp"
-	belly_fullscreen_color = "#711e1e" //CHOMPedit
+	belly_fullscreen_color = "#711e1e"
 
 /obj/belly/dragon/maw
 	name = "Maw"
@@ -660,7 +663,7 @@ I think I covered everything.
 	mode_flags = DM_FLAG_NUMBING
 	struggle_messages_inside = list(
 		"Deciding that you've stayed long enough, you wriggle and writhe, stretching yourself out in the chamber, trying to thrust your hands and face up the way you entered. The beast stirs, and this churny pocket of flesh providing you safety clenches hard, aiding your entry back up into the lowermost depths of it's gullet. rhythmic clenches continue to invite you back down, however, should you reconsider.")
-	belly_fullscreen = "anim_belly"
+	belly_fullscreen = "VBOanim_belly1"
 
 ///
 ///		AI handling stuff
@@ -733,7 +736,7 @@ I think I covered everything.
 ///		AI handling stuff
 ///
 // It hurts me a little to make these mob specific procs instead of effects that can be invoked by any mob, but I'm too lazy to go fix mob attacks like that.
-/mob/living/simple_mob/vore/bigdragon/proc/repulse(var/range = 2)
+/mob/living/simple_mob/vore/bigdragon/proc/repulse(range = 2)
 	var/list/thrownatoms = list()
 	for(var/mob/living/victim in oview(range, src))
 		thrownatoms += victim
@@ -746,7 +749,7 @@ I think I covered everything.
 	playsound(src, "sound/weapons/punchmiss.ogg", 50, 1)
 
 //Split repulse into two parts so I can recycle this later
-/mob/living/simple_mob/vore/bigdragon/proc/yeet(var/atom/movable/AM, var/gentle = 0)
+/mob/living/simple_mob/vore/bigdragon/proc/yeet(atom/movable/AM, gentle = 0)
 	var/maxthrow = 7
 	var/atom/throwtarget
 	var/distfromcaster
@@ -769,7 +772,7 @@ I think I covered everything.
 			playsound(src, get_sfx("punch"), 50, 1)
 		AM.throw_at(throwtarget, maxthrow, 3, src)
 
-/mob/living/simple_mob/vore/bigdragon/proc/chargestart(var/atom/A)
+/mob/living/simple_mob/vore/bigdragon/proc/chargestart(atom/A)
 	if(!enraged)
 		set_AI_busy(TRUE)
 
@@ -778,7 +781,7 @@ I think I covered everything.
 	chargetimer = addtimer(CALLBACK(src, PROC_REF(chargeend), A), charge_warmup, TIMER_STOPPABLE)
 
 
-/mob/living/simple_mob/vore/bigdragon/proc/chargeend(var/atom/A, var/explicit = 0, var/gentle = 0)
+/mob/living/simple_mob/vore/bigdragon/proc/chargeend(atom/A, explicit = 0, gentle = 0)
 	//make sure our target still exists and is on a turf
 	if(QDELETED(A) || !isturf(get_turf(A)))
 		set_AI_busy(FALSE)
@@ -810,7 +813,7 @@ I think I covered everything.
 		yeet(target, gentle)
 	set_AI_busy(FALSE)
 
-/mob/living/simple_mob/vore/bigdragon/proc/firebreathstart(var/atom/A)
+/mob/living/simple_mob/vore/bigdragon/proc/firebreathstart(atom/A)
 	glow_toggle = 1
 	set_light(glow_range, glow_intensity, glow_color) //Setting it here so the light starts immediately
 	if(!enraged)
@@ -820,7 +823,7 @@ I think I covered everything.
 	firebreathtimer = addtimer(CALLBACK(src, PROC_REF(firebreathend), A), charge_warmup, TIMER_STOPPABLE)
 	playsound(src, "sound/magic/Fireball.ogg", 50, 1)
 
-/mob/living/simple_mob/vore/bigdragon/proc/firebreathend(var/atom/A)
+/mob/living/simple_mob/vore/bigdragon/proc/firebreathend(atom/A)
 	//make sure our target still exists and is on a turf
 	if(QDELETED(A) || !isturf(get_turf(A)))
 		set_AI_busy(FALSE)
@@ -860,7 +863,7 @@ I think I covered everything.
 	var/fire_stacks = 1
 
 //Making it so fire passes through mobs but not walls
-/obj/item/projectile/bullet/incendiary/dragonflame/check_penetrate(var/atom/A)
+/obj/item/projectile/bullet/incendiary/dragonflame/check_penetrate(atom/A)
 	if(!A || !A.density) return 1
 
 	if(istype(A, /obj/mecha))
@@ -887,11 +890,11 @@ I think I covered everything.
 	if(iscarbon(target))
 		var/mob/living/carbon/M = target
 		M.adjust_fire_stacks(fire_stacks)
-		M.IgniteMob()
+		M.ignite_mob()
 	else
 		. = ..()
 
-/mob/living/simple_mob/vore/bigdragon/do_tame(var/obj/O, var/mob/user)
+/mob/living/simple_mob/vore/bigdragon/do_tame(obj/O, mob/user)
 	if(!user)
 		return
 	if(faction == FACTION_NEUTRAL)
@@ -925,13 +928,13 @@ I think I covered everything.
 	var/warnings = 0
 	var/last_warning
 
-/datum/ai_holder/simple_mob/healbelly/proc/confirmPatient(var/mob/living/P)
+/datum/ai_holder/simple_mob/healbelly/proc/confirmPatient(mob/living/P)
 	if(isanimal(holder))
 		var/mob/living/simple_mob/H = holder
 		if(H.will_eat(P))
 			if(issilicon(P))
 				return
-			if(!iscarbon(P))	//CHOMPEdit. Makes healbelly mobs target synths now. Man.. feels weird writing chompedit on my own code from chomp.
+			if(!iscarbon(P))	//Makes healbelly mobs target synths now.
 				if(!P.client)	//Don't target simple mobs that aren't player controlled
 					return
 			if(P.stat == DEAD)
@@ -984,7 +987,7 @@ I think I covered everything.
 	holder.a_intent = I_HURT
 	return 1
 
-/datum/ai_holder/simple_mob/healbelly/retaliate/dragon/can_attack(atom/movable/the_target, var/vision_required = TRUE)
+/datum/ai_holder/simple_mob/healbelly/retaliate/dragon/can_attack(atom/movable/the_target, vision_required = TRUE)
 	if(istype(holder,/mob/living/simple_mob/vore/bigdragon))
 		var/mob/living/simple_mob/vore/bigdragon/BG = holder
 		if(holder.IIsAlly(the_target))
@@ -1010,7 +1013,7 @@ I think I covered everything.
 					for(var/RG in to_inject)
 						if(!P.reagents.has_reagent(RG))
 							P.reagents.add_reagent(RG, 10)
-				L.ExtinguishMob()
+				L.extinguish_mob()
 			return //Don't attack people if we're on help intent
 	return .=..()
 
@@ -1042,7 +1045,7 @@ I think I covered everything.
 				return
 	return .=..()
 
-/mob/living/simple_mob/vore/bigdragon/proc/enrage(var/atom/movable/attacker)
+/mob/living/simple_mob/vore/bigdragon/proc/enrage(atom/movable/attacker)
 	enraged = 1
 	norange = 0
 	faction = FACTION_DRAGON
@@ -1065,8 +1068,68 @@ I think I covered everything.
 	set_AI_busy(FALSE)
 
 //Smack people it warns
-/datum/ai_holder/simple_mob/healbelly/retaliate/dragon/proc/dissuade(var/chump)
+/datum/ai_holder/simple_mob/healbelly/retaliate/dragon/proc/dissuade(chump)
 	if(chump in check_trajectory(chump, holder, pass_flags = PASSTABLE))
 		if(istype(holder,/mob/living/simple_mob/vore/bigdragon))
 			var/mob/living/simple_mob/vore/bigdragon/H = holder
 			H.chargeend(chump,1,1)
+
+/mob/living/simple_mob/vore/bigdragon/proc/export_style()
+	set name = "Export style string"
+	set desc = "Export a string of text that can be used to instantly get the current style back using the import style verb"
+	set category = "Abilities.Settings"
+	var/output_style = jointext(list(
+		overlay_colors["Underbelly"],
+		under,
+		overlay_colors["Body"],
+		body,
+		overlay_colors["Ears"],
+		ears,
+		overlay_colors["Mane"],
+		mane,
+		overlay_colors["Horns"],
+		horns,
+		overlay_colors["Eyes"],
+		eyes), ";")
+	to_chat(src, span_notice("Exported style string is \" [output_style] \". Use this to get the same style in the future with import style"))
+
+/mob/living/simple_mob/vore/bigdragon/proc/import_style()
+	set name = "Import style string"
+	set desc = "Import a string of text that was made using the import style verb to get back that style"
+	set category = "Abilities.Settings"
+	var/input_style
+	input_style = sanitizeSafe(tgui_input_text(src,"Paste the style string you exported with Export Style.", "Style loading"))
+	if(input_style)
+		var/list/input_style_list = splittext(input_style, ";")
+		if((LAZYLEN(input_style_list) == 12) && (input_style_list[2] in underbelly_styles) && (input_style_list[4] in body_styles) && (input_style_list[6] in ear_styles) && (input_style_list[8] in mane_styles) && (input_style_list[10] in horn_styles) && (input_style_list[12] in ear_styles))
+			try
+				if(rgb2num(input_style_list[1]))
+					overlay_colors["Underbelly"] = input_style_list[1]
+			catch
+			under = input_style_list[2]
+			try
+				if(rgb2num(input_style_list[3]))
+					overlay_colors["Body"] = input_style_list[3]
+			catch
+			body = input_style_list[4]
+			try
+				if(rgb2num(input_style_list[5]))
+					overlay_colors["Ears"] = input_style_list[5]
+			catch
+			ears = input_style_list[6]
+			try
+				if(rgb2num(input_style_list[7]))
+					overlay_colors["Mane"] = input_style_list[7]
+			catch
+			mane = input_style_list[8]
+			try
+				if(rgb2num(input_style_list[9]))
+					overlay_colors["Horns"] = input_style_list[9]
+			catch
+			horns = input_style_list[10]
+			try
+				if(rgb2num(input_style_list[11]))
+					overlay_colors["Eyes"] = input_style_list[11]
+			catch
+			eyes = input_style_list[12]
+			build_icons()

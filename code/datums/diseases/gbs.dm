@@ -1,5 +1,7 @@
 /datum/disease/gbs
 	name = "GBS"
+	medical_name = "Guillain-Barré Syndrome"
+	desc = "If left untreated death will occur."
 	max_stages = 5
 	spread_text = "On contact"
 	spread_flags = DISEASE_SPREAD_CONTACT | DISEASE_SPREAD_BLOOD | DISEASE_SPREAD_FLUIDS
@@ -9,7 +11,7 @@
 	agent = "Gravitokinetic Bipotential SADS+"
 	viable_mobtypes = list(/mob/living/carbon/human)
 	danger = DISEASE_PANDEMIC
-	disease_flags = CAN_NOT_POPULATE
+	disease_flags = CURABLE | CAN_NOT_POPULATE
 
 /datum/disease/gbs/stage_act()
 	if(!..())
@@ -40,6 +42,8 @@
 
 /datum/disease/gbs/curable
 	name = "Non-Contagious GBS"
+	medical_name = "Non-Contagious Guillain-Barré Syndrome"
+	desc = "If left untreated death will occur."
 	stage_prob = 5
 	spread_text = "Non-contagious"
 	spread_flags = DISEASE_SPREAD_NON_CONTAGIOUS

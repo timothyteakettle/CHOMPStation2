@@ -6,6 +6,7 @@
 	density = TRUE
 	anchored = TRUE
 	unacidable = TRUE
+	flags = REMOTEVIEW_ON_ENTER
 	circuit = /obj/item/circuitboard/recharge_station
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 50
@@ -155,15 +156,7 @@
 	go_out()
 	return
 
-/obj/machinery/recharge_station/emp_act(severity)
-	if(occupant)
-		occupant.emp_act(severity)
-		go_out()
-	if(cell)
-		cell.emp_act(severity)
-	..(severity)
-
-/obj/machinery/recharge_station/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/obj/machinery/recharge_station/attackby(obj/item/O as obj, mob/user as mob)
 	if(!occupant)
 		if(default_deconstruction_screwdriver(user, O))
 			return
@@ -180,7 +173,7 @@
 
 	..()
 
-/obj/machinery/recharge_station/MouseDrop_T(var/mob/target, var/mob/user)
+/obj/machinery/recharge_station/MouseDrop_T(mob/target, mob/user)
 	if(user.stat || user.lying || !Adjacent(user) || !target.Adjacent(user))
 		return
 
@@ -244,10 +237,10 @@
 	if(icon_update_tick == 0)
 		build_overlays()
 
-/obj/machinery/recharge_station/Bumped(var/mob/living/L)
+/obj/machinery/recharge_station/Bumped(mob/living/L)
 	go_in(L)
 
-/obj/machinery/recharge_station/proc/go_in(var/mob/living/L)
+/obj/machinery/recharge_station/proc/go_in(mob/living/L)
 
 	if(occupant)
 		return
@@ -266,7 +259,6 @@
 			return
 
 		add_fingerprint(R)
-		R.reset_view(src)
 		R.forceMove(src)
 		occupant = R
 		update_icon()
@@ -280,7 +272,6 @@
 			return
 
 		add_fingerprint(P)
-		P.reset_view(src)
 		P.forceMove(src)
 		occupant = P
 		update_icon()
@@ -291,7 +282,6 @@
 		var/mob/living/carbon/human/H = L
 		if(H.isSynthetic() || H.wearing_rig)
 			add_fingerprint(H)
-			H.reset_view(src)
 			H.forceMove(src)
 			occupant = H
 			update_icon()
@@ -302,9 +292,7 @@
 /obj/machinery/recharge_station/proc/go_out()
 	if(!occupant)
 		return
-
-	occupant.forceMove(src.loc)
-	occupant.reset_view()
+	occupant.forceMove(get_turf(src))
 	occupant = null
 	update_icon()
 

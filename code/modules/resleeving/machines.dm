@@ -15,7 +15,7 @@
 	for(var/i = 1 to container_limit)
 		containers += new /obj/item/reagent_containers/glass/bottle/biomass(src)
 
-/obj/machinery/clonepod/transhuman/growclone(var/datum/transhuman/body_record/current_project)
+/obj/machinery/clonepod/transhuman/growclone(datum/transhuman/body_record/current_project)
 	//Manage machine-specific stuff.
 	if(mess || attempting)
 		return 0
@@ -51,6 +51,7 @@
 	set_occupant(H)
 	H.adjustCloneLoss((H.getMaxHealth() - (H.getMaxHealth()))*-0.75)
 	H.Paralyse(4)
+	H.Sleeping(4)
 	H.updatehealth()
 
 	//Machine specific stuff at the end
@@ -131,12 +132,13 @@
 	density = TRUE
 	anchored = TRUE
 
-	var/list/stored_material =  list(MAT_STEEL = 30000, MAT_GLASS = 30000)
+	var/list/stored_material =  list(MAT_STEEL = MATERIAL_COST(15), MAT_GLASS = MATERIAL_COST(15))
 	var/connected      //What console it's done up with
 	var/busy = 0       //Busy cloning
 	var/body_cost = 15000  //Cost of a cloned body (metal and glass ea.)
 	var/max_res_amount = 30000 //Max the thing can hold
-	var/datum/transhuman/body_record/current_project
+	var/datum/weakref/current_br
+
 	var/broken = 0
 	var/burn_value = 0 //Setting these to 0, if resleeving as organic with unupgraded sleevers gives them no damage, resleeving synths with unupgraded synthfabs should not give them potentially 105 damage.
 	var/brute_value = 0
@@ -151,6 +153,10 @@
 	component_parts += new /obj/item/stack/cable_coil(src, 2)
 	RefreshParts()
 	update_icon()
+
+/obj/machinery/transhuman/synthprinter/Destroy()
+	current_br = null
+	. = ..()
 
 /obj/machinery/transhuman/synthprinter/RefreshParts()
 
@@ -176,7 +182,7 @@
 	if(stat & NOPOWER)
 		if(busy)
 			busy = 0
-			current_project = null
+			current_br = null
 		update_icon()
 		return
 
@@ -188,14 +194,14 @@
 
 	return
 
-/obj/machinery/transhuman/synthprinter/proc/print(var/datum/transhuman/body_record/BR)
-	if(!istype(BR) || busy)
+/obj/machinery/transhuman/synthprinter/proc/print(datum/weakref/BR)
+	if(!BR?.resolve() || busy)
 		return 0
 
 	if(stored_material[MAT_STEEL] < body_cost || stored_material[MAT_GLASS] < body_cost)
 		return 0
 
-	current_project = BR
+	current_br = BR
 	busy = 5
 	update_icon()
 
@@ -203,8 +209,11 @@
 
 /obj/machinery/transhuman/synthprinter/proc/make_body()
 	//Manage machine-specific stuff
+
+	var/datum/transhuman/body_record/current_project = current_br?.resolve()
 	if(!current_project)
 		busy = 0
+		current_br = null
 		update_icon()
 		return
 
@@ -269,7 +278,6 @@
 	else
 		to_chat(user, "\the [src] cannot hold more [S.name].")
 
-	updateUsrDialog(user)
 	return
 
 /obj/machinery/transhuman/synthprinter/update_icon()
@@ -311,7 +319,11 @@
 	RefreshParts()
 	update_icon()
 
-/obj/machinery/transhuman/resleever/proc/set_occupant(var/mob/living/carbon/human/H)
+/obj/machinery/transhuman/resleever/Destroy()
+	. = ..()
+
+
+/obj/machinery/transhuman/resleever/proc/set_occupant(mob/living/carbon/human/H)
 	SHOULD_NOT_OVERRIDE(TRUE)
 	if(!H)
 		weakref_occupant = null
@@ -375,7 +387,6 @@
 		var/mob/M = G.affecting
 		if(put_mob(M))
 			qdel(G)
-			src.updateUsrDialog(user)
 			return //Don't call up else we'll get attack messsages
 	if(istype(W, /obj/item/paicard/sleevecard))
 		var/obj/item/paicard/sleevecard/C = W
@@ -411,15 +422,13 @@
 
 	if(put_mob(O))
 		if(O == user)
-			updateUsrDialog(user)
 			visible_message("[user] climbs into \the [src].")
 		else
-			updateUsrDialog(user)
 			visible_message("[user] puts [O] into \the [src].")
 
 	add_fingerprint(user)
 
-/obj/machinery/transhuman/resleever/proc/putmind(var/datum/transhuman/mind_record/MR, mode = 1, var/mob/living/carbon/human/override = null, var/db_key)
+/obj/machinery/transhuman/resleever/proc/putmind(datum/transhuman/mind_record/MR, mode = 1, mob/living/carbon/human/override = null, db_key)
 	var/mob/living/carbon/human/occupant = get_occupant()
 	if((!occupant || !istype(occupant) || occupant.stat >= DEAD) && mode == 1)
 		return 0
@@ -480,21 +489,33 @@
 	if(new_imp.handle_implant(occupant, BP_HEAD))
 		new_imp.post_implant(occupant)
 
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_RESLEEVED_MIND, occupant, MR.mind_ref)
+
 	//Inform them and make them a little dizzy.
 	if(confuse_amount + blur_amount <= 16)
 		to_chat(occupant, span_notice("You feel a small pain in your head as you're given a new backup implant. Your new body feels comfortable already, however."))
 	else
 		to_chat(occupant, span_warning("You feel a small pain in your head as you're given a new backup implant. Oh, and a new body. It's disorienting, to say the least."))
 
-	occupant.confused = max(occupant.confused, confuse_amount)
+	occupant.SetConfused(max(occupant.confused, confuse_amount))								// Apply immedeate effects
 	occupant.eye_blurry = max(occupant.eye_blurry, blur_amount)
 
 	// Vore deaths get a fake modifier labeled as such
 	if(!occupant.mind)
-		log_debug("[occupant] didn't have a mind to check for vore_death, which may be problematic.")
+		log_runtime("[occupant] didn't have a mind to check for vore_death, which may be problematic.")
 
-	if(occupant.mind && occupant.original_player && ckey(occupant.mind.key) != occupant.original_player)
-		log_and_message_admins("is now a cross-sleeved character. Body originally belonged to [occupant.real_name]. Mind is now [occupant.mind.name].",occupant)
+	if(occupant.mind)
+		if(occupant.original_player && ckey(occupant.mind.key) != occupant.original_player)
+			log_and_message_admins("is now a cross-sleeved character. Body originally belonged to [occupant.real_name]. Mind is now [occupant.mind.name].",occupant)
+		var/datum/antagonist/antag_data = SSantag_job.get_antag_data(occupant.mind.special_role)
+		if(antag_data)
+			antag_data.add_antagonist(occupant.mind)
+			antag_data.place_mob(occupant)
+		if(occupant.mind.antag_holder)
+			occupant.mind.antag_holder.apply_antags(occupant)
+
+		if(occupant.changeling_locked || occupant.mind.antag_holder.changeling)
+			occupant.make_changeling()
 
 	if(original_occupant)
 		occupant = original_occupant
@@ -502,13 +523,10 @@
 	playsound(src, 'sound/machines/medbayscanner1.ogg', 100, 1) // Play our sound at the end of the mind injection!
 	return 1
 
-/obj/machinery/transhuman/resleever/proc/go_out(var/mob/M)
+/obj/machinery/transhuman/resleever/proc/go_out()
 	var/mob/living/carbon/human/occupant = get_occupant()
 	if(!occupant)
 		return
-	if (occupant.client)
-		occupant.client.eye = occupant.client.mob
-		occupant.client.perspective = MOB_PERSPECTIVE
 	occupant.forceMove(get_turf(src))
 	set_occupant(null)
 	icon_state = "implantchair"
@@ -521,11 +539,8 @@
 	if(get_occupant())
 		to_chat(usr, span_warning("\The [src] is already occupied!"))
 		return
-	if(M.client)
-		M.client.perspective = EYE_PERSPECTIVE
-		M.client.eye = src
 	M.stop_pulling()
-	M.loc = src
+	M.forceMove(src)
 	set_occupant(M)
 	src.add_fingerprint(usr)
 	icon_state = "implantchair_on"
@@ -537,7 +552,7 @@
 	set src in oview(1)
 	if(usr.stat != 0)
 		return
-	src.go_out(usr)
+	go_out()
 	add_fingerprint(usr)
 	return
 

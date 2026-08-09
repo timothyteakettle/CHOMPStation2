@@ -129,6 +129,9 @@
 /obj/item/storage/box/syndie_kit/imp_aug/sprinter
 	case_type = /obj/item/implantcase/sprinter
 
+/obj/item/storage/box/syndie_kit/imp_aug/med_scanner
+	case_type = /obj/item/implantcase/med_scanner
+
 /obj/item/storage/box/syndie_kit/imp_aug/armblade
 	case_type = /obj/item/implantcase/armblade
 
@@ -227,7 +230,7 @@
 
 	calibrate_size()
 
-/proc/fill_cigarre_package(var/obj/item/storage/fancy/cigarettes/C, var/list/reagents)
+/proc/fill_cigarre_package(obj/item/storage/fancy/cigarettes/C, list/reagents)
 	for(var/reagent in reagents)
 		C.reagents.add_reagent(reagent, reagents[reagent] * C.storage_slots)
 

@@ -23,8 +23,7 @@
 	throw_speed = 1
 	throw_range = 5
 	w_class = ITEMSIZE_NORMAL
-	matter = list(MAT_STEEL = 50000, MAT_GLASS = 25000)
-	origin_tech = list(TECH_ENGINEERING = 4, TECH_MATERIAL = 2)
+	matter = list(MAT_STEEL = MATERIAL_COST(25), MAT_GLASS = MATERIAL_COST(12.5))
 	var/datum/effect/effect/system/spark_spread/spark_system
 	var/p_dir = NORTH 			// Next pipe will be built with this dir
 	var/p_flipped = FALSE		// If the next pipe should be built flipped
@@ -60,11 +59,14 @@
 		recipe = first_atmos
 
 /obj/item/pipe_dispenser/Destroy()
-	qdel_null(spark_system)
-	qdel_null(tool)
+	QDEL_NULL(spark_system)
+	QDEL_NULL(tool)
 	return ..()
 
 /obj/item/pipe_dispenser/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	tgui_interact(user)
 
 /obj/item/pipe_dispenser/ui_assets(mob/user)
@@ -90,7 +92,7 @@
 		"preview_rows" = recipe.get_preview(p_dir),
 		"categories" = list(),
 		"selected_color" = paint_color,
-		"paint_colors" = pipe_colors,
+		"paint_colors" = GLOB.pipe_colors,
 		"mode" = mode
 	)
 
@@ -174,7 +176,7 @@
 		make_pipe_whitelist = typecacheof(list(/obj/structure/lattice, /obj/structure/girder, /obj/item/pipe))
 	var/can_make_pipe = (isturf(A) || is_type_in_typecache(A, make_pipe_whitelist))
 
-	var/can_destroy_pipe = istype(A, /obj/item/pipe) || istype(A, /obj/item/pipe_meter) || istype(A, /obj/structure/disposalconstruct)
+	var/can_destroy_pipe = istype(A, /obj/item/pipe) || istype(A, /obj/item/pipe_meter) || istype(A, /obj/structure/disposalconstruct) || istype(A, /obj/item/pipe_gsensor)
 
 	. = TRUE
 	if((mode & DESTROY_MODE) && can_destroy_pipe)
@@ -189,7 +191,7 @@
 		if(!istype(A, /obj/machinery/atmospherics/pipe/simple/heat_exchanging) && istype(A, /obj/machinery/atmospherics/pipe))
 			var/obj/machinery/atmospherics/pipe/P = A
 			playsound(src, 'sound/machines/click.ogg', 50, 1)
-			P.change_color(pipe_colors[paint_color])
+			P.change_color(GLOB.pipe_colors[paint_color])
 			user.visible_message(span_notice("[user] paints \the [P] [paint_color]."), span_notice("You paint \the [P] [paint_color]."))
 			return
 
@@ -207,6 +209,13 @@
 						PM.setAttachLayer(queued_piping_layer)
 						if(mode & WRENCH_MODE)
 							do_wrench(PM, user)
+				else if(istype(recipe, /datum/pipe_recipe/air_sensor))
+					to_chat(user, span_notice("You start building an air sensor..."))
+					if(do_after(user, 2, target = A))
+						activate()
+						var/obj/item/pipe_gsensor/GS = new /obj/item/pipe_gsensor(get_turf(A))
+						if(mode & WRENCH_MODE)
+							do_wrench(GS, user)
 				else if(istype(recipe, /datum/pipe_recipe/pipe))
 					var/datum/pipe_recipe/pipe/R = recipe
 					to_chat(user, span_notice("You start building a pipe..."))
@@ -219,7 +228,7 @@
 						P.update()
 						P.add_fingerprint(user)
 						if(R.paintable)
-							P.color = pipe_colors[paint_color]
+							P.color = GLOB.pipe_colors[paint_color]
 						P.setPipingLayer(queued_piping_layer)
 						if(queued_p_flipped)
 							P.do_a_flip()
@@ -258,7 +267,7 @@
 			else
 				return ..()
 
-/obj/item/pipe_dispenser/proc/build_effect(var/obj/P, var/time = 1.5)
+/obj/item/pipe_dispenser/proc/build_effect(obj/P, time = 1.5)
 	set waitfor = FALSE
 	P.filters += filter(type = "angular_blur", size = 30)
 	animate(P.filters[P.filters.len], size = 0, time = time)
@@ -268,7 +277,7 @@
 	P.filters -= outline
 	P.filters -= filter(type = "angular_blur", size = 0)
 
-/obj/item/pipe_dispenser/proc/animate_deletion(var/obj/P, var/time = 1.5)
+/obj/item/pipe_dispenser/proc/animate_deletion(obj/P, time = 1.5)
 	set waitfor = FALSE
 	P.filters += filter(type = "angular_blur", size = 0)
 	animate(P.filters[P.filters.len], size = 30, time = time)
@@ -280,7 +289,7 @@
 /obj/item/pipe_dispenser/proc/activate()
 	playsound(src, 'sound/items/deconstruct.ogg', 50, 1)
 
-/obj/item/pipe_dispenser/proc/do_wrench(var/atom/target, mob/user)
+/obj/item/pipe_dispenser/proc/do_wrench(atom/target, mob/user)
 	var/resolved = target.attackby(tool,user)
 	if(!resolved && tool && target)
 		tool.afterattack(target,user,1)

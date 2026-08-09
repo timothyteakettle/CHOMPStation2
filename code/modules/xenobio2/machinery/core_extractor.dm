@@ -23,7 +23,7 @@
 	default_apply_parts()
 	update_light_color()
 
-/obj/machinery/slime/extractor/attackby(var/obj/item/W, var/mob/user)
+/obj/machinery/slime/extractor/attackby(obj/item/W, mob/user)
 
 	//Let's try to deconstruct first.
 	if(W.has_tool_quality(TOOL_SCREWDRIVER) && !inuse)
@@ -53,7 +53,7 @@
 		return
 	move_into_extractor(user,target)
 
-/obj/machinery/slime/extractor/proc/move_into_extractor(var/mob/user,var/mob/living/victim)
+/obj/machinery/slime/extractor/proc/move_into_extractor(mob/user,mob/living/victim)
 
 	if(src.occupant)
 		to_chat(user, span_danger("The core extractor is full, empty it first!"))
@@ -74,11 +74,8 @@
 
 	user.visible_message(span_danger("[user] starts to put [victim] into the core extractor!"))
 	src.add_fingerprint(user)
-	if(do_after(user, 30) && victim.Adjacent(src) && user.Adjacent(src) && victim.Adjacent(user) && !occupant)
+	if(do_after(user, 3 SECONDS, target = src) && victim.Adjacent(src) && user.Adjacent(src) && victim.Adjacent(user) && !occupant)
 		user.visible_message(span_danger("[user] stuffs [victim] into the core extractor!"))
-		if(victim.client)
-			victim.client.perspective = EYE_PERSPECTIVE
-			victim.client.eye = src
 		victim.forceMove(src)
 		src.occupant = victim
 		update_light_color()
@@ -184,7 +181,6 @@
 	name = T_BOARD("Slime extractor")
 	build_path = "/obj/machinery/slime/extractor"
 	board_type = "machine"
-	origin_tech = list(TECH_DATA = 3, TECH_BIO = 3)
 	req_components = list(
 							/obj/item/stock_parts/manipulator = 2,
 							/obj/item/stock_parts/matter_bin = 1,

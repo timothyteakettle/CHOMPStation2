@@ -40,7 +40,7 @@
 	set src in usr
 
 	var/current_color = rgb(eye_colour[1],eye_colour[2],eye_colour[3])
-	var/new_color = tgui_color_picker(src, "Pick a new color for your eyes.","Eye Color", current_color)
+	var/new_color = tgui_color_picker(owner, "Pick a new color for your eyes.","Eye Color", current_color)
 	if(new_color && owner)
 		// input() supplies us with a hex color, which we can't use, so we convert it to rbg values.
 		var/list/new_color_rgb_list = hex2rgb(new_color)
@@ -53,7 +53,7 @@
 		// Finally, update the eye icon on the mob.
 		owner.regenerate_icons()
 
-/obj/item/organ/internal/eyes/replaced(var/mob/living/carbon/human/target)
+/obj/item/organ/internal/eyes/replaced(mob/living/carbon/human/target)
 
 	// Apply our eye colour to the target.
 	if(istype(target) && eye_colour)
@@ -72,7 +72,7 @@
 		owner.b_eyes ? owner.b_eyes : 0
 		)
 
-/obj/item/organ/internal/eyes/take_damage(amount, var/silent=0)
+/obj/item/organ/internal/eyes/take_damage(amount, silent=0)
 	var/oldbroken = is_broken()
 	..()
 	if(is_broken() && !oldbroken && owner && !owner.stat)
@@ -100,13 +100,14 @@
 			owner.custom_pain("Your eyes are watering, making it harder to see clearly for a moment.",1)
 			owner.eye_blurry += 10
 
-/obj/item/organ/internal/eyes/proc/get_total_protection(var/flash_protection = FLASH_PROTECTION_NONE)
+/obj/item/organ/internal/eyes/proc/get_total_protection(flash_protection = FLASH_PROTECTION_NONE)
 	return (flash_protection + innate_flash_protection)
 
-/obj/item/organ/internal/eyes/proc/additional_flash_effects(var/intensity)
+/obj/item/organ/internal/eyes/proc/additional_flash_effects(intensity)
 	return -1
 
-/obj/item/organ/internal/eyes/emp_act(severity)
-	if(robotic >= ORGAN_ASSISTED)
+/obj/item/organ/internal/eyes/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || !robotic || !owner)
 		return
 	owner.eye_blurry += (4/severity)

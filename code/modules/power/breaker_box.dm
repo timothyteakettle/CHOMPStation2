@@ -26,7 +26,7 @@
 	for(var/obj/structure/cable/C in src.loc)
 		qdel(C)
 	. = ..()
-	for(var/datum/tgui_module/rcon/R in world)
+	for(var/datum/tgui_module/rcon/R in SStgui.all_uis)
 		R.FindDevices()
 
 /obj/machinery/power/breakerbox/Initialize(mapload)
@@ -62,7 +62,7 @@
 
 	busy = 1
 	to_chat(user, span_green("Updating power settings..."))
-	if(do_after(user, 50))
+	if(do_after(user, 5 SECONDS, target = src))
 		set_state(!on)
 		to_chat(user, span_green("Update Completed. New setting:[on ? "on": "off"]"))
 		update_locked = 1
@@ -84,7 +84,7 @@
 	for(var/mob/O in viewers(user))
 		O.show_message(span_red(text("[user] started reprogramming [src]!")), 1)
 
-	if(do_after(user, 50))
+	if(do_after(user, 5 SECONDS, target = src))
 		set_state(!on)
 		user.visible_message(\
 		span_notice("[user.name] [on ? "enabled" : "disabled"] the breaker box!"),\
@@ -94,10 +94,9 @@
 			update_locked = 0
 	busy = 0
 
-/obj/machinery/power/breakerbox/attackby(var/obj/item/W as obj, var/mob/user as mob)
+/obj/machinery/power/breakerbox/attackby(obj/item/W as obj, mob/user as mob)
 	if(istype(W, /obj/item/multitool))
 		var/newtag = tgui_input_text(user, "Enter new RCON tag. Use \"NO_TAG\" to disable RCON or leave empty to cancel.", "SMES RCON system", "", MAX_NAME_LEN)
-		newtag = sanitize(newtag,MAX_NAME_LEN)
 		if(newtag)
 			RCon_tag = newtag
 			to_chat(user, span_notice("You changed the RCON tag to: [newtag]"))
@@ -111,7 +110,7 @@
 	if(default_part_replacement(user, W))
 		return
 
-/obj/machinery/power/breakerbox/proc/set_state(var/state)
+/obj/machinery/power/breakerbox/proc/set_state(state)
 	on = state
 	if(on)
 		icon_state = icon_state_on

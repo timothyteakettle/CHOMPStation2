@@ -1,10 +1,10 @@
-/mob/observer/dead/say(var/message, var/datum/language/speaking = null, var/whispering = 0)
+/mob/observer/dead/say(message, datum/language/speaking = null, whispering = 0)
 	message = sanitize(message)
 
 	if(!message)
 		return
 
-	log_ghostsay(message, src)
+	log_talk("(GHOST SAY) [message]", LOG_SAY, color="#9c00bc")
 
 	if (client)
 		if(message)
@@ -20,7 +20,7 @@
 	if(!message)
 		return
 
-	log_ghostemote(message, src)
+	log_message("(GHOST EMOTE) [message]", LOG_EMOTE, color="#9c00bc")
 
 	if(client)
 		if(message)

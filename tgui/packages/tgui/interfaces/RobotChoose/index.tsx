@@ -12,6 +12,7 @@ export const RobotChoose = (props) => {
 
   const {
     possible_modules,
+    whitelisted_modules,
     possible_sprites,
     selected_module,
     sprite_datum,
@@ -24,26 +25,33 @@ export const RobotChoose = (props) => {
   } = data;
 
   return (
-    <Window width={800} height={605} theme={theme || 'ntos'}>
+    <Window width={800} height={605} theme={theme}>
       <Window.Content>
         <Stack fill>
-          <ModuleSection
-            title="Modules"
-            sortable={possible_modules}
-            selected={selected_module}
-          />
-          <SpriteSection
-            title="Sprites"
-            sortable={possible_sprites}
-            selected={sprite_datum}
-          />
-          <IconSection
-            currentName={currentName}
-            mindName={mind_name}
-            isDefaultName={isDefaultName}
-            sprite={sprite_datum_class}
-            size={sprite_datum_size}
-          />
+          <Stack.Item basis="30%">
+            <ModuleSection
+              title="Modules"
+              sortable={possible_modules}
+              highlighted={whitelisted_modules}
+              selected={selected_module}
+            />
+          </Stack.Item>
+          <Stack.Item basis="30%">
+            <SpriteSection
+              title="Sprites"
+              sortable={possible_sprites}
+              selected={sprite_datum}
+            />
+          </Stack.Item>
+          <Stack.Item grow>
+            <IconSection
+              currentName={currentName}
+              mindName={mind_name}
+              isDefaultName={isDefaultName}
+              sprite={sprite_datum_class}
+              size={sprite_datum_size}
+            />
+          </Stack.Item>
         </Stack>
       </Window.Content>
     </Window>

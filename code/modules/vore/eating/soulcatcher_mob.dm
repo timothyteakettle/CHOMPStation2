@@ -31,7 +31,7 @@
 	if(ext_blind)
 		eye_blind = 5
 		client.screen.Remove(GLOB.global_hud.whitense)
-		overlay_fullscreen("blind", /obj/screen/fullscreen/blind)
+		overlay_fullscreen("blind", /atom/movable/screen/fullscreen/blind)
 	else
 		eye_blind = 0
 		clear_fullscreen("blind")
@@ -41,12 +41,12 @@
 		client.screen.Remove(GLOB.global_hud.whitense)
 
 // Say proc for captures souls
-/mob/living/carbon/brain/caught_soul/vore/say(var/message, var/datum/language/speaking = null, var/whispering = 0)
+/mob/living/carbon/brain/caught_soul/vore/say(message, datum/language/speaking = null, whispering = 0)
 	if(silent) return FALSE
 	gem.use_speech(message, src, eyeobj)
 
 // Emote proc for captured souls
-/mob/living/carbon/brain/caught_soul/vore/custom_emote(var/m_type, var/message)
+/mob/living/carbon/brain/caught_soul/vore/custom_emote(m_type, message)
 	if(silent) return FALSE
 	gem.use_emote(message,src,eyeobj)
 
@@ -93,7 +93,7 @@
 
 	src.nsay_vore_act()
 
-/mob/proc/nsay_vore_act(var/message)
+/mob/proc/nsay_vore_act(message)
 	if(stat != CONSCIOUS)
 		to_chat(src, span_warning("You can't use NSay Vore while unconscious."))
 		return
@@ -105,7 +105,7 @@
 		return
 
 	if(!message)
-		message = tgui_input_text(usr, "Type a message to say.","Speak into Soulcatcher", multiline=TRUE)
+		message = tgui_input_text(src, "Type a message to say.","Speak into Soulcatcher", multiline=TRUE, encode = FALSE)
 	if(message)
 		var/sane_message = sanitize(message)
 		gem.use_speech(sane_message, src)
@@ -124,7 +124,7 @@
 
 	src.nme_vore_act()
 
-/mob/proc/nme_vore_act(var/message)
+/mob/proc/nme_vore_act(message)
 	if(stat != CONSCIOUS)
 		to_chat(src, span_warning("You can't use NMe Vore while unconscious."))
 		return
@@ -136,7 +136,7 @@
 		return
 
 	if(!message)
-		message = tgui_input_text(usr, "Type an action to perform.","Emote into Soulcatcher", multiline=TRUE)
+		message = tgui_input_text(src, "Type an action to perform.","Emote into Soulcatcher", multiline=TRUE, encode = FALSE)
 	if(message)
 		var/sane_message = sanitize(message)
 		gem.use_emote(sane_message, src)
@@ -190,27 +190,25 @@
 
 	QDEL_NULL(eyeobj)
 	gem.notify_holder("[src] ended SR projection.")
-	gem.show_vore_fx(src, TRUE)
+	gem.show_vore_fx(src)
 
 /mob/living/carbon/brain/caught_soul/vore/nsay_brain()
 	set name = "NSay"
 	set desc = "Speak to your Soulcatcher (circumventing SR speaking)."
 	set category = "Soulcatcher"
 
-	var/message = tgui_input_text(usr, "Type a message to say.","Speak into Soulcatcher", multiline=TRUE)
+	var/message = tgui_input_text(src, "Type a message to say.","Speak into Soulcatcher", "", MAX_MESSAGE_LEN, TRUE)
 	if(message)
-		var/sane_message = sanitize(message)
-		gem.use_speech(sane_message, src)
+		gem.use_speech(message, src)
 
 /mob/living/carbon/brain/caught_soul/vore/nme_brain()
 	set name = "NMe"
 	set desc = "Emote to your Soulcatcher (circumventing SR speaking)."
 	set category = "Soulcatcher"
 
-	var/message = tgui_input_text(usr, "Type an action to perform.","Emote into Soulcatcher", multiline=TRUE)
+	var/message = tgui_input_text(src, "Type an action to perform.","Emote into Soulcatcher", "", MAX_MESSAGE_LEN, TRUE)
 	if(message)
-		var/sane_message = sanitize(message)
-		gem.use_emote(sane_message, src)
+		gem.use_emote(message, src)
 
 // Allows the captured owner to transfer themselves to valid nearby objects
 /mob/living/carbon/brain/caught_soul/vore/proc/transfer_self()

@@ -40,7 +40,7 @@
 	var/copy = "/mob/living/simple_mob/vore/solarray"
 
 
-/mob/living/simple_mob/vore/spacecritter/attackby(var/obj/item/O, var/mob/user)
+/mob/living/simple_mob/vore/spacecritter/attackby(obj/item/O, mob/user)
 	if(istype(O, evolvekey))
 		user.drop_from_inventory(O)
 		qdel(O)
@@ -194,7 +194,13 @@
 	..()
 
 /mob/living/simple_mob/vore/spacecritter/radcrab/proc/irradiate()
-	SSradiation.radiate(src, rads)
+	radiation_pulse(
+		src,
+		max_range = 3,
+		threshold = RAD_MEDIUM_INSULATION,
+		chance = 100,
+		strength = rads
+	)
 
 /mob/living/simple_mob/vore/spacecritter/radcrab/supermattercrab
 	size_multiplier = 1.5
@@ -250,15 +256,7 @@
 	icon_living = "gravityshell"
 	icon_dead = "gravityshell-dead"
 	movement_cooldown = 5			// Lower is faster.
-	armor_soak = list(		// Values for getsoak() checks.
-				"melee" = 7,
-				"bullet" = 7,
-				"laser" = 7,
-				"energy" = 7,
-				"bomb" = 0,
-				"bio" = 0,
-				"rad" = 0
-				)
+	armor = list(melee = 14, bullet = 14, laser = 14, energy = 14, bomb = 0, bio = 100, rad = 100)
 	var/artifact_master = /datum/component/artifact_master/gravity
 
 	evolve = "/mob/living/simple_mob/vore/spacecritter/gravityshell/cleanse"

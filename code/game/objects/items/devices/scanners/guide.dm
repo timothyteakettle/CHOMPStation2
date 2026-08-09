@@ -12,16 +12,16 @@
 	guide = TRUE
 	icon_state = "health-g"
 
-/obj/item/healthanalyzer/proc/guide(var/mob/living/carbon/human/M, mob/living/user)
+/obj/item/healthanalyzer/proc/guide(mob/living/carbon/human/M, mob/living/user)
 
 /* Enable this if you want non-medical users to be blocked from the guide. Kind of pointless, since the only ones that would really NEED the guide are non-medical users.
 	var/obj/item/card/id/ourid = user?.GetIdCard()
 	if(!ourid)
 		return
-	if(access_change_ids in ourid.GetAccess())
+	if(ACCESS_CHANGE_IDS in ourid.GetAccess())
 		playsound(src, 'sound/machines/defib_failed.ogg', 50, 0)
 		return
-	if(access_medical in ourid.GetAccess())
+	if(ACCESS_MEDICAL in ourid.GetAccess())
 		playsound(src, 'sound/effects/pop.ogg', 50, FALSE)
 	else
 		playsound(src, 'sound/machines/defib_failed.ogg', 50, 0)
@@ -116,5 +116,5 @@
 		peeb += dat
 		peeb += span_notice("For more detailed information on the patient's condition, utilize a body scanner at the closest medical bay.")
 
-	user.show_message(peeb, 1)
+		user.show_message(peeb, 1)
 //CHOMPedit end.

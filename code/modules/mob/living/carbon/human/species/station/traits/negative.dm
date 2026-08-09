@@ -47,7 +47,7 @@
 	custom_only = FALSE
 	banned_species = list(SPECIES_TESHARI, SPECIES_SHADEKIN_CREW) //These are already this weak.
 
-/datum/trait/negative/endurance_low/apply(var/datum/species/S,var/mob/living/carbon/human/H)
+/datum/trait/negative/endurance_low/apply(datum/species/S,mob/living/carbon/human/H)
 	..()
 	H.setMaxHealth(S.total_health)
 
@@ -59,7 +59,7 @@
 	custom_only = FALSE
 	banned_species = list(SPECIES_TESHARI) //These are already this weak.
 
-/datum/trait/negative/endurance_very_low/apply(var/datum/species/S,var/mob/living/carbon/human/H)
+/datum/trait/negative/endurance_very_low/apply(datum/species/S,mob/living/carbon/human/H)
 	..()
 	H.setMaxHealth(S.total_health)
 
@@ -137,9 +137,10 @@
 /datum/trait/negative/hollow
 	name = "Hollow Bones/Aluminum Alloy"
 	desc = "Your bones and robot limbs are much easier to break."
-	cost = -3 // increased due to medical intervention needed.
+	cost = -2 //I feel like this should be higher, but let's see where it goes
+	excludes = list(/datum/trait/negative/boneless, /datum/trait/negative/boneless/major, /datum/trait/positive/densebones)
 
-/datum/trait/negative/hollow/apply(var/datum/species/S,var/mob/living/carbon/human/H)
+/datum/trait/negative/hollow/apply(datum/species/S,mob/living/carbon/human/H)
 	..()
 	for(var/obj/item/organ/external/O in H.organs)
 		O.min_broken_damage *= 0.5
@@ -159,14 +160,7 @@
 
 	activation_message="You feel off balance..."
 	primitive_expression_messages=list("staggers")
-
-/datum/trait/negative/neural_hypersensitivity
-	name = "Neural Hypersensitivity"
-	desc = "Your nerves are particularly sensitive to physical changes, leading to experiencing twice the intensity of pain and pleasure alike. Makes all pain effects twice as strong, and occur at half as much damage."
-	cost = -1
-	var_changes = list("trauma_mod" = 2)
-	can_take = ORGANICS
-	custom_only = FALSE
+	excludes = list(/datum/trait/negative/lightweight_light, /datum/trait/positive/heavyweight)
 
 /datum/trait/negative/breathes
 	cost = -2
@@ -189,6 +183,15 @@
 	desc = "You breathe nitrogen instead of oxygen (which is poisonous to you). Incidentally, phoron isn't poisonous to breathe to you."
 	var_changes = list("breath_type" = GAS_N2, "poison_type" = GAS_O2, "ideal_air_type" = /datum/gas_mixture/belly_air/nitrogen_breather)
 
+/datum/trait/negative/breathes/methane
+	name = "Methane Breather"
+	desc = "You breathe methane instead of oxygen (which is poisonous to you)."
+	var_changes = list("breath_type" = GAS_CH4, "poison_type" = GAS_O2, "ideal_air_type" = /datum/gas_mixture/belly_air/methane_breather)
+
+/datum/trait/negative/breathes/carbon_dioxide
+	name = "Carbon Dioxide Breather"
+	desc = "You breathe carbon dioxide instead of oxygen, much like a plant. Oxygen is not poisonous to you."
+	var_changes = list("breath_type" = GAS_CO2, "exhale_type" = GAS_O2, "ideal_air_type" = /datum/gas_mixture/belly_air/carbon_dioxide_breather)
 
 /datum/trait/negative/monolingual
 	name = "Monolingual"
@@ -221,6 +224,7 @@
 	var_changes = list("gun_accuracy_mod" = -35)
 	custom_only = FALSE
 	varchange_type = TRAIT_VARCHANGE_MORE_BETTER
+	excludes = list(/datum/trait/negative/thick_digits)
 
 	//Traitgenes
 	is_genetrait = TRUE
@@ -241,7 +245,7 @@
 /datum/trait/negative/less_blood
 	name = "Low Blood Volume"
 	desc = "You have 33.3% less blood volume compared to most species, making you more prone to blood loss issues."
-	cost = -3
+	cost = -3 //CHOMPEdit - Keep original value
 	var_changes = list("blood_volume" = 375)
 	excludes = list(/datum/trait/negative/less_blood_extreme)
 	can_take = ORGANICS
@@ -249,7 +253,7 @@
 /datum/trait/negative/less_blood_extreme
 	name = "Low Blood Volume, Extreme"
 	desc = "You have 60% less blood volume compared to most species, making you much more prone to blood loss issues."
-	cost = -5
+	cost = -5 //CHOMPEdit - Keep original value
 	var_changes = list("blood_volume" = 224)
 	excludes = list(/datum/trait/negative/less_blood)
 	can_take = ORGANICS
@@ -271,34 +275,14 @@
 	name = "Low Blood Sugar"
 	desc = "If you let your nutrition get too low, you will start to experience adverse affects including hallucinations, unconsciousness, and weakness"
 	cost = -1
-	special_env = TRUE
 
 	// Traitgenes Made into a gene trait
 	is_genetrait = TRUE
 	hidden = FALSE
+	added_component_path = /datum/component/diabetic
 
 	activation_message="You feel drowsy..."
 	primitive_expression_messages=list("looks drowsy")
-
-/datum/trait/negative/low_blood_sugar/handle_environment_special(var/mob/living/carbon/human/H)
-	if(H.nutrition > 200 || isbelly(H.loc))
-		return
-	if((H.nutrition < 200) && prob(5))
-		if(H.nutrition > 100)
-			to_chat(H,span_warning("You start to feel noticeably weak as your stomach rumbles, begging for more food. Maybe you should eat something to keep your blood sugar up"))
-		else if(H.nutrition > 50)
-			to_chat(H,span_warning("You begin to feel rather weak, and your stomach rumbles loudly. You feel lightheaded and it's getting harder to think. You really need to eat something."))
-		else if(H.nutrition > 25)
-			to_chat(H,span_danger("You're feeling very weak and lightheaded, and your stomach continously rumbles at you. You really need to eat something!"))
-		else
-			to_chat(H,span_critical("You're feeling extremely weak and lightheaded. You feel as though you might pass out any moment and your stomach is screaming for food by now! You should really find something to eat!"))
-	if((H.nutrition < 100) && prob(10))
-		H.Confuse(10)
-	if((H.nutrition < 50) && prob(25))
-		H.hallucination = max(30,H.hallucination+8)
-	if((H.nutrition < 25) && prob(5))
-		H.drowsyness = max(100,H.drowsyness+30)
-
 
 /datum/trait/negative/blindness
 	name = "Permanently blind"
@@ -315,18 +299,15 @@
 	activation_message="You can't seem to see anything."
 	primitive_expression_messages=list("stumbles aimlessly.")
 
-/datum/trait/negative/blindness/handle_environment_special(var/mob/living/carbon/human/H)
+/datum/trait/negative/blindness/handle_environment_special(mob/living/carbon/human/H)
 	H.sdisabilities |= sdisability 		//no matter what you do, the blindess still comes for you // Traitgenes tweaked to be consistant with other gene traits by using var
 
 /datum/trait/negative/agoraphobia
 	name = "Agoraphobia"
 	desc = "You very much dislike being in crowded places. When in the company of more than two other people, you start to panic and experience adverse effects."
 	cost = -3
-	var/warning_cap = 400
-	var/hallucination_cap = 25
-	var/escalation_speed = 0.8
-	special_env = TRUE
 	excludes = list(/datum/trait/negative/lonely,/datum/trait/negative/lonely/major)
+	added_component_path = /datum/component/crowd_detection/agoraphobia
 
 	//Traitgenes
 	is_genetrait = TRUE
@@ -335,134 +316,19 @@
 	activation_message="You feel like you need some space"
 	primitive_expression_messages=list("keeps their distance from others")
 
-/datum/trait/negative/agoraphobia/handle_environment_special(var/mob/living/carbon/human/H)
-	spawn(0)
-		var/list/in_range = list()
-		// If they're dead or unconcious they're a bit beyond this kind of thing.
-		if(H.stat)
-			return
-		// No point processing if we're already stressing the hell out.
-		if(H.hallucination >= hallucination_cap && H.loneliness_stage >= warning_cap)
-			return
-		in_range |= check_mob_company(H,H)	//Checks our item slots and bellies for any people.
-		in_range |= belly_check(H,H.loc)	//Recursive check if we're in anyones bellies, are they in anyone's belly, etc.
-		in_range |= holder_check(H,H.loc)	//Recursive check if someone's holding us, is anyone holding them, etc.
-
-		// Check for company.
-		for(var/mob/living/M in viewers(get_turf(H)))
-			in_range |= check_mob_company(H,M)
-
-		for(var/obj/effect/overlay/aiholo/A in range(5, H))
-			in_range |= A
-
-		if(in_range.len > 2)
-			if(H.loneliness_stage < warning_cap)
-				H.loneliness_stage = min(warning_cap,H.loneliness_stage+escalation_speed)
-			handle_loneliness(H)
-			if(H.loneliness_stage >= warning_cap && H.hallucination < hallucination_cap)
-				H.hallucination = min(hallucination_cap,H.hallucination+2.5*escalation_speed)
-		else
-			H.loneliness_stage = max(H.loneliness_stage-4,0)
-
-
-/datum/trait/negative/agoraphobia/proc/handle_loneliness(var/mob/living/carbon/human/H)
-	if(world.time < H.next_loneliness_time)
-		return //Moved this at the top so we dont waste time assigning vars we will never use
-	var/ms = handle_loneliness_message(H)
-	if(ms)
-		to_chat(H, ms)
-	H.next_loneliness_time = world.time+500
-	H.fear = min((H.fear + 3), 102)
-
-/datum/trait/negative/agoraphobia/proc/handle_loneliness_message(var/mob/living/carbon/human/H)
-	var/Lonely = H.loneliness_stage
-	if(Lonely == escalation_speed)
-		return "You notice there's more people than you feel comfortable with around you..."
-	else if(Lonely >= 50 && Lonely < 250)
-		return "You start to feel anxious from the number of people around you."
-	else if(Lonely >= 250 && Lonely < warning_cap)
-		if(H.stuttering < hallucination_cap)
-			H.stuttering += 5
-		return "[pick("You don't think you can last much longer with this much company!", "You should go find some space!")]" //if we add more here make it a list for readability
-	else if(Lonely >= warning_cap)
-		var/list/panicmessages = list(	"Why am I still here? I have to leave and get some space!",
-						"Please, just let me be alone!",
-						"I need to be alone!")
-		return span_bolddanger("[pick(panicmessages)]")
-	return FALSE
-
-/datum/trait/negative/agoraphobia/proc/find_held_by(var/atom/item)
-	if(!item || !istype(item))
-		return null
-	else if(istype(item,/mob/living))
-		return item
-	else
-		return find_held_by(item.loc)
-
-/datum/trait/negative/agoraphobia/proc/holder_check(var/mob/living/carbon/human/H,var/obj/item/holder/H_holder)
-	var/list/in_range = list()
-	if(istype(H_holder))
-		var/mob/living/held_by = find_held_by(H_holder)
-		if(held_by)
-			in_range |= check_mob_company(H,held_by,FALSE)
-		in_range |= holder_check(H,held_by)
-	return in_range
-
-/datum/trait/negative/agoraphobia/proc/belly_check(var/mob/living/carbon/human/H,var/obj/belly/B)
-	var/list/in_range = list()
-	if(istype(B))
-		in_range |= check_mob_company(H,B.owner,FALSE)
-		if(isbelly(B.owner.loc))
-			in_range |= belly_check(H,B.owner.loc)
-	return in_range
-
-/datum/trait/negative/agoraphobia/proc/check_mob_company(var/mob/living/carbon/human/H,var/mob/living/M,var/invis_matters = TRUE)
-	var/list/in_range = list()
-	if(!istype(M))
-		return in_range
-	var/social_check = !istype(M, /mob/living/carbon) && !istype(M, /mob/living/silicon/robot)
-	var/ckey_check = !M.ckey
-	var/overall_checks = M == H || M.stat == DEAD || social_check || ckey_check
-	if(invis_matters && M.invisibility > H.see_invisible)
-		return in_range
-	if(!overall_checks)
-		in_range |= M
-	in_range |= check_contents(M,H)
-	return in_range
-
-/datum/trait/negative/agoraphobia/proc/check_contents(var/atom/item,var/mob/living/carbon/human/H,var/max_layer = 3,var/current_layer = 1)
-	var/list/in_range = list()
-	if(!item || !istype(item) || current_layer > max_layer)
-		return in_range
-	for(var/datum/content in item.contents)
-		if(istype(content,/obj/item/holder))
-			var/obj/item/holder/contentholder = content
-			in_range |= check_mob_company(H,contentholder.held_mob)
-		else
-			in_range |= check_contents(content,H,max_layer,current_layer+1)
-	return in_range
-
 /datum/trait/negative/lonely
 	name = "Minor loneliness vulnerability"
 	desc = "You're very prone to loneliness! Being alone for extended periods of time causes adverse effects. Most mobs will cure this loneliness as long as they aren't hostile."
 	cost = -1
-	var/warning_cap = 400
-	var/only_people = FALSE
-	var/hallucination_cap = 25
-	var/escalation_speed = 0.8
-	special_env = TRUE
 	excludes = list(/datum/trait/negative/lonely/major,/datum/trait/negative/agoraphobia)
+	added_component_path = /datum/component/crowd_detection/lonely
 
 /datum/trait/negative/lonely/major
 	name = "Major loneliness vulnerability"
 	desc = "You're extremely prone to loneliness! Being alone for extended periods of time causes adverse effects. Most mobs won't be enough to cure this loneliness, you need other social beings."
 	cost = -3
-	warning_cap = 300
-	hallucination_cap = 50
-	escalation_speed = 1.3
-	only_people = TRUE
-	special_env = TRUE
 	excludes = list(/datum/trait/negative/lonely,/datum/trait/negative/agoraphobia)
+	added_component_path = /datum/component/crowd_detection/lonely/major
 
 	//Traitgenes
 	is_genetrait = TRUE
@@ -471,147 +337,34 @@
 	activation_message="You feel like you are in desperate need of company..."
 	primitive_expression_messages=list("Looks up at you pleadingly")
 
-/datum/trait/negative/lonely/proc/sub_loneliness(var/mob/living/carbon/human/H,var/amount = 4)
-	H.loneliness_stage = max(H.loneliness_stage - 4, 0)
-	if(world.time >= H.next_loneliness_time && H.loneliness_stage > 0)
-		to_chat(H, span_infoplain("The nearby company calms you down..."))
-		H.next_loneliness_time = world.time+500
-
-/datum/trait/negative/lonely/proc/check_mob_company(var/mob/living/carbon/human/H,var/mob/living/M)
-	if(!istype(M))
-		return 0
-	var/social_check = only_people && !istype(M, /mob/living/carbon) && !istype(M, /mob/living/silicon/robot)
-	var/self_invisible_check = M == H || M.invisibility > H.see_invisible
-	var/ckey_check = only_people && !M.ckey
-	var/overall_checks = M.stat == DEAD || social_check || ckey_check
-	if(self_invisible_check)
-		return 0
-	if((M.faction == "neutral" || M.faction == H.faction) && !overall_checks)
-		sub_loneliness(H)
-		return 1
-	else
-		if(M.vore_organs)
-			for(var/obj/belly/B in M.vore_organs)
-				for(var/mob/living/content in B.contents)
-					if(istype(content))
-						check_mob_company(H,content)
-	return 0
-
-/datum/trait/negative/lonely/proc/check_contents(var/atom/item,var/mob/living/carbon/human/H,var/max_layer = 3,var/current_layer = 1)
-	if(!item || !istype(item) || current_layer > max_layer)
-		return 0
-	for(var/datum/content in item.contents)
-		if(istype(content,/obj/item/holder))
-			var/obj/item/holder/contentholder = content
-			if(check_mob_company(H,contentholder.held_mob))
-				return 1
-		else
-			if(check_contents(content,H,max_layer,current_layer+1))
-				return 1
-	return 0
-
-/datum/trait/negative/lonely/handle_environment_special(var/mob/living/carbon/human/H)
-	spawn(0)
-		// If they're dead or unconcious they're a bit beyond this kind of thing.
-		if(H.stat)
-			return
-		// No point processing if we're already stressing the hell out.
-		if(H.hallucination >= hallucination_cap && H.loneliness_stage >= warning_cap)
-			return
-
-		// Outpost 21 addition begin - extended loneliness mechanics
-		if(H.mind && H.mind.changeling) // We are never alone~
-			H.loneliness_stage = 0
-			return
-		if(H.has_brain_worms()) // Brain friends!
-			sub_loneliness(H)
-			return
-		// Outpost 21 addition end
-
-		// Vored? Not gonna get frightened.
-		if(isbelly(H.loc))
-			sub_loneliness(H)
-			return
-		if(istype(H.loc, /obj/item/holder))
-			sub_loneliness(H)
-			return
-		// Check for company.
-		if(check_contents(H,H)) //Check our item slots and storage for any micros.
-			sub_loneliness(H)
-			return
-		for(var/mob/living/M in viewers(get_turf(H)))
-			if(check_mob_company(H,M))
-				return
-		//Check to see if there's anyone in our belly
-		if(H.vore_organs)
-			for(var/obj/belly/B in H.vore_organs)
-				for(var/mob/living/content in B.contents)
-					if(istype(content))
-						if(check_mob_company(H,content))
-							return
-		for(var/obj/item/holder/micro/M in range(1, H))
-			sub_loneliness(H)
-		for(var/obj/effect/overlay/aiholo/A in range(5, H))
-			sub_loneliness(H)
-
-		for(var/obj/item/toy/plushie/teshari/P in range(5, H))
-			sub_loneliness(H)
-
-		// No company? Suffer :(
-		if(H.loneliness_stage < warning_cap)
-			H.loneliness_stage = min(warning_cap,H.loneliness_stage+escalation_speed)
-		handle_loneliness(H)
-		if(H.loneliness_stage >= warning_cap && H.hallucination < hallucination_cap)
-			H.hallucination = min(hallucination_cap,H.hallucination+2.5*escalation_speed)
-
-/datum/trait/negative/lonely/proc/handle_loneliness(var/mob/living/carbon/human/H)
-	var/ms = ""
-	if(H.loneliness_stage == escalation_speed)
-		ms = "[pick("Well.. No one is around you anymore...","Well.. You're alone now...","You suddenly feel alone...")]" // Outpost 21 edit - More variety
-	if(H.loneliness_stage >= 50)
-		ms = "[pick("You begin to feel alone...","You feel isolated...","You need company...","Where is everyone?...","You need to find someone...")]" // Outpost 21 edit - More variety
-	if(H.loneliness_stage >= 250)
-		ms = "[pick("You don't think you can last much longer without some visible company!", "You should go find someone to be with!","You need to find company!","Find someone to be with!")]" // Outpost 21 edit - More variety
-		if(H.stuttering < hallucination_cap)
-			H.stuttering += 5
-	if(H.loneliness_stage >= warning_cap)
-		ms = span_danger(span_bold("[pick("Where are the others?", "Please, there has to be someone nearby!", "I don't want to be alone!","Please, anyone! I don't want to be alone!")]")) // Outpost 21 edit - More variety
-	if(world.time < H.next_loneliness_time)
-		return
-	if(ms != "")
-		to_chat(H, ms)
-	H.next_loneliness_time = world.time+500
-	H.fear = min((H.fear + 3), 102)
-
-
 /datum/trait/negative/endurance_glass // Glass Cannon
 	name = "Glass Endurance"
 	desc = "Your body is very fragile. Reduces your maximum hitpoints to 25. Beware sneezes. You require only 50 damage in total to die, compared to 200 normally. You will go into crit after losing 25 HP, compared to crit at 100 HP."
 	cost = -12 // Similar to Very Low Endurance, this straight up will require you NEVER getting in a fight. This is extremely crippling. I salute the madlad that takes this.
 	var_changes = list("total_health" = 25)
 
-/datum/trait/negative/endurance_glass/apply(var/datum/species/S,var/mob/living/carbon/human/H)
+/datum/trait/negative/endurance_glass/apply(datum/species/S,mob/living/carbon/human/H)
 	..()
 	H.setMaxHealth(S.total_health)
 
 /datum/trait/negative/reduced_biocompat_minor
 	name = "Reduced Biocompatibility, Minor"
 	desc = "For whatever reason, you're one of the unlucky few who don't get as much benefit from modern-day chemicals. Remember to note this down in your medical records! Chems are only 80% as effective on you!"
-	cost = -2
+	cost = -2 //CHOMPEdit - Keep original value
 	var_changes = list("chem_strength_heal" = 0.8)
 	can_take = ORGANICS
 
 /datum/trait/negative/reduced_biocompat
 	name = "Reduced Biocompatibility"
 	desc = "For whatever reason, you're one of the unlucky few who don't get as much benefit from modern-day chemicals. Remember to note this down in your medical records! Chems are only 60% as effective on you!"
-	cost = -4
+	cost = -4 //CHOMPEdit - Keep original value
 	var_changes = list("chem_strength_heal" = 0.6)
 	can_take = ORGANICS
 
 /datum/trait/negative/reduced_biocompat_extreme
 	name = "Reduced Biocompatibility, Major"
 	desc = "For whatever reason, you're one of the unlucky few who don't get as much benefit from modern-day chemicals. Remember to note this down in your medical records! Chems are only 30% as effective on you!"
-	cost = -8
+	cost = -8 //CHOMPEdit - Keep original value
 	var_changes = list("chem_strength_heal" = 0.3)
 	can_take = ORGANICS
 
@@ -647,17 +400,10 @@
 	desc = "Some say that when it rains, it pours.  Unfortunately, this is also true for yourself if you get cut. You bleed much faster than average, at 3x the normal rate."
 	cost = -3
 	can_take = ORGANICS
+	var_changes = list("bloodloss_rate" = 3)
 
-	activation_message="You feel "
+	activation_message="You feel like your skin is made of paper!"
 	primitive_expression_messages=list("bumps their toe, screaming in pain")
-
-/datum/trait/negative/haemophilia_plus/apply(var/datum/species/S,var/mob/living/carbon/human/H)
-	..()
-	H.add_modifier(/datum/modifier/trait/haemophilia)
-
-/datum/trait/negative/haemophilia_plus/unapply(var/datum/species/S,var/mob/living/carbon/human/H)
-	..()
-	H.remove_modifiers_of_type(/datum/modifier/trait/haemophilia)
 
 /datum/trait/negative/pain_intolerance_basic
 	name = "Pain Intolerance"
@@ -677,6 +423,14 @@
 
 	activation_message="You feel as though the airflow around you is painful..."
 	primitive_expression_messages=list("bumps their toe, screaming in pain")
+
+/datum/trait/negative/neural_hypersensitivity
+	name = "Neural Hypersensitivity" //Would rename this to 'Pain Intolerance, Extreme' but for savefile reasons, it stays this name.
+	desc = "You are frail and sensitive to pain. You experience 100% more pain from all sources."
+	cost = -5
+	var_changes = list("pain_mod" = 2)
+	can_take = ORGANICS
+	custom_only = FALSE
 
 /datum/trait/negative/sensitive_biochem
 	name = "Sensitive Biochemistry, Minor"
@@ -714,15 +468,16 @@
 	desc = "Even the tiniest particles of dirt give you uneasy footing, even through several layers of footwear."
 	cost = -5
 	var_changes = list("dirtslip" = TRUE)
-	excludes = list(/datum/trait/positive/absorbent) // CHOMPAdd
+	excludes = list(/datum/trait/positive/absorbent)
 
 /datum/trait/negative/thick_digits
 	name = "Thick Digits"
 	desc = "Your hands are not shaped in a way that allows useage of guns."
 	cost = -4
 	custom_only = FALSE
+	excludes = list(/datum/trait/negative/bad_shooter)
 
-/datum/trait/negative/thick_digits/apply(var/datum/species/S,var/mob/living/carbon/human/H)
+/datum/trait/negative/thick_digits/apply(datum/species/S,mob/living/carbon/human/H)
 	..()
 	H.add_modifier(/datum/modifier/trait/thickdigits)
 
@@ -825,3 +580,240 @@
 	addiction = REAGENT_ID_ASUSTENANCE
 	custom_only = FALSE
 	hidden = TRUE //Disabled on Virgo
+
+/datum/trait/negative/unlucky
+	name = "Unlucky"
+	desc = "You are naturally unlucky and ill-events often befall you."
+	cost = -2
+	is_genetrait = FALSE
+	hidden = FALSE
+	custom_only = FALSE
+	added_component_path = /datum/component/omen/trait
+	excludes = list(/datum/trait/negative/unlucky/major, /datum/trait/neutral/slip_prone)
+
+
+/datum/trait/negative/unlucky/major
+	name = "Unlucky, Major"
+	desc = "Your luck is extremely awful and potentially fatal."
+	cost = -5
+	tutorial = "You should avoid disposal bins."
+	is_genetrait = TRUE
+	hidden = FALSE //VOREStation Note: Disabled //CHOMPEdit - Enable
+	added_component_path = /datum/component/omen/trait/major
+	excludes = list(/datum/trait/negative/unlucky, /datum/trait/neutral/slip_prone)
+	activation_message= span_cult(span_bold("What a terrible night to have a curse!"))
+	primitive_expression_messages=list("unluckily stubs their toe!")
+
+/datum/trait/negative/heavy_landing
+	name = "Heavy Landing"
+	desc = "Your heavy frame causes you to crash heavily when falling from heights. The bigger they are, the harder they fall!"
+	cost = -1
+	var_changes = list("soft_landing" = FALSE) //override soft landing if the species would otherwise start with it
+	custom_only = FALSE
+	excludes = list(/datum/trait/positive/soft_landing)
+
+/datum/trait/negative/heavy_landing/apply(datum/species/S, mob/living/carbon/human/H, trait_prefs)
+	..()
+	ADD_TRAIT(H, TRAIT_HEAVY_LANDING, ROUNDSTART_TRAIT)
+
+/*
+ * So, I know what you're thinking.
+ * "Why is this a negative trait? It sounds like a positive one!"
+ * In theory, yes. Being unable to have your limbs break DOES sound like a good thing!
+ * However, that is where limb code comes into play.
+ * Normally, with highly damaged limbs, you have a RNG(X)% chance for it to be sliced off if it takes a lot of damage and the damage from the blow is over a certain threshold.
+ * Additionally, limbs have a 'maximum damage' it can reach in which it can't reach anymore. Your arm, for example, is 80 damage maximum. Head 75.
+ * Trying to hit it more won't do any more damage, just constantly roll chances (if the hitting blow is strong enough) to cut it off/gib it.
+ * With this trait, however, as soon as you reach that maximum damage, your limb IMMEDIATELY gibs. No RNG chance rolls. 'attack must be X strong to hit it off'. Nothing.
+ * Additionally, normal limbloss code has one-shot protection and prevents bullets from gibbing limbs. This makes you forfeit that protection.
+ */
+/datum/trait/negative/boneless
+	name = "Boneless"
+	desc = "You have no bones! Though your limbs will gib once reaching their maximum limit in exchange."
+	cost = -3
+	custom_only = TRUE
+	can_take = ORGANICS
+	is_genetrait = FALSE //genetically removes your bones? nah.
+	hidden = FALSE
+	///How much our limbs max_damage is multiplied by.
+	var/limb_health = 1
+	excludes = list(/datum/trait/negative/hollow, /datum/trait/positive/densebones, /datum/trait/negative/boneless/major)
+
+/datum/trait/negative/boneless/major
+	name = "Boneless, Major"
+	desc = "You have no bones! Your limbs are also much, much easier to gib in exchange. (Seriously this can result in one shot deaths and similar)"
+	cost = -6 //For reference, getting hit in the head with a welder 3 times kills you. Head has 37.5 HP. Reaching that cap = instant death
+	limb_health = 0.5
+	excludes = list(/datum/trait/negative/hollow, /datum/trait/positive/densebones, /datum/trait/negative/boneless)
+
+/datum/trait/negative/boneless/apply(datum/species/S,mob/living/carbon/human/H)
+	..()
+	for(var/obj/item/organ/external/ex_organ in H.organs)
+		ex_organ.cannot_break = TRUE
+		ex_organ.dislocated = -1
+		ex_organ.nonsolid = TRUE //ESSENTIAL for boneless. Otherwise it acts like a normal limb.
+		ex_organ.spread_dam = TRUE
+		ex_organ.max_damage = floor(ex_organ.max_damage * limb_health)
+
+		if(istype(ex_organ, /obj/item/organ/external/head))
+			ex_organ.encased = FALSE //you can just reach in and grab it
+			ex_organ.cannot_gib = FALSE
+
+		else if(istype(ex_organ, /obj/item/organ/external/chest))
+			ex_organ.encased = FALSE
+
+/datum/trait/negative/deep_sleeper
+	name = "Deep Sleeper"
+	desc = "When you fall asleep, it takes you four times as long to wake up."
+	cost = -1
+	var_changes = list("waking_speed" = 0.25)
+	custom_only = FALSE
+
+/datum/trait/negative/deep_breather
+	name ="Deep Breather"
+	desc = "You need more air for your lungs to properly work.."
+	cost = -1
+
+	custom_only = FALSE
+	can_take = ORGANICS
+
+	var_changes = list("minimum_breath_pressure" = 18)
+	excludes = list(/datum/trait/positive/light_breather)
+
+
+/*EMP traits. Noting this down because I was like 'what is the difference between emp_dmg_mod and the modifier?'
+ * emp_dmg_mod: If the species has emp_sensitivity bitflag of EMP_BRUTE_DMG, EMP_BURN_DMG, EMP_TOX_DMG, or EMP_OXY_DMG, damage is multiplied by that.
+ * As of the time of writing this, the ONLY species with those bitflags are proteans...Meaning this has been a free trait FOREVER for synths.
+ * The modifier, however, makes everything inside of you (organs, limbs, items) get EMP'd as if it was 1 severity more severe (or 2 if using the major trait)
+*/
+/datum/trait/negative/faultwires
+	name = "Faulty Wires"
+	desc = "Due to poor construction, you have an unfortante weakness to EMPs."
+	cost = -3
+	custom_only = FALSE
+	can_take = SYNTHETICS
+	var_changes = list("emp_dmg_mod" = 1.3, "emp_stun_mod" = 1.3, "emp_sensitivity" = (EMP_BLIND | EMP_DEAFEN | EMP_BRUTE_DMG | EMP_BURN_DMG | EMP_CONFUSE))
+	excludes = list(/datum/trait/negative/poorconstruction, /datum/trait/positive/emp_resist, /datum/trait/positive/emp_resist_major)
+
+/datum/trait/negative/faultwires/apply(datum/species/S,mob/living/carbon/human/H)
+	..()
+	H.add_modifier(/datum/modifier/trait/empweakness)
+
+/datum/trait/negative/poorconstruction
+	name = "Poor Construction"
+	desc = "Due to poor construction, you have an hefty weakness to EMPs."
+	cost = -5
+	custom_only = FALSE
+	can_take = SYNTHETICS
+	var_changes = list("emp_dmg_mod" = 1.6, "emp_stun_mod" = 1.6, "emp_sensitivity" = (EMP_BLIND | EMP_DEAFEN | EMP_BRUTE_DMG | EMP_BURN_DMG | EMP_CONFUSE | EMP_WEAKEN))
+	excludes = list(/datum/trait/negative/faultwires, /datum/trait/positive/emp_resist, /datum/trait/positive/emp_resist_major)
+
+/datum/trait/negative/poorconstruction/apply(datum/species/S,mob/living/carbon/human/H)
+	..()
+	H.add_modifier(/datum/modifier/trait/majorempweakness)
+
+/datum/trait/negative/meltable
+	name = "Water Weakness"
+	desc = "Due to your biology, water is harmful to you."
+	cost = -1
+	custom_only = TRUE
+	var_changes = list("water_resistance" = 0, "water_damage_mod" = 0.3)
+	excludes = list(/datum/trait/negative/meltable_major)
+
+/datum/trait/negative/meltable_major
+	name = "Extreme Water Weakness"
+	desc = "Due to your biology, water is very harmful to you."
+	cost = -3
+	custom_only = TRUE
+	var_changes = list("water_resistance" = 0, "water_damage_mod" = 0.8)
+	excludes = list(/datum/trait/negative/meltable)
+
+/datum/trait/negative/lightweight_light
+	name = "Lesser Lightweight"
+	desc = "Your light weight and poor balance make you very susceptible to unhelpful bumping if you are unprepared)"
+	cost = -1
+	var_changes = list("lightweight_light" = 1)
+	excludes = list(/datum/trait/negative/lightweight, /datum/trait/positive/heavyweight)
+	custom_only = FALSE
+
+/datum/trait/negative/scrawny
+	name = "Scrawny"
+	desc = "You have a much harder time breaking free of grabs as well as creating and holding onto grabs on other people."
+	cost = -2
+	var_changes = list("grab_resist_divisor_victims" = 0.5, "grab_resist_divisor_self" = 3, "grab_power_victims" = 1, "grab_power_self" = -1)
+
+/datum/trait/negative/schizophrenia
+	name = "Episodic hallucinations."
+	desc = "You have a condition which causes you to spontaneously have hallucinations! Luckily for you, in the modern space age, our doctors have solutions for you, just make sure you don't forget to take your pills."
+	cost = -3
+	custom_only = FALSE
+	special_env = TRUE
+	can_take = ORGANICS
+	added_component_path = /datum/component/schizophrenia
+	hidden = FALSE //Disabled on Vorestation //CHOMPEnable
+
+/datum/trait/negative/synth_pain
+	name = "Obligate Pain Simulation"
+	desc = "Due to a structural flaw, hard-coding, or other inherent weakness, your body can feel pain, and you can't turn it off."
+	cost = -4
+	custom_only = FALSE
+	can_take = SYNTHETICS
+	excludes = list(/datum/trait/neutral/synth_cosmetic_pain)
+
+/datum/trait/negative/synth_pain/apply(datum/species/S, mob/living/carbon/human/H, trait_prefs)
+	H.synth_cosmetic_pain = TRUE
+	. = ..()
+
+/datum/trait/negative/rad_weakness
+	name = "Radiation Weakness"
+	desc = "You are approximately 50% more susceptible to radiation, and it dissipates slower from your body."
+	cost = -2
+	var_changes = list("radiation_mod" = 1.5, "rad_removal_mod" = 0.5, "rad_levels" = WEAKENED_RADIATION_RESISTANCE)
+
+// medical allergens
+/datum/trait/negative/medical_allergy
+	name = "Allergy: " + REAGENT_TRICORDRAZINE
+	desc = "You're highly allergic to " + REAGENT_TRICORDRAZINE + " and " + REAGENT_TRICORLIDAZE + ", be sure to write that in your medical record! NB: By taking this trait, you acknowledge there is a significant risk your character may suffer a fatal reaction if exposed to this substance."
+	cost = -1
+	custom_only = FALSE
+	var/medallergen = MEDALLERGEN_TRICORD
+
+	/* Lets show medical some mercy by not making these genes
+	is_genetrait = TRUE
+	hidden = FALSE
+
+	activation_message="Something feels odd..."
+	*/
+
+/datum/trait/negative/medical_allergy/apply(datum/species/S,mob/living/carbon/human/H)
+	S.medallergens |= medallergen
+	..()
+
+/datum/trait/negative/medical_allergy/unapply(datum/species/S,mob/living/carbon/human/H)
+	S.medallergens &= ~medallergen
+	..()
+
+/datum/trait/negative/medical_allergy/bicard
+	name = "Allergy: " + REAGENT_BICARIDINE
+	desc = "You're highly allergic to " + REAGENT_BICARIDINE + " and " + REAGENT_BICARIDAZE + ", be sure to write that in your medical record! NB: By taking this trait, you acknowledge there is a significant risk your character may suffer a fatal reaction if exposed to this substance."
+	medallergen = MEDALLERGEN_BICARD
+
+/datum/trait/negative/medical_allergy/dylo
+	name = "Allergy: " + REAGENT_ANTITOXIN
+	desc = "You're highly allergic to " + REAGENT_ANTITOXIN + ", be sure to write that in your medical record! NB: By taking this trait, you acknowledge there is a significant risk your character may suffer a fatal reaction if exposed to this substance."
+	medallergen = MEDALLERGEN_DYLO
+
+/datum/trait/negative/medical_allergy/spacacillin
+	name = "Allergy: " + REAGENT_SPACEACILLIN
+	desc = "You're highly allergic to " + REAGENT_SPACEACILLIN + ", be sure to write that in your medical record! NB: By taking this trait, you acknowledge there is a significant risk your character may suffer a fatal reaction if exposed to this substance."
+	medallergen = MEDALLERGEN_SPACACIL
+
+/datum/trait/negative/medical_allergy/peridaxon
+	name = "Allergy: " + REAGENT_PERIDAXON
+	desc = "You're highly allergic to " + REAGENT_PERIDAXON + ", be sure to write that in your medical record! NB: By taking this trait, you acknowledge there is a significant risk your character may suffer a fatal reaction if exposed to this substance."
+	medallergen = MEDALLERGEN_PERIDAX
+
+/datum/trait/negative/medical_allergy/kelotane
+	name = "Allergy: " + REAGENT_KELOTANE
+	desc = "You're highly allergic to " + REAGENT_KELOTANE + ", " + REAGENT_DERMALINE + " and " + REAGENT_DERMALAZE + ", be sure to write that in your medical record! NB: By taking this trait, you acknowledge there is a significant risk your character may suffer a fatal reaction if exposed to this substance."
+	medallergen = MEDALLERGEN_KELOTANE

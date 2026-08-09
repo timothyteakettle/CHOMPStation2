@@ -8,11 +8,11 @@ GLOBAL_LIST_EMPTY(job_whitelist)
 /proc/load_jobwhitelist()
 	var/text = file2text("config/jobwhitelist.txt")
 	if (!text)
-		log_misc("Failed to load config/jobwhitelist.txt")
+		log_world("Failed to load config/jobwhitelist.txt")
 	else
 		GLOB.job_whitelist = splittext(text, "\n")
 
-/proc/is_job_whitelisted(mob/M, var/rank)
+/proc/is_job_whitelisted(mob/M, rank)
 	if(!CONFIG_GET(flag/use_jobwhitelist)) // CHOMPedit
 		return 1 // CHOMPedit
 	var/datum/job/job = job_master.GetJob(rank)

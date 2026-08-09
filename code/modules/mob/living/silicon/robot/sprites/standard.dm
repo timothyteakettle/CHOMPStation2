@@ -83,6 +83,7 @@
 /datum/robot_sprite/standard/handy
 	name = "Handy"
 	sprite_icon_state = "handy"
+	hat_offset = BORG_HAT_OFFSET_NONE
 
 /datum/robot_sprite/standard/mechoid
 	name = "Acheron"
@@ -97,6 +98,7 @@
 	name = "ZOOM-BA"
 	sprite_icon_state = "zoomba"
 	has_dead_sprite = TRUE
+	hat_offset = ZOOMBA_HAT_OFFSET
 
 /datum/robot_sprite/standard/worm
 	name = "W02M"
@@ -106,6 +108,7 @@
 	has_custom_open_sprites = FALSE
 	has_vore_belly_sprites = TRUE
 	has_dead_sprite = TRUE
+	hat_offset = WORM_HAT_OFFSET
 
 /datum/robot_sprite/standard/uptall
 	name = "Feminine Humanoid"
@@ -132,6 +135,7 @@
 	has_vore_belly_sprites = TRUE
 	has_dead_sprite_overlay = FALSE
 	rest_sprite_options = list("Default", "Sit", "Bellyup")
+	hat_offset = SMOL_RAPTOR_HAT_OFFSET
 
 // Tall sprites
 /*
@@ -158,16 +162,20 @@
 	has_rest_lights_sprites = TRUE
 	has_rest_eyes_sprites = TRUE
 	sprite_decals = list("breastplate")
-	icon_x = 32
-	pixel_x = 0
+	icon_x = 64
+	pixel_x = -16
+	hat_offset = DULLAHAN_TAUR_HAT_OFFSET
 
 /datum/robot_sprite/dogborg/tall/standard/dullahanv3/standarddully
 	name = "Dullahan standard v3"
 	sprite_icon = 'icons/mob/robot/dullahan/v3/standard.dmi'
 	sprite_icon_state = "dullahanstandard"
 	has_vore_belly_sprites = TRUE
+	has_vore_belly_resting_sprites = TRUE
+	belly_capacity_list = list("sleeper" = 3)
 	sprite_decals = list("decals")
 	rest_sprite_options = list("Default", "sit")
+	hat_offset = DULLAHAN_HAT_OFFSET
 
 
 /* //This used to be Widerobot_Standard_ch.dm. It was unticked, so it shall be put here instead.
@@ -176,12 +184,6 @@
 //Also makes it easier to make new borgs
 
 //INCOMPLETE and not ready, no sprites other than tall and basically useless, also lacking a belly
-
-//Add ourselves to the borg list
-/hook/startup/proc/Modular_Borg_init_standardhound()
-	//robot_modules["Honk-Hound"] = /obj/item/robot_module/robot/clerical/honkborg - done in station_vr modular chomp for ordering reasons
-	robot_module_types += "Standard-Hound" //Add ourselves to global
-	return 1
 
 /obj/item/robot_module/robot/standard/hound
 	name = "Standard-Hound"

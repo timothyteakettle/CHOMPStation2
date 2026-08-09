@@ -38,6 +38,8 @@ BONUS
 		"Transmission 11" = "The hosts coughing will occasionally spread the virus."
 	)
 
+	bodies = list("Cough")
+
 /datum/symptom/cough/severityset(datum/disease/advance/A)
 	. = ..()
 	if(A.resistance >= 3)
@@ -59,14 +61,14 @@ BONUS
 	if(A.transmission >= 11)
 		infective = TRUE
 
-/datum/symptom/cough/Activate(var/datum/disease/advance/A)
+/datum/symptom/cough/Activate(datum/disease/advance/A)
 	if(!..())
 		return
 	var/mob/living/M = A.affected_mob
 	if(M.stat == DEAD)
 		return
 	switch(A.stage)
-		if(1, 2, 3)
+		if(1 to 3)
 			if(prob(base_message_chance) && !supress_warning)
 				to_chat(M, span_warning(pick("Your throat itches.", "You lightly cough.")))
 		else

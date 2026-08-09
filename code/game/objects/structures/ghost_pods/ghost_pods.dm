@@ -14,7 +14,7 @@
 	var/delay_to_try_again = 0 // How long to wait if first attempt fails.  Set to 0 to never try again.
 
 // Call this to get a ghost volunteer.
-/obj/structure/ghost_pod/proc/trigger(var/alert, var/adminalert)
+/obj/structure/ghost_pod/proc/trigger(alert, adminalert)
 	if(!ghost_query_type)
 		return FALSE
 	if(busy)
@@ -32,37 +32,33 @@
 /obj/structure/ghost_pod/proc/get_winner()
 	SIGNAL_HANDLER
 	busy = FALSE
-	var/deletion_candidate = FALSE
-	if(Q && Q.candidates.len) //Q should NEVER get deleted but...whatever, sanity.
+	if(length(Q.candidates))
 		var/mob/observer/dead/D = Q.candidates[1]
+		UnregisterSignal(Q, COMSIG_GHOST_QUERY_COMPLETE)
+		QDEL_NULL(Q) //get rid of the query
 		create_occupant(D)
-		icon_state = icon_state_opened
-		if(needscharger)
-			new /obj/machinery/recharge_station/ghost_pod_recharger(src.loc)
-			deletion_candidate = TRUE
-	else
-		if(delay_to_try_again)
-			addtimer(CALLBACK(src, PROC_REF(trigger)), delay_to_try_again)
+		return
+
+	if(delay_to_try_again)
+		addtimer(CALLBACK(src, PROC_REF(trigger)), delay_to_try_again)
 	UnregisterSignal(Q, COMSIG_GHOST_QUERY_COMPLETE)
-	qdel_null(Q) //get rid of the query
-	if(deletion_candidate)
-		qdel(src)
+	QDEL_NULL(Q) //get rid of the query
 
 // Override this to create whatever mob you need. Be sure to call ..() if you don't want it to make infinite mobs.
-/obj/structure/ghost_pod/proc/create_occupant(var/mob/M)
+/obj/structure/ghost_pod/proc/create_occupant(mob/M)
 	used = TRUE
-	//VOREStation Addition Start
-	if(src in active_ghost_pods)
-		active_ghost_pods -= src
-	//VOREStation Addition End
-	return TRUE
+	icon_state = icon_state_opened
+	GLOB.active_ghost_pods -= src
+	if(needscharger)
+		new /obj/machinery/recharge_station/ghost_pod_recharger(src.loc)
+		qdel(src)
 
 
 // This type is triggered manually by a player discovering the pod and deciding to open it.
 /obj/structure/ghost_pod/manual
 	var/confirm_before_open = FALSE // Recommended to be TRUE if the pod contains a surprise.
 
-/obj/structure/ghost_pod/manual/attack_hand(var/mob/living/user)
+/obj/structure/ghost_pod/manual/attack_hand(mob/living/user)
 	if(!used)
 		if(confirm_before_open)
 			if(tgui_alert(user, "Are you sure you want to touch \the [src]?", "Confirm", list("No", "Yes")) != "Yes")
@@ -74,7 +70,7 @@
 			ghostpod_startup(FALSE)
 		// VOREStation Addition End
 
-/obj/structure/ghost_pod/manual/attack_ai(var/mob/living/silicon/user)
+/obj/structure/ghost_pod/manual/attack_ai(mob/living/silicon/user)
 	if(Adjacent(user))
 		attack_hand(user) // Borgs can open pods.
 
@@ -97,7 +93,7 @@
 /obj/structure/ghost_pod/ghost_activated
 	description_info = "A ghost can click on this to return to the round as whatever is contained inside this object."
 
-/obj/structure/ghost_pod/ghost_activated/attack_ghost(var/mob/observer/dead/user)
+/obj/structure/ghost_pod/ghost_activated/attack_ghost(mob/observer/dead/user)
 	//VOREStation Add Start
 	if(jobban_isbanned(user, JOB_GHOSTROLES))
 		to_chat(user, span_warning("You cannot inhabit this creature because you are banned from playing ghost roles."))

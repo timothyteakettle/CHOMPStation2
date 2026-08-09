@@ -2,7 +2,6 @@
 	name = "linear combat shield"
 	desc = "A shield generator that forms a rectangular, unidirectionally projectile-blocking wall in front of the exosuit."
 	icon_state = "shield"
-	origin_tech = list(TECH_PHORON = 3, TECH_MAGNET = 6, TECH_ILLEGAL = 4)
 	equip_cooldown = 5
 	energy_drain = 20
 	range = 0
@@ -71,11 +70,11 @@
 		if(my_shield.active)
 			set_ready_state(FALSE)
 			step_delay = 4
-			log_message("Activated.")
+			src.mecha_log_message("Activated.")
 		else
 			set_ready_state(TRUE)
 			step_delay = 1
-			log_message("Deactivated.")
+			src.mecha_log_message("Deactivated.")
 
 /obj/item/mecha_parts/mecha_equipment/combat_shield/Topic(href, href_list)
 	..()

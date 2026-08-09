@@ -1,5 +1,4 @@
-/* //CHOMPedit commented micromech stuff, because fuck this trash
-/obj/mecha/micro/sec/moved_inside(var/mob/living/carbon/human/H as mob)
+/obj/mecha/micro/sec/moved_inside(mob/living/carbon/human/H as mob)
 	if(..())
 		if(H.client)
 			H.client.mouse_pointer_icon = file("icons/mecha/mecha_mouse.dmi")
@@ -54,4 +53,4 @@
 
 /obj/effect/decal/mecha_wreckage/micro/sec/weasel
 	name = "Weasel wreckage"
-	icon_state = "weasel-broken" */
+	icon_state = "weasel-broken"

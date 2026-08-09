@@ -13,10 +13,10 @@
 	var/being_butchered = FALSE 		// No multiproccing
 
 // Harvest an animal's delicious byproducts
-/mob/living/proc/harvest(var/mob/user, var/obj/item/I)
+/mob/living/proc/harvest(mob/user, obj/item/I)
 	if(meat_type && meat_amount>0 && (stat == DEAD) && !being_butchered)
 		being_butchered = TRUE
-		while(meat_amount > 0 && do_after(user, 0.5 SECONDS * (mob_size / 10), src))
+		while(meat_amount > 0 && do_after(user, 0.5 SECONDS * (mob_size / 10), target = src))
 			var/obj/item/meat = new meat_type(get_turf(src))
 			if(name_the_meat)
 				meat.name = "[src.name] [meat.name]"
@@ -29,14 +29,14 @@
 		handle_butcher(user, I)
 		being_butchered = FALSE
 
-/mob/living/proc/can_butcher(var/mob/user, var/obj/item/I)	// Override for special butchering checks.
+/mob/living/proc/can_butcher(mob/user, obj/item/I)	// Override for special butchering checks.
 	if(((meat_type && meat_amount) || LAZYLEN(butchery_loot)) && stat == DEAD)
 		return TRUE
 
 	return FALSE
 
-/mob/living/proc/handle_butcher(var/mob/user, var/obj/item/I)
-	if(!user || do_after(user, 2 SECONDS * mob_size / 10, src))
+/mob/living/proc/handle_butcher(mob/user, obj/item/I)
+	if(!user || do_after(user, 2 SECONDS * mob_size / 10, target = src))
 		if(LAZYLEN(butchery_loot))
 			if(LAZYLEN(butchery_loot))
 				for(var/path in butchery_loot)

@@ -46,7 +46,7 @@
 	var/obj/item/radio/headset/mob_radio		//Adminbus headset for simplemob shenanigans.
 	does_spin = FALSE
 	can_be_drop_pred = TRUE				// Mobs are pred by default.
-	can_be_drop_prey = TRUE				//CHOMP Add This also counts for spontaneous prey for telenoms and phase noms.
+	can_be_drop_prey = TRUE
 	var/damage_threshold  = 0 //For some mobs, they have a damage threshold required to deal damage to them.
 
 	var/nom_mob = FALSE //If a mob is meant to be hostile for vore purposes but is otherwise not hostile, if true makes certain AI ignore the mob
@@ -63,11 +63,11 @@
 
 //For all those ID-having mobs
 /mob/living/simple_mob/GetIdCard()
-	if(get_active_hand()) //CHOMPAdd Start
+	if(get_active_hand())
 		var/obj/item/I = get_active_hand()
 		var/id = I.GetID()
 		if(id)
-			return id //CHOMPAdd End
+			return id
 	if(myid)
 		return myid
 
@@ -100,7 +100,7 @@
 	..()
 	update_icon()
 
-/mob/living/simple_mob/proc/will_eat(var/mob/living/M)
+/mob/living/simple_mob/proc/will_eat(mob/living/M)
 	if(client) //You do this yourself, dick!
 		//ai_log("vr/wont eat [M] because we're player-controlled", 3) //VORESTATION AI TEMPORARY REMOVAL
 		return 0
@@ -109,8 +109,6 @@
 		return 0
 	if(src == M) //Don't eat YOURSELF dork
 		//ai_log("vr/won't eat [M] because it's me!", 3) //VORESTATION AI TEMPORARY REMOVAL
-		return 0
-	if(!M.devourable)	// Why was there never a check for edibility to begin with
 		return 0
 	if(M.is_incorporeal()) // No eating the phased ones
 		return 0
@@ -146,7 +144,7 @@
 			return PounceTarget(L, pouncechance)
 
 		// We're not attempting a pounce, if they're down or we can eat standing, do it as long as they're edible. Otherwise, hit normally.
-		if(will_eat(L) && (L.lying || vore_standing_too)) //CHOMPEdit
+		if(will_eat(L) && (L.lying || vore_standing_too))
 			return EatTarget(L)
 		else
 			return ..()
@@ -154,7 +152,7 @@
 		return ..()
 
 
-/mob/living/simple_mob/proc/CanPounceTarget(var/mob/living/M) //returns either FALSE or a %chance of success
+/mob/living/simple_mob/proc/CanPounceTarget(mob/living/M) //returns either FALSE or a %chance of success
 	if(!M.canmove || issilicon(M) || world.time < vore_pounce_cooldown) //eliminate situations where pouncing CANNOT happen
 		return FALSE
 	if(M.is_incorporeal())
@@ -170,7 +168,7 @@
 		return max(0,(vore_pounce_successrate - (vore_pounce_falloff * TargetHealthPercent)))
 
 
-/mob/living/simple_mob/proc/PounceTarget(var/mob/living/M, var/successrate = 100)
+/mob/living/simple_mob/proc/PounceTarget(mob/living/M, successrate = 100)
 	vore_pounce_cooldown = world.time + 20 SECONDS // don't attempt another pounce for a while
 	if(prob(successrate)) // pounce success!
 		M.Weaken(5)
@@ -187,7 +185,7 @@
 
 // Attempt to eat target
 // TODO - Review this.  Could be some issues here
-/mob/living/simple_mob/proc/EatTarget(var/mob/living/M)
+/mob/living/simple_mob/proc/EatTarget(mob/living/M)
 	//ai_log("vr/EatTarget() [M]",2) //VORESTATION AI TEMPORARY REMOVAL
 	//stop_automated_movement = 1 //VORESTATION AI TEMPORARY REMOVAL
 	var/old_target = M
@@ -212,7 +210,10 @@
 	. = ..()
 
 // Make sure you don't call ..() on this one, otherwise you duplicate work.
-/mob/living/simple_mob/init_vore()
+/mob/living/simple_mob/init_vore(force)
+	if(force)
+		vore_active = TRUE
+		voremob_loaded = TRUE
 	if(!vore_active || no_vore || !voremob_loaded)
 		return
 
@@ -225,14 +226,23 @@
 	add_verb(src, /mob/living/simple_mob/proc/toggle_digestion)
 	add_verb(src, /mob/living/simple_mob/proc/toggle_fancygurgle)
 	add_verb(src, /mob/living/proc/vertical_nom)
+	add_verb(src, /mob/living/simple_mob/proc/animal_nom)
+	add_verb(src, /mob/living/proc/shred_limb)
+	add_verb(src, /mob/living/simple_mob/proc/nutrition_heal)
+	add_verb(src, /mob/living/proc/eat_trash_verb)
+	add_verb(src, /mob/living/proc/toggle_trash_catching)
 
 	if(LAZYLEN(vore_organs))
 		return
 
+	can_be_drop_pred = TRUE // Mobs will eat anyone that decides to drop/slip into them by default.
+	load_default_bellies()
+
+/mob/living/simple_mob/proc/load_default_bellies()
 	//A much more detailed version of the default /living implementation
 	var/obj/belly/B = new /obj/belly(src)
 	vore_selected = B
-	B.immutable = 1
+	B.immutable = TRUE
 	B.affects_vore_sprites = TRUE
 	B.name = vore_stomach_name ? vore_stomach_name : "stomach"
 	B.desc = vore_stomach_flavor ? vore_stomach_flavor : "Your surroundings are warm, soft, and slimy. Makes sense, considering you're inside \the [name]."
@@ -242,7 +252,7 @@
 	B.contaminates = vore_default_contaminates
 	B.contamination_flavor = vore_default_contamination_flavor
 	B.contamination_color = vore_default_contamination_color
-	B.escapable = vore_escape_chance > 0
+	B.escapable = vore_escape_chance > 0 ? B_ESCAPABLE_DEFAULT : B_ESCAPABLE_NONE
 	B.escapechance = vore_escape_chance
 	B.escapechance_absorbed = vore_escape_chance_absorbed
 	B.digestchance = vore_digest_chance
@@ -271,17 +281,16 @@
 		"The churning walls slowly pulverize you into meaty nutrients.",
 		"The stomach glorps and gurgles as it tries to work you into slop.")
 	can_be_drop_pred = TRUE // Mobs will eat anyone that decides to drop/slip into them by default.
-//	B.belly_fullscreen = "yet_another_tumby" //Chompedit - Why are they even using this one, I do not understand.
-	B.belly_fullscreen = "a_tumby" //Chompedit
-	B.belly_fullscreen_color = "#823232" //Chompedit
-	B.belly_fullscreen_color2 = "#823232" //Chompedit
+	B.belly_fullscreen = "a_tumby"
+	B.belly_fullscreen_color = "#823232"
+	B.belly_fullscreen_color2 = "#823232"
 
-/mob/living/simple_mob/Bumped(var/atom/movable/AM, yes)
+/mob/living/simple_mob/Bumped(atom/movable/AM, yes)
 	if(tryBumpNom(AM))
 		return
 	..()
 
-/mob/living/simple_mob/proc/tryBumpNom(var/mob/tmob)
+/mob/living/simple_mob/proc/tryBumpNom(mob/tmob)
 	//returns TRUE if we actually start an attempt to bumpnom, FALSE if checks fail or the random bump nom chance fails
 	if(istype(tmob) && will_eat(tmob) && !istype(tmob, type) && prob(vore_bump_chance) && !ckey) //check if they decide to eat. Includes sanity check to prevent cannibalism.
 		if(!faction_bump_vore && faction == tmob.faction)
@@ -375,7 +384,7 @@
 	else
 		. = ..()
 
-/mob/living/simple_mob/proc/animal_mount(var/mob/living/M in living_mobs(1))
+/mob/living/simple_mob/proc/animal_mount(mob/living/M in living_mobs(1))
 	set name = "Animal Mount/Dismount"
 	set category = "Abilities.Mob"
 	set desc = "Let people ride on you."
@@ -392,7 +401,6 @@
 		visible_message(span_notice("[M] starts riding [name]!"))
 
 /mob/living/simple_mob/handle_message_mode(message_mode, message, verb, used_radios, speaking, alt_name)
-	//CHOMPEdit - This whole proc tbh
 	if(message_mode)
 		if(message_mode == "intercom")
 			for(var/obj/item/radio/intercom/I in view(1, null))
@@ -464,7 +472,6 @@
 			H.Weaken(3)
 			return
 	var/armor_block = run_armor_check(T, "melee")
-	var/armor_soak = get_armor_soak(T, "melee")
-	T.apply_damage(20, HALLOSS,, armor_block, armor_soak)
-	if(prob(75)) //CHOMPEdit
+	T.apply_damage(20, HALLOSS, null, armor_block)
+	if(prob(75))
 		T.apply_effect(3, WEAKEN, armor_block)

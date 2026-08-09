@@ -30,7 +30,7 @@
 			message_mode = null
 		return radio.talk_into(src,message,message_mode,verb,speaking)
 
-/mob/living/silicon/say_quote(var/text)
+/mob/living/silicon/say_quote(text)
 	var/ending = copytext(text, length(text))
 
 	if (ending == "?")
@@ -44,7 +44,7 @@
 #define IS_ROBOT 2
 #define IS_PAI 3
 
-/mob/living/silicon/say_understands(var/other, var/datum/language/speaking = null)
+/mob/living/silicon/say_understands(other, datum/language/speaking = null)
 	//These only pertain to common. Languages are handled by mob/say_understands()
 	if(!speaking)
 		if(iscarbon(other))
@@ -57,7 +57,7 @@
 
 //For holopads only. Usable by AI.
 /mob/living/silicon/ai/proc/holopad_talk(list/message_pieces, verb)
-	log_say("(HPAD) [multilingual_to_message(message_pieces)]",src)
+	log_talk("(HPAD) [multilingual_to_message(message_pieces)]", LOG_SAY)
 
 	var/obj/machinery/hologram/holopad/T = src.holo
 	if(T && T.masters[src])//If there is a hologram and its master is the user.
@@ -79,7 +79,7 @@
 		return 0
 	return 1
 
-/mob/living/silicon/ai/proc/holopad_emote(var/message) //This is called when the AI uses the 'me' verb while using a holopad.
+/mob/living/silicon/ai/proc/holopad_emote(message) //This is called when the AI uses the 'me' verb while using a holopad.
 	message = trim(message)
 
 	if(!message)
@@ -108,14 +108,14 @@
 				if(O)
 					O.see_emote(src, message)
 
-		log_emote("(HPAD) [message]", src)
+		log_message("(HPAD) [message]", LOG_EMOTE)
 
 	else //This shouldn't occur, but better safe then sorry.
 		to_chat(src, span_filter_notice("No holopad connected."))
 		return 0
 	return 1
 
-/mob/living/silicon/ai/emote(var/act, var/m_type, var/message)
+/mob/living/silicon/ai/emote(act, m_type, message)
 	var/obj/machinery/hologram/holopad/T = holo
 	if(T && T.masters[src]) //Is the AI using a holopad?
 		. = holopad_emote(message)

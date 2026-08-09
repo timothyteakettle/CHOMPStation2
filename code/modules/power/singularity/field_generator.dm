@@ -72,6 +72,8 @@
 	. = ..()
 	fields = list()
 	connected_gens = list()
+	AddElement(/datum/element/climbable)
+	AddElement(/datum/element/empprotection, EMP_PROTECT_SELF)
 
 /obj/machinery/field_generator/process()
 	if(Varedit_start == 1)
@@ -146,7 +148,7 @@
 					user.visible_message("[user.name] starts to weld the [src.name] to the floor.", \
 						"You start to weld the [src] to the floor.", \
 						"You hear welding")
-					if (do_after(user,20 * WT.toolspeed))
+					if (do_after(user, 2 SECONDS * WT.toolspeed, target = src))
 						if(!src || !WT.isOn()) return
 						state = 2
 						to_chat(user, "You weld the field generator to the floor.")
@@ -158,7 +160,7 @@
 					user.visible_message("[user.name] starts to cut the [src.name] free from the floor.", \
 						"You start to cut the [src] free from the floor.", \
 						"You hear welding")
-					if (do_after(user,20 * WT.toolspeed))
+					if (do_after(user, 2 SECONDS * WT.toolspeed, target = src))
 						if(!src || !WT.isOn()) return
 						state = 1
 						to_chat(user, "You cut the [src] free from the floor.")
@@ -168,11 +170,7 @@
 		..()
 		return
 
-
-/obj/machinery/field_generator/emp_act()
-	return 0
-
-/obj/machinery/field_generator/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/field_generator/bullet_act(obj/item/projectile/Proj)
 	if(istype(Proj, /obj/item/projectile/beam))
 		power += Proj.damage * EMITTER_DAMAGE_POWER_TRANSFER
 		update_icon()
@@ -234,7 +232,7 @@
 		return 0
 
 //Tries to draw the needed power from our own power reserve, or connected generators if we can. Returns the amount of power we were able to get.
-/obj/machinery/field_generator/proc/draw_power(var/draw = 0, var/list/flood_list = list())
+/obj/machinery/field_generator/proc/draw_power(draw = 0, list/flood_list = list())
 	flood_list += src
 
 	if(src.power >= draw)//We have enough power
@@ -269,7 +267,7 @@
 	src.active = 2
 
 
-/obj/machinery/field_generator/proc/setup_field(var/NSEW)
+/obj/machinery/field_generator/proc/setup_field(NSEW)
 	var/turf/T = src.loc
 	var/obj/machinery/field_generator/G
 	var/steps = 0
@@ -352,7 +350,16 @@
 				if((world.time - O.last_warning) > 50) //to stop message-spam
 					temp = 0
 					admin_chat_message(message = "SINGUL/TESLOOSE!", color = "#FF2222") //VOREStation Add
-					message_admins("A singulo exists and a containment field has failed.",1)
+					message_admins("A singulo exists and a containment field has failed.")
 					investigate_log("has " + span_red("failed") + " whilst a singulo exists.","singulo")
 					log_game("FIELDGEN([x],[y],[z]) Containment failed while singulo/tesla exists.")
 			O.last_warning = world.time
+
+/obj/machinery/field_generator/pre_mapped
+	state = 2 //Start welded.
+	anchored = TRUE
+
+
+/obj/machinery/field_generator/pre_mapped/Initialize(mapload)
+	. = ..()
+	update_icon()

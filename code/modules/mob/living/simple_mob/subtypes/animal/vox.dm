@@ -8,11 +8,9 @@
 	min_n2 = 0 //breathe N2
 	max_n2 = 0
 
-	// CHOMPAdd: Pain sounds
 	species_sounds = "Vox"
 	pain_emote_1p = list("shriek")
 	pain_emote_3p = list("shrieks")
-	// CHOMPAdd End
 
 /mob/living/simple_mob/vox/armalis
 	name = "serpentine alien"
@@ -29,7 +27,6 @@
 	melee_damage_upper = 40
 	attacktext = "slammed its enormous claws into"
 	movement_cooldown = 2
-//	environment_smash_flags = SMASH_LIGHT_STRUCTURES | SMASH_CONTAINERS | SMASH_WALLS // WALLS Temporary commenting, YW - Hv3
 	attack_sound = 'sound/weapons/bladeslice.ogg'
 	status_flags = 0
 	max_oxy = 0
@@ -38,7 +35,7 @@
 	var/amp = null
 	var/quills = 3
 
-/mob/living/simple_mob/vox/armalis/death(var/gibbed = FALSE)
+/mob/living/simple_mob/vox/armalis/death(gibbed = FALSE)
 	..(TRUE)
 	var/turf/gloc = get_turf(loc)
 	visible_message(span_bolddanger("[src] shudders violently and explodes!"),span_warning("You feel your body rupture!"))
@@ -46,7 +43,7 @@
 	explosion(gloc, -1, -1, 3, 5)
 	qdel(src)
 
-/mob/living/simple_mob/vox/armalis/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/mob/living/simple_mob/vox/armalis/attackby(obj/item/O as obj, mob/user as mob)
 	base_attack_cooldown = 5
 	if(O.force)
 		if(O.force >= 25)
@@ -126,7 +123,7 @@
 	set name = "Shriek"
 	set desc = "Give voice to a psychic shriek."
 
-/mob/living/simple_mob/vox/armalis/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/mob/living/simple_mob/vox/armalis/attackby(obj/item/O as obj, mob/user as mob)
 	if(istype(O,/obj/item/vox/armalis_armour))
 		user.drop_item(O)
 		armour = O

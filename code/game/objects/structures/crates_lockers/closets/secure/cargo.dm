@@ -1,7 +1,7 @@
 /obj/structure/closet/secure_closet/cargotech
 	name = "cargo technician's locker"
-	req_access = list(access_cargo)
-	closet_appearance = /decl/closet_appearance/secure_closet/cargo
+	req_access = list(ACCESS_CARGO)
+	closet_appearance = /datum/decl/closet_appearance/secure_closet/cargo
 
 	starts_with = list(
 		/obj/item/clothing/under/rank/cargotech,
@@ -16,7 +16,8 @@
 		/obj/item/radio/headset/earbud/cargo,
 		/obj/item/clothing/gloves/black,
 		/obj/item/clothing/gloves/fingerless,
-		/obj/item/clothing/head/soft)
+		/obj/item/clothing/head/soft,
+		/obj/item/cargo_scanner)
 
 /obj/structure/closet/secure_closet/cargotech/Initialize(mapload)
 	if(prob(75))
@@ -29,8 +30,8 @@
 
 /obj/structure/closet/secure_closet/quartermaster
 	name = "quartermaster's locker"
-	req_access = list(access_qm)
-	closet_appearance = /decl/closet_appearance/secure_closet/cargo/qm
+	req_access = list(ACCESS_QM)
+	closet_appearance = /datum/decl/closet_appearance/secure_closet/cargo/qm
 
 	starts_with = list(
 		/obj/item/clothing/under/rank/cargo,
@@ -52,13 +53,14 @@
 		/obj/item/clothing/gloves/black,
 		/obj/item/clothing/gloves/fingerless,
 		/obj/item/tank/emergency/oxygen,
-		/obj/item/clothing/mask/gas,
+		/obj/item/clothing/mask/gas/clear,
 		/obj/item/clothing/glasses/meson,
 		/obj/item/clothing/head/soft,
 		/obj/item/clothing/suit/storage/hooded/wintercoat/cargo,
 		/obj/item/clothing/suit/storage/hooded/wintercoat/cargo/qm,
 		/obj/item/clothing/head/beret/qm,
-		/obj/item/clothing/shoes/boots/winter/supply)
+		/obj/item/clothing/shoes/boots/winter/supply,
+		/obj/item/cargo_scanner)
 
 /obj/structure/closet/secure_closet/quartermaster/Initialize(mapload)
 	if(prob(75))
@@ -71,8 +73,8 @@
 
 /obj/structure/closet/secure_closet/miner
 	name = "miner's equipment"
-	req_access = list(access_mining)
-	closet_appearance = /decl/closet_appearance/secure_closet/mining
+	req_access = list(ACCESS_MINING)
+	closet_appearance = /datum/decl/closet_appearance/secure_closet/mining
 
 	starts_with = list(
 		/obj/item/radio/headset/miner,
@@ -80,7 +82,7 @@
 		/obj/item/clothing/gloves/black,
 		/obj/item/clothing/shoes/black,
 		/obj/item/analyzer,
-		/obj/item/storage/bag/ore,
+		/obj/item/ore_bag,
 		/obj/item/storage/belt/miner,
 		/obj/item/flashlight/lantern,
 		/obj/item/shovel,
@@ -105,7 +107,7 @@
 /obj/structure/closet/lumber
 	name = "Lumberjack's equipment"
 	desc = "It's a storage unit for Lumberjack equpiment, though it seems the lock is broken."
-	closet_appearance = /decl/closet_appearance/secure_closet/lumber
+	closet_appearance = /datum/decl/closet_appearance/secure_closet/lumber
 
 	starts_with = list(
 		/obj/item/radio/headset/miner,

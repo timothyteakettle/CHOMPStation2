@@ -4,7 +4,7 @@
 // connected: Machine we're in, type unchecked so I doubt it's used beyond monkeying
 // flags: See below, bitfield.
 
-/proc/domutcheck(var/mob/living/M, var/connected=null, var/flags=0)
+/proc/domutcheck(mob/living/M, connected=null, flags=0)
 	// Traitgenes NO_DNA and Synthetics cannot be mutated
 	if(M.isSynthetic())
 		return
@@ -68,3 +68,5 @@
 					M.active_genes -= gene.name // Traitgenes Use name instead, cannot use type with dynamically setup traitgenes
 					M.update_icon = 1
 	M.update_mutations()
+	// Inform anything attached of our mutation
+	SEND_SIGNAL(M, COMSIG_MOB_DNA_MUTATION)

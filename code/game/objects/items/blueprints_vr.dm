@@ -8,7 +8,7 @@
 
 // Now that I've scared away half the people looking at this file, here's the relevant info:
 
-// Banning areas: Go to global_lists_vr, jump to the BUILDABLE_AREA_TYPES and read the comments left there.
+// Banning areas: Go to global_lists_vr, jump to the GLOB.BUILDABLE_AREA_TYPES and read the comments left there.
 
 
 
@@ -116,6 +116,9 @@
 		..()
 
 /obj/item/areaeditor/attack_self(mob/user) //Convert this to TGUI some time.
+	. = ..(user)
+	if(.)
+		return TRUE
 	add_fingerprint(user)
 	. = "<BODY><HTML><head><title>[src]</title></head> \
 				<h2>[station_name()] [src.name]</h2>"
@@ -177,6 +180,9 @@
 	var/legend = 1
 
 /obj/item/wire_reader/attack_self(mob/user) //Convert this to TGUI some time.
+	. = ..(user)
+	if(.)
+		return TRUE
 	add_fingerprint(user)
 	. = "<BODY><HTML><head><title>[src]</title></head> \
 				<h2>[station_name()] [src.name]</h2>"
@@ -247,7 +253,9 @@
 
 
 /obj/item/areaeditor/blueprints/attack_self(mob/user)
-	. = ..()
+	. = ..(user)
+	if(. == 1) //I hate this so much.
+		return TRUE
 	var/area/A = get_area(user)
 	if(!legend)
 		if(get_area_type() == AREA_STATION)
@@ -324,27 +332,27 @@
 	if(message)
 		to_chat(user, message)
 */
-/obj/item/areaeditor/blueprints/dropped(mob/user)
+/obj/item/areaeditor/blueprints/dropped(mob/user, equipping, slot)
+	if(equipping)
+		return ..()
 	..()
 	//clear_viewer()
 	if(areaColor_turfs.len)
 		seeAreaColors_remove()
 	legend = FALSE
 
-
-
 /obj/item/areaeditor/proc/get_area_type(area/A)
-	if (!A)
+	if(!A)
 		A = get_area(usr)
 	if(A.outdoors)
 		return AREA_SPACE
 
-	for (var/type in BUILDABLE_AREA_TYPES)
-		if ( istype(A,type) )
+	for(var/type in GLOB.BUILDABLE_AREA_TYPES)
+		if(istype(A,type))
 			return AREA_SPACE
 
-	for (var/type in SPECIALS)
-		if ( istype(A,type) )
+	for(var/type in GLOB.SPECIALS)
+		if(istype(A,type))
 			return AREA_SPECIAL
 	return AREA_STATION
 
@@ -376,7 +384,6 @@
 	var/area/A = get_area(usr)
 	var/prevname = "[A.name]"
 	var/str = tgui_input_text(usr, "New area name", "Area Creation", max_length = MAX_NAME_LEN)
-	str = sanitize(str,MAX_NAME_LEN)
 	if(!str || !length(str) || str==prevname) //cancel
 		return
 	if(length(str) > 50)
@@ -453,7 +460,7 @@
 			//I personally think adding walls to an area is a big deal, so this is commented out.
 
 			//BEGIN ESOTERIC BULLSHIT
-			//log_debug("Origin: [origin.c_airblock(checkT)] SourceT: [sourceT.c_airblock(checkT)] 0=NB 1=AB 2=ZB, 3=B")
+			//to_chat(world, "Origin: [origin.c_airblock(checkT)] SourceT: [sourceT.c_airblock(checkT)] 0=NB 1=AB 2=ZB, 3=B")
 			/*
 			if(origin.c_airblock(checkT)) //If everything breaks and it doesn't want to work, turn on the above debug and check this line. C.L. 0 = not blocked.
 				continue
@@ -465,13 +472,13 @@
 			found_turfs += origin //If this isn't done, it just adds the 8 tiles around the user.
 		return found_turfs
 
-/proc/create_area(mob/creator, var/obj/item/areaeditor/AO)
+/proc/create_area(mob/creator, obj/item/areaeditor/AO)
 	if(AO && istype(AO,/obj/item/areaeditor))
 		if(AO.uses_charges && AO.charges < 1)
 			to_chat(creator, span_warning("You need more paper before you can even think of editing this area!"))
 			return
 
-	var/list/turfs = detect_room(get_turf(creator), area_or_turf_fail_types, BP_MAX_ROOM_SIZE*2)
+	var/list/turfs = detect_room(get_turf(creator), GLOB.area_or_turf_fail_types, BP_MAX_ROOM_SIZE*2)
 	if(!turfs)
 		to_chat(creator, span_warning("The new area must have a floor and not a part of a shuttle."))
 		return
@@ -483,7 +490,7 @@
 
 	for(var/i in 1 to length(turfs))
 		var/area/place = get_area(turfs[i])
-		if(blacklisted_areas[place.type])
+		if(GLOB.blacklisted_areas[place.type])
 			continue
 		if(!place.requires_power || (place.flag_check(BLUE_SHIELDED)))
 			continue // No expanding powerless rooms etc
@@ -499,7 +506,6 @@
 	var/area/oldA = get_area(get_turf(creator))
 	if(!isarea(area_choice))
 		var/str = tgui_input_text(creator, "New area name", "Blueprint Editing", max_length = MAX_NAME_LEN)
-		str = sanitize(str,MAX_NAME_LEN)
 		if(!str || !length(str)) //cancel
 			return
 		if(length(str) > 50)
@@ -526,7 +532,7 @@
 	oldA.power_check() //Simply makes the area turn the power off if you nicked an APC from it.
 	to_chat(creator, span_notice("You have created a new area, named [newA.name]. It is now weather proof, and constructing an APC will allow it to be powered."))
 	if(annoy_admins)
-		message_admins("[key_name(creator, creator.client)] just made a new area called [newA.name] ](<A href='byond://?_src_=holder;[HrefToken()];adminmoreinfo=\ref[creator]'>?</A>) at ([creator.x],[creator.y],[creator.z] - <A href='byond://?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[creator.x];Y=[creator.y];Z=[creator.z]'>JMP</a>)",0,1)
+		message_admins("[key_name(creator, creator.client)] just made a new area called [newA.name] ](<A href='byond://?_src_=holder;[HrefToken()];adminmoreinfo=\ref[creator]'>?</A>) at ([creator.x],[creator.y],[creator.z] - <A href='byond://?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[creator.x];Y=[creator.y];Z=[creator.z]'>JMP</a>)")
 	log_game("[key_name(creator, creator.client)] just made a new area called [newA.name]")
 	if(AO && istype(AO,/obj/item/areaeditor))
 		if(AO.uses_charges)
@@ -546,12 +552,12 @@
 // OLD CODE. DON'T TOUCH OR 100 RABID SQUIRRELS WILL DEVOUR YOU.
 // I say old code, but it truly isn't. It's a bastardization of the new create_area code and the old create_area code.
 // In essence, it does a few things: Ensure no blacklisted areas are nearby, get the nearby areas (to allow merging), and allow you to make a whole near area.
-/obj/item/areaeditor/proc/create_area_whole(mob/creator, var/override = 0) //Gets the entire enclosed space and makes a new area out of it. Can overwrite old areas.
+/obj/item/areaeditor/proc/create_area_whole(mob/creator, override = 0) //Gets the entire enclosed space and makes a new area out of it. Can overwrite old areas.
 	if(uses_charges && charges < 5)
 		to_chat(creator, span_warning("You need more paper before you can even think of editing this area!"))
 		return
 
-	var/res = detect_room_ex(get_turf(creator), can_create_areas_into, area_or_turf_fail_types)
+	var/res = detect_room_ex(get_turf(creator), can_create_areas_into, GLOB.area_or_turf_fail_types)
 	if(!res)
 		to_chat(creator, span_warning("There is an area forbidden from being edited here! Use the fine-tune area creator! (3x3)"))
 		return
@@ -578,7 +584,7 @@
 	var/str										//What the new area is named.
 	var/can_make_new_area = 1					//If they can make a new area here or not.
 
-	var/list/nearby_turfs_to_check = detect_room(get_turf(creator), area_or_turf_fail_types, BP_MAX_ROOM_SIZE*2) //Get the nearby areas.
+	var/list/nearby_turfs_to_check = detect_room(get_turf(creator), GLOB.area_or_turf_fail_types, BP_MAX_ROOM_SIZE*2) //Get the nearby areas.
 
 	if(!nearby_turfs_to_check)
 		to_chat(creator, span_warning("The new area must have a floor and not a part of a shuttle."))
@@ -589,10 +595,10 @@
 
 	for(var/i in 1 to length(nearby_turfs_to_check))
 		var/area/place = get_area(nearby_turfs_to_check[i])
-		if(blacklisted_areas[place.type])
+		if(GLOB.blacklisted_areas[place.type])
 			if(!creator.lastarea != place) //Stops them from merging a blacklisted area to make it larger. Allows them to merge a blacklisted area into an allowed area. (Expansion!)
 				continue
-		if(!BUILDABLE_AREA_TYPES[place.type]) //TODOTODOTODO
+		if(!GLOB.BUILDABLE_AREA_TYPES[place.type]) //TODOTODOTODO
 			can_make_new_area = 0
 		if(!place.requires_power || (place.flag_check(BLUE_SHIELDED)))
 			continue // No expanding powerless rooms etc
@@ -612,7 +618,6 @@
 			to_chat(creator, span_warning("Making a new area here would be meaningless. Renaming it would be a better option."))
 			return
 		str = tgui_input_text(creator, "New area name", "Blueprint Editing", max_length = MAX_NAME_LEN)
-		str = sanitize(str,MAX_NAME_LEN)
 		if(!str || !length(str)) //cancel
 			return
 		if(length(str) > 50)
@@ -653,7 +658,7 @@
 	set_area_machinery(newA, newA.name, oldA.name)
 	oldA.power_check() //Simply makes the area turn the power off if you nicked an APC from it.
 	to_chat(creator, span_notice("You have created a new area, named [newA.name]. It is now weather proof, and constructing an APC will allow it to be powered."))
-	message_admins("[key_name(creator, creator.client)] just made a new area called [newA.name] ](<A href='byond://?_src_=holder;[HrefToken()];adminmoreinfo=\ref[creator]'>?</A>) at ([creator.x],[creator.y],[creator.z] - <A href='byond://?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[creator.x];Y=[creator.y];Z=[creator.z]'>JMP</a>)",0,1)
+	message_admins("[key_name(creator, creator.client)] just made a new area called [newA.name] ](<A href='byond://?_src_=holder;[HrefToken()];adminmoreinfo=\ref[creator]'>?</A>) at ([creator.x],[creator.y],[creator.z] - <A href='byond://?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[creator.x];Y=[creator.y];Z=[creator.z]'>JMP</a>)")
 	log_game("[key_name(creator, creator.client)] just made a new area called [newA.name]")
 	charges -= 5
 
@@ -661,12 +666,12 @@
 		interact()
 	return
 
-/proc/move_turfs_to_area(var/list/turf/turfs, var/area/A)
+/proc/move_turfs_to_area(list/turf/turfs, area/A)
 	for(var/T in turfs)
 		ChangeArea(T, A)
 
 
-/obj/item/areaeditor/proc/detect_room_ex(var/turf/first, var/allowedAreas = AREA_SPACE, var/list/forbiddenAreas = list(), var/visual)
+/obj/item/areaeditor/proc/detect_room_ex(turf/first, allowedAreas = AREA_SPACE, list/forbiddenAreas = list(), visual)
 	if(!istype(first))
 		return ROOM_ERR_LOLWAT
 	if(!visual && forbiddenAreas[first.loc.type] || forbiddenAreas[first.type]) //Is the area of the starting turf a banned area? Is the turf a banned area?
@@ -771,16 +776,6 @@
 			if(i.icon_state == "blueprints")
 				usr.client.images.Remove(i)
 
-
-
-
-
-
-
-
-
-
-
 //GLOBAL VERB FOR PAPER TO ENABLE ANYONE TO MAKE AN AREA IN BUILDABLE AREAS.
 //THIS IS 70 TILES. ANYTHING LARGER SHOULD USE ACTUAL BLUEPRINTS.
 
@@ -810,20 +805,20 @@
 /proc/get_new_area_type(area/A) //1 = can build in. 0 = can not build in.
 	if (!A)
 		A = get_area(usr)
-	if(A.outdoors) //ALWAYS able to build outdoors. This means if it's missed in BUILDABLE_AREA_TYPES it's fine.
+	if(A.outdoors) //ALWAYS able to build outdoors. This means if it's missed in GLOB.BUILDABLE_AREA_TYPES it's fine.
 		return 1
 
-	for (var/type in BUILDABLE_AREA_TYPES) //This works well.
+	for (var/type in GLOB.BUILDABLE_AREA_TYPES) //This works well.
 		if ( istype(A,type) )
 			return 1
 
-	for (var/type in SPECIALS)
+	for (var/type in GLOB.SPECIALS)
 		if ( istype(A,type) )
 			return 0
 	return 0 //If it's not a buildable area, don't let them build in it.
 
 
-/proc/detect_new_area(var/turf/first, var/user) //Heavily simplified version for creating an area yourself.
+/proc/detect_new_area(turf/first, user) //Heavily simplified version for creating an area yourself.
 	if(!istype(first)) //Not on a turf.
 		to_chat(usr, span_warning("You can not create a room here."))
 		return
@@ -891,7 +886,7 @@
 	var/area/oldA = get_area(get_turf(creator))	//The old area (area currently standing in)
 	var/str										//What the new area is named.
 
-	var/list/nearby_turfs_to_check = detect_room(get_turf(creator), area_or_turf_fail_types, 70) //Get the nearby areas.
+	var/list/nearby_turfs_to_check = detect_room(get_turf(creator), GLOB.area_or_turf_fail_types, 70) //Get the nearby areas.
 
 	if(!nearby_turfs_to_check)
 		to_chat(creator, span_warning("The new area must have a floor and not a part of a shuttle."))
@@ -901,7 +896,7 @@
 		return
 
 	//They can select an area they want to turn their current area into.
-	str = sanitizeSafe(tgui_input_text(usr, "What would you like to name the area?", "Area Name", null, MAX_NAME_LEN), MAX_NAME_LEN)
+	str = sanitizeSafe(tgui_input_text(creator, "What would you like to name the area?", "Area Name", null, MAX_NAME_LEN, encode = FALSE), MAX_NAME_LEN)
 	if(isnull(str)) //They pressed cancel.
 		to_chat(creator, span_warning("No new area made. Cancelling."))
 		return
@@ -930,7 +925,7 @@
 	set_area_machinery(newA, newA.name, oldA.name)
 	oldA.power_check() //Simply makes the area turn the power off if you nicked an APC from it.
 	to_chat(creator, span_notice("You have created a new area, named [newA.name]. It is now weather proof, and constructing an APC will allow it to be powered."))
-	message_admins("[key_name(creator, creator.client)] just made a new area called [newA.name] ](<A href='byond://?_src_=holder;[HrefToken()];adminmoreinfo=\ref[creator]'>?</A>) at ([creator.x],[creator.y],[creator.z] - <A href='byond://?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[creator.x];Y=[creator.y];Z=[creator.z]'>JMP</a>)",0,1)
+	message_admins("[key_name(creator, creator.client)] just made a new area called [newA.name] ](<A href='byond://?_src_=holder;[HrefToken()];adminmoreinfo=\ref[creator]'>?</A>) at ([creator.x],[creator.y],[creator.z] - <A href='byond://?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[creator.x];Y=[creator.y];Z=[creator.z]'>JMP</a>)")
 	log_game("[key_name(creator, creator.client)] just made a new area called [newA.name]")
 
 	var/list/zLevels = using_map.station_levels.Copy()

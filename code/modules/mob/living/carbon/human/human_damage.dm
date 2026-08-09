@@ -2,7 +2,7 @@
 /mob/living/carbon/human/updatehealth()
 	var/huskmodifier = 2.5 // With 1.5, you need 250 burn instead of 200 to husk a human.
 
-	if(status_flags & GODMODE)
+	if(SEND_SIGNAL(src, COMSIG_LIVING_HEALTH_UPDATE) & COMSIG_LIVING_HEALTH_UPDATE_GOD_MODE)
 		health = getMaxHealth()
 		set_stat(CONSCIOUS)
 		return
@@ -45,11 +45,17 @@
 	//TODO: fix husking
 	if( ((getMaxHealth() - total_burn) < (-getMaxHealth()) * huskmodifier) && stat == DEAD)
 		ChangeToHusk()
+	if(health <= -getMaxHealth()) //die only once
+		death()
+		return
+	handle_shock()
+	handle_pain()
 	return
 
-/mob/living/carbon/human/adjustBrainLoss(var/amount)
+/mob/living/carbon/human/adjustBrainLoss(amount)
 
-	if(status_flags & GODMODE)	return 0	//godmode
+	if(SEND_SIGNAL(src, COMSIG_TAKING_BRAIN_DAMAGE, amount) & COMSIG_CANCEL_BRAIN_DAMAGE)
+		return 0	// Cancelled by a component
 
 	if(should_have_organ(O_BRAIN))
 		var/obj/item/organ/internal/brain/sponge = internal_organs_by_name[O_BRAIN]
@@ -61,9 +67,10 @@
 	else
 		brainloss = 0
 
-/mob/living/carbon/human/setBrainLoss(var/amount)
+/mob/living/carbon/human/setBrainLoss(amount)
 
-	if(status_flags & GODMODE)	return 0	//godmode
+	if(SEND_SIGNAL(src, COMSIG_TAKING_BRAIN_DAMAGE, amount) & COMSIG_CANCEL_BRAIN_DAMAGE)
+		return 0	// Cancelled by a component
 
 	if(should_have_organ(O_BRAIN))
 		var/obj/item/organ/internal/brain/sponge = internal_organs_by_name[O_BRAIN]
@@ -77,7 +84,8 @@
 
 /mob/living/carbon/human/getBrainLoss()
 
-	if(status_flags & GODMODE)	return 0	//godmode
+	if(SEND_SIGNAL(src, COMSIG_CHECK_FOR_GODMODE) & COMSIG_GODMODE_CANCEL) //I don't want to go in and do HUD stuff imediately, so... no.
+		return 0	// Cancelled by a component
 
 	if(should_have_organ(O_BRAIN))
 		var/obj/item/organ/internal/brain/sponge = internal_organs_by_name[O_BRAIN]
@@ -103,6 +111,8 @@
 	for(var/obj/item/organ/external/O in organs)
 		if(O.robotic >= ORGAN_ROBOT)
 			continue //robot limbs don't count towards shock and crit
+		if(!O.organ_can_feel_pain())
+			continue //Limbs that can't feel pain don't count towards shock.
 		amount += O.brute_dam
 	return amount
 
@@ -125,6 +135,8 @@
 	for(var/obj/item/organ/external/O in organs)
 		if(O.robotic >= ORGAN_ROBOT)
 			continue //robot limbs don't count towards shock and crit
+		if(!O.organ_can_feel_pain())
+			continue //Limbs that can't feel pain don't count towards shock.
 		amount += O.burn_dam
 	return amount
 
@@ -135,16 +147,18 @@
 	return amount
 
 //'include_robo' only applies to healing, for legacy purposes, as all damage typically hurts both types of organs
-/mob/living/carbon/human/adjustBruteLoss(var/amount,var/include_robo)
+/mob/living/carbon/human/adjustBruteLoss(amount,include_robo)
+	if(SEND_SIGNAL(src, COMSIG_TAKING_BRUTE_DAMAGE, amount) & COMSIG_CANCEL_BRUTE_DAMAGE)
+		return 0	// Cancelled by a component
 	amount = amount*species.brute_mod
 	if(amount > 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_damage_percent))
-				if(M.energy_based)
+				if(M.energy_based && M.energy_source)
 					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_damage_percent
 			if(!isnull(M.incoming_brute_damage_percent))
-				if(M.energy_based)
+				if(M.energy_based && M.energy_source)
 					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_brute_damage_percent
 		if(nif && nif.flag_check(NIF_C_BRUTEARMOR,NIF_FLAGS_COMBAT)){amount *= 0.7} //VOREStation Edit - NIF mod for damage resistance for this type of damage
@@ -157,16 +171,16 @@
 	BITSET(hud_updateflag, HEALTH_HUD)
 
 //'include_robo' only applies to healing, for legacy purposes, as all damage typically hurts both types of organs
-/mob/living/carbon/human/adjustFireLoss(var/amount,var/include_robo)
+/mob/living/carbon/human/adjustFireLoss(amount,include_robo)
 	amount = amount*species.burn_mod
 	if(amount > 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_damage_percent))
-				if(M.energy_based)
+				if(M.energy_based && M.energy_source)
 					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_damage_percent
 			if(!isnull(M.incoming_fire_damage_percent))
-				if(M.energy_based)
+				if(M.energy_based && M.energy_source)
 					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_fire_damage_percent
 		if(nif && nif.flag_check(NIF_C_BURNARMOR,NIF_FLAGS_COMBAT)){amount *= 0.7} //VOREStation Edit - NIF mod for damage resistance for this type of damage
@@ -178,7 +192,7 @@
 		heal_overall_damage(0, -amount, include_robo)
 	BITSET(hud_updateflag, HEALTH_HUD)
 
-/mob/living/carbon/human/proc/adjustBruteLossByPart(var/amount, var/organ_name, var/obj/damage_source = null)
+/mob/living/carbon/human/proc/adjustBruteLossByPart(amount, organ_name, obj/damage_source = null)
 	amount = amount*species.brute_mod
 	if (organ_name in organs_by_name)
 		var/obj/item/organ/external/O = get_organ(organ_name)
@@ -186,11 +200,11 @@
 		if(amount > 0)
 			for(var/datum/modifier/M in modifiers)
 				if(!isnull(M.incoming_damage_percent))
-					if(M.energy_based)
+					if(M.energy_based && M.energy_source)
 						M.energy_source.use(M.damage_cost*amount)
 					amount *= M.incoming_damage_percent
 				if(!isnull(M.incoming_brute_damage_percent))
-					if(M.energy_based)
+					if(M.energy_based && M.energy_source)
 						M.energy_source.use(M.damage_cost*amount)
 					amount *= M.incoming_brute_damage_percent
 			if(nif && nif.flag_check(NIF_C_BRUTEARMOR,NIF_FLAGS_COMBAT)){amount *= 0.7} //VOREStation Edit - NIF mod for damage resistance for this type of damage
@@ -204,7 +218,7 @@
 
 	BITSET(hud_updateflag, HEALTH_HUD)
 
-/mob/living/carbon/human/proc/adjustFireLossByPart(var/amount, var/organ_name, var/obj/damage_source = null)
+/mob/living/carbon/human/proc/adjustFireLossByPart(amount, organ_name, obj/damage_source = null)
 	amount = amount*species.burn_mod
 	if (organ_name in organs_by_name)
 		var/obj/item/organ/external/O = get_organ(organ_name)
@@ -212,11 +226,11 @@
 		if(amount > 0)
 			for(var/datum/modifier/M in modifiers)
 				if(!isnull(M.incoming_damage_percent))
-					if(M.energy_based)
+					if(M.energy_based && M.energy_source)
 						M.energy_source.use(M.damage_cost*amount)
 					amount *= M.incoming_damage_percent
 				if(!isnull(M.incoming_fire_damage_percent))
-					if(M.energy_based)
+					if(M.energy_based && M.energy_source)
 						M.energy_source.use(M.damage_cost*amount)
 					amount *= M.incoming_fire_damage_percent
 			if(nif && nif.flag_check(NIF_C_BURNARMOR,NIF_FLAGS_COMBAT)){amount *= 0.7} //VOREStation Edit - NIF mod for damage resistance for this type of damage
@@ -230,15 +244,15 @@
 
 	BITSET(hud_updateflag, HEALTH_HUD)
 
-/mob/living/carbon/human/Stun(amount)
+/mob/living/carbon/human/Stun(amount, ignore_canstun = FALSE)
 	if(HULK in mutations)	return
 	..()
 
-/mob/living/carbon/human/Weaken(amount)
+/mob/living/carbon/human/Weaken(amount, ignore_canstun = FALSE)
 	if(HULK in mutations)	return
 	..()
 
-/mob/living/carbon/human/Paralyse(amount)
+/mob/living/carbon/human/Paralyse(amount, ignore_canstun = FALSE)
 	if(HULK in mutations)	return
 	// Notify our AI if they can now control the suit.
 	if(wearing_rig && !stat && paralysis < amount) //We are passing out right this second.
@@ -263,7 +277,7 @@
 
 /mob/living/carbon/human/inStasisNow()
 	var/stasisValue = getStasis()
-	if(stasisValue && (life_tick % stasisValue))
+	if(stasisValue && (life_tick % stasisValue) || HAS_TRAIT(src, TRAIT_STASIS))
 		return 1
 
 	return 0
@@ -273,13 +287,13 @@
 		cloneloss = 0
 	return ..()
 
-/mob/living/carbon/human/setCloneLoss(var/amount)
+/mob/living/carbon/human/setCloneLoss(amount)
 	if((species.flags & NO_DNA) || isSynthetic())
 		cloneloss = 0
 	else
 		..()
 
-/mob/living/carbon/human/adjustCloneLoss(var/amount)
+/mob/living/carbon/human/adjustCloneLoss(amount)
 	..()
 
 	if((species.flags & NO_DNA) || isSynthetic())
@@ -320,20 +334,20 @@
 		oxyloss = 0
 	return ..()
 
-/mob/living/carbon/human/adjustOxyLoss(var/amount)
+/mob/living/carbon/human/adjustOxyLoss(amount)
 	if(!should_have_organ(O_LUNGS))
 		oxyloss = 0
 	else
 		amount = amount*species.oxy_mod
 		..(amount)
 
-/mob/living/carbon/human/setOxyLoss(var/amount)
+/mob/living/carbon/human/setOxyLoss(amount)
 	if(!should_have_organ(O_LUNGS))
 		oxyloss = 0
 	else
 		..()
 
-/mob/living/carbon/human/adjustHalLoss(var/amount)
+/mob/living/carbon/human/adjustHalLoss(amount)
 	if(species.flags & NO_PAIN)
 		halloss = 0
 	else
@@ -341,34 +355,34 @@
 			amount = amount*species.pain_mod
 		..(amount)
 
-/mob/living/carbon/human/setHalLoss(var/amount)
+/mob/living/carbon/human/setHalLoss(amount)
 	if(species.flags & NO_PAIN)
 		halloss = 0
 	else
 		..()
 
-/mob/living/carbon/human/Stun(var/amount)
+/mob/living/carbon/human/Stun(amount, ignore_canstun = FALSE)
 	if(amount > 0)	//only multiply it by the mod if it's positive, or else it takes longer to fade too!
 		amount = amount*species.stun_mod
 	..(amount)
 
-/mob/living/carbon/human/SetStunned(var/amount)
+/mob/living/carbon/human/SetStunned(amount, ignore_canstun = FALSE)
 	..()
 
-/mob/living/carbon/human/AdjustStunned(var/amount)
+/mob/living/carbon/human/AdjustStunned(amount, ignore_canstun = FALSE)
 	if(amount > 0) // Only multiply it if positive.
 		amount = amount*species.stun_mod
 	..(amount)
 
-/mob/living/carbon/human/Weaken(var/amount)
+/mob/living/carbon/human/Weaken(amount, ignore_canstun = FALSE)
 	if(amount > 0)	//only multiply it by the mod if it's positive, or else it takes longer to fade too!
 		amount = amount*species.weaken_mod
 	..(amount)
 
-/mob/living/carbon/human/SetWeakened(var/amount)
+/mob/living/carbon/human/SetWeakened(amount, ignore_canstun = FALSE)
 	..()
 
-/mob/living/carbon/human/AdjustWeakened(var/amount)
+/mob/living/carbon/human/AdjustWeakened(amount, ignore_canstun = FALSE)
 	if(amount > 0) // Only multiply it if positive.
 		amount = amount*species.weaken_mod
 	..(amount)
@@ -378,14 +392,14 @@
 		toxloss = 0
 	return ..()
 
-/mob/living/carbon/human/adjustToxLoss(var/amount)
+/mob/living/carbon/human/adjustToxLoss(amount)
 	if(species.flags & NO_POISON)
 		toxloss = 0
 	else
 		amount = amount*species.toxins_mod
 		..(amount)
 
-/mob/living/carbon/human/setToxLoss(var/amount)
+/mob/living/carbon/human/setToxLoss(amount)
 	if(species.flags & NO_POISON)
 		toxloss = 0
 	else
@@ -394,7 +408,7 @@
 ////////////////////////////////////////////
 
 //Returns a list of damaged organs
-/mob/living/carbon/human/proc/get_damaged_organs(var/brute, var/burn)
+/mob/living/carbon/human/proc/get_damaged_organs(brute, burn)
 	var/list/obj/item/organ/external/parts = list()
 	for(var/obj/item/organ/external/O in organs)
 		if((brute && O.brute_dam) || (burn && O.burn_dam))
@@ -409,10 +423,18 @@
 			parts += O
 	return parts
 
+//Returns a list of fracturable organs
+/mob/living/carbon/human/proc/get_fracturable_organs()
+	var/list/obj/item/organ/external/parts = list()
+	for(var/obj/item/organ/external/O in organs)
+		if(O.is_fracturable())
+			parts += O
+	return parts
+
 //Heals ONE external organ, organ gets randomly selected from damaged ones.
 //It automatically updates damage overlays if necesary
 //It automatically updates health status
-/mob/living/carbon/human/heal_organ_damage(var/brute, var/burn)
+/mob/living/carbon/human/heal_organ_damage(brute, burn)
 	var/list/obj/item/organ/external/parts = get_damaged_organs(brute,burn)
 	if(!parts.len)	return
 	var/obj/item/organ/external/picked = pick(parts)
@@ -428,7 +450,7 @@ In most cases it makes more sense to use apply_damage() instead! And make sure t
 //Damages ONE external organ, organ gets randomly selected from damagable ones.
 //It automatically updates damage overlays if necesary
 //It automatically updates health status
-/mob/living/carbon/human/take_organ_damage(var/brute, var/burn, var/sharp = FALSE, var/edge = FALSE)
+/mob/living/carbon/human/take_organ_damage(brute, burn, sharp = FALSE, edge = FALSE)
 	var/list/obj/item/organ/external/parts = get_damageable_organs()
 	if(!parts.len)	return
 	var/obj/item/organ/external/picked = pick(parts)
@@ -440,7 +462,7 @@ In most cases it makes more sense to use apply_damage() instead! And make sure t
 
 //Heal MANY external organs, in random order
 //'include_robo' only applies to healing, for legacy purposes, as all damage typically hurts both types of organs
-/mob/living/carbon/human/heal_overall_damage(var/brute, var/burn, var/include_robo)
+/mob/living/carbon/human/heal_overall_damage(brute, burn, include_robo)
 	var/list/obj/item/organ/external/parts = get_damaged_organs(brute,burn)
 
 	var/update = 0
@@ -461,8 +483,7 @@ In most cases it makes more sense to use apply_damage() instead! And make sure t
 	if(update)	UpdateDamageIcon()
 
 // damage MANY external organs, in random order
-/mob/living/carbon/human/take_overall_damage(var/brute, var/burn, var/sharp = FALSE, var/edge = FALSE, var/used_weapon = null)
-	if(status_flags & GODMODE)	return	//godmode
+/mob/living/carbon/human/take_overall_damage(brute, burn, sharp = FALSE, edge = FALSE, used_weapon = null)
 	var/list/obj/item/organ/external/parts = get_damageable_organs()
 	var/update = 0
 	while(parts.len && (brute>0 || burn>0) )
@@ -495,7 +516,7 @@ This function restores the subjects blood to max.
 /*
 This function restores all organs.
 */
-/mob/living/carbon/human/restore_all_organs(var/ignore_prosthetic_prefs)
+/mob/living/carbon/human/restore_all_organs(ignore_prosthetic_prefs)
 	for(var/obj/item/organ/external/current_organ in organs)
 		current_organ.rejuvenate(ignore_prosthetic_prefs)
 
@@ -510,7 +531,7 @@ This function restores all organs.
 	return
 
 /*
-/mob/living/carbon/human/proc/get_organ(var/zone)
+/mob/living/carbon/human/proc/get_organ(zone)
 	if(!zone)
 		zone = BP_TORSO
 	else if (zone in list( O_EYES, O_MOUTH ))
@@ -518,9 +539,10 @@ This function restores all organs.
 	return organs_by_name[zone]
 */
 
-/mob/living/carbon/human/apply_damage(var/damage = 0, var/damagetype = BRUTE, var/def_zone = null, var/blocked = 0, var/soaked = 0, var/sharp = FALSE, var/edge = FALSE, var/obj/used_weapon = null, var/projectile = FALSE)
+/mob/living/carbon/human/apply_damage(damage = 0, damagetype = BRUTE, def_zone = null, blocked = 0, sharp = FALSE, edge = FALSE, obj/used_weapon = null, projectile = FALSE)
+	SEND_SIGNAL(src, COMSIG_MOB_APPLY_DAMAGE, damage, damagetype, def_zone, blocked, sharp, edge, used_weapon, projectile)
 	if(GLOB.Debug2)
-		to_world_log("## DEBUG: human/apply_damage() was called on [src], with [damage] damage, an armor value of [blocked], and a soak value of [soaked].")
+		log_world("## DEBUG: human/apply_damage() was called on [src], with [damage] damage, and an armor value of [blocked].")
 	var/obj/item/organ/external/organ = null
 	if(isorgan(def_zone))
 		organ = def_zone
@@ -530,37 +552,37 @@ This function restores all organs.
 
 	for(var/datum/modifier/M in modifiers) //MODIFIER STUFF. It's best to do this RIGHT before armor is calculated, so it's done here! This is the 'forcefield' defence.
 		if(damagetype == BRUTE && (!isnull(M.effective_brute_resistance)))
-			if(M.energy_based)
+			if(M.energy_based && M.energy_source)
 				M.energy_source.use(M.damage_cost * damage)
 			damage = damage * M.effective_brute_resistance
 			continue
 		if((damagetype == BURN || damagetype == ELECTROCUTE) && (!isnull(M.effective_fire_resistance)))
-			if(M.energy_based)
+			if(M.energy_based && M.energy_source)
 				M.energy_source.use(M.damage_cost * damage)
 			damage = damage * M.effective_fire_resistance
 			continue
 		if(damagetype == TOX && (!isnull(M.effective_tox_resistance)))
-			if(M.energy_based)
+			if(M.energy_based && M.energy_source)
 				M.energy_source.use(M.damage_cost * damage)
 			damage = damage * M.effective_tox_resistance
 			continue
 		if(damagetype == OXY && (!isnull(M.effective_oxy_resistance)))
-			if(M.energy_based)
+			if(M.energy_based && M.energy_source)
 				M.energy_source.use(M.damage_cost * damage)
 			damage = damage * M.effective_oxy_resistance
 			continue
 		if(damagetype == CLONE && (!isnull(M.effective_clone_resistance)))
-			if(M.energy_based)
+			if(M.energy_based && M.energy_source)
 				M.energy_source.use(M.damage_cost * damage)
 			damage = damage * M.effective_clone_resistance
 			continue
 		if(damagetype == HALLOSS && (!isnull(M.effective_hal_resistance)))
-			if(M.energy_based)
+			if(M.energy_based && M.energy_source)
 				M.energy_source.use(M.damage_cost * damage)
 			damage = damage * M.effective_hal_resistance
 			continue
 		if(damagetype == SEARING && (!isnull(M.effective_fire_resistance) || !isnull(M.effective_brute_resistance)))
-			if(M.energy_based)
+			if(M.energy_based && M.energy_source)
 				M.energy_source.use(M.damage_cost * damage)
 			var/damage_mitigation = 0//Used for dual calculations.
 			if(!isnull(M.effective_fire_resistance))
@@ -581,7 +603,7 @@ This function restores all organs.
 			if((damage > 25 && prob(20)) || (damage > 50 && prob(60)))
 				if(organ && organ.organ_can_feel_pain() && !isbelly(loc) && !istype(loc, /obj/item/dogborg/sleeper)) //VOREStation Add
 					emote("scream")
-		..(damage, damagetype, def_zone, blocked, soaked)
+		..(damage, damagetype, def_zone, blocked)
 		return 1
 
 	//Handle BRUTE and BURN damage
@@ -590,20 +612,14 @@ This function restores all organs.
 	if(blocked >= 100)
 		return 0
 
-	if(soaked >= damage)
-		return 0
-
 	if(!organ)	return 0
 
 	if(blocked)
 		blocked = (100-blocked)/100
 		damage = (damage * blocked)
 
-	if(soaked)
-		damage -= soaked
-
 	if(GLOB.Debug2)
-		to_world_log("## DEBUG: [src] was hit for [damage].")
+		log_world("## DEBUG: [src] was hit for [damage].")
 
 	switch(damagetype)
 		if(BRUTE)
@@ -613,11 +629,11 @@ This function restores all organs.
 
 			for(var/datum/modifier/M in modifiers)
 				if(!isnull(M.incoming_damage_percent))
-					if(M.energy_based)
+					if(M.energy_based && M.energy_source)
 						M.energy_source.use(M.damage_cost*damage)
 					damage *= M.incoming_damage_percent
 				if(!isnull(M.incoming_brute_damage_percent))
-					if(M.energy_based)
+					if(M.energy_based && M.energy_source)
 						M.energy_source.use(M.damage_cost*damage)
 					damage *= M.incoming_brute_damage_percent
 
@@ -630,11 +646,11 @@ This function restores all organs.
 
 			for(var/datum/modifier/M in modifiers)
 				if(!isnull(M.incoming_damage_percent))
-					if(M.energy_based)
+					if(M.energy_based && M.energy_source)
 						M.energy_source.use(M.damage_cost*damage)
 					damage *= M.incoming_damage_percent
 				if(!isnull(M.incoming_brute_damage_percent))
-					if(M.energy_based)
+					if(M.energy_based && M.energy_source)
 						M.energy_source.use(M.damage_cost*damage)
 					damage *= M.incoming_fire_damage_percent
 
@@ -658,4 +674,5 @@ This function restores all organs.
 	// Will set our damageoverlay icon to the next level, which will then be set back to the normal level the next mob.Life().
 	updatehealth()
 	BITSET(hud_updateflag, HEALTH_HUD)
+	SEND_SIGNAL(src, COMSIG_MOB_AFTER_APPLY_DAMAGE, damage, damagetype, def_zone, blocked, sharp, edge, used_weapon, projectile)
 	return 1
